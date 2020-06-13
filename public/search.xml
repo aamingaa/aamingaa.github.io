@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>股票问题</title>
+      <link href="/2020/06/13/%E8%82%A1%E7%A5%A8%E9%97%AE%E9%A2%98/"/>
+      <url>/2020/06/13/%E8%82%A1%E7%A5%A8%E9%97%AE%E9%A2%98/</url>
+      
+        <content type="html"><![CDATA[<p>股票问题（1）</p><p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p><p>如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。</p><p>输入: [7,1,5,3,6,4]<br>输出: 5<br>解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。<br>     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。</p><p>来源：力扣（LeetCode）<br>链接：<a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(prices==<span class="keyword">null</span> || prices.length==<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> min=prices[<span class="number">0</span>],max=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;prices.length;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            max=Math.max(max,prices[i]-min);</span><br><span class="line">            min=Math.min(min,prices[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>股票问题（2）</p><p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p><p>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。</p><p>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p><p>输入: [7,1,5,3,6,4]<br>输出: 7<br>解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。<br>     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。</p><p>来源：力扣（LeetCode）<br>链接：<a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span></span>&#123;</span><br><span class="line"><span class="comment">//    能挣钱就卖</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(prices.length&lt;<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;prices.length;i++)</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="keyword">if</span>(prices[i]&gt;=prices[i-<span class="number">1</span>])</span><br><span class="line">          &#123;</span><br><span class="line">              ans+=(prices[i]-prices[i-<span class="number">1</span>]);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>股票问题 (3)</p><p>给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。</p><p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。</p><p>注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p><p>示例 1:</p><p>输入: [3,3,5,0,0,3,1,4]<br>输出: 6<br>解释: 在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。<br>     随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。</p><p>来源：力扣（LeetCode）<br>链接：<a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">        对于任意一天考虑四个变量:</span></span><br><span class="line"><span class="comment">        fstBuy: 在该天第一次买入股票可获得的最大收益 </span></span><br><span class="line"><span class="comment">        fstSell: 在该天第一次卖出股票可获得的最大收益</span></span><br><span class="line"><span class="comment">        secBuy: 在该天第二次买入股票可获得的最大收益</span></span><br><span class="line"><span class="comment">        secSell: 在该天第二次卖出股票可获得的最大收益</span></span><br><span class="line"><span class="comment">        分别对四个变量进行相应的更新, 最后secSell就是最大</span></span><br><span class="line"><span class="comment">        收益值(secSell &gt;= fstSell)</span></span><br><span class="line"><span class="comment">        **/</span></span><br><span class="line">        <span class="keyword">int</span> fstBuy = Integer.MIN_VALUE, fstSell = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> secBuy = Integer.MIN_VALUE, secSell = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> p : prices) &#123;</span><br><span class="line">            fstBuy = Math.max(fstBuy, -p);</span><br><span class="line">            fstSell = Math.max(fstSell, fstBuy + p);</span><br><span class="line">            secBuy = Math.max(secBuy, fstSell - p);</span><br><span class="line">            secSell = Math.max(secSell, secBuy + p); </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> secSell;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 算法面试题 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>ArrayList</title>
+      <link href="/2020/05/31/ArrayList/"/>
+      <url>/2020/05/31/ArrayList/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> Java容器 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 容器 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>虚拟机面试问题</title>
+      <link href="/2020/05/31/%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9D%A2%E8%AF%95%E9%97%AE%E9%A2%98/"/>
+      <url>/2020/05/31/%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9D%A2%E8%AF%95%E9%97%AE%E9%A2%98/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="1-各个垃圾回收器有什么区别？"><a href="#1-各个垃圾回收器有什么区别？" class="headerlink" title="1.各个垃圾回收器有什么区别？"></a>1.各个垃圾回收器有什么区别？</h2><h2 id="2-什么情况下会Stop-The-World？"><a href="#2-什么情况下会Stop-The-World？" class="headerlink" title="2.什么情况下会Stop The World？"></a>2.什么情况下会Stop The World？</h2><h2 id="3-G1和CMS的区别？"><a href="#3-G1和CMS的区别？" class="headerlink" title="3.G1和CMS的区别？"></a>3.G1和CMS的区别？</h2><h2 id="4-什么时候会STOP-THE-WORLD？"><a href="#4-什么时候会STOP-THE-WORLD？" class="headerlink" title="4.什么时候会STOP THE WORLD？"></a>4.什么时候会STOP THE WORLD？</h2>]]></content>
+      
+      
+      <categories>
+          
+          <category> 虚拟机 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Java内存模型(一)</title>
+      <link href="/2020/05/30/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
+      <url>/2020/05/30/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="1-内存模型的定义"><a href="#1-内存模型的定义" class="headerlink" title="1.内存模型的定义"></a>1.内存模型的定义</h2><p>Java 内存模型试图屏蔽各种硬件和操作系统的内存访问差异，以实现让 Java 程序在各种平台下都能达到一致的内存访问效果。</p><h2 id="2-主内存与工作内存"><a href="#2-主内存与工作内存" class="headerlink" title="2.主内存与工作内存"></a>2.主内存与工作内存</h2><p>处理器上的寄存器的读写的速度比内存快几个数量级，为了解决这种速度矛盾，在它们之间加入了高速缓存。</p><p>所有的变量都存储在主内存中，每个线程还有自己的工作内存，工作内存存储在高速缓存或者寄存器中，保存了该线程使用的变量的主内存副本拷贝。不同线程之间的变量值传递需要通过主内存来完成。sss</p><p><img src="/2020/05/30/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/JMM.png" class title="this is}&lt;&#x2F;p&gt; &lt;h2 id&#x3D;3-内存间交互操作&gt;&lt;a href&#x3D;#3-内存间交互操作 class&#x3D;headerlink"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 并发编程 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>test1</title>
+      <link href="/2020/05/25/test1/"/>
+      <url>/2020/05/25/test1/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> 测试 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>我的第一篇博客</title>
+      <link href="/2020/05/25/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/"/>
+      <url>/2020/05/25/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+      
+        <content type="html"><![CDATA[<p>##第一章</p><p>内容</p><hr><p>##第二章</p><p>##<a href="https://blog.csdn.net/xjm850552586/article/details/84101345?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase" target="_blank" rel="noopener">https://blog.csdn.net/xjm850552586/article/details/84101345?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase</a></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Hello World</title>
+      <link href="/2020/05/25/hello-world/"/>
+      <url>/2020/05/25/hello-world/</url>
+      
+        <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+  
+  
+</search>
