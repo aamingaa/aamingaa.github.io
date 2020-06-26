@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="股票问题（1） 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。 如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。 输入: [7,1,5,3,6,4]输出: 5解释: 在第 2 天（股票价格 &#x3D; 1）的时候买入，在第 5 天（股票价格 &#x3D; 6）的时候卖出，最大利润 &#x3D; 6-1 &#x3D; 5 。     注意利润不能是 7-1 &#x3D; 6, 因">
+<meta name="description" content="[TOC] 什么是缓存穿透正常情况下，查询的数据都存在，如果请求一个不存在的数据，也就是缓存和数据库都查不到这个数据，每次都会去数据库查询，这种查询不存在数据的现象我们称为缓存穿透 穿透带来的问题如果每次都拿一个不存在的id去查询数据库，可能会导致你的数据库压力增大 解决办法 缓存空值 之所以发生穿透，是因为缓存中没有存储这些数据的key，从而每次都查询数据库我们可以为这些key在缓存中设置对应的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="股票问题">
-<meta property="og:url" content="http://aamingaa.github.io/2020/06/13/%E8%82%A1%E7%A5%A8%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="redis缓存穿透、击穿、雪崩等">
+<meta property="og:url" content="http://aamingaa.github.io/2020/06/26/redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81%E9%9B%AA%E5%B4%A9%E7%AD%89/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="股票问题（1） 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。 如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。 输入: [7,1,5,3,6,4]输出: 5解释: 在第 2 天（股票价格 &#x3D; 1）的时候买入，在第 5 天（股票价格 &#x3D; 6）的时候卖出，最大利润 &#x3D; 6-1 &#x3D; 5 。     注意利润不能是 7-1 &#x3D; 6, 因">
-<meta property="article:published_time" content="2020-06-13T01:51:31.000Z">
-<meta property="article:modified_time" content="2020-06-13T12:10:56.257Z">
+<meta property="og:description" content="[TOC] 什么是缓存穿透正常情况下，查询的数据都存在，如果请求一个不存在的数据，也就是缓存和数据库都查不到这个数据，每次都会去数据库查询，这种查询不存在数据的现象我们称为缓存穿透 穿透带来的问题如果每次都拿一个不存在的id去查询数据库，可能会导致你的数据库压力增大 解决办法 缓存空值 之所以发生穿透，是因为缓存中没有存储这些数据的key，从而每次都查询数据库我们可以为这些key在缓存中设置对应的">
+<meta property="article:published_time" content="2020-06-26T01:31:46.000Z">
+<meta property="article:modified_time" content="2020-06-26T08:18:57.111Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -118,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://aamingaa.github.io/2020/06/13/股票问题/"/>
+  <link rel="canonical" href="http://aamingaa.github.io/2020/06/26/redis缓存穿透、雪崩等/"/>
 
 
 
 
 
-  <title>股票问题 | Hexo</title>
+  <title>redis缓存穿透、击穿、雪崩等 | Hexo</title>
   
 
 
@@ -285,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/06/13/%E8%82%A1%E7%A5%A8%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/06/26/redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81%E9%9B%AA%E5%B4%A9%E7%AD%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -302,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">股票问题</h1>
+          <h1 class="post-title" itemprop="name headline">redis缓存穿透、击穿、雪崩等</h1>
         
 
         <div class="post-meta">
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-13T09:51:31+08:00">
-                2020-06-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-26T09:31:46+08:00">
+                2020-06-26
               </time>
             
 
@@ -337,8 +337,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index">
-                    <span itemprop="name">算法面试题</span>
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
                   </a>
                 </span>
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k
+                  1.2k
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  4
                 </span>
               
             </div>
@@ -410,41 +410,36 @@
       
 
       
-        <p>股票问题（1）</p>
-<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p>
-<p>如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。</p>
-<p>输入: [7,1,5,3,6,4]<br>输出: 5<br>解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。<br>     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。</p>
-<p>来源：力扣（LeetCode）<br>链接：<a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(prices==<span class="keyword">null</span> || prices.length==<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> min=prices[<span class="number">0</span>],max=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;prices.length;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            max=Math.max(max,prices[i]-min);</span><br><span class="line">            min=Math.min(min,prices[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>[TOC]</p>
+<h2 id="什么是缓存穿透"><a href="#什么是缓存穿透" class="headerlink" title="什么是缓存穿透"></a>什么是缓存穿透</h2><p>正常情况下，查询的数据都存在，如果请求一个不存在的数据，也就是缓存和数据库都查不到这个数据，每次都会去数据库查询，这种查询不存在数据的现象我们称为缓存穿透</p>
+<h3 id="穿透带来的问题"><a href="#穿透带来的问题" class="headerlink" title="穿透带来的问题"></a>穿透带来的问题</h3><p>如果每次都拿一个不存在的id去查询数据库，可能会导致你的数据库压力增大</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
+<li>缓存空值<br> 之所以发生穿透，是因为缓存中没有存储这些数据的key，从而每次都查询数据库<br>我们可以为这些key在缓存中设置对应的值为null，后面查询这个key的时候就不用查询数据库了<br>当然为了健壮性，我们要对这些key设置过期时间，以防止真的有数据</li>
+<li>BloomFilter<br>BloomFilter 类似于一个hbase set 用来判断某个元素（key）是否存在于某个集合中<br>我们把有数据的key都放到BloomFilter中，每次查询的时候都先去BloomFilter判断，如果没有就直接返回null<br>注意BloomFilter没有删除操作，对于删除的key，查询就会经过BloomFilter然后查询缓存再查询数据库，所以BloomFilter可以结合缓存空值用，对于删除的key，可以在缓存中缓存null</li>
+</ol>
+<h2 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h2><h3 id="什么是缓存击穿"><a href="#什么是缓存击穿" class="headerlink" title="什么是缓存击穿"></a>什么是缓存击穿</h3><p>在高并发的情况下，大量的请求同时查询同一个key时，此时这个key正好失效了，就会导致同一时间，这些请求都会去查询数据库，这样的现象我们称为缓存击穿</p>
+<h3 id="击穿带来的问题"><a href="#击穿带来的问题" class="headerlink" title="击穿带来的问题"></a>击穿带来的问题</h3><p>会造成某一时刻数据库请求量过大</p>
+<h3 id="解决办法-1"><a href="#解决办法-1" class="headerlink" title="解决办法"></a>解决办法</h3><p><strong>1.使用互斥锁(mutex key)</strong></p>
+<p>业界比较常用的做法，是使用mutex。简单地来说，就是在缓存失效的时候（判断拿出来的值为空），不是立即去load db，而是先使用缓存工具的某些带成功操作返回值的操作（比如Redis的SETNX或者Memcache的ADD）去set一个mutex key，当操作返回成功时，再进行load db的操作并回设缓存；否则，就重试整个get缓存的方法。</p>
+<p>SETNX，是「SET if Not eXists」的缩写，也就是只有不存在的时候才设置，可以利用它来实现锁的效果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">get</span><span class="params">(key)</span> </span>&#123;</span><br><span class="line">	String value = redis.get(key);</span><br><span class="line">	<span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="comment">//代表缓存值过期</span></span><br><span class="line">		<span class="comment">//设置3min的超时，防止del操作失败的时候，下次缓存过期一直不能load db</span></span><br><span class="line">		<span class="keyword">if</span> (redis.setnx(key_mutex, <span class="number">1</span>, <span class="number">3</span> * <span class="number">60</span>) == <span class="number">1</span>) &#123;</span><br><span class="line">			<span class="comment">//代表设置成功</span></span><br><span class="line">			value = db.get(key);</span><br><span class="line">			redis.set(key, value, expire_secs);</span><br><span class="line">			redis.del(key_mutex);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">//这个时候代表同时候的其他线程已经load db并回设到缓存了，这时候重试获取缓存值即可</span></span><br><span class="line">			sleep(<span class="number">50</span>);</span><br><span class="line">			get(key);</span><br><span class="line">			<span class="comment">//重试</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> value;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>股票问题（2）</p>
-<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p>
-<p>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。</p>
-<p>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-<p>输入: [7,1,5,3,6,4]<br>输出: 7<br>解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。<br>     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。</p>
-<p>来源：力扣（LeetCode）<br>链接：<a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span></span>&#123;</span><br><span class="line"><span class="comment">//    能挣钱就卖</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(prices.length&lt;<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;prices.length;i++)</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="keyword">if</span>(prices[i]&gt;=prices[i-<span class="number">1</span>])</span><br><span class="line">          &#123;</span><br><span class="line">              ans+=(prices[i]-prices[i-<span class="number">1</span>]);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>股票问题 (3)</p>
-<p>给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。</p>
-<p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。</p>
-<p>注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-<p>示例 1:</p>
-<p>输入: [3,3,5,0,0,3,1,4]<br>输出: 6<br>解释: 在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。<br>     随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。</p>
-<p>来源：力扣（LeetCode）<br>链接：<a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">        对于任意一天考虑四个变量:</span></span><br><span class="line"><span class="comment">        fstBuy: 在该天第一次买入股票可获得的最大收益 </span></span><br><span class="line"><span class="comment">        fstSell: 在该天第一次卖出股票可获得的最大收益</span></span><br><span class="line"><span class="comment">        secBuy: 在该天第二次买入股票可获得的最大收益</span></span><br><span class="line"><span class="comment">        secSell: 在该天第二次卖出股票可获得的最大收益</span></span><br><span class="line"><span class="comment">        分别对四个变量进行相应的更新, 最后secSell就是最大</span></span><br><span class="line"><span class="comment">        收益值(secSell &gt;= fstSell)</span></span><br><span class="line"><span class="comment">        **/</span></span><br><span class="line">        <span class="keyword">int</span> fstBuy = Integer.MIN_VALUE, fstSell = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> secBuy = Integer.MIN_VALUE, secSell = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> p : prices) &#123;</span><br><span class="line">            fstBuy = Math.max(fstBuy, -p);</span><br><span class="line">            fstSell = Math.max(fstSell, fstBuy + p);</span><br><span class="line">            secBuy = Math.max(secBuy, fstSell - p);</span><br><span class="line">            secSell = Math.max(secSell, secBuy + p); </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> secSell;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>股票(4)</p>
-<p>给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。</p>
-<p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。</p>
-<p>注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-<p>示例 1:</p>
-<p>输入: [2,4,1], k = 2<br>输出: 2<br>解释: 在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。</p>
-<p>来源：力扣（LeetCode）<br>链接：<a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span> k, <span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">        当k大于等于数组长度一半时, 问题退化为贪心问题此时采用 买卖股票的最佳时机 II</span></span><br><span class="line"><span class="comment">        的贪心方法解决可以大幅提升时间性能, 对于其他的k, 可以采用 买卖股票的最佳时机 III</span></span><br><span class="line"><span class="comment">        的方法来解决, 在III中定义了两次买入和卖出时最大收益的变量, 在这里就是k租这样的</span></span><br><span class="line"><span class="comment">        变量, 即问题IV是对问题III的推广, t[i][0]和t[i][1]分别表示第i比交易买入和卖出时</span></span><br><span class="line"><span class="comment">        各自的最大收益</span></span><br><span class="line"><span class="comment">        **/</span></span><br><span class="line">        <span class="keyword">if</span>(k &lt; <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span>(k &gt;= prices.length/<span class="number">2</span>) <span class="keyword">return</span> greedy(prices);</span><br><span class="line">        <span class="keyword">int</span>[][] t = <span class="keyword">new</span> <span class="keyword">int</span>[k][<span class="number">2</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k; ++i)</span><br><span class="line">            t[i][<span class="number">0</span>] = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> p : prices) &#123;</span><br><span class="line">            t[<span class="number">0</span>][<span class="number">0</span>] = Math.max(t[<span class="number">0</span>][<span class="number">0</span>], -p);</span><br><span class="line">            t[<span class="number">0</span>][<span class="number">1</span>] = Math.max(t[<span class="number">0</span>][<span class="number">1</span>], t[<span class="number">0</span>][<span class="number">0</span>] + p);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; k; ++i) &#123;</span><br><span class="line">                t[i][<span class="number">0</span>] = Math.max(t[i][<span class="number">0</span>], t[i-<span class="number">1</span>][<span class="number">1</span>] - p);</span><br><span class="line">                t[i][<span class="number">1</span>] = Math.max(t[i][<span class="number">1</span>], t[i][<span class="number">0</span>] + p);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t[k-<span class="number">1</span>][<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">greedy</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> max = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; prices.length; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span>(prices[i] &gt; prices[i-<span class="number">1</span>])</span><br><span class="line">                max += prices[i] - prices[i-<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.”永远不过期”**</p>
+<p>这里的“永远不过期”包含两层意思：</p>
+<p>(1) 从redis上看，确实没有设置过期时间，这就保证了，不会出现热点key过期问题，也就是“物理”不过期。</p>
+<p>(2) 从功能上看，如果不过期，那不就成静态的了吗？所以我们把过期时间存在key对应的value里，如果发现要过期了，通过一个后台的异步线程进行缓存的构建，也就是“逻辑”过期</p>
+<p>从实战看，这种方法对于性能非常友好，唯一不足的就是构建缓存时候，其余线程(非构建缓存的线程)可能访问的是老数据，但是对于一般的互联网功能来说这个还是可以忍受。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">get</span><span class="params">(<span class="keyword">final</span> String key)</span> </span>&#123;</span><br><span class="line">	V v = redis.get(key);</span><br><span class="line">	String value = v.getValue();</span><br><span class="line">	<span class="keyword">long</span> timeout = v.getTimeout();</span><br><span class="line">	<span class="keyword">if</span> (v.timeout &lt;= System.currentTimeMillis()) &#123;</span><br><span class="line">		<span class="comment">// 异步更新后台异常执行  </span></span><br><span class="line">		threadPool.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">				String keyMutex = <span class="string">"mutex:"</span> + key;</span><br><span class="line">				<span class="keyword">if</span> (redis.setnx(keyMutex, <span class="string">"1"</span>)) &#123;</span><br><span class="line">					<span class="comment">// 3 min timeout to avoid mutex holder crash  </span></span><br><span class="line">					redis.expire(keyMutex, <span class="number">3</span> * <span class="number">60</span>);</span><br><span class="line">					String dbValue = db.get(key);</span><br><span class="line">					redis.set(key, dbValue);</span><br><span class="line">					redis.delete(keyMutex);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
+<h2 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h2><h3 id="什么是缓存雪崩"><a href="#什么是缓存雪崩" class="headerlink" title="什么是缓存雪崩"></a>什么是缓存雪崩</h3><p>当某一时刻发生大规模的缓存失效的情况，比如你的缓存服务宕机了</p>
+<h3 id="解决办法-2"><a href="#解决办法-2" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
+<li>如果Redis是集群部署，将热点数据均匀分布在不同的Redis库中也能避免全部失效</li>
+<li>ehcache本地缓存 + Hystrix限流&amp;降级<br>ehcache 本地缓存的目的也是考虑在 Redis Cluster 完全不可用的时候，ehcache 本地缓存还能够支撑一阵<br>使用 Hystrix进行限流 &amp; 降级 ，比如一秒来了5000个请求，我们可以设置假设只能有一秒 2000个请求能通过这个组件，那么其他剩余的 3000 请求就会走限流逻辑</li>
+<li>在批量往Redis存数据的时候，把每个Key的失效时间都加个随机值就好了</li>
+<li>热点数据永不过期，参考上文</li>
+</ol>
 
       
     </div>
@@ -469,8 +464,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/05/31/ArrayList/" rel="next" title="ArrayList">
-                <i class="fa fa-chevron-left"></i> ArrayList
+              <a href="/2020/06/25/%E9%98%BB%E5%A1%9E%E3%80%81%E5%90%8C%E6%AD%A5%E3%80%81%E4%B9%90%E8%A7%82%E6%82%B2%E8%A7%82%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5/" rel="next" title="阻塞、同步、乐观悲观相关概念">
+                <i class="fa fa-chevron-left"></i> 阻塞、同步、乐观悲观相关概念
               </a>
             
           </div>
@@ -479,8 +474,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B/" rel="prev" title="设计模式(创建型)">
-                设计模式(创建型) <i class="fa fa-chevron-right"></i>
+              <a href="/2020/06/26/%E6%8D%A2%E7%94%B5%E8%84%91%E4%BA%86%E8%BF%81%E7%A7%BBhexo%E5%8D%9A%E5%AE%A2/" rel="prev" title="换电脑了迁移hexo博客(Win->MAC)">
+                换电脑了迁移hexo博客(Win->MAC) <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -535,8 +530,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -605,6 +609,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是缓存穿透"><span class="nav-number">1.</span> <span class="nav-text">什么是缓存穿透</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#穿透带来的问题"><span class="nav-number">1.1.</span> <span class="nav-text">穿透带来的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决办法"><span class="nav-number">1.2.</span> <span class="nav-text">解决办法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存击穿"><span class="nav-number">2.</span> <span class="nav-text">缓存击穿</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是缓存击穿"><span class="nav-number">2.1.</span> <span class="nav-text">什么是缓存击穿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#击穿带来的问题"><span class="nav-number">2.2.</span> <span class="nav-text">击穿带来的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决办法-1"><span class="nav-number">2.3.</span> <span class="nav-text">解决办法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存雪崩"><span class="nav-number">3.</span> <span class="nav-text">缓存雪崩</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是缓存雪崩"><span class="nav-number">3.1.</span> <span class="nav-text">什么是缓存雪崩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决办法-2"><span class="nav-number">3.2.</span> <span class="nav-text">解决办法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
