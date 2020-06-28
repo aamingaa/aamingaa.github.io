@@ -79,23 +79,16 @@
 
 
 
-<meta name="description" content="打开网络和共享中心—&gt;更改适配器配置—–&gt;右键VMware Network Adapter—&gt;属性—-&gt;双击IPv4—&gt; 设置IP地址 以及网关 网关地址必须和vmwareNAT设置的一致，IP保持同一网段内即可       重启虚拟机 使用root 用户修改 linux网络配置 su root vi &#x2F;etc&#x2F;sysconfig&#x2F;network-sc">
+<meta name="description" content="count(*)：所有行进行统计，包括NULL行.COUNT(*)不单会进行全表扫描，也会对表的每个字段进行扫描。count(1)：所有行进行统计，包括NULL行.其实就可以想成表中有这么一个字段,这个字段就是固定值1,count(1),就是计算一共有多少个1count(column)：对column中非Null进行统计 执行效率：列名为主键，count(列名)会比count(1)快   列名不为">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VMWARE+Centos8配置静态IP地址">
-<meta property="og:url" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/index.html">
+<meta property="og:title" content="count(*)、count(1)、count(某字段)的区别">
+<meta property="og:url" content="http://aamingaa.github.io/2020/06/28/count-%E3%80%81count-1-%E3%80%81count-%E6%9F%90%E5%AD%97%E6%AE%B5-%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="打开网络和共享中心—&gt;更改适配器配置—–&gt;右键VMware Network Adapter—&gt;属性—-&gt;双击IPv4—&gt; 设置IP地址 以及网关 网关地址必须和vmwareNAT设置的一致，IP保持同一网段内即可       重启虚拟机 使用root 用户修改 linux网络配置 su root vi &#x2F;etc&#x2F;sysconfig&#x2F;network-sc">
-<meta property="og:image" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/1.png">
-<meta property="og:image" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/2.png">
-<meta property="og:image" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/3.png">
-<meta property="og:image" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/4.png">
-<meta property="og:image" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/5.png">
-<meta property="og:image" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/6.png">
-<meta property="article:published_time" content="2020-06-14T04:49:00.000Z">
-<meta property="article:modified_time" content="2020-06-14T05:09:02.972Z">
+<meta property="og:description" content="count(*)：所有行进行统计，包括NULL行.COUNT(*)不单会进行全表扫描，也会对表的每个字段进行扫描。count(1)：所有行进行统计，包括NULL行.其实就可以想成表中有这么一个字段,这个字段就是固定值1,count(1),就是计算一共有多少个1count(column)：对column中非Null进行统计 执行效率：列名为主键，count(列名)会比count(1)快   列名不为">
+<meta property="article:published_time" content="2020-06-28T02:19:42.000Z">
+<meta property="article:modified_time" content="2020-06-28T07:15:18.327Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/1.png">
 
 
 
@@ -125,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8配置静态IP地址/"/>
+  <link rel="canonical" href="http://aamingaa.github.io/2020/06/28/count-、count-1-、count-某字段-的区别/"/>
 
 
 
 
 
-  <title>VMWARE+Centos8配置静态IP地址 | Hexo</title>
+  <title>count(*)、count(1)、count(某字段)的区别 | Hexo</title>
   
 
 
@@ -292,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/06/28/count-%E3%80%81count-1-%E3%80%81count-%E6%9F%90%E5%AD%97%E6%AE%B5-%E7%9A%84%E5%8C%BA%E5%88%AB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -309,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">VMWARE+Centos8配置静态IP地址</h1>
+          <h1 class="post-title" itemprop="name headline">count(*)、count(1)、count(某字段)的区别</h1>
         
 
         <div class="post-meta">
@@ -321,8 +314,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T12:49:00+08:00">
-                2020-06-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-28T10:19:42+08:00">
+                2020-06-28
               </time>
             
 
@@ -344,8 +337,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
                   </a>
                 </span>
 
@@ -380,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  183
+                  169
                 </span>
               
 
@@ -417,43 +410,11 @@
       
 
       
-        <img src="/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/1.png" class title="第一步">
-
-
-
-<img src="/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/2.png" class title="第二步">
-
-<img src="/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/3.png" class title="第三步">
-
-<p>打开网络和共享中心—&gt;更改适配器配置—–&gt;右键VMware Network Adapter—&gt;属性—-&gt;双击IPv4—&gt;</p>
-<p>设置IP地址 以及网关</p>
-<p>网关地址必须和vmwareNAT设置的一致，IP保持同一网段内即可</p>
-<img src="/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/4.png" class title="如图所示">
-
-
-
-
-
-<p>重启虚拟机</p>
-<p>使用root 用户修改 linux网络配置</p>
-<p>su root</p>
-<p>vi /etc/sysconfig/network-scripts/ifcfg-ens33</p>
-<img src="/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/5.png" class title="如图所示">
-
-<p>重启网卡</p>
-<p>nmcli c reload</p>
-<p>配置到这里可以实现本机与虚拟机之间的通信了</p>
-<p>虚拟机连接外网</p>
-<p>如果你本机可以连接外网，但是虚拟机ping baidu.com 返回错误信息了，需要绑定DNS</p>
-<p>vi /etc/resolv.conf （没有此文件新建一个即可）</p>
-<p>nameserver 网关地址</p>
-<img src="/2020/06/14/VMWARE-Centos8%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%9C%B0%E5%9D%80/6.png" class title="如图所示">
-
-
-
-<blockquote>
-<p>链接：<a href="https://www.jianshu.com/p/6801da089cf2" target="_blank" rel="noopener">https://www.jianshu.com/p/6801da089cf2</a></p>
-</blockquote>
+        <p><strong>count(*)：所有行进行统计，包括NULL行.COUNT(*)不单会进行全表扫描，也会对表的每个字段进行扫描。<br>count(1)：所有行进行统计，包括NULL行.其实就可以想成表中有这么一个字段,这个字段就是固定值1,count(1),就是计算一共有多少个1<br>count(column)：对column中非Null进行统计</strong></p>
+<p>执行效率：<br>列名为主键，count(列名)会比count(1)快  </p>
+<p>列名不为主键，count(1)会比count(列名)快  </p>
+<p>如果表多个列并且没有主键，则 count（1） 的执行效率优于 count（*）  </p>
+<p>如果有主键，则 select count（主键）的执行效率是最优的  </p>
 
       
     </div>
@@ -478,8 +439,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/06/14/docker-search%E6%8A%A5%E9%94%99%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" rel="next" title="docker search报错解决方法">
-                <i class="fa fa-chevron-left"></i> docker search报错解决方法
+              <a href="/2020/06/27/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%95%E5%B1%82-%E5%9B%9B%E7%A7%8D%E7%B1%BB%E5%9E%8B-%E5%8F%82%E6%95%B0%E5%90%AB%E4%B9%89/" rel="next" title="线程池底层&四种类型&参数含义">
+                <i class="fa fa-chevron-left"></i> 线程池底层&四种类型&参数含义
               </a>
             
           </div>
@@ -488,8 +449,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/06/15/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%BB%93%E6%9E%84%E5%9E%8B/" rel="prev" title="设计模式-结构型">
-                设计模式-结构型 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/06/28/mybatis%E7%9B%B8%E5%85%B3%E7%96%91%E6%83%91/" rel="prev" title="mybatis相关疑惑">
+                mybatis相关疑惑 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
