@@ -4,6 +4,101 @@
   
     
     <entry>
+      <title>修饰符(public&amp;protect&amp;default&amp;private)、接口，抽象类</title>
+      <link href="/2020/07/02/%E4%BF%AE%E9%A5%B0%E7%AC%A6public-protect-default-private/"/>
+      <url>/2020/07/02/%E4%BF%AE%E9%A5%B0%E7%AC%A6public-protect-default-private/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h2><p><img src="/2020/07/02/%E4%BF%AE%E9%A5%B0%E7%AC%A6public-protect-default-private/1.png" class title="如图% }&lt;&#x2F;p&gt; &lt;p&gt;Java 中有三个访问权限修饰符：private、protected 以及 public，&lt;strong&gt;如果不加访问修饰符，表示包级可见&lt;&#x2F;strong&gt;。&lt;br&gt;可以对类或类中的成员（字段以及方法）加上访问修饰符。&lt;&#x2F;p&gt; &lt;p&gt;&lt;strong&gt;protected 用于修饰成员，表示在继承体系中成员对于子类可见，但是这个访问修饰符对于类没有意义。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt; &lt;figure class&#x3D;highlight plain&gt;&lt;table&gt;&lt;tr&gt;&lt;td class&#x3D;gutter&gt;&lt;pre&gt;&lt;span class&#x3D;line&gt;1&lt;&#x2F;span&gt;&lt;br&gt;&lt;span class&#x3D;line&gt;2&lt;&#x2F;span&gt;&lt;br&gt;&lt;&#x2F;pre&gt;&lt;&#x2F;td&gt;&lt;td class&#x3D;code&gt;&lt;pre&gt;&lt;span class&#x3D;line&gt;类可见表示其它类可以用这个类创建实例对象。&lt;&#x2F;span&gt;&lt;br&gt;&lt;span class&#x3D;line&gt;成员可见表示其它类可以用这个类的实例对象访问到该成员；&lt;&#x2F;span&gt;&lt;br&gt;&lt;&#x2F;pre&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;table&gt;&lt;&#x2F;figure&gt; &lt;h2 id&#x3D;抽象类与接口&gt;&lt;a href&#x3D;#抽象类与接口 class&#x3D;headerlink title&#x3D;抽象类与接口&gt;&lt;&#x2F;a&gt;抽象类与接口&lt;&#x2F;h2&gt;&lt;h3 id&#x3D;抽象类&gt;&lt;a href&#x3D;#抽象类 class&#x3D;headerlink title&#x3D;抽象类&gt;&lt;&#x2F;a&gt;抽象类&lt;&#x2F;h3&gt;&lt;p&gt;&lt;strong&gt;抽象类用来描述一种类型应该具备的基本特征与功能。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt; &lt;p&gt;（犬科均会吼叫，但属于犬科的狼与狗其吼叫内容不同。所以犬科规定了有吼叫功能，但并不明确吼叫的细节。吼叫的细节应该由狼与狗这样的犬科子类重写吼叫的方法具体实现。）&lt;&#x2F;p&gt; &lt;p&gt;&lt;strong&gt;抽象类和普通类最大的区别是，抽象类不能被实例化，需要继承抽象类才能实例化其子类。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt; &lt;h3 id&#x3D;接口&gt;&lt;a href&#x3D;#接口 class&#x3D;headerlink title&#x3D;接口&gt;&lt;&#x2F;a&gt;接口&lt;&#x2F;h3&gt;&lt;p&gt;接口是抽象类的延伸，在 Java 8 之前，它可以看成是一个完全抽象的类，也就是说它不能有任何的方法实现。&lt;&#x2F;p&gt; &lt;p&gt;从 Java 8 开始，接口也可以拥有默认的方法实现，这是因为不支持默认方法的接口的维护成本太高了（default）。&lt;&#x2F;p&gt; &lt;p&gt;&lt;strong&gt;接口的成员（字段 + 方法）默认都是 public 的，并且不允许定义为 private 或者 protected。接口的字段默认都是 static 和 final 的。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt; &lt;h3 id&#x3D;比较&gt;&lt;a href&#x3D;#比较 class&#x3D;headerlink title&#x3D;比较&gt;&lt;&#x2F;a&gt;比较&lt;&#x2F;h3&gt;&lt;ul&gt; &lt;li&gt;从设计层面上看，抽象类提供了一种 IS-A 关系，那么就必须满足里式替换原则，即子类对象必须能够替换掉所&lt;br&gt;有父类对象。而接口更像是一种 LIKE-A 关系，它只是提供一种方法实现契约，并不要求接口和实现接口的类具&lt;br&gt;有 IS-A 关系。&lt;&#x2F;li&gt; &lt;li&gt;从使用上来看，一个类可以实现多个接口，但是不能继承多个抽象类。&lt;&#x2F;li&gt; &lt;li&gt;接口的变量只能是 static 和 final 类型的，而抽象类的变量没有这种限制。&lt;&#x2F;li&gt; &lt;li&gt;接口的成员只能是 public 的，而抽象类的成员可以有多种访问权限。&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;h3 id&#x3D;使用选择&gt;&lt;a href&#x3D;#使用选择 class&#x3D;headerlink title&#x3D;使用选择&gt;&lt;&#x2F;a&gt;使用选择&lt;&#x2F;h3&gt;&lt;p&gt;使用接口：&lt;br&gt;1.需要让不相关的类都实现一个方法，例如不相关的类都可以实现 Compareable 接口中的 compareTo() 方法；&lt;br&gt;2.需要使用多重继承。&lt;br&gt;使用抽象类：&lt;br&gt;1.需要在几个相关的类中共享代码。&lt;br&gt;2.需要能控制继承来的成员的访问权限，而不是都为 public。&lt;br&gt;3.需要继承非静态和非常量字段。&lt;br&gt;在很多情况下，接口优先于抽象类。因为接口没有抽象类严格的类层次结构要求，可以灵活地为一个类添加行为。并&lt;br&gt;且从 Java 8 开始，接口也可以有默认的方法实现，使得修改接口的成本也变的很低&lt;&#x2F;p&gt;"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java基础 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>面向对象三大特性的理解?</title>
+      <link href="/2020/07/02/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/"/>
+      <url>/2020/07/02/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>将数据和基于数据的操作封装在一起，数据被保护在抽象数据类型的内部，只保留一些对外的接口使其与外部发生联系。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">   <span class="keyword">private</span> String name;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">int</span> gender;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> name;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getGender</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> gender == <span class="number">0</span> ? <span class="string">"man"</span> : <span class="string">"woman"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">work</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (<span class="number">18</span> &lt;= age &amp;&amp; age &lt;= <span class="number">50</span>) &#123;</span><br><span class="line">    System.out.println(name + <span class="string">" is working very hard!"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    System.out.println(name + <span class="string">" can't work any more!"</span>);</span><br><span class="line">   &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>继承实现了 IS-A 关系，例如 Cat 和 Animal 就是一种 IS-A 关系，因此 Cat 可以继承自 Animal，从而获得 Animal 非<br>private 的属性和方法。<br>继承应该遵循里氏替换原则，子类对象必须能够替换掉所有父类对象。<br>Cat 可以当做 Animal 来使用，也就是说可以使用 Animal 引用 Cat 对象。父类引用指向子类对象称为 向上转型 。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Animal animal = <span class="keyword">new</span> Cat();</span><br></pre></td></tr></table></figure><h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><p>多态分为编译时多态和运行时多态：</p><ul><li><p>编译时多态主要指方法的重载</p></li><li><p>运行时多态指的是 <strong>对象引用所指向的具体类型在运行期间才确定</strong></p></li></ul><p>运行时多态有三个条件：<br>  1.继承<br>  2.重写<br>  3.向上转型</p><p>下面的代码中，乐器类（Instrument）有两个子类：Wind 和 Percussion，它们都覆盖了父类的 play() 方法，并且<br>在 main() 方法中使用父类 Instrument 来引用 Wind 和 Percussion 对象。在 Instrument 引用调用 play() 方法时，<br>会执行实际引用对象所在类的 play() 方法，而不是 Instrument 类的方法。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Instrument</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  System.out.println(<span class="string">"Instument is playing..."</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wind</span> <span class="keyword">extends</span> <span class="title">Instrument</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  System.out.println(<span class="string">"Wind is playing..."</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Percussion</span> <span class="keyword">extends</span> <span class="title">Instrument</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  System.out.println(<span class="string">"Percussion is playing..."</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Music</span> </span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">   List&lt;Instrument&gt; instruments = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">   instruments.add(<span class="keyword">new</span> Wind());</span><br><span class="line">   instruments.add(<span class="keyword">new</span> Percussion());</span><br><span class="line">   <span class="keyword">for</span>(Instrument instrument : instruments) &#123;</span><br><span class="line">   instrument.play();</span><br><span class="line">   &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Wind is playing...</span><br><span class="line">Percussion is playing...</span><br></pre></td></tr></table></figure><h2 id="重写与重载"><a href="#重写与重载" class="headerlink" title="重写与重载"></a>重写与重载</h2><p>重写（Override）<br>存在于继承体系中，指子类实现了一个与父类在方法声明上完全相同的一个方法。<br>为了满足里式替换原则，重写有以下三个限制：<br><strong>1.子类方法的访问权限必须大于等于父类方法；</strong><br><strong>2.子类方法的返回类型必须是父类方法返回类型或为其子类型。</strong><br><strong>3.子类方法抛出的异常类型必须是父类抛出异常类型或为其子类型。</strong><br>使用 @Override 注解，可以让编译器帮忙检查是否满足上面的三个限制条件。使用 @Override 注解，可以让编译器帮忙检查是否满足上面的三个限制条件。</p><p>在调用一个方法时，先从本类中查找看是否有对应的方法，如果没有查找到再到父类中查看，看是否有继承来的方<br>法。否则就要对参数进行转型，转成父类之后看是否有对应的方法。总的来说，方法调用的优先级为：</p><p>this.func(this)<br>super.func(this)<br>this.func(super)<br>super.func(super)</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java基础 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Error和Exception</title>
+      <link href="/2020/07/02/Error%E5%92%8CException/"/>
+      <url>/2020/07/02/Error%E5%92%8CException/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><p>Throwable 用来表示任何可以作为异常抛出的类，分为两种： Error 和 Exception。其中 Error 用来表示 JVM<br>无法处理的错误，Exception 分为两种：</p><ul><li><p>非运行时异常 ：需要用 try…catch… 语句捕获并进行处理，并且可以从异常中恢复,IOEXception,SQLException；</p></li><li><p>运行时异常 ：是程序运行时发错误，例如除 0 会引发 Arithmetic Exception，此时程序崩溃并且无法恢复，RuntimeException及其子类。</p></li></ul><img src="/2020/07/02/Error%E5%92%8CException/1.png" class title="如图">]]></content>
+      
+      
+      <categories>
+          
+          <category> Java基础 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>JDK和JRE</title>
+      <link href="/2020/07/02/JDK%E5%92%8CJRE/"/>
+      <url>/2020/07/02/JDK%E5%92%8CJRE/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><p>JDK（Java Development Kit）：是 Java 开发工具包，，包括了 JRE、Java 工具和 Java 基础类库。</p><p>JRE（ Java Runtime Environment）：是 Java 的运行环境，包含 <strong>JVM 标准实现及 Java 核心类库</strong>。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java基础 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>B树、B+树、红黑树</title>
+      <link href="/2020/07/01/B%E6%A0%91%E3%80%81B-%E6%A0%91%E3%80%81%E7%BA%A2%E9%BB%91%E6%A0%91/"/>
+      <url>/2020/07/01/B%E6%A0%91%E3%80%81B-%E6%A0%91%E3%80%81%E7%BA%A2%E9%BB%91%E6%A0%91/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="B树与B-树的区别？"><a href="#B树与B-树的区别？" class="headerlink" title="B树与B+树的区别？"></a>B树与B+树的区别？</h2><ol><li><p>B+树非叶子节点上是不存储数据的，仅存储键值，而B树节点中不仅存储键值，也会存储数据。之所以这么做是因为页的大小是固定的，如果不存储数据，那么就会存储更多的键值，相应的树的阶数（节点的子节点树）就会更大，树就会更矮更胖，如此一来我们查找数据进行磁盘的IO次数有会再次减少，数据查询的效率也会更快。 </p></li><li><p>因为B+树索引的所有数据均存储在叶子节点，而且数据是按照顺序排列的。那么B+树使得范围查找，排序查找，分组查找以及去重查找变得异常简单。而B树因为数据分散在各个节点，要实现这一点是很不容易的。</p></li></ol><h2 id="B-树与红黑树的区别？"><a href="#B-树与红黑树的区别？" class="headerlink" title="B+树与红黑树的区别？"></a>B+树与红黑树的区别？</h2><p>但是文件系统及数据库系统普遍采用 B+ Tree 作为索引结构，主要有以下两个</p><p>原因</p><p>（一）更少的查找次数</p><p>平衡树查找操作的时间复杂度和树高 h 相关，O(h)=O(logdN)，其中 d 为每个节点的出度。</p><p>红黑树的出度为 2，而 B+ Tree 的出度一般都非常大，所以红黑树的树高 h 很明显比 B+ Tree 大非常多，查找的次数也就更多。</p><p>（二）利用磁盘预读特性</p><p>为了减少磁盘 I/O 操作，磁盘往往不是严格按需读取，而是每次都会预读。预读过程中，磁盘进行顺序读取，顺序读取不需要进行磁盘寻道，并且只需要很短的磁盘旋转时间，速度会非常快。操作系统一般将内存和磁盘分割成固定大小的块，每一块称为一页，内存与磁盘以页为单位交换数据。数据库系统将索引的一个节点的大小设置为页的大小，使得一次 I/O 就能完全载入一个节点。并且可以利用预读特性，相邻的节点也能够被预先载入。</p><h2 id="为什么说红黑树没能充分利用磁盘预读功能"><a href="#为什么说红黑树没能充分利用磁盘预读功能" class="headerlink" title="为什么说红黑树没能充分利用磁盘预读功能?"></a>为什么说红黑树没能充分利用磁盘预读功能?</h2><p>红黑树这种结构，h明显要深的多。由于逻辑上很近的节点（父子）物理上可能很远，无法利用局部性，所以红黑树的I/O渐进复杂度也为O(h)，效率明显比B-Tree差很多。<br>也就是说，使用红黑树（平衡二叉树）结构的话，每次磁盘预读中的很多数据是用不上的数据。因此，它没能利用好磁盘预读的提供的数据。然后又由于深度大（较B树而言），所以进行的磁盘IO操作更多。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> mysql </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>实现阻塞队列</title>
       <link href="/2020/07/01/%E5%AE%9E%E7%8E%B0%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/"/>
       <url>/2020/07/01/%E5%AE%9E%E7%8E%B0%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/</url>
