@@ -79,10 +79,14 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://aamingaa.github.io/categories/%E6%B5%8B%E8%AF%95/index.html">
+<meta name="description" content="[TOC] 为什么redis快？ Redis是一个纯kv的操作。并且Redis绝大部分请求是纯粹的内存操作，所以速度非常快。例如，使用在一般Linux系统上运行的流水线Redis每秒可以发送一百万个请求  内部是单程实现的（不需要创建&#x2F;销毁线程，避免上下文切换，无并发资源竞争的问题） 1.上下文的切换 * 上下文其实不难理解，它就是CPU寄存器和程序计数器。主要的作用就是存放没有被分配到资源的线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis相关问题剖析">
+<meta property="og:url" content="http://aamingaa.github.io/2020/07/05/redis%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 为什么redis快？ Redis是一个纯kv的操作。并且Redis绝大部分请求是纯粹的内存操作，所以速度非常快。例如，使用在一般Linux系统上运行的流水线Redis每秒可以发送一百万个请求  内部是单程实现的（不需要创建&#x2F;销毁线程，避免上下文切换，无并发资源竞争的问题） 1.上下文的切换 * 上下文其实不难理解，它就是CPU寄存器和程序计数器。主要的作用就是存放没有被分配到资源的线程">
+<meta property="article:published_time" content="2020-07-05T12:19:55.000Z">
+<meta property="article:modified_time" content="2020-07-05T14:12:13.909Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -114,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://aamingaa.github.io/categories/测试/"/>
+  <link rel="canonical" href="http://aamingaa.github.io/2020/07/05/redis相关问题剖析/"/>
 
 
 
 
 
-  <title>分类: 测试 | Hexo</title>
+  <title>redis相关问题剖析 | Hexo</title>
   
 
 
@@ -139,7 +143,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -267,55 +271,219 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>测试<small>分类</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/07/05/redis%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E5%89%96%E6%9E%90/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2020/05/25/test1/" itemprop="url">
-              
-                <span itemprop="name">test1</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">redis相关问题剖析</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-05-25T20:53:50+08:00"
-              content="2020-05-25" >
-          05-25
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-05T20:19:55+08:00">
+                2020-07-05
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  724
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  2
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h2 id="为什么redis快？"><a href="#为什么redis快？" class="headerlink" title="为什么redis快？"></a>为什么redis快？</h2><ul>
+<li><p>Redis是一个纯kv的操作。并且Redis绝大部分请求是纯粹的内存操作，所以速度非常快。例如，使用在一般Linux系统上运行的流水线Redis每秒可以发送一百万个请求</p>
+</li>
+<li><p>内部是单程实现的（不需要创建/销毁线程，避免上下文切换，无并发资源竞争的问题）</p>
+<p>1.上下文的切换</p>
+<p>* 上下文其实不难理解，它就是CPU寄存器和程序计数器。主要的作用就是存放没有被分配到资源的线程，多线程操作的时候，不是每一个线程都能够直接获取到CPU资源的，我们之所以能够看到我们电脑上能够运行很多的程序，是应为多线程的执行和CPU不断对多线程的切换。但是总有线程获取到资源，也总有线程需要等待获取资源，这个时候，等待获取资源的线程就需要被挂起，也就是我们的寄存。这个时候我们的上下文就产生了，当我们的上下文再次被唤起，得到资源的时候，就是我们上下文的切换。</p>
+<p>2.竞争资源</p>
+<p>* 竞争资源相对来说比较好理解，CPU对上下文的切换其实就是一种资源分批，但是在切换之前，到底切换到哪一个上下文，就是资源竞争的开始。在我redis中由于是单线程的，所以所有的操作都不会涉及到资源的竞争。</p>
+<p>3.锁的消耗</p>
+<p>* 对于多线程的情况来讲，不能回避的就是锁的问题。如果说多线程操作出现并发，有可能导致数据不一致，或者操作达不到预期的效果。这个时候我们就需要锁来解决这些问题。当我们的线程很多的时候，就需要不断的加锁，释放锁，该操作就会消耗掉我们很多的时间</p>
+</li>
+<li><p>异步非阻塞的I/O（多路复用）</p>
+<p>多路I/O复用模型是利用 select、poll、epoll 可以同时监察多个流的 I/O 事件的能力，在空闲的时候，会把当前线程阻塞掉，当有一个或多个流有 I/O 事件时，就从阻塞态中唤醒，于是程序就会轮询一遍所有的流（epoll 是只轮询那些真正发出了事件的流），并且只依次顺序的处理就绪的流，这种做法就避免了大量的无用操作。</p>
+<p><strong>这里“多路”指的是多个网络连接，“复用”指的是复用同一个线程。</strong>采用多路 I/O 复用技术可以让单个线程高效的处理多个连接请求（尽量减少网络 IO 的时间消耗）</p>
+</li>
+</ul>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/05/%E8%B7%B3%E8%B7%83%E8%A1%A8/" rel="next" title="跳跃表">
+                <i class="fa fa-chevron-left"></i> 跳跃表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/05/redis%E5%86%99%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4%E7%9A%84%E5%8E%9F%E7%90%86/" rel="prev" title="redis写入和删除的原理">
+                redis写入和删除的原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -323,6 +491,12 @@
 
 
           
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
 
         </div>
         
@@ -343,8 +517,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -364,7 +547,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">66</span>
+                  <span class="site-state-item-count">75</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -376,7 +559,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -413,6 +596,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么redis快？"><span class="nav-number">1.</span> <span class="nav-text">为什么redis快？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -457,7 +656,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共51.2k字</span>
+  <span class="post-count">博客全站共57.8k字</span>
 </div>
 
         
@@ -574,6 +773,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 

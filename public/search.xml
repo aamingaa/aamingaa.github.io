@@ -4,6 +4,177 @@
   
     
     <entry>
+      <title>redis高可用</title>
+      <link href="/2020/07/05/redis%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+      <url>/2020/07/05/redis%E9%AB%98%E5%8F%AF%E7%94%A8/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><p><strong>Redis多副本（主从）</strong></p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/6EJvicazJ6KzImNoKH1nofWM9rqIR6VUWeDxJHhJHIQgDFF9Hb5kRnGkNicM7KGfpad5VnUo0pOQjm2Fw7TGUs0Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p><p>Redis 多副本，采用主从（replication）部署结构，相较于单副本而言最大的特点就是主从实例间数据实时同步，并且提供数据持久化和备份策略。主从实例部署在不同的物理服务器上，根据公司的基础环境配置，可以实现同时对外提供服务和读写分离策略。</p><p>优点：</p><p>1、高可靠性，一方面，采用双机主备架构，能够在主库出现故障时自动进行主备切换，从库提升为主库提供服务，保证服务平稳运行。另一方面，开启数据持久化功能和配置合理的备份策略，能有效的解决数据误操作和数据异常丢失的问题。</p><p>2、读写分离策略，从节点可以扩展主库节点的读能力，有效应对大并发量的读操作。</p><p>缺点：</p><p>1、故障恢复复杂，如果没有RedisHA系统（需要开发），当主库节点出现故障时，需要手动将一个从节点晋升为主节点，同时需要通知业务方变更配置，并且需要让其他从库节点去复制新主库节点，整个过程需要人为干预，比较繁琐。</p><p>2、主库的写能力受到单机的限制，可以考虑分片</p><p>3、主库的存储能力受到单机的限制，可以考虑Pika</p><p>4、原生复制的弊端在早期的版本也会比较突出，如：Redis复制中断后，Slave会发起psync，此时如果同步不成功，则会进行全量同步，主库执行全量备份的同时可能会造成毫秒或秒级的卡顿；又由于COW机制，导致极端情况下的主库内存溢出，程序异常退出或宕机；主库节点生成备份文件导致服务器磁盘IO和CPU（压缩）资源消耗；发送数GB大小的备份文件导致服务器出口带宽暴增，阻塞请求。建议升级到最新版本。</p><p><strong>Redis Sentinel（哨兵）</strong></p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/6EJvicazJ6KzImNoKH1nofWM9rqIR6VUW1ibIW7Go066hNFQF5jUpkv5NN8RIA4McUSyRPVb82OTnpnWnmKyrDbA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p><p>Redis Sentinel是社区版本推出的原生高可用解决方案，Redis Sentinel部署架构主要包括两部分：Redis Sentinel集群和Redis数据集群，其中Redis Sentinel集群是由若干Sentinel节点组成的分布式集群。可以实现故障发现、故障自动转移、配置中心和客户端通知。Redis Sentinel的节点数量要满足2n+1（n&gt;=1）的奇数个。</p><p>优点：</p><p>1、Redis Sentinel集群部署简单</p><p>2、能够解决Redis主从模式下的高可用切换问题</p><p>3、很方便实现Redis数据节点的线形扩展，轻松突破Redis自身单线程瓶颈，可极大满足对Redis大容量或高性能的业务需求。</p><p>4、可以实现一套Sentinel监控一组Redis数据节点或多组数据节点</p><p>缺点：</p><p>1、部署相对Redis 主从模式要复杂一些，原理理解更繁琐</p><p>2、资源浪费，Redis数据节点中slave节点作为备份节点不提供服务</p><p>3、Redis Sentinel主要是针对Redis数据节点中的主节点的高可用切换，对Redis的数据节点做失败判定分为主观下线和客观下线两种，对于Redis的从节点有对节点做主观下线操作，并不执行故障转移。</p><p>4、不能解决读写分离问题，实现起来相对复杂</p><p>建议：</p><p>1、如果监控同一业务，可以选择一套Sentinel集群监控多组Redis数据节点的方案，反之选择一套Sentinel监控一组Redis数据节点的方案</p><p>2、sentinel monitor <master-name> <ip> <port> <quorum> 配置中的<quorum>建议设置成Sentinel节点的一半加1，当Sentinel部署在多个IDC的时候，单个IDC部署的Sentinel数量不建议超过（Sentinel数量 – quorum）。</quorum></quorum></port></ip></master-name></p><p>3、合理设置参数，防止误切，控制切换灵敏度控制</p><ol><li>quorum</li><li>down-after-milliseconds 30000</li><li>failover-timeout 180000</li><li>maxclient</li><li>timeout</li></ol><p>4、部署的各个节点服务器时间尽量要同步，否则日志的时序性会混乱</p><p>5、Redis建议使用pipeline和multi-keys操作，减少RTT次数，提高请求效率</p><p>6、自行搞定配置中心（zookeeper），方便客户端对实例的链接访问</p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/6EJvicazJ6KzImNoKH1nofWM9rqIR6VUWNSEC8dvIoHtWlm4OyK3KxaXc4sSzibK0nFC4hNKhhsPXibrQibFwLOglA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p><p>Redis Cluster是社区版推出的Redis分布式集群解决方案，主要解决Redis分布式方面的需求，比如，当遇到单机内存，并发和流量等瓶颈的时候，Redis Cluster能起到很好的负载均衡的目的。Redis Cluster集群节点最小配置6个节点以上（3主3从），其中主节点提供读写操作，从节点作为备用节点，不提供请求，只作为故障转移使用。Redis Cluster采用虚拟槽分区，所有的键根据哈希函数映射到0～16383个整数槽内，每个节点负责维护一部分槽以及槽所印映射的键值数据。</p><p>优点：</p><p>1、无中心架构</p><p>2、数据按照slot存储分布在多个节点，节点间数据共享，可动态调整数据分布。</p><p>3、可扩展性，可线性扩展到1000多个节点，节点可动态添加或删除。</p><p>4、高可用性，部分节点不可用时，集群仍可用。通过增加Slave做standby数据副本，能够实现故障自动failover，节点之间通过gossip协议交换状态信息，用投票机制完成Slave到Master的角色提升。</p><p>5、降低运维成本，提高系统的扩展性和可用性。</p><p>缺点：</p><p>1、Client实现复杂，驱动要求实现Smart Client，缓存slots mapping信息并及时更新，提高了开发难度，客户端的不成熟影响业务的稳定性。目前仅JedisCluster相对成熟，异常处理部分还不完善，比如常见的“max redirect exception”。</p><p>2、节点会因为某些原因发生阻塞（阻塞时间大于clutser-node-timeout），被判断下线，这种failover是没有必要的。</p><p>3、数据通过异步复制,不保证数据的强一致性。</p><p>4、多个业务使用同一套集群时，无法根据统计区分冷热数据，资源隔离性较差，容易出现相互影响的情况。</p><p>5、Slave在集群中充当“冷备”，不能缓解读压力，当然可以通过SDK的合理设计来提高Slave资源的利用率。</p><p>6、key批量操作限制，如使用mset、mget目前只支持具有相同slot值的key执行批量操作。对于映射为不同slot值的key由于keys 不支持跨slot查询，所以执行mset、mget、sunion等操作支持不友好。</p><p>7、key事务操作支持有限，只支持多key在同一节点上的事务操作，当多个key分布于不同的节点上时无法使用事务功能。</p><p>8、key作为数据分区的最小粒度，因此不能将一个很大的键值对象如hash、list等映射到不同的节点。</p><p>9、不支持多数据库空间，单机下的redis可以支持到16个数据库，集群模式下只能使用1个数据库空间，即db 0。</p><p>10、复制结构只支持一层，从节点只能复制主节点，不支持嵌套树状复制结构。</p><p>11、避免产生hot-key，导致主库节点成为系统的短板。</p><p>12、避免产生big-key，导致网卡撑爆、慢查询等。</p><p>13、重试时间应该大于cluster-node-time时间</p><p>14、Redis Cluster不建议使用pipeline和multi-keys操作，减少max redirect产生的场景。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> redis </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>redis写入和删除的原理</title>
+      <link href="/2020/07/05/redis%E5%86%99%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4%E7%9A%84%E5%8E%9F%E7%90%86/"/>
+      <url>/2020/07/05/redis%E5%86%99%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4%E7%9A%84%E5%8E%9F%E7%90%86/</url>
+      
+        <content type="html"><![CDATA[<p><a href="https://www.jianshu.com/p/ea15a1e0d43d" target="_blank" rel="noopener">https://www.jianshu.com/p/ea15a1e0d43d</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> redis </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>redis相关问题剖析</title>
+      <link href="/2020/07/05/redis%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E5%89%96%E6%9E%90/"/>
+      <url>/2020/07/05/redis%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E5%89%96%E6%9E%90/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="为什么redis快？"><a href="#为什么redis快？" class="headerlink" title="为什么redis快？"></a>为什么redis快？</h2><ul><li><p>Redis是一个纯kv的操作。并且Redis绝大部分请求是纯粹的内存操作，所以速度非常快。例如，使用在一般Linux系统上运行的流水线Redis每秒可以发送一百万个请求</p></li><li><p>内部是单程实现的（不需要创建/销毁线程，避免上下文切换，无并发资源竞争的问题）</p><p>1.上下文的切换</p><p>* 上下文其实不难理解，它就是CPU寄存器和程序计数器。主要的作用就是存放没有被分配到资源的线程，多线程操作的时候，不是每一个线程都能够直接获取到CPU资源的，我们之所以能够看到我们电脑上能够运行很多的程序，是应为多线程的执行和CPU不断对多线程的切换。但是总有线程获取到资源，也总有线程需要等待获取资源，这个时候，等待获取资源的线程就需要被挂起，也就是我们的寄存。这个时候我们的上下文就产生了，当我们的上下文再次被唤起，得到资源的时候，就是我们上下文的切换。</p><p>2.竞争资源</p><p>* 竞争资源相对来说比较好理解，CPU对上下文的切换其实就是一种资源分批，但是在切换之前，到底切换到哪一个上下文，就是资源竞争的开始。在我redis中由于是单线程的，所以所有的操作都不会涉及到资源的竞争。</p><p>3.锁的消耗</p><p>* 对于多线程的情况来讲，不能回避的就是锁的问题。如果说多线程操作出现并发，有可能导致数据不一致，或者操作达不到预期的效果。这个时候我们就需要锁来解决这些问题。当我们的线程很多的时候，就需要不断的加锁，释放锁，该操作就会消耗掉我们很多的时间</p></li><li><p>异步非阻塞的I/O（多路复用）</p><p>多路I/O复用模型是利用 select、poll、epoll 可以同时监察多个流的 I/O 事件的能力，在空闲的时候，会把当前线程阻塞掉，当有一个或多个流有 I/O 事件时，就从阻塞态中唤醒，于是程序就会轮询一遍所有的流（epoll 是只轮询那些真正发出了事件的流），并且只依次顺序的处理就绪的流，这种做法就避免了大量的无用操作。</p><p><strong>这里“多路”指的是多个网络连接，“复用”指的是复用同一个线程。</strong>采用多路 I/O 复用技术可以让单个线程高效的处理多个连接请求（尽量减少网络 IO 的时间消耗）</p></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> redis </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>跳跃表</title>
+      <link href="/2020/07/05/%E8%B7%B3%E8%B7%83%E8%A1%A8/"/>
+      <url>/2020/07/05/%E8%B7%B3%E8%B7%83%E8%A1%A8/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><p>跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。上层结点都有指向下层结点的指针，从上往下每一层链表节点数递减。比如第一层有两个，第二层有四个，以此类推。</p><p><img src="https://user-gold-cdn.xitu.io/2019/12/27/16f4745348536f87?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="跳跃表-三级索引-寻找42"></p><p>插入</p><p>看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引；</p><p>其中每一层的索引链表中是否需要增加新增的节点，其实并没有什么标准答案，我们尽量做到索引的平均分布即可，常用的就是【随机判断】决定是否需要新增或调整索引，当有新节点插入的时候，通过概率算法判断这个节点需要插入到几级节点中。</p><p>比如：</p><ul><li>底层数据链表有 N 个元素，随机选择 N/2 个元素作为 1 级索引，随机选择 N/4 个元素作为 2 级索引…一直到顶层索引；</li><li>新插入数据节点，1/2 概率不插入任何一级索引，1/4 概率返回需要插入 1 级索引，1/8 概率返回需要插入到 2 级索引，以此类推；</li><li>这里要注意一点，插入 2 级索引的时候，同时也需要插入 1 级索引；也就是插入 n 级索引的时候，同时也要插入 1~( n-1 ) 级索引。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> redis </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>sql相关</title>
+      <link href="/2020/07/05/sql%E7%9B%B8%E5%85%B3/"/>
+      <url>/2020/07/05/sql%E7%9B%B8%E5%85%B3/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="左连接和内联的区别"><a href="#左连接和内联的区别" class="headerlink" title="左连接和内联的区别"></a>左连接和内联的区别</h2><p><strong>左连接：左边有的，右边没有的为null</strong></p><p><strong>右连接：左边没有的，右边有的为null</strong></p><p><strong>内连接：显示左边右边共有的</strong></p><p><img src="https://img-blog.csdnimg.cn/20200705154749515.png" alt="在这里插入图片描述"></p><p><img src="https://img-blog.csdnimg.cn/20200705154850251.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p><p>左连接</p><p><img src="https://img-blog.csdnimg.cn/20200705155226877.png" alt="在这里插入图片描述"></p><p>内连接</p><p><img src="https://img-blog.csdnimg.cn/20200705155007995.png" alt="在这里插入图片描述"></p><p>右连接</p><p><img src="https://img-blog.csdnimg.cn/20200705154938172.png" alt="在这里插入图片描述"></p><h2 id="like和in关键字"><a href="#like和in关键字" class="headerlink" title="like和in关键字"></a>like和in关键字</h2><p>LIKE：</p><p>当无法确切知道所要查找的值，而是知道所要查找的数据符合的模式时，可以使用LIKE 子句进行匹配。一般来说，LIKE 子句仅在字符串类型时使用，但对数字类型数据是不能使用 LIKE 子句的。</p><p>不在 LIKE子句中使用时， 就不具有特殊的含义，仅表示其本身的值。</p><p>IN：</p><p>当确切知道所要查找的内容，且为多个值时，可以使用 IN 子句来进行数据比较</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> mysql </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>一条SQL查询语句的执行过程</title>
+      <link href="/2020/07/05/%E4%B8%80%E6%9D%A1SQL%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
+      <url>/2020/07/05/%E4%B8%80%E6%9D%A1SQL%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><p>输入下面一条SQL语句，我们来分析下这条语句在MySQL内部的执行过程。</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from T where ID=10;</span><br></pre></td></tr></table></figure><p><img src="https://img-blog.csdnimg.cn/20190109110912557.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bjd2wxMjA2,size_16,color_FFFFFF,t_70" alt="img"></p><p>体来说，MySQL 可以分为 Server 层和存储引擎两部分。</p><p>Server 层包括：连接器、查询缓存、分析器、优化器、执行器等，涵盖了 MySQL 的大多数核心服务功能，以及所有的内置函数（如：日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如：存储过程、触发器、视图等等。</p><p>存储引擎层负责：数据的存储和提取。其架构是插件式的，支持InnoDB、MyISAM、Memory等多个存储引擎。从MySQL5.5.5版本开始默认的是InnoDB，但是在建表时可以通过 engine = MyISAM 来指定存储引擎。不同存储引擎的表数据存取方式不同，支持的功能也不同。</p><p>从图中可以看出，不同的存储引擎共用一个 Server 层，也就是从连接器到执行器的部分。</p><h2 id="1、连接器"><a href="#1、连接器" class="headerlink" title="1、连接器"></a>1、连接器</h2><p> 第一步，要首先连接上数据库，这个时候使用的就是连接器。</p><p>连接器负责跟客户端建立连接、获取权限、维持和管理连接。连接命令如下：</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h$ip -P$port -u$user -p</span><br></pre></td></tr></table></figure><p>连接命令中的 mysql 是客户端工具，用来跟服务端建立连接。在完成经典的 TCP 握手后，连接器就要开始认证你的身份，这个时候用的就是输入的用户名和密码。</p><ul><li>如果用户名或密码不对，你就会收到一个”Access denied for user”的错误，然后客户端程序结束执行。</li><li>如果用户名密码认证通过，连接器会到权限表里面查出你拥有的权限。之后，这个连接里面的权限判断逻辑，都将依赖于此时读到的权限。</li></ul><p>这就意味着，一个用户成功创建以后，即使你用管理员账号对这个用户的权限做了修改，也不会影响已经存在连接的权限。修改完成后，只有再新建的连接才会使用新的权限设置。</p><p>连接完成后，如果你没有后续的动作，这个连接就处于空闲状态，你可以在 show processlist 命令中看到它。文本中这个图是 show processlist 的结果，其中的 Command 列显示为“Sleep”的这一行，就表示现在系统里面有一个空闲连接。</p><p><img src="https://img-blog.csdnimg.cn/20190109112901965.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bjd2wxMjA2,size_16,color_FFFFFF,t_70" alt="img"></p><p>客户端如果太长时间没动静，连接器就会自动将它断开。这个时间是由参数 wait_timeout 控制的，默认值是 8 小时。</p><p><strong>数据库中的长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接。短连接指的是每次执行完很少的几次查询就断开连接，下次查询时再重新建立一个。</strong></p><p>但是如果连接都使用长连接的话，你可能会发现，有时候 MySQL 占用内存涨的特别快，这是因为 MySQL 在执行过程中临时使用的内存是管理在连接对象里面的。这些资源会在连接断开的时候才会释放。所以如果长连接累积下来，可能导致内存占用太大，被系统强行杀掉（OOM），从现象上看就是 MySQL 异常重启了。</p><p>那么怎么解决这个问题呢？下面提供两种解决方案：</p><blockquote><p>1、<strong>定期断开长连接</strong>。使用一段时间，或者程序里面判断执行过一个占用内存的大查询后，断开连接，释放资源，之后要查询的时候再重连。 </p><p>2、如果你用的是 MySQL 5.7 或更新版本，可以在每次执行一个比较大的操作后，通过<strong>执行 mysql_reset_connection 来重新初始化连接资源</strong>。这个过程不需要重连和重新做权限验证，但是会将连接恢复到刚刚创建完时的状态。</p></blockquote><h2 id="2、查询缓存"><a href="#2、查询缓存" class="headerlink" title="2、查询缓存"></a>2、查询缓存</h2><p>连接建立完成后，就可以执行 select 语句了。执行逻辑就会来到第二步：查询缓存。</p><p><strong>MySQL 拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。之前执行过的语句及其结果都会以key-value 对的形式，被直接缓存到内存中。其中，\</strong>key 是查询的语句，value 是查询的结果*<em>。如果你的查询能够直接在缓存中找到 key，那么这个 value 就会直接返回给客户端。*</em></p><p>如果语句不在查询缓存中，就会继续后面的执行阶段。执行完成后，执行结果会被存入查询缓存中。你可以看到，如果查询命中缓存，MySQL 不需要执行后面的复杂操作，就可以直接返回结果，这个效率会很高。</p><ul><li><p><strong>但是大多数情况下不建议使用查询缓存 —&gt; 因为查询缓存往往弊大于利</strong></p><p>查询缓存的失效非常频繁，只要有对一个表的更新，这个表上所有的查询缓存都会被清空。因此很可能你刚费劲存的结果还没来得及使用就被一个更新给清空了。</p></li></ul><p>对于更新压力大的数据库而言，查询缓存的命中率就会非常低。除非你的业务就是有一张静态表，很长时间才会更新一次。比如，一个系统配置表，那这张表上的查询才适合使用查询缓存。</p><p>默认的 SQL 语句是不缓存的，可以显示的指定查询缓存：</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select SQL_CACHE * from T where ID=10;</span><br></pre></td></tr></table></figure><p>需要说明的是：MySQL 8.0版本已经将查询缓存功能删除了。</p><h2 id="3、分析器"><a href="#3、分析器" class="headerlink" title="3、分析器"></a>3、分析器</h2><p>如果没有命中查询缓存，就要开始正真执行语句了。首先，MySQL 需要知道你要做什么，因此要对 SQL 语句做解析。</p><p>分析器先会做“词法分析”。MySQL 从你输入的”select”这个关键字识别出来，这是一个查询语句。它也要把字符串“T”识别成“表名 T”，把字符串“ID”识别成“列 ID”。</p><p>做完了这些识别以后，就要做“语法分析”。语法分析根据语法规则，判断输入的这个 SQL语句是否满足 MySQL 的语法规范。</p><p>如果你的语句不对，就会收到“You have an error in your SQL syntax”的错误提醒，比如下面这个语句 select 少打了开头的字母“s”。</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; elect * from t where ID=1;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ERROR 1064 (42000): You have an error in your SQL syntax; <span class="keyword">check</span> the <span class="keyword">manual</span> that corresponds <span class="keyword">to</span> your MySQL <span class="keyword">server</span> <span class="keyword">version</span> <span class="keyword">for</span> the <span class="keyword">right</span> syntax <span class="keyword">to</span> <span class="keyword">use</span> near <span class="string">'elect * from t where ID=1'</span> <span class="keyword">at</span> line <span class="number">1</span></span><br></pre></td></tr></table></figure><p>一般语法错误会提示第一个出现错误的位置，所以你要关注的是紧接“use near”的内容。</p><h2 id="4、优化器"><a href="#4、优化器" class="headerlink" title="4、优化器"></a>4、优化器</h2><p>经过了分析器，MySQL就知道你要做什么了。在开始之前还要经过优化器的处理。</p><p>优化器是在表里有多个索引的时候，决定使用哪个索引；或者在一个语句有多表关联（join）的时候，决定各个表的连接顺序。</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from t1 join t2 using(ID)  where t1.c=10 and t2.d=20;</span><br></pre></td></tr></table></figure><ul><li>既可以先从表 t1 里面取出 c=10 的记录的 ID 值，再根据 ID 值关联到表 t2，再判断 t2 里面 d 的值是否等于 20。</li><li>也可以先从表 t2 里面取出 d=20 的记录的 ID 值，再根据 ID 值关联到 t1，再判断 t1 里面 c 的值是否等于 10。</li></ul><p>这两种执行方法的逻辑结果是一样的，但是执行的效率会有不同，而<strong>优化器的作用就是决定选择使用哪一个方案</strong>。优化器阶段完成后，这个语句的执行方案就确定下来了，然后进入执行器阶段。</p><h2 id="5、执行器"><a href="#5、执行器" class="headerlink" title="5、执行器"></a>5、执行器</h2><p> MySQL 通过分析器知道了你要做什么，通过优化器知道了该怎么做，于是就进入执行器阶段，开始执行语句。</p><p>开始执行的时候，要先判断一下你对这个表 T 有没有执行查询的权限，如果没有，就会返回没有权限的错误。</p><p>如下所示 (在工程实现上，如果命中查询缓存，会在查询缓存放回结果的时候，做权限验证。查询也会在优化器之前调用 precheck 验证权限)。</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from T where ID=10;</span><br><span class="line"></span><br><span class="line">ERROR 1142 (42000): <span class="keyword">SELECT</span> command denied <span class="keyword">to</span> <span class="keyword">user</span> <span class="string">'b'</span>@<span class="string">'localhost'</span> <span class="keyword">for</span> <span class="keyword">table</span> <span class="string">'T'</span></span><br></pre></td></tr></table></figure><p>如果有权限，就打开表继续执行。打开表的时候，执行器就会根据表的引擎定义，去使用这个引擎提供的接口。</p><p>比如我们这个例子中的表 T 中，ID 字段没有索引，那么执行流程是这样的：</p><p>1、调用 InnoDB 引擎接口取这个表的第一行，判断 ID 值是不是 10，如果不是则跳过，如果是则将这行存在结果集中；</p><p>2、调用引擎接口取“下一行”，重复相同的判断逻辑，直到取到这个表的最后一行；</p><p>3、执行器将上述遍历过程中所有满足条件的行组成的记录集作为结果集返回给客户端。</p><p>至此，这个语句就执行完成了。</p><p>对于有索引的表，执行的逻辑也差不多。第一次调用的是“取满足条件的第一行”这个接口，之后循环取“满足条件的下一行”这个接口，这些接口都是引擎中已经定义好的。</p><p>你会在数据库的慢查询日志中看到一个 rows_examined 的字段，表示这个语句执行过程中扫描了多少行。这个值就是在执行器每次调用引擎获取数据行的时候累加的。</p><p><strong>在有些场景下，执行器调用一次，在引擎内部则扫描了多行，因此引擎扫描行数跟 rows_examined 并不是完全相同的。</strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> mysql </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>隔离级别serilizable</title>
+      <link href="/2020/07/05/%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%ABserilizable/"/>
+      <url>/2020/07/05/%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%ABserilizable/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="如何实现的"><a href="#如何实现的" class="headerlink" title="如何实现的"></a>如何实现的</h2><p>在SERIALIZABLE级别下，不会使用mysql的mvcc机制，而是在每一个select请求下获得读锁，在每一个update操作下尝试获得写锁。</p><p>对于insert、update、delete，InnoDB会自动给涉及的数据加写锁；对于一般的Select语句，InnoDB不会加任何锁</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> mysql </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>分布式锁</title>
+      <link href="/2020/07/04/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/"/>
+      <url>/2020/07/04/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>ZGC和Shenandoah</title>
+      <link href="/2020/07/04/ZGC%E5%92%8CShenandoah/"/>
+      <url>/2020/07/04/ZGC%E5%92%8CShenandoah/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="ZGC"><a href="#ZGC" class="headerlink" title="ZGC"></a>ZGC</h2><p>ZGC几乎在所有地方并发执行的，除了初始标记的是STW的。所以停顿时间几乎就耗费在初始标记上，这部分的实际是非常少的。那么其他阶段是怎么做到可以并发执行的呢？</p><p>ZGC主要新增了两项技术，一个是<strong>着色指针Colored Pointer</strong>，另一个是<strong>读屏障Load Barrier</strong>。</p><p><strong>着色指针Colored Pointer</strong><br> ZGC利用指针的64位中的几位表示Finalizable、Remapped、Marked1、Marked0（ZGC仅支持64位平台），以标记该指向内存的存储状态。相当于在对象的指针上标注了对象的信息。注意，这里的指针相当于Java术语当中的引用。</p><p>在这个被指向的内存发生变化的时候（内存在Compact被移动时），颜色就会发生变化。</p><p>在G1的时候就说到过，Compact阶段是需要STW，否则会影响用户线程执行。那么怎么解决这个问题呢？</p><p><strong>读屏障Load Barrier</strong> 由于着色指针的存在，在程序运行时访问对象的时候，可以轻易知道对象在内存的存储状态（通过指针访问对象），若请求读的内存在被着色了。那么则会触发读屏障。读屏障会更新指针再返回结果，此过程有一定的耗费，从而达到与用户线程并发的效果。</p><p>把这两项技术联合下理解，引用R大（RednaxelaFX）的话</p><blockquote><p>与标记对象的传统算法相比，ZGC在指针上做标记，在访问指针时加入Load Barrier（读屏障），比如当对象正被GC移动，指针上的颜色就会不对，这个屏障就会先把指针更新为有效地址再返回，也就是，永远只有单个对象读取时有概率被减速，而不存在为了保持应用与GC一致而粗暴整体的Stop The World。</p></blockquote><p>链接：<a href="https://juejin.im/post/5bade237e51d450ea401fd71" target="_blank" rel="noopener">https://juejin.im/post/5bade237e51d450ea401fd71</a></p><h2 id="Shenandoah"><a href="#Shenandoah" class="headerlink" title="Shenandoah"></a>Shenandoah</h2><p>相比 G1 内存布局同样基于 Region，默认回收策略也是优先处理回收价值最大的 Region。但在管理堆内存方面，与 G1 有不同：① 支持并发整理，G1 的回收阶段不能与用户线程并发。②默认不使用分代收集，不会有专门的新生代 Region 或老年代 Region。③ 摒弃了在 G1 中耗费大量内存和计算资源去维护的记忆集，改用名为连接矩阵的全局数据结构来记录跨 Region 的引用关系。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java虚拟机 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>IO多路复用</title>
       <link href="/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/"/>
       <url>/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</url>
@@ -578,7 +749,7 @@
       <link href="/2020/06/30/%E7%B4%A2%E5%BC%95%E7%9B%B8%E5%85%B3%E7%96%91%E9%97%AE/"/>
       <url>/2020/06/30/%E7%B4%A2%E5%BC%95%E7%9B%B8%E5%85%B3%E7%96%91%E9%97%AE/</url>
       
-        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="索引有哪几种"><a href="#索引有哪几种" class="headerlink" title="索引有哪几种"></a>索引有哪几种</h2><ol><li><p>B+Tree 索引</p></li><li><p>哈希索引</p></li><li><p>全文索引</p></li><li><p>空间数据索引</p></li></ol><h2 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h2><p>联合索引是指对表上的多个列进行索引，联合索引也是一棵B+树，不同的是联合索引的键值数量不是1，而是大于等于2.</p><p><img src="https://img-blog.csdn.net/20180807153551287?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xtMTA2MDg5MTI2NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p><h2 id="最左前缀匹配"><a href="#最左前缀匹配" class="headerlink" title="最左前缀匹配"></a>最左前缀匹配</h2><p>顾名思义是最左优先，以最左边的为起点任何连续的索引都能匹配上.(A,B,C) 这样3列，mysql会首先匹配A，然后再B，C.</p><p>如果用(B,C)这样的数据来检索的话，就会找不到A使得索引失效。</p><h2 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h2><p>索引包含所有需要查询的字段的值,不需要回表操作。<br>具有以下优点：<br>索引通常远小于数据行的大小，只读取索引能大大减少数据访问量。<br>一些存储引擎（例如 MyISAM）在内存中只缓存索引，而数据依赖于操作系统来缓存。因此，只访问索引可以<br>不使用系统调用（通常比较费时）。<br>对于 InnoDB 引擎，若辅助索引能够覆盖查询，则无需访问主索引。</p>]]></content>
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="索引有哪几种"><a href="#索引有哪几种" class="headerlink" title="索引有哪几种"></a>索引有哪几种</h2><ol><li><p>B+Tree 索引</p></li><li><p>哈希索引</p></li><li><p>全文索引</p></li><li><p>空间数据索引</p></li></ol><h2 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h2><p>联合索引是指对表上的多个列进行索引，联合索引也是一棵B+树，不同的是联合索引的键值数量不是1，而是大于等于2.</p><p><img src="https://img-blog.csdn.net/20180807153551287?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xtMTA2MDg5MTI2NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p><h2 id="最左前缀匹配"><a href="#最左前缀匹配" class="headerlink" title="最左前缀匹配"></a>最左前缀匹配</h2><p>顾名思义是最左优先，以最左边的为起点任何连续的索引都能匹配上.(A,B,C) 这样3列，mysql会首先匹配A，然后再B，C.</p><p>如果用(B,C)这样的数据来检索的话，就会找不到A使得索引失效。</p><h2 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h2><p>索引包含所有需要查询的字段的值,不需要回表操作。<br>具有以下优点：<br>索引通常远小于数据行的大小，只读取索引能大大减少数据访问量。<br>一些存储引擎（例如 MyISAM）在内存中只缓存索引，而数据依赖于操作系统来缓存。因此，只访问索引可以<br>不使用系统调用（通常比较费时）。<br>对于 InnoDB 引擎，若辅助索引能够覆盖查询，则无需访问主索引。</p><h2 id="什么情况下不应该用索引？"><a href="#什么情况下不应该用索引？" class="headerlink" title="什么情况下不应该用索引？"></a>什么情况下不应该用索引？</h2><p>1.表记录少的</p><p>2.经常增删改的表或者字段</p><p>3.where条件里用不到的字段不创建索引</p><p>4.过滤性不好的不适合建索引</p><h2 id="适合创建索引条件"><a href="#适合创建索引条件" class="headerlink" title="适合创建索引条件"></a>适合创建索引条件</h2><p>1.主键自动建立唯一索引</p><p>2.频繁作为查询条件的字段应该建立索引</p><p>3.查询中与其他表关联的字段，外键关系建立索引</p><p>4.单键/组合索引的选择问题，组合索引性价比更高</p><p>5.查询中排序的字段，排序字段若通过索引去访问将大大提高排序效率</p><p>6.查询中统计或者分组字段</p>]]></content>
       
       
       <categories>
@@ -672,7 +843,7 @@
       
       <categories>
           
-          <category> 算法面试 </category>
+          <category> 算法面试题 </category>
           
       </categories>
       
@@ -1160,7 +1331,7 @@
       
       <categories>
           
-          <category> 虚拟机 </category>
+          <category> Java虚拟机 </category>
           
       </categories>
       
@@ -1198,7 +1369,7 @@
       
       <categories>
           
-          <category> 测试 </category>
+          <category> hexo相关 </category>
           
       </categories>
       
