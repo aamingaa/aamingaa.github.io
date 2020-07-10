@@ -4,6 +4,44 @@
   
     
     <entry>
+      <title>TCP和UDP相关问题</title>
+      <link href="/2020/07/10/TCP%E5%92%8CUDP%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/"/>
+      <url>/2020/07/10/TCP%E5%92%8CUDP%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><p>TCP提供可靠的、面向连接的运输服务。在传输数据之前必须三次握手建立连接，数据传输结束之后，4次挥手释放连接，而且在数据传递时，又有确认应答、超时重传、滑动窗口、拥塞控制等机制保证传送数据的可靠性。TCP经常用于对网络通信质量有很高要求的地方，如文件传输，邮件发送，远程登录等场景。SMTP、TELNET、HTTP、FTP</p><p>   UDP在传送数据之前不需要建立连接，目的主机收到UDP报文后，不需要给出确认。UDP不提供可靠交付，一般用于即时通信，如语音、视频、直播等。RIP(路由选择协议)，DNS</p><h2 id="什么是TCP的三次握手？"><a href="#什么是TCP的三次握手？" class="headerlink" title="什么是TCP的三次握手？"></a>什么是TCP的三次握手？</h2><p><img src="https://img-blog.csdnimg.cn/20200710095751436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70" alt="img"></p><p>假设 A 为客户端，B 为服务器端。（同步发送，同步收到）</p><p>最初客户端和服务端都处于 CLOSED(关闭) 状态。ACK为确认值，ack为确认编号</p><p>一开始，B 的 TCP 服务器进程首先创建传输控制块TCB，然后处于 LISTEN(监听) 状态，等待客户端的连接请求。</p><p>· 第一次握手：A 的 TCP 客户端进程创建传输控制块 TCB、向 B 发出连接请求报文段，这时首部中的同步位 SYN=1，同时选择一个初始序号 seq = x。这时，TCP 客户进程进入 SYN-SENT（同步已发送）状态。</p><p>· 第二次握手：B 收到连接请求报文后，向 A 发送确认。在确认报文段中应把 SYN 位和 ACK 位都置 1，确认号是 ack = x + 1，同时也为自己选择一个初始序号 seq = y。（请注意，这个报文段也不能携带数据，但同样要消耗掉一个序号。）这时 TCP 服务端进程进入 SYN-RCVD（同步收到）状态。</p><p>· 第三次握手：TCP 客户进程收到 B 的确认后，还要向 B 给出确认。确认报文段的 ACK 置 1，确认号 ack = y + 1，而自己的序号 seq = x + 1。这时 ACK 报文段可以携带数据。但如果不携带数据则不消耗序号，这种情况下，下一个数据报文段的序号仍是 seq = x + 1。这时，TCP 连接已经建立，A 进入 ESTABLISHED（已建立连接）状态。</p><h2 id="为什么是三次握手？"><a href="#为什么是三次握手？" class="headerlink" title="为什么是三次握手？"></a>为什么是三次握手？</h2><p><strong>三次握手的原因主要有两个目的，信息对等和防止超时。</strong></p><p>从信息对等的角度看，双方只有确定 4 类信息才能建立连接，即 A 和 B 分别确认自己和对方的发送和接收能力正常。在第二次握手后，从 B 的角度看还不能确定自己的发送能力和对方的接收能力，只有在第三次握手后才能确认。</p><p>三次握手也是防止失效连接突然到达导致脏连接，网络报文的生存时间往往会超过 TCP 请求超时时间，A 的某个超时连接请求可能会在双方释放连接之后到达 B，B 会误以为是 A 创建了新的连接请求，然后发送确认报文创建连接。因为 A 机器的状态不是 SYN_SENT，所以直接丢弃了 B 的确认数据。如果是两次握手，连接已经建立了，服务器资源被白白浪费。如果是三次握手，B 由于长时间没有收到确认信息，最终超时导致创建连接失败，因此不会出现脏连接。</p><h2 id="四次挥手？"><a href="#四次挥手？" class="headerlink" title="四次挥手？"></a>四次挥手？</h2><p><img src="https://img-blog.csdnimg.cn/20200710100009759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70" alt="img"></p><p>由于TCP连接是全双工的，因此每个方向都必须单独关闭。当一方数据发送任务完成之后，可以发送FIN来终止这个方向的连接。而另一方可以继续发送数据。</p><p>· 客户端发送请求释放连接报文，FIN=1,seq=u;客户端进入FIN-WAIT-1状态；</p><p>· 服务器收到请求，发送确认报文。ACK=1,seq=v,ack=u+1;服务器进入CLOSE-WAIT状态。客户端收到后进入终止等待2FIN-WAIT-2;</p><p>· 服务器发送完数据之后，向客户端发送请求释放连接报文，FIN=1,ACK=1,seq=w,ack=u+1;进入LAST-ACK状态</p><p>·客户端收到请求后，发送确认报文，ACK=1,seq=u+1,ack=w+1。客户端进入TIME-WAIT状态，等待2MSL后进如CLOSED状态，服务器收到确认后进如CLOSED状态。</p><p><strong>四次挥手的原因</strong></p><p>第一点原因是为了保证被动关闭方可以进入 CLOSED 状态。MSL 是最大报文段寿命，等待 2MSL 可以保证 A 发送的最后一个确认报文能被 B 接收，如果该报文丢失，B 没有收到就会超时重传之前的 FIN+ACK 报文，而如果 A 在发送确认报文后就立即释放连接就无法收到 B 超时重传的报文，因而也不会再一次发送确认报文段，B 就无法正常进入 CLOSED 状态。</p><p>第二点原因是 2MSL 时间之后，本连接中的所有报文就都会从网络中消失，可以防止已失效连接的请求数据包与正常连接的请求数据包混淆而发生异常。</p><p>除此之外，TCP 还设有一个保活计时器，用于解决客户端主机故障的问题，服务器每收到一次客户的数据就重新设置保活计时器，时间为 2 小时。如果 2 小时内没有收到就间隔 75 秒发送一次探测报文，连续 10 次都没有响应后就关闭连接。</p><h2 id="TCP是怎么保证可靠的？"><a href="#TCP是怎么保证可靠的？" class="headerlink" title="TCP是怎么保证可靠的？"></a>TCP是怎么保证可靠的？</h2><p>TCP 的可靠传输包含很多机制，例如使用<strong>检验和</strong>来检测一个传输分组中的比特错误、使用<strong>定时器</strong>来用于超时重传一个分组、使用<strong>序号</strong>来检测丢失的分组和冗余副本、使用<strong>确认</strong>来告诉发送方确认的分组信息、使用<strong>否定确认</strong>来告诉发送方某个分组未被正确接收。除此之外，TCP 还使用<strong>流量控制</strong>和<strong>拥塞控制</strong>来保证可靠性。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 计算机网络 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>ICMP及其应用</title>
+      <link href="/2020/07/09/ICMP%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/"/>
+      <url>/2020/07/09/ICMP%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/</url>
+      
+        <content type="html"><![CDATA[<p>[TOC]</p><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>ICMP 报文是封装在 IP 包里面的。ICMP 是为了更有效地转发 IP 数据报和提高交付成功的机会。它封装在 IP 数据报中，但是不属于高层协议。</p><h2 id="Ping"><a href="#Ping" class="headerlink" title="Ping"></a>Ping</h2><p>Ping 是 ICMP 的一个重要应用，主要用来测试两台主机之间的连通性。<br>Ping 的原理是通过向目的主机发送 ICMP Echo 请求报文，目的主机收到之后会发送 Echo 回答报文。Ping 会根据时<br>间和成功响应的次数估算出数据包往返时间以及丢包率。</p><p>ping 命令执行的时候，源主机首先会构建一个 ICMP 请求数据包，ICMP 数据包内包含多个字段。最重要的是两个，第一个是类型字段，对于请求数据包而言该字段为 8；另外一个是顺序号，主要用于区分连续 ping 的时候发出的多个数据包。每发出一个请求数据包，顺序号会自动加 1。</p><p>在规定的时候间内，源主机如果没有接到 ICMP 的应答包，则说明目标主机不可达；如果接收到了 ICMP 应答包，则说明目标主机可达。应答数据包的类型字段为 0，构建新的ICMP数据包，发回给主机A，此时，源主机会检查，用当前时刻减去该数据包最初从源主机上发出的时刻，就是 ICMP 数据包的时间延迟。</p><h2 id="Traceroute"><a href="#Traceroute" class="headerlink" title="Traceroute"></a>Traceroute</h2><p>Traceroute 是 ICMP 的另一个应用，用来跟踪一个分组从源点到终点的路径。<br>Traceroute 发送的 IP 数据报封装的是无法交付的 UDP 用户数据报，并由目的主机发送终点不可达差错报告报文</p><ul><li><p>Traceroute 的第一个作用就是故意设置特殊的 TTL，来追踪去往目的地时沿途经过的路由器。Traceroute 的参数指向某个目的 IP 地址，它会发送一个 UDP 的数据包。将TTL 设置成 1，也就是说一旦遇到一个路由器或者一个关卡，就表示它“牺牲”了。如果中间的路由器不止一个，当然碰到第一个就“牺牲”。于是，返回一个 ICMP 包，也就是网络差错包，类型是时间超时。接下来，将 TTL 设置为2.。。这样，Traceroute 就拿到了所有的路由器 IP。怎么知道 UDP 有没有到达目的主机呢？Traceroute 程序会发送一份 UDP 数据报给目的主机，但它会选择一个不可能的值作为 UDP 端口号（大于 30000）。当该数据报到达时，将使目的主机的 UDP 模块产生一份“端口不可达”错误 ICMP 报文。如果数据报没有到达，则可能是超时</p></li><li><p>Traceroute 还有一个作用是故意设置不分片，从而确定路径的 MTU。要做的工作首先是发送分组，并设置“不分片”标志。发送的第一个分组的长度正好与出口 MTU 相等。如果</p></li></ul><p>中间遇到窄的关口会被卡住，会发送 ICMP 网络差错包，</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 计算机网络 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>redis高可用</title>
       <link href="/2020/07/05/redis%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
       <url>/2020/07/05/redis%E9%AB%98%E5%8F%AF%E7%94%A8/</url>
