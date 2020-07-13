@@ -79,22 +79,18 @@
 
 
 
-<meta name="description" content="[TOC] 概念红黑树是自平衡的二叉查找树  性质性质1：每个节点要么是红色，要么是黑色。 性质2：根节点永远是黑色的。 性质3：所有的叶子节点都是空节点（即null），并且是黑色的。 性质4：每个红色节点的两个子节点都是黑色。（从每个叶子到根的路径上不会有两个连续的红色节点。） 性质5：从任一节点到其子树中每个叶子节点的路径都包含相同数量的黑色节点。 操作插入红黑树的插入主要分两步：  首先和二">
+<meta name="description" content="[TOC] 第一步：浏览器输入域名 例如输入：  第二步：浏览器查找域名的IP地址 浏览器会把输入的域名解析成对应的IP，其过程如下： 1.查找浏览器缓存：因为浏览器一般会缓存DNS记录一段时间，不同浏览器的时间可能不一样，一般2-30分钟不等，浏览器去查找这些缓存，如果有缓存，直接返回IP，否则下一步。 2.查找系统缓存：浏览器缓存中找不到IP之后，浏览器会进行系统调用（windows中是get">
 <meta property="og:type" content="article">
-<meta property="og:title" content="红黑树剖析">
-<meta property="og:url" content="http://aamingaa.github.io/2020/07/03/%E7%BA%A2%E9%BB%91%E6%A0%91%E5%89%96%E6%9E%90/index.html">
+<meta property="og:title" content="敲击url后发生了什么">
+<meta property="og:url" content="http://aamingaa.github.io/2020/07/10/%E6%95%B2%E5%87%BBurl%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 概念红黑树是自平衡的二叉查找树  性质性质1：每个节点要么是红色，要么是黑色。 性质2：根节点永远是黑色的。 性质3：所有的叶子节点都是空节点（即null），并且是黑色的。 性质4：每个红色节点的两个子节点都是黑色。（从每个叶子到根的路径上不会有两个连续的红色节点。） 性质5：从任一节点到其子树中每个叶子节点的路径都包含相同数量的黑色节点。 操作插入红黑树的插入主要分两步：  首先和二">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f03bae101f8c99?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f03baf6b875784?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f03bbc0efb78e8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f03be147552958?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f03bd41c1d7d63?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="article:published_time" content="2020-07-03T12:34:17.000Z">
-<meta property="article:modified_time" content="2020-07-03T13:51:13.360Z">
+<meta property="og:description" content="[TOC] 第一步：浏览器输入域名 例如输入：  第二步：浏览器查找域名的IP地址 浏览器会把输入的域名解析成对应的IP，其过程如下： 1.查找浏览器缓存：因为浏览器一般会缓存DNS记录一段时间，不同浏览器的时间可能不一样，一般2-30分钟不等，浏览器去查找这些缓存，如果有缓存，直接返回IP，否则下一步。 2.查找系统缓存：浏览器缓存中找不到IP之后，浏览器会进行系统调用（windows中是get">
+<meta property="og:image" content="https://img-blog.csdn.net/20180907093605464?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW9fMDUwOQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="article:published_time" content="2020-07-10T13:47:39.000Z">
+<meta property="article:modified_time" content="2020-07-10T14:05:28.236Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f03bae101f8c99?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20180907093605464?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW9fMDUwOQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 
 
 
@@ -124,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://aamingaa.github.io/2020/07/03/红黑树剖析/"/>
+  <link rel="canonical" href="http://aamingaa.github.io/2020/07/10/敲击url后发生了什么/"/>
 
 
 
 
 
-  <title>红黑树剖析 | Hexo</title>
+  <title>敲击url后发生了什么 | Hexo</title>
   
 
 
@@ -291,7 +287,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/07/03/%E7%BA%A2%E9%BB%91%E6%A0%91%E5%89%96%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/07/10/%E6%95%B2%E5%87%BBurl%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -308,7 +304,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">红黑树剖析</h1>
+          <h1 class="post-title" itemprop="name headline">敲击url后发生了什么</h1>
         
 
         <div class="post-meta">
@@ -320,8 +316,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-03T20:34:17+08:00">
-                2020-07-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-10T21:47:39+08:00">
+                2020-07-10
               </time>
             
 
@@ -343,8 +339,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index">
-                    <span itemprop="name">mysql</span>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
                   </a>
                 </span>
 
@@ -379,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  553
+                  1.5k
                 </span>
               
 
@@ -395,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  5
                 </span>
               
             </div>
@@ -417,40 +413,33 @@
 
       
         <p>[TOC]</p>
-<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>红黑树是自平衡的二叉查找树</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f03bae101f8c99?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>性质1：每个节点要么是红色，要么是黑色。</p>
-<p>性质2：根节点永远是黑色的。</p>
-<p>性质3：所有的叶子节点都是空节点（即null），并且是黑色的。</p>
-<p>性质4：每个红色节点的两个子节点都是黑色。（从每个叶子到根的路径上不会有两个连续的红色节点。）</p>
-<p>性质5：从任一节点到其子树中每个叶子节点的路径都包含相同数量的黑色节点。</p>
-<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>红黑树的插入主要分两步：</p>
-<ul>
-<li><p>首先和二叉查找树的插入一样，查找、插入</p>
+<p>第一步：浏览器输入域名</p>
+<p>例如输入：</p>
+<p><img src="https://img-blog.csdn.net/20180907093605464?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW9fMDUwOQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>第二步：浏览器查找域名的IP地址</p>
+<p>浏览器会把输入的域名解析成对应的IP，其过程如下：</p>
+<p>1.查找浏览器缓存：因为浏览器一般会缓存DNS记录一段时间，不同浏览器的时间可能不一样，一般2-30分钟不等，浏览器去查找这些缓存，如果有缓存，直接返回IP，否则下一步。</p>
+<p>2.查找系统缓存：浏览器缓存中找不到IP之后，浏览器会进行系统调用（windows中是gethostbyname），查找本机的hosts文件，如果找到，直接返回IP，否则下一步。</p>
+<p>3.查找路由器缓存：如果1,2步都查询无果，则需要借助网络，路由器一般都有自己的DNS缓存，将前面的请求发给路由器，查找ISP 服务商缓存 DNS的服务器，如果查找到IP则直接返回，没有的话继续查找。</p>
+<p>4.递归查询：如果以上步骤还找不到，则ISP的DNS服务器就会进行递归查询，所谓递归查询就是如果主机所询问的本地域名服务器不知道被查询域名的IP地址，那么本地域名服务器就以DNS客户的身份，向其他根域名服务器继续发出查询请求报文，而不是让该主机自己进行下一步查询。（本地域名服务器地址是通过DHPC协议获取地址，DHPC是负责分配IP地址的）</p>
+<p>5.迭代查询：本地域名服务器采用迭代查询，它先向一个根域名服务器查询。本地域名服务器向根域名服务器的查询一般都是采用迭代查询。所谓迭代查询就是当根域名服务器收到本地域名服务器发出的查询请求报文后，要么告诉本地域名服务器下一步应该查询哪一个域名服务器，然后本地域名服务器自己进行后续的查询。（而不是替代本地域名服务器进行后续查询）。</p>
+<p>本例子中：根域名服务器告诉本地域名服务器，下一次应查询的顶级域名服务器dns.net的IP地址。本地域名服务器向顶级域名服务器dns.net进行查询。顶级域名服务器dns.net告诉本地域名服务器，下一次应查询的权限域名服务器dns.csdn.net的IP地址。本地域名服务器向权限域名服务器dns.csdn.net进行查询。权限域名服务器dns.csdn.net告诉本地域名服务器，所查询的主机<a href="http://www.csdn.net的IP地址。本地域名服务器最后把结果告诉主机。" target="_blank" rel="noopener">www.csdn.net的IP地址。本地域名服务器最后把结果告诉主机。</a></p>
+<p>第三步 ：浏览器与目标服务器建立TCP连接</p>
+<ol>
+<li><p>主机浏览器通过DNS解析得到了目标服务器的IP地址后，与服务器建立TCP连接。</p>
 </li>
-<li><p>然后调整结构，保证满足红黑树状态</p>
-<ul>
-<li><p>对结点进行重新着色</p>
+<li><p>TCP3次握手连接：浏览器所在的客户机向服务器发出连接请求报文（SYN标志为1）；服务器接收报文后，同意建立连接，向客户机发出确认报文（SYN，ACK标志位均为1）；客户机接收到确认报文后，再次向服务器发出报文，确认已接收到确认报文；此处客户机与服务器之间的TCP连接建立完成，开始通信。</p>
 </li>
-<li><p>以及对树进行相关的旋转操作</p>
-</li>
-</ul>
-</li>
-</ul>
-<p>一般情况下，红黑树中新插入的节点都是红色的。因为我们从性质5中知道，当前红黑树中从根节点到每个叶子节点的黑色节点数量是一样的，此时假如新的黑色节点的话，必然破坏规则，但加入红色节点却不一定，除非其父节点就是红色节点，因此加入红色节点，破坏规则的可能性小一些。</p>
-<h3 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h3><p>LL</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f03baf6b875784?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>LR（插入节点的父节点是左节点，插入节点是右节点）</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f03bbc0efb78e8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>RR</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f03be147552958?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>RL</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f03bd41c1d7d63?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>  IO多路复用epoll的实现采用红黑树组织管理sockfd，以支持快速的增删改查.<br>  ngnix中,用红黑树管理timer,因为红黑树是有序的,可以很快的得到距离当前最小的定时器.<br>  java中TreeMap，jdk1.8的hashmap的实现.</p>
-<h2 id="与平衡树的区别"><a href="#与平衡树的区别" class="headerlink" title="与平衡树的区别"></a>与平衡树的区别</h2><p>1.红黑树是为了解决平衡树在插入、删除等操作需要频繁调整的情况。红黑树放弃了追求完全平衡，追求大致平衡</p>
-<p>2.平衡二叉树,每次插入新节点之后需要旋转的次数不能预知。</p>
-<h2 id="平衡树的概念"><a href="#平衡树的概念" class="headerlink" title="平衡树的概念"></a>平衡树的概念</h2><p>平衡二叉树必须是排序二叉树</p>
-<p>左子树和右子树的深度之差的绝对值不超过1。</p>
+</ol>
+<p>第四步：浏览器通过http协议发送请求</p>
+<p>浏览器向主机发起一个HTTP-GET方法报文请求。请求中包含访问的URL，也就是<a href="http://www.csdn.com/" target="_blank" rel="noopener">http://www.csdn.com/</a> ，KeepAlive，长连接，还有User-Agent用户浏览器操作系统信息，编码等。值得一提的是Accep-Encoding和Cookies项。Accept-Encoding一般采用gzip，压缩之后传输html文件。Cookies如果是首次访问，会提示服务器建立用户缓存信息，如果不是，可以利用Cookies对应键值，找到相应缓存，缓存里面存放着用户名，密码和一些用户设置项。</p>
+<p>第五步：某些服务会做永久重定向响应</p>
+<p>对于大型网站存在多个主机站点，了负载均衡或者导入流量，提高SEO排名，往往不会直接返回请求页面，而是重定向。返回的状态码就不是200OK，而是301,302以3开头的重定向码，浏览器在获取了重定向响应后，在响应报文中Location项找到重定向地址，浏览器重新第一步访问即可。</p>
+<p>重定向的作用：重定向是为了负载均衡或者导入流量，提高SEO排名。利用一个前端服务器接受请求，然后负载到不同的主机上，可以大大提高站点的业务并发处理能力；重定向也可将多个域名的访问，集中到一个站点；由于baidu.com，<a href="http://www.baidu.com会被搜索引擎认为是两个网站，照成每个的链接数都会减少从而降低排名，永久重定向会将两个地址关联起来，搜索引擎会认为是同一个网站，从而提高排名。" target="_blank" rel="noopener">www.baidu.com会被搜索引擎认为是两个网站，照成每个的链接数都会减少从而降低排名，永久重定向会将两个地址关联起来，搜索引擎会认为是同一个网站，从而提高排名。</a></p>
+<p>第六步：浏览器跟踪重定向地址</p>
+<p>当浏览器知道了重定向后最终的访问地址之后，重新发送一个http请求，发送内容同上。</p>
+<p>第七步：服务器处理请求</p>
+<p>服务器接收到获取请求，然后处理并返回一个响应。Web 页面内容放入报文主体中，发回给主机。浏览器收到 HTTP 响应报文后，抽取出 Web 页面内容，之后进行渲染，显示 Web 页面。</p>
 
       
     </div>
@@ -475,8 +464,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/07/03/%E5%B9%B3%E5%8F%B0%E6%97%A0%E5%85%B3%E6%80%A7%E3%80%81%E6%9C%BA%E5%99%A8%E7%A0%81%E3%80%81%E5%AD%97%E8%8A%82%E7%A0%81/" rel="next" title="平台无关性、机器码、字节码、与C++区别">
-                <i class="fa fa-chevron-left"></i> 平台无关性、机器码、字节码、与C++区别
+              <a href="/2020/07/10/TCP%E5%92%8CUDP%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/" rel="next" title="TCP和UDP相关问题">
+                <i class="fa fa-chevron-left"></i> TCP和UDP相关问题
               </a>
             
           </div>
@@ -485,8 +474,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/07/03/B%E6%A0%91%E5%92%8CB-%E6%A0%91%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="prev" title="B树和B+树的区别?">
-                B树和B+树的区别? <i class="fa fa-chevron-right"></i>
+              <a href="/2020/07/13/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" rel="prev" title="排序算法">
+                排序算法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -541,17 +530,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -620,22 +600,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性质"><span class="nav-number">2.</span> <span class="nav-text">性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作"><span class="nav-number">3.</span> <span class="nav-text">操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#插入"><span class="nav-number">3.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#旋转"><span class="nav-number">3.2.</span> <span class="nav-text">旋转</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景"><span class="nav-number">4.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#与平衡树的区别"><span class="nav-number">5.</span> <span class="nav-text">与平衡树的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平衡树的概念"><span class="nav-number">6.</span> <span class="nav-text">平衡树的概念</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
