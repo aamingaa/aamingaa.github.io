@@ -79,14 +79,22 @@
 
 
 
+<meta name="description" content="[TOC] 引言Java的集合框架，PriorityQueue源码解析等… 概述前面以Java ArrayDeque为例讲解了Stack和Queue，其实还有一种特殊的队列叫做PriorityQueue，即优先队列。优先队列的作用是能保证每次取出的元素都是队列中权值最小的（Java的优先队列每次取最小元素，C++的优先队列每次取最大元素）。这里牵涉到了大小关系，元素大小的评判可以通过元素本身的自然">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PriorityQueue源码剖析">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/13/PriorityQueue%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 引言Java的集合框架，PriorityQueue源码解析等… 概述前面以Java ArrayDeque为例讲解了Stack和Queue，其实还有一种特殊的队列叫做PriorityQueue，即优先队列。优先队列的作用是能保证每次取出的元素都是队列中权值最小的（Java的优先队列每次取最小元素，C++的优先队列每次取最大元素）。这里牵涉到了大小关系，元素大小的评判可以通过元素本身的自然">
+<meta property="og:image" content="https://camo.githubusercontent.com/ac0678ef35b8a6cbfca531e2ca645ff2a50e9baf/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f626173652e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/e7333c5724af6ee4e4fdff70862f9a31a906e361/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f6f666665722e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/bd7715e17d75c967a49a0df6cc399e544a8cc80c/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f7065656b2e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/dbe221333180c2a9693d46afd4b79cc485569f30/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f706f6c6c2e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/6511a83152577db51c77d1448facc75da6fd2a17/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f72656d6f7665322e706e67">
 <meta property="article:published_time" content="2020-07-13T11:38:58.000Z">
-<meta property="article:modified_time" content="2020-07-13T11:38:58.227Z">
+<meta property="article:modified_time" content="2020-07-13T13:44:22.677Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/ac0678ef35b8a6cbfca531e2ca645ff2a50e9baf/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f626173652e706e67">
 
 
 
@@ -323,6 +331,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -349,7 +379,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  1.7k
                 </span>
               
 
@@ -365,7 +395,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  7
                 </span>
               
             </div>
@@ -386,7 +416,38 @@
       
 
       
-        
+        <p>[TOC]</p>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><strong>Java的集合框架，PriorityQueue源码解析等…</strong></p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>前面以Java <em>ArrayDeque</em>为例讲解了<em>Stack</em>和<em>Queue</em>，其实还有一种特殊的队列叫做<em>PriorityQueue</em>，即优先队列。<strong>优先队列的作用是能保证每次取出的元素都是队列中权值最小的</strong>（Java的优先队列每次取最小元素，C++的优先队列每次取最大元素）。这里牵涉到了大小关系，<strong>元素大小的评判可以通过元素本身的自然顺序（*natural ordering*），也可以通过构造时传入的比较器</strong>（<em>Comparator</em>，类似于C++的仿函数）。</p>
+<p>Java中<em>PriorityQueue</em>实现了<em>Queue</em>接口，不允许放入<code>null</code>元素；其通过堆实现，具体说是通过完全二叉树（<em>complete binary tree</em>）实现的<strong>小顶堆</strong>（任意一个非叶子节点的权值，都不大于其左右子节点的权值），也就意味着可以通过数组来作为<em>PriorityQueue</em>的底层实现。</p>
+<p><a href="https://camo.githubusercontent.com/ac0678ef35b8a6cbfca531e2ca645ff2a50e9baf/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f626173652e706e67" target="_blank" rel="noopener"><img src="https://camo.githubusercontent.com/ac0678ef35b8a6cbfca531e2ca645ff2a50e9baf/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f626173652e706e67" alt="PriorityQueue"></a></p>
+<p>上图中我们给每个元素按照层序遍历的方式进行了编号，如果你足够细心，会发现父节点和子节点的编号是有联系的，更确切的说父子节点的编号之间有如下关系：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">leftNo &#x3D; parentNo*2+1</span><br><span class="line">rightNo &#x3D; parentNo*2+2</span><br><span class="line">parentNo &#x3D; (nodeNo-1)&#x2F;2</span><br></pre></td></tr></table></figure>
+
+<p>通过上述三个公式，可以轻易计算出某个节点的父节点以及子节点的下标。这也就是为什么可以直接用数组来存储堆的原因。</p>
+<p><em>PriorityQueue</em>的<code>peek()</code>和<code>element</code>操作是常数时间，<code>add()</code>, <code>offer()</code>, 无参数的<code>remove()</code>以及<code>poll()</code>方法的时间复杂度都是<em>log(N)</em>。</p>
+<h2 id="方法解析"><a href="#方法解析" class="headerlink" title="方法解析"></a>方法解析</h2><h3 id="add-和offer"><a href="#add-和offer" class="headerlink" title="add()和offer()"></a>add()和offer()</h3><p><code>add(E e)</code>和<code>offer(E e)</code>的语义相同，都是向优先队列中插入元素，只是<code>Queue</code>接口规定二者对插入失败时的处理不同，前者在插入失败时抛出异常，后则则会返回<code>false</code>。对于<em>PriorityQueue</em>这两个方法其实没什么差别。</p>
+<p><a href="https://camo.githubusercontent.com/e7333c5724af6ee4e4fdff70862f9a31a906e361/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f6f666665722e706e67" target="_blank" rel="noopener"><img src="https://camo.githubusercontent.com/e7333c5724af6ee4e4fdff70862f9a31a906e361/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f6f666665722e706e67" alt="add"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;offer(E e)</span><br><span class="line">public boolean offer(E e) &#123;</span><br><span class="line">    if (e &#x3D;&#x3D; null)&#x2F;&#x2F;不允许放入null元素</span><br><span class="line">        throw new NullPointerException();</span><br><span class="line">    modCount++;</span><br><span class="line">    int i &#x3D; size;</span><br><span class="line">    if (i &gt;&#x3D; queue.length)</span><br><span class="line">        grow(i + 1);&#x2F;&#x2F;自动扩容</span><br><span class="line">    size &#x3D; i + 1;</span><br><span class="line">    if (i &#x3D;&#x3D; 0)&#x2F;&#x2F;队列原来为空，这是插入的第一个元素</span><br><span class="line">        queue[0] &#x3D; e;</span><br><span class="line">    else</span><br><span class="line">        siftUp(i, e);&#x2F;&#x2F;调整</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码中，扩容函数<code>grow()</code>类似于<code>ArrayList</code>里的<code>grow()</code>函数，就是再申请一个更大的数组，并将原数组的元素复制过去，这里不再赘述。需要注意的是<code>siftUp(int k, E x)</code>方法，该方法用于插入元素<code>x</code>并维持堆的特性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;siftUp()</span><br><span class="line">private void siftUp(int k, E x) &#123;</span><br><span class="line">    while (k &gt; 0) &#123;</span><br><span class="line">        int parent &#x3D; (k - 1) &gt;&gt;&gt; 1;&#x2F;&#x2F;parentNo &#x3D; (nodeNo-1)&#x2F;2</span><br><span class="line">        Object e &#x3D; queue[parent];</span><br><span class="line">        if (comparator.compare(x, (E) e) &gt;&#x3D; 0)&#x2F;&#x2F;调用比较器的比较方法</span><br><span class="line">            break;</span><br><span class="line">        queue[k] &#x3D; e;</span><br><span class="line">        k &#x3D; parent;</span><br><span class="line">    &#125;</span><br><span class="line">    queue[k] &#x3D; x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新加入的元素<code>x</code>可能会破坏小顶堆的性质，因此需要进行调整。调整的过程为：<strong>从<code>k</code>指定的位置开始，将<code>x</code>逐层与当前点的<code>parent</code>进行比较并交换，直到满足<code>x &gt;= queue[parent]</code>为止</strong>。注意这里的比较可以是元素的自然顺序，也可以是依靠比较器的顺序。</p>
+<h3 id="element-和peek"><a href="#element-和peek" class="headerlink" title="element()和peek()"></a>element()和peek()</h3><p><code>element()</code>和<code>peek()</code>的语义完全相同，都是获取但不删除队首元素，也就是队列中权值最小的那个元素，二者唯一的区别是当方法失败时前者抛出异常，后者返回<code>null</code>。根据小顶堆的性质，堆顶那个元素就是全局最小的那个；由于堆用数组表示，根据下标关系，<code>0</code>下标处的那个元素既是堆顶元素。所以<strong>直接返回数组<code>0</code>下标处的那个元素即可</strong>。</p>
+<p><a href="https://camo.githubusercontent.com/bd7715e17d75c967a49a0df6cc399e544a8cc80c/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f7065656b2e706e67" target="_blank" rel="noopener"><img src="https://camo.githubusercontent.com/bd7715e17d75c967a49a0df6cc399e544a8cc80c/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f7065656b2e706e67" alt="peek"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;peek()</span><br><span class="line">public E peek() &#123;</span><br><span class="line">    if (size &#x3D;&#x3D; 0)</span><br><span class="line">        return null;</span><br><span class="line">    return (E) queue[0];&#x2F;&#x2F;0下标处的那个元素就是最小的那个</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="remove-和poll"><a href="#remove-和poll" class="headerlink" title="remove()和poll()"></a>remove()和poll()</h3><p><code>remove()</code>和<code>poll()</code>方法的语义也完全相同，都是获取并删除队首元素，区别是当方法失败时前者抛出异常，后者返回<code>null</code>。由于删除操作会改变队列的结构，为维护小顶堆的性质，需要进行必要的调整。</p>
+<p><a href="https://camo.githubusercontent.com/dbe221333180c2a9693d46afd4b79cc485569f30/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f706f6c6c2e706e67" target="_blank" rel="noopener"><img src="https://camo.githubusercontent.com/dbe221333180c2a9693d46afd4b79cc485569f30/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f706f6c6c2e706e67" alt="poll"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public E poll() &#123;</span><br><span class="line">    if (size &#x3D;&#x3D; 0)</span><br><span class="line">        return null;</span><br><span class="line">    int s &#x3D; --size;</span><br><span class="line">    modCount++;</span><br><span class="line">    E result &#x3D; (E) queue[0];&#x2F;&#x2F;0下标处的那个元素就是最小的那个</span><br><span class="line">    E x &#x3D; (E) queue[s];</span><br><span class="line">    queue[s] &#x3D; null;</span><br><span class="line">    if (s !&#x3D; 0)</span><br><span class="line">        siftDown(0, x);&#x2F;&#x2F;调整</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码首先记录<code>0</code>下标处的元素，并用最后一个元素替换<code>0</code>下标位置的元素，之后调用<code>siftDown()</code>方法对堆进行调整，最后返回原来<code>0</code>下标处的那个元素（也就是最小的那个元素）。重点是<code>siftDown(int k, E x)</code>方法，该方法的作用是<strong>从<code>k</code>指定的位置开始，将<code>x</code>逐层向下与当前点的左右孩子中较小的那个交换，直到<code>x</code>小于或等于左右孩子中的任何一个为止</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;siftDown()</span><br><span class="line">private void siftDown(int k, E x) &#123;</span><br><span class="line">    int half &#x3D; size &gt;&gt;&gt; 1;</span><br><span class="line">    while (k &lt; half) &#123;</span><br><span class="line">    	&#x2F;&#x2F;首先找到左右孩子中较小的那个，记录到c里，并用child记录其下标</span><br><span class="line">        int child &#x3D; (k &lt;&lt; 1) + 1;&#x2F;&#x2F;leftNo &#x3D; parentNo*2+1</span><br><span class="line">        Object c &#x3D; queue[child];</span><br><span class="line">        int right &#x3D; child + 1;</span><br><span class="line">        if (right &lt; size &amp;&amp;</span><br><span class="line">            comparator.compare((E) c, (E) queue[right]) &gt; 0)</span><br><span class="line">            c &#x3D; queue[child &#x3D; right];</span><br><span class="line">        if (comparator.compare(x, (E) c) &lt;&#x3D; 0)</span><br><span class="line">            break;</span><br><span class="line">        queue[k] &#x3D; c;&#x2F;&#x2F;然后用c取代原来的值</span><br><span class="line">        k &#x3D; child;</span><br><span class="line">    &#125;</span><br><span class="line">    queue[k] &#x3D; x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="remove-Object-o"><a href="#remove-Object-o" class="headerlink" title="remove(Object o)"></a>remove(Object o)</h3><p><code>remove(Object o)</code>方法用于删除队列中跟<code>o</code>相等的某一个元素（如果有多个相等，只删除一个），该方法不是<em>Queue</em>接口内的方法，而是<em>Collection</em>接口的方法。由于删除操作会改变队列结构，所以要进行调整；又由于删除元素的位置可能是任意的，所以调整过程比其它函数稍加繁琐。具体来说，<code>remove(Object o)</code>可以分为2种情况：1. 删除的是最后一个元素。直接删除即可，不需要调整。2. 删除的不是最后一个元素，从删除点开始以最后一个元素为参照调用一次<code>siftDown()</code>即可。此处不再赘述。</p>
+<p><a href="https://camo.githubusercontent.com/6511a83152577db51c77d1448facc75da6fd2a17/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f72656d6f7665322e706e67" target="_blank" rel="noopener"><img src="https://camo.githubusercontent.com/6511a83152577db51c77d1448facc75da6fd2a17/68747470733a2f2f7777772e706461692e746563682f5f696d616765732f636f6c6c656374696f6e2f5072696f7269747951756575655f72656d6f7665322e706e67" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;remove(Object o)</span><br><span class="line">public boolean remove(Object o) &#123;</span><br><span class="line">	&#x2F;&#x2F;通过遍历数组的方式找到第一个满足o.equals(queue[i])元素的下标</span><br><span class="line">    int i &#x3D; indexOf(o);</span><br><span class="line">    if (i &#x3D;&#x3D; -1)</span><br><span class="line">        return false;</span><br><span class="line">    int s &#x3D; --size;</span><br><span class="line">    if (s &#x3D;&#x3D; i) &#x2F;&#x2F;情况1</span><br><span class="line">        queue[i] &#x3D; null;</span><br><span class="line">    else &#123;</span><br><span class="line">        E moved &#x3D; (E) queue[s];</span><br><span class="line">        queue[s] &#x3D; null;</span><br><span class="line">        siftDown(i, moved);&#x2F;&#x2F;情况2</span><br><span class="line">        ......</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -419,6 +480,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/14/String%E3%80%81StringBuffer%E3%80%81StringBuilder/" rel="prev" title="String、StringBuffer、StringBuilder">
+                String、StringBuffer、StringBuilder <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -472,8 +537,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -493,7 +567,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -516,7 +590,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -542,6 +616,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">2.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法解析"><span class="nav-number">3.</span> <span class="nav-text">方法解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#add-和offer"><span class="nav-number">3.1.</span> <span class="nav-text">add()和offer()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#element-和peek"><span class="nav-number">3.2.</span> <span class="nav-text">element()和peek()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-和poll"><span class="nav-number">3.3.</span> <span class="nav-text">remove()和poll()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-Object-o"><span class="nav-number">3.4.</span> <span class="nav-text">remove(Object o)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -586,7 +676,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共76.8k字</span>
+  <span class="post-count">博客全站共80.1k字</span>
 </div>
 
         
