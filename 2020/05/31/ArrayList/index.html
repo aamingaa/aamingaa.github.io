@@ -79,12 +79,14 @@
 
 
 
+<meta name="description" content="[TOC] [TOC] 扩容需要使用 grow() 方法进行扩容，新容量的大小为 oldCapacity + (oldCapacity &gt;&gt; 1) ，也就是旧容量的 1.5 倍。扩容操作需要调用 Arrays.copyOf() 把原数组整个复制到新数组中，这个操作代价很高，因此最好在创建ArrayList 对象时就指定大概的容量大小，减少扩容操作的次数。 1234567891011pr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ArrayList">
 <meta property="og:url" content="http://aamingaa.github.io/2020/05/31/ArrayList/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] [TOC] 扩容需要使用 grow() 方法进行扩容，新容量的大小为 oldCapacity + (oldCapacity &gt;&gt; 1) ，也就是旧容量的 1.5 倍。扩容操作需要调用 Arrays.copyOf() 把原数组整个复制到新数组中，这个操作代价很高，因此最好在创建ArrayList 对象时就指定大概的容量大小，减少扩容操作的次数。 1234567891011pr">
 <meta property="article:published_time" content="2020-05-31T02:22:12.000Z">
-<meta property="article:modified_time" content="2020-05-31T02:23:05.671Z">
+<meta property="article:modified_time" content="2020-07-18T13:08:47.383Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="容器">
 <meta name="twitter:card" content="summary">
@@ -372,7 +374,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  959
                 </span>
               
 
@@ -388,7 +390,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  4
                 </span>
               
             </div>
@@ -409,7 +411,37 @@
       
 
       
-        
+        <p>[TOC]</p>
+<p>[TOC]</p>
+<h2 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h2><p>需要使用 grow() 方法进行扩容，新容量的大小为 oldCapacity + (oldCapacity &gt;&gt; 1) ，也就是旧容量的 1.5 倍。<br>扩容操作需要调用 Arrays.copyOf() 把原数组整个复制到新数组中，这个操作代价很高，因此最好在创建<br>ArrayList 对象时就指定大概的容量大小，减少扩容操作的次数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private void grow(int minCapacity) &#123;</span><br><span class="line">      &#x2F;&#x2F; overflow-conscious code</span><br><span class="line">      int oldCapacity &#x3D; elementData.length;</span><br><span class="line">      int newCapacity &#x3D; oldCapacity + (oldCapacity &gt;&gt; 1);</span><br><span class="line">      if (newCapacity - minCapacity &lt; 0)</span><br><span class="line">          newCapacity &#x3D; minCapacity;</span><br><span class="line">      if (newCapacity - MAX_ARRAY_SIZE &gt; 0)</span><br><span class="line">          newCapacity &#x3D; hugeCapacity(minCapacity);</span><br><span class="line">      &#x2F;&#x2F; minCapacity is usually close to size, so this is a win:</span><br><span class="line">      elementData &#x3D; Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h2><p>需要调用 System.arraycopy() 将 index+1 后面的元素都复制到 index 位置上，该操作的时间复杂度为 O(N)，可以看<br>出 ArrayList 删除元素的代价是非常高的。</p>
+<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><p>ArrayList 基于数组实现，并且具有动态扩容特性，因此保存元素的数组不一定都会被使用，那么就没必要全部进行<br>序列化。<br>保存元素的数组 elementData 使用 transient 修饰，该关键字声明数组默认不会被序列化。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transient Object[] elementData; &#x2F;&#x2F; non-private to simplify nested class access</span><br></pre></td></tr></table></figure>
+
+<p>ArrayList 实现了 writeObject() 和 readObject() 来控制只序列化数组中有元素填充那部分内容。</p>
+<h2 id="与Vector比较"><a href="#与Vector比较" class="headerlink" title="与Vector比较"></a>与Vector比较</h2><p>它的实现与 ArrayList 类似，但是使用了 synchronized 进行同步。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean add(E e) &#123;</span><br><span class="line">    modCount++;</span><br><span class="line">    ensureCapacityHelper(elementCount + 1);</span><br><span class="line">    elementData[elementCount++] &#x3D; e;</span><br><span class="line">    return true;</span><br><span class="line">    &#125;</span><br><span class="line">    public synchronized E get(int index) &#123;</span><br><span class="line">    if (index &gt;&#x3D; elementCount)</span><br><span class="line">    throw new ArrayIndexOutOfBoundsException(index);</span><br><span class="line">    return elementData(index);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>与 ArrayList的比较</p>
+<p>①Vector 是同步的，因此开销就比 ArrayList 要大，访问速度更慢。最好使用 ArrayList 而不是 Vector，因为同步<br>操作完全可以由程序员自己来控制；<br>②Vector 每次扩容请求其大小的 2 倍空间，而 ArrayList 是 1.5 倍。</p>
+<h2 id="替代方案"><a href="#替代方案" class="headerlink" title="替代方案"></a>替代方案</h2><h3 id="synchronizedList"><a href="#synchronizedList" class="headerlink" title="synchronizedList"></a>synchronizedList</h3><p>在SynchronizedList内部维护了一个普通对象Collection，还有排斥锁mutex.创建出synchronizedList之后，再操作List的时候，就会对方法上锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; synList &#x3D; Collections.synchronizedList(arrayList);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">    synchronized (mutex) &#123;return c.add(e);&#125;</span><br><span class="line">&#125;</span><br><span class="line">public boolean remove(Object o) &#123;</span><br><span class="line">    synchronized (mutex) &#123;return c.remove(o);&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public boolean containsAll(Collection&lt;?&gt; coll) &#123;</span><br><span class="line">    synchronized (mutex) &#123;return c.containsAll(coll);&#125;</span><br><span class="line">&#125;</span><br><span class="line">public boolean addAll(Collection&lt;? extends E&gt; coll) &#123;</span><br><span class="line">    synchronized (mutex) &#123;return c.addAll(coll);&#125;</span><br><span class="line">&#125;</span><br><span class="line">public boolean removeAll(Collection&lt;?&gt; coll) &#123;</span><br><span class="line">    synchronized (mutex) &#123;return c.removeAll(coll);&#125;</span><br><span class="line">&#125;</span><br><span class="line">public boolean retainAll(Collection&lt;?&gt; coll) &#123;</span><br><span class="line">    synchronized (mutex) &#123;return c.retainAll(coll);&#125;</span><br><span class="line">&#125;</span><br><span class="line">public void clear() &#123;</span><br><span class="line">    synchronized (mutex) &#123;c.clear();&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h3><h4 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h4><p>写操作在一个复制的数组上进行，读操作还是在原始数组中进行，读写分离，互不影响。<br>写操作需要加锁，防止并发写入时导致写入数据丢失。<br>写操作结束之后需要把原始数组指向新的复制数组。</p>
+<h4 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h4><p>CopyOnWriteArrayList 在写操作的同时允许读操作，大大提高了读操作的性能，因此很适合读多写少的应用场景。</p>
+<p>但是 CopyOnWriteArrayList 有其缺陷：<br>①内存占用：在写操作时需要复制一个新的数组，使得内存占用为原来的两倍左右；<br>②数据不一致：读操作不能读取实时性的数据，因为部分写操作的数据还未同步到读数组中。<br>所以 CopyOnWriteArrayList 不适合内存敏感以及对实时性要求很高的场景。</p>
+<h2 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h2><p>底层<strong>通过双向链表实现</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private static class Node&lt;E&gt; &#123;</span><br><span class="line">    E item;</span><br><span class="line">    Node&lt;E&gt; next;</span><br><span class="line">    Node&lt;E&gt; prev;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个链表存储了 first 和 last 指针：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">transient Node&lt;E&gt; first;</span><br><span class="line">transient Node&lt;E&gt; last;</span><br></pre></td></tr></table></figure>
+
+<h3 id="与-ArrayList-的比较"><a href="#与-ArrayList-的比较" class="headerlink" title="与 ArrayList 的比较"></a>与 ArrayList 的比较</h3><p>ArrayList 基于动态数组实现，LinkedList 基于双向链表实现；<br>ArrayList 支持随机访问，LinkedList 不支持；<br>LinkedList 在任意位置添加删除元素更快。</p>
+
       
     </div>
     
@@ -505,8 +537,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -576,6 +617,22 @@
       </section>
 
       
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#扩容"><span class="nav-number">1.</span> <span class="nav-text">扩容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除元素"><span class="nav-number">2.</span> <span class="nav-text">删除元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化"><span class="nav-number">3.</span> <span class="nav-text">序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#与Vector比较"><span class="nav-number">4.</span> <span class="nav-text">与Vector比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#替代方案"><span class="nav-number">5.</span> <span class="nav-text">替代方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronizedList"><span class="nav-number">5.1.</span> <span class="nav-text">synchronizedList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWriteArrayList"><span class="nav-number">5.2.</span> <span class="nav-text">CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读写分离"><span class="nav-number">5.2.1.</span> <span class="nav-text">读写分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#适用场景"><span class="nav-number">5.2.2.</span> <span class="nav-text">适用场景</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedList"><span class="nav-number">6.</span> <span class="nav-text">LinkedList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#与-ArrayList-的比较"><span class="nav-number">6.1.</span> <span class="nav-text">与 ArrayList 的比较</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
 
       
 
@@ -619,7 +676,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共92.7k字</span>
+  <span class="post-count">博客全站共93.1k字</span>
 </div>
 
         

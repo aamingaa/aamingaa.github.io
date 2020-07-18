@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="[TOC] 概念AQS全称是AbstractQueuedSynchronizer，即抽象同步队列。下面看一下AQS的类图结构：  为了方便下面几个关键点的理解，大家先熟悉一下AQS的类图结构。 AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它使用一个 volatile int state 变量作为共享资源，如果线程获取资源失败，则进入同步队列等待；如果获取成功就执行临界区代码，释放资源时">
+<meta name="description" content="[TOC] 概念AQS全称是AbstractQueuedSynchronizer，即抽象同步队列。下面看一下AQS的类图结构：  为了方便下面几个关键点的理解，大家先熟悉一下AQS的类图结构。 AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它使用一个 volatile int state 变量作为共享资源。如果线程获取资源失败，则进入同步队列等待；如果获取成功就执行临界区代码，释放资源时">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AQS是什么?">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/01/AQS%E6%98%AF%E4%BB%80%E4%B9%88/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 概念AQS全称是AbstractQueuedSynchronizer，即抽象同步队列。下面看一下AQS的类图结构：  为了方便下面几个关键点的理解，大家先熟悉一下AQS的类图结构。 AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它使用一个 volatile int state 变量作为共享资源，如果线程获取资源失败，则进入同步队列等待；如果获取成功就执行临界区代码，释放资源时">
+<meta property="og:description" content="[TOC] 概念AQS全称是AbstractQueuedSynchronizer，即抽象同步队列。下面看一下AQS的类图结构：  为了方便下面几个关键点的理解，大家先熟悉一下AQS的类图结构。 AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它使用一个 volatile int state 变量作为共享资源。如果线程获取资源失败，则进入同步队列等待；如果获取成功就执行临界区代码，释放资源时">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/21/16c151e53fa38334?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/30/16c418eb1664d74f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/31/16c4545ea0b027b9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/30/16c42890d2ec5e01?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/31/16c45d2d8320a2c4?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-07-01T08:23:51.000Z">
-<meta property="article:modified_time" content="2020-07-15T14:19:57.937Z">
+<meta property="article:modified_time" content="2020-07-18T12:42:30.148Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/7/21/16c151e53fa38334?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -381,7 +381,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.9k
+                  3.7k
                 </span>
               
 
@@ -397,7 +397,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  17
+                  16
                 </span>
               
             </div>
@@ -422,9 +422,8 @@
 <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>AQS全称是AbstractQueuedSynchronizer，即抽象同步队列。下面看一下AQS的类图结构：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/7/21/16c151e53fa38334?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
 <p>为了方便下面几个关键点的理解，大家先<strong>熟悉一下AQS的类图结构</strong>。</p>
-<p>AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它使用一个 volatile int state 变量作为共享资源，如果线程获取资源失败，则进入同步队列等待；如果获取成功就执行临界区代码，释放资源时会通知同步队列中的等待线程。</p>
+<p>AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它使用一个 volatile int state 变量作为共享资源。如果线程获取资源失败，则进入同步队列等待；如果获取成功就执行临界区代码，释放资源时会通知同步队列中的等待线程。</p>
 <p>同步器的主要使用方式是继承，子类通过继承同步器并实现它的抽象方法来管理同步状态，对同步状态进行更改需要使用同步器提供的 3个方法 <code>getState</code>、<code>setState</code> 和 <code>compareAndSetState</code> ，它们保证状态改变是安全的。</p>
-<p>每当有新线程请求资源时都会进入一个等待队列，只有当持有锁的线程释放锁资源后该线程才能持有资源。等待队列通过双向链表实现，线程被封装在链表的 Node 节点中，Node 的等待状态包括：CANCELLED（线程已取消）、SIGNAL（线程需要唤醒）、CONDITION （线程正在等待）、PROPAGATE（后继节点会传播唤醒操作，只在共享模式下起作用）</p>
 <h2 id="state-状态的维护"><a href="#state-状态的维护" class="headerlink" title="state 状态的维护"></a>state 状态的维护</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在AQS中维持了一个单一的共享状态state，来实现同步器同步。看一下state的相关代码如下：</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
 <h3 id="state源码"><a href="#state源码" class="headerlink" title="state源码"></a>state源码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">    &#x2F;**</span><br><span class="line">   * The synchronization state.</span><br><span class="line">   *&#x2F;</span><br><span class="line">  private volatile int state;</span><br><span class="line"></span><br><span class="line">  &#x2F;**</span><br><span class="line">   * Returns the current value of synchronization state.</span><br><span class="line">   * This operation has memory semantics of a &#123;@code volatile&#125; read.</span><br><span class="line">   * @return current state value</span><br><span class="line">   *&#x2F;</span><br><span class="line">  protected final int getState() &#123;</span><br><span class="line">      return state;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  &#x2F;**</span><br><span class="line">   * Sets the value of synchronization state.</span><br><span class="line">   * This operation has memory semantics of a &#123;@code volatile&#125; write.</span><br><span class="line">   * @param newState the new state value</span><br><span class="line">   *&#x2F;</span><br><span class="line">  protected final void setState(int newState) &#123;</span><br><span class="line">      state &#x3D; newState;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  &#x2F;**</span><br><span class="line">   * Atomically sets synchronization state to the given updated</span><br><span class="line">   * value if the current state value equals the expected value.</span><br><span class="line">   * This operation has memory semantics of a &#123;@code volatile&#125; read</span><br><span class="line">   * and write.</span><br><span class="line">   *</span><br><span class="line">   * @param expect the expected value</span><br><span class="line">   * @param update the new value</span><br><span class="line">   * @return &#123;@code true&#125; if successful. False return indicates that the actual</span><br><span class="line">   *         value was not equal to the expected value.</span><br><span class="line">   *&#x2F;</span><br><span class="line">  protected final boolean compareAndSetState(int expect, int update) &#123;</span><br><span class="line">      &#x2F;&#x2F; See below for intrinsics setup to support this</span><br><span class="line">      return unsafe.compareAndSwapInt(this, stateOffset, expect, update);</span><br><span class="line">  &#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
@@ -470,8 +469,9 @@
 <li>ConditionObject对象都维护了一个单独的<strong>等待队列</strong> ，AQS所维护的CLH队列是<strong>同步队列</strong>，它们节点类型相同，都是Node。</li>
 </ul>
 <h2 id="独占与共享模式。"><a href="#独占与共享模式。" class="headerlink" title="独占与共享模式。"></a>独占与共享模式。</h2><p>AQS支持两种同步模式:独占式和共享式。</p>
-<p>获取同步状态时，调用 <code>acquire</code> 方法，维护一个同步队列，使用 <code>tryAcquire</code> 方法安全地获取线程同步状态，获取失败的线程会被构造同步节点并通过 <code>addWaiter</code> 方法加入到同步队列的尾部，在队列中自旋。之后调用 <code>acquireQueued</code> 方法使得该节点以死循环的方式获取同步状态，如果获取不到则阻塞，被阻塞线程的唤醒主要依靠前驱节点的出队或被中断实现，移出队列或停止自旋的条件是前驱节点是头结点且成功获取了同步状态。</p>
-<p>释放同步状态时，同步器调用 <code>tryRelease</code> 方法释放同步状态，然后调用 <code>unparkSuccessor</code> 方法唤醒头节点的后继节点，使后继节点重新尝试获取同步状态。</p>
+<p><strong>独占模式</strong>表示锁只会被一个线程占用，其他线程必须等到持有锁的线程释放锁后才能获取锁，同一时间只能有一个线程获取到锁。</p>
+<p><strong>共享模式</strong>表示多个线程获取同一个锁有可能成功</p>
+<p>独占模式通过 acquire 和 release 方法获取和释放锁，共享模式通过 acquireShared 和 releaseShared</p>
 <h3 id="独占式"><a href="#独占式" class="headerlink" title="独占式"></a>独占式</h3><p>获取同步状态时，调用 <code>acquire</code> 方法，维护一个同步队列，使用 <code>tryAcquire</code> 方法安全地获取线程同步状态，获取失败的线程会被构造同步节点并通过 <code>addWaiter</code> 方法加入到同步队列的尾部，在队列中自旋。之后调用 <code>acquireQueued</code> 方法使得该节点以死循环的方式获取同步状态，如果获取不到则阻塞，被阻塞线程的唤醒主要依靠前驱节点的出队或被中断实现，移出队列或停止自旋的条件是前驱节点是头结点且成功获取了同步状态。</p>
 <p>释放同步状态时，同步器调用 <code>tryRelease</code> 方法释放同步状态，然后调用 <code>unparkSuccessor</code> 方法唤醒头节点的后继节点，使后继节点重新尝试获取同步状态。</p>
 <p>同一时刻仅有一个线程持有同步状态，如<strong>ReentrantLock</strong>。又可分为公平锁和非公平锁。</p>
@@ -759,7 +759,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共92.7k字</span>
+  <span class="post-count">博客全站共93.1k字</span>
 </div>
 
         
