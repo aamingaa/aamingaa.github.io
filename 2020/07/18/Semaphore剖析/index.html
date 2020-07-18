@@ -79,19 +79,16 @@
 
 
 
-<meta name="description" content="[TOC] 概念BIO （Blocking I&#x2F;O）：同步阻塞I&#x2F;O模式。 NIO （New I&#x2F;O）：同步非阻塞模式。 AIO （Asynchronous I&#x2F;O）：异步非阻塞I&#x2F;O模型。 同步异步指的是被调用者结果返回时通知线程的一种机制，阻塞非阻塞指的是调用结果返回进程前的状态，是挂起还是继续处理其他任务。 同步阻塞模式：这种模式下，我们的工作模式是先来到厨房，开始烧水，并坐在水壶面前一直等">
+<meta name="description" content="[TOC] Semaphore 类似于操作系统中的信号量，可以控制对互斥资源的访问线程数。 可以看到公平共享锁和非公平共享锁的区别就在是否需要判断队列中是否有已经等待的线程。公平共享锁需要先判断，非公平共享锁直接插队，尽管前面已经有线程在等待。 12345678910111213141516171819202122232425262728293031323334353637383940414243">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Nio、Bio、Aio">
-<meta property="og:url" content="http://aamingaa.github.io/2020/07/03/Nio%E3%80%81Bio%E3%80%81Aio/index.html">
+<meta property="og:title" content="Semaphore剖析">
+<meta property="og:url" content="http://aamingaa.github.io/2020/07/18/Semaphore%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 概念BIO （Blocking I&#x2F;O）：同步阻塞I&#x2F;O模式。 NIO （New I&#x2F;O）：同步非阻塞模式。 AIO （Asynchronous I&#x2F;O）：异步非阻塞I&#x2F;O模型。 同步异步指的是被调用者结果返回时通知线程的一种机制，阻塞非阻塞指的是调用结果返回进程前的状态，是挂起还是继续处理其他任务。 同步阻塞模式：这种模式下，我们的工作模式是先来到厨房，开始烧水，并坐在水壶面前一直等">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/14/1697c8d55677ce94?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/14/1697c8d556639922?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="article:published_time" content="2020-07-03T08:23:09.000Z">
-<meta property="article:modified_time" content="2020-07-03T11:38:54.733Z">
+<meta property="og:description" content="[TOC] Semaphore 类似于操作系统中的信号量，可以控制对互斥资源的访问线程数。 可以看到公平共享锁和非公平共享锁的区别就在是否需要判断队列中是否有已经等待的线程。公平共享锁需要先判断，非公平共享锁直接插队，尽管前面已经有线程在等待。 12345678910111213141516171819202122232425262728293031323334353637383940414243">
+<meta property="article:published_time" content="2020-07-18T15:24:27.000Z">
+<meta property="article:modified_time" content="2020-07-18T16:10:12.259Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/3/14/1697c8d55677ce94?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 
 
 
@@ -121,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://aamingaa.github.io/2020/07/03/Nio、Bio、Aio/"/>
+  <link rel="canonical" href="http://aamingaa.github.io/2020/07/18/Semaphore剖析/"/>
 
 
 
 
 
-  <title>Nio、Bio、Aio | Hexo</title>
+  <title>Semaphore剖析 | Hexo</title>
   
 
 
@@ -288,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/07/03/Nio%E3%80%81Bio%E3%80%81Aio/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/07/18/Semaphore%E5%89%96%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -305,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Nio、Bio、Aio</h1>
+          <h1 class="post-title" itemprop="name headline">Semaphore剖析</h1>
         
 
         <div class="post-meta">
@@ -317,8 +314,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-03T16:23:09+08:00">
-                2020-07-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-18T23:24:27+08:00">
+                2020-07-18
               </time>
             
 
@@ -340,8 +337,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
-                    <span itemprop="name">Java基础</span>
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index">
+                    <span itemprop="name">并发编程</span>
                   </a>
                 </span>
 
@@ -376,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.2k
+                  467
                 </span>
               
 
@@ -392,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  2
                 </span>
               
             </div>
@@ -414,40 +411,10 @@
 
       
         <p>[TOC]</p>
-<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p><strong>BIO （Blocking I/O）：同步阻塞I/O模式。</strong></p>
-<p><strong>NIO （New I/O）：同步非阻塞模式。</strong></p>
-<p><strong>AIO （Asynchronous I/O）：异步非阻塞I/O模型。</strong></p>
-<p><strong>同步异步指的是被调用者结果返回时通知线程的一种机制，阻塞非阻塞指的是调用结果返回进程前的状态，是挂起还是继续处理其他任务。</strong></p>
-<p>同步阻塞模式：这种模式下，我们的工作模式是先来到厨房，开始烧水，并坐在水壶面前一直等着水烧开。</p>
-<p>同步非阻塞模式：这种模式下，我们的工作模式是先来到厨房，开始烧水，但是我们不一直坐在水壶前面等，而是回到客厅看电视，然后每隔几分钟到厨房看一下水有没有烧开。</p>
-<p>异步非阻塞I/O模型：这种模式下，我们的工作模式是先来到厨房，开始烧水，我们不一一直坐在水壶前面等，也不隔一段时间去看一下，而是在客厅看电视，水壶上面有个开关，水烧开之后他会通知我。</p>
-<p>阻塞VS非阻塞：人是否坐在水壶前面一直等。</p>
-<p>同步VS异步：水壶是不是在水烧开之后主动通知人。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>Bio</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">public class DemoServer extends Thread &#123;</span><br><span class="line">    private ServerSocket serverSocket;</span><br><span class="line">    public int getPort() &#123;</span><br><span class="line">        return  serverSocket.getLocalPort();</span><br><span class="line">    &#125;</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            serverSocket &#x3D; new ServerSocket(0);</span><br><span class="line">            while (true) &#123;</span><br><span class="line">                Socket socket &#x3D; serverSocket.accept();</span><br><span class="line">                RequestHandler requestHandler &#x3D; new RequestHandler(socket);</span><br><span class="line">                requestHandler.start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            if (serverSocket !&#x3D; null) &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    serverSocket.close();</span><br><span class="line">                &#125; catch (IOException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) throws IOException &#123;</span><br><span class="line">        DemoServer server &#x3D; new DemoServer();</span><br><span class="line">        server.start();</span><br><span class="line">        try (Socket client &#x3D; new Socket(InetAddress.getLocalHost(), server.getPort())) &#123;</span><br><span class="line">            BufferedReader bufferedReader &#x3D; new BufferedReader(new                   InputStreamReader(client.getInputStream()));</span><br><span class="line">            bufferedReader.lines().forEach(s -&gt; System.out.println(s));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br><span class="line">&#x2F;&#x2F; 简化实现，不做读取，直接发送字符串</span><br><span class="line">class RequestHandler extends Thread &#123;</span><br><span class="line">    private Socket socket;</span><br><span class="line">    RequestHandler(Socket socket) &#123;</span><br><span class="line">        this.socket &#x3D; socket;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        try (PrintWriter out &#x3D; new PrintWriter(socket.getOutputStream());) &#123;</span><br><span class="line">            out.println(&quot;Hello world!&quot;);</span><br><span class="line">            out.flush();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>Semaphore 类似于操作系统中的信号量，可以控制对互斥资源的访问线程数。</p>
+<p>可以看到公平共享锁和非公平共享锁的区别就在是否需要判断队列中是否有已经等待的线程。公平共享锁需要先判断，非公平共享锁直接插队，尽管前面已经有线程在等待。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">class test &#123;</span><br><span class="line">    &#x2F;&#x2F;初始化10个信号量在信号包中，让ABCD4个线程分别去获取</span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        Semaphore semaphore &#x3D; new Semaphore(10,false);</span><br><span class="line">        SemaphoreTest(semaphore);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void SemaphoreTest(final Semaphore semaphore) throws InterruptedException &#123;</span><br><span class="line">        &#x2F;&#x2F;线程A初始获取了4个信号量，然后分3次释放了这4个信号量</span><br><span class="line">        Thread threadA &#x3D; new Thread(new Runnable() &#123;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    semaphore.acquire(8);</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + &quot; get 1 semaphore&quot;);</span><br><span class="line">                    Thread.sleep(1000);</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + &quot; release 1 semaphore&quot;);</span><br><span class="line">                    semaphore.release(3);</span><br><span class="line">                    Thread.sleep(5000);</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + &quot; release 1 semaphore&quot;);</span><br><span class="line">                    semaphore.release(5);</span><br><span class="line"></span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        threadA.setName(&quot;threadA&quot;);</span><br><span class="line">        &#x2F;&#x2F;线程B初始获取了5个信号量，然后分2次释放了这5个信号量</span><br><span class="line">        Thread threadB &#x3D; new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    System.out.println(&quot;B start&quot;);</span><br><span class="line">                    semaphore.acquire(6);</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + &quot; get 6 semaphore&quot;);</span><br><span class="line">                    Thread.sleep(3000);</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + &quot; release 6 semaphore&quot;);</span><br><span class="line">                    semaphore.release(6);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        threadB.setName(&quot;threadB&quot;);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;线程C初始获取了4个信号量，然后分1次释放了这4个信号量</span><br><span class="line">        Thread threadC &#x3D; new Thread(new Runnable() &#123;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    System.out.println(&quot;C start&quot;);</span><br><span class="line">                    semaphore.acquire(2);</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + &quot; get 2 semaphore&quot;);</span><br><span class="line">                    Thread.sleep(2000);</span><br><span class="line"></span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + &quot; release 2 semaphore&quot;);</span><br><span class="line">                    semaphore.release(2);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        threadC.setName(&quot;threadC&quot;);</span><br><span class="line">        threadA.start();</span><br><span class="line">        Thread.sleep(1);</span><br><span class="line">        threadB.start();</span><br><span class="line">        Thread.sleep(3000);</span><br><span class="line">        threadC.start();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li><p>服务器端启动 ServerSocket，端口 0 表示自动绑定一个空闲端口。</p>
-</li>
-<li><p>调用 accept 方法，阻塞等待客户端连接。</p>
-</li>
-<li><p>利用 Socket 模拟了一个简单的客户端，只进行连接、读取、打印。</p>
-</li>
-<li><p>当连接建立后，启动一个单独线程负责回复客户端请求。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/3/14/1697c8d55677ce94?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-</li>
-</ul>
-<p>Nio</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">import java.io.BufferedReader;</span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.io.InputStreamReader;</span><br><span class="line">import java.net.InetAddress;</span><br><span class="line">import java.net.InetSocketAddress;</span><br><span class="line">import java.net.Socket;</span><br><span class="line">import java.nio.channels.SelectionKey;</span><br><span class="line">import java.nio.channels.Selector;</span><br><span class="line">import java.nio.channels.ServerSocketChannel;</span><br><span class="line">import java.nio.channels.SocketChannel;</span><br><span class="line">import java.nio.charset.Charset;</span><br><span class="line">import java.util.Iterator;</span><br><span class="line">import java.util.Set;</span><br><span class="line"></span><br><span class="line">public class NioExample extends Thread &#123;</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        try (Selector selector &#x3D; Selector.open();</span><br><span class="line">             ServerSocketChannel serverSocket &#x3D; ServerSocketChannel.open();)</span><br><span class="line">        &#123;&#x2F;&#x2F; 创建 Selector 和 Channel</span><br><span class="line">            serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), 8888));</span><br><span class="line">            serverSocket.configureBlocking(false);</span><br><span class="line">            &#x2F;&#x2F; 注册到 Selector，并说明关注点</span><br><span class="line">            serverSocket.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line">            while (true) &#123;</span><br><span class="line">                selector.select();&#x2F;&#x2F; 阻塞等待就绪的 Channel，这是关键点之一</span><br><span class="line">                Set&lt;SelectionKey&gt; selectedKeys &#x3D; selector.selectedKeys();</span><br><span class="line">                Iterator&lt;SelectionKey&gt; iter &#x3D; selectedKeys.iterator();</span><br><span class="line">                while (iter.hasNext()) &#123;</span><br><span class="line">                    SelectionKey key &#x3D; iter.next();</span><br><span class="line">                    &#x2F;&#x2F; 生产系统中一般会额外进行就绪状态检查</span><br><span class="line">                    sayHelloWorld((ServerSocketChannel) key.channel());</span><br><span class="line">                    iter.remove();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    private void sayHelloWorld(ServerSocketChannel server) throws IOException &#123;</span><br><span class="line">        try (SocketChannel client &#x3D; server.accept();) &#123;</span><br><span class="line">            client.write(Charset.defaultCharset().encode(&quot;Hello world!&quot;));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; 省略了与前面类似的 main</span><br><span class="line">    public static void main(String[] args) throws IOException &#123;</span><br><span class="line">        NioExample server &#x3D; new NioExample();</span><br><span class="line">        server.start();</span><br><span class="line">        try (Socket client &#x3D; new Socket(InetAddress.getLocalHost(), 8888)) &#123;</span><br><span class="line">            BufferedReader bufferedReader &#x3D; new BufferedReader(new InputStreamReader(client.getInputStream()));</span><br><span class="line">            bufferedReader.lines().forEach(s -&gt; System.out.println(s));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>首先，通过 Selector.open() 创建一个 Selector，作为类似调度员的角色。</p>
-<p>然后，创建一个 ServerSocketChannel，并且向 Selector 注册，通过指定 SelectionKey.OP_ACCEPT，告诉调度员，它关注的是新的连接请求。注意：为什么我们要明确配置非阻塞模式呢？这是因为阻塞模式下，注册操作是不允许的，会抛出 IllegalBlockingModeException 异常。</p>
-<p>Selector 阻塞在 select 操作，当有 Channel 发生接入请求，就会被唤醒。</p>
-<p>在 sayHelloWorld 方法中，通过 SocketChannel 和 Buffer 进行数据操作，在本例中是发送了一段字符串。</p>
-<p>可以看到，在前面两个样例中，IO 都是同步阻塞模式，所以需要多线程以实现多任务处理。而 NIO 则是利用了单线程轮询事件的机制，通过高效地定位就绪的 Channel，来决定做什么，仅仅 select 阶段是阻塞的，可以有效避免大量客户端连接时，频繁线程切换带来的问题，应用的扩展能力有了非常大的提高。下面这张图对这种实现思路进行了形象地说明</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/3/14/1697c8d556639922?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p><a href="https://juejin.im/post/5c8aea1df265da2de33f6a09" target="_blank" rel="noopener">https://juejin.im/post/5c8aea1df265da2de33f6a09</a></p>
-<p><a href="https://juejin.im/post/5d19820c6fb9a07ea42094e2#heading-4" target="_blank" rel="noopener">https://juejin.im/post/5d19820c6fb9a07ea42094e2#heading-4</a></p>
 
       
     </div>
@@ -472,8 +439,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/07/03/%E5%80%BC%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92/" rel="next" title="值传递和引用传递">
-                <i class="fa fa-chevron-left"></i> 值传递和引用传递
+              <a href="/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/" rel="next" title="Spring相关问题">
+                <i class="fa fa-chevron-left"></i> Spring相关问题
               </a>
             
           </div>
@@ -481,10 +448,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/07/03/%E5%B9%B3%E5%8F%B0%E6%97%A0%E5%85%B3%E6%80%A7%E3%80%81%E6%9C%BA%E5%99%A8%E7%A0%81%E3%80%81%E5%AD%97%E8%8A%82%E7%A0%81/" rel="prev" title="平台无关性、机器码、字节码、与C++区别">
-                平台无关性、机器码、字节码、与C++区别 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -538,17 +501,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -617,22 +571,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
