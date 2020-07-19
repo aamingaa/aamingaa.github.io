@@ -89,7 +89,7 @@
 <meta property="og:image" content="http://aamingaa.github.io/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/2.png">
 <meta property="og:image" content="http://aamingaa.github.io/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/3.png">
 <meta property="article:published_time" content="2020-06-27T01:53:39.000Z">
-<meta property="article:modified_time" content="2020-07-18T05:08:09.693Z">
+<meta property="article:modified_time" content="2020-07-19T02:50:02.362Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/1.png">
@@ -377,7 +377,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.6k
+                  1.8k
                 </span>
               
 
@@ -444,6 +444,8 @@
 
 <h3 id="get"><a href="#get" class="headerlink" title="get"></a>get</h3><p>get 逻辑比较简单，只需要将 Key 通过 Hash 之后定位到具体的 Segment ，再通过一次 Hash 定位到具体的元素上。</p>
 <p>由于 HashEntry 中的 value 属性是用 volatile 关键词修饰的，保证了内存可见性，所以每次获取时都是最新值,<strong>整个过程都不需要加锁</strong>。。</p>
+<h3 id="size"><a href="#size" class="headerlink" title="size"></a>size</h3><p>每个 Segment 维护了一个 count 变量来统计该 Segment 中的键值对个数。</p>
+<p>在执行 size 操作时，需要遍历所有 Segment 然后把 count 累计起来。ConcurrentHashMap 在执行 size 操作时先尝试不加锁，如果连续两次不加锁操作得到的结果一致，那么可以认为这个结果是正确的。<br>如果尝试的次数超过 3 次，就需要对每个 Segment 加锁。</p>
 <h2 id="jdk1-8他的数据结构"><a href="#jdk1-8他的数据结构" class="headerlink" title="jdk1.8他的数据结构"></a>jdk1.8他的数据结构</h2><p>其中抛弃了原有的 Segment 分段锁，而采用了 <code>CAS + synchronized</code> 来保证并发安全性。</p>
 <p>跟HashMap很像，也把之前的HashEntry改成了Node，但是作用不变，把值和next采用了volatile去修饰，保证了可见性，并且也引入了红黑树，在链表大于一定值的时候会转换（默认是8）。</p>
 <p>① 取消分段锁机制，进一步降低冲突概率。② 引入红黑树结构，同一个哈希槽上的元素个数超过一定阈值后，单向链表改为红黑树结构。③ 使用了更加优化的方式统计集合内的元素数量。具体优化表现在：在 put、resize 和 size 方法中设计元素总数的更新和计算都避免了锁，使用 CAS 代替。</p>
@@ -643,7 +645,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#存储结构"><span class="nav-number">1.</span> <span class="nav-text">存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发度高的原因"><span class="nav-number">2.</span> <span class="nav-text">并发度高的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put"><span class="nav-number">2.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get"><span class="nav-number">2.2.</span> <span class="nav-text">get</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jdk1-8他的数据结构"><span class="nav-number">3.</span> <span class="nav-text">jdk1.8他的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put-1"><span class="nav-number">3.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-1"><span class="nav-number">3.2.</span> <span class="nav-text">get</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#存储结构"><span class="nav-number">1.</span> <span class="nav-text">存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发度高的原因"><span class="nav-number">2.</span> <span class="nav-text">并发度高的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put"><span class="nav-number">2.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get"><span class="nav-number">2.2.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#size"><span class="nav-number">2.3.</span> <span class="nav-text">size</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jdk1-8他的数据结构"><span class="nav-number">3.</span> <span class="nav-text">jdk1.8他的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put-1"><span class="nav-number">3.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-1"><span class="nav-number">3.2.</span> <span class="nav-text">get</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -693,7 +695,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共93.5k字</span>
+  <span class="post-count">博客全站共94.1k字</span>
 </div>
 
         

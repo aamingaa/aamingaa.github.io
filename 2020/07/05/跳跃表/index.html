@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="[TOC] 跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。上层结点都有指向下层结点的指针，从上往下每一层链表节点数递减。比如第一层有两个，第二层有四个，以此类推。  插入 看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引； 其中每一层的索引链表中是否需要增加新增的节点，其实并没有什么标准答案，我们尽量做到索引的">
+<meta name="description" content="[TOC] [TOC] 跳跃表跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。上层结点都有指向下层结点的指针，从上往下每一层链表节点数递减。比如第一层有两个，第二层有四个，以此类推。  插入看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引； 其中每一层的索引链表中是否需要增加新增的节点，其实并没有什么标准答案，我">
 <meta property="og:type" content="article">
 <meta property="og:title" content="跳跃表">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/05/%E8%B7%B3%E8%B7%83%E8%A1%A8/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。上层结点都有指向下层结点的指针，从上往下每一层链表节点数递减。比如第一层有两个，第二层有四个，以此类推。  插入 看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引； 其中每一层的索引链表中是否需要增加新增的节点，其实并没有什么标准答案，我们尽量做到索引的">
+<meta property="og:description" content="[TOC] [TOC] 跳跃表跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。上层结点都有指向下层结点的指针，从上往下每一层链表节点数递减。比如第一层有两个，第二层有四个，以此类推。  插入看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引； 其中每一层的索引链表中是否需要增加新增的节点，其实并没有什么标准答案，我">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/27/16f4745348536f87?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-07-05T11:24:11.000Z">
-<meta property="article:modified_time" content="2020-07-05T11:45:46.811Z">
+<meta property="article:modified_time" content="2020-07-19T08:00:38.460Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/12/27/16f4745348536f87?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  391
+                  551
                 </span>
               
 
@@ -413,10 +413,10 @@
 
       
         <p>[TOC]</p>
-<p>跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。上层结点都有指向下层结点的指针，从上往下每一层链表节点数递减。比如第一层有两个，第二层有四个，以此类推。</p>
+<p>[TOC]</p>
+<h2 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a>跳跃表</h2><p>跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。上层结点都有指向下层结点的指针，从上往下每一层链表节点数递减。比如第一层有两个，第二层有四个，以此类推。</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/12/27/16f4745348536f87?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="跳跃表-三级索引-寻找42"></p>
-<p>插入</p>
-<p>看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引；</p>
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>看懂了跳跃表的数据结构，那么就很容易理解节点的插入操作了，基本上两步操作就可以实现：在最底层的数据链表中插入数据，然后调整索引；</p>
 <p>其中每一层的索引链表中是否需要增加新增的节点，其实并没有什么标准答案，我们尽量做到索引的平均分布即可，常用的就是【随机判断】决定是否需要新增或调整索引，当有新节点插入的时候，通过概率算法判断这个节点需要插入到几级节点中。</p>
 <p>比如：</p>
 <ul>
@@ -424,6 +424,9 @@
 <li>新插入数据节点，1/2 概率不插入任何一级索引，1/4 概率返回需要插入 1 级索引，1/8 概率返回需要插入到 2 级索引，以此类推；</li>
 <li>这里要注意一点，插入 2 级索引的时候，同时也需要插入 1 级索引；也就是插入 n 级索引的时候，同时也要插入 1~( n-1 ) 级索引。</li>
 </ul>
+<h2 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h2><p>通过一个bit数组来存储特定数据的一种数据结构,每一个bit位都能独立包含信息,bit是数据的最小存储单元,因此能大量节省空间</p>
+<p>按下标从数组的高位(左)向低位(右)取值,bit数组起始值全为0,从左到右取下标(下标从0开始),数组的每个元素值就是一个下标值.将元素对应的下标在bit位上的值改为1</p>
+<p>举例:数组[2,5,3,8] 起始000000000 元素2对应下标2,<br>将左到右的下标2的值改为1 –&gt; 001000000————————————————</p>
 
       
     </div>
@@ -514,8 +517,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -585,6 +597,22 @@
       </section>
 
       
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#跳跃表"><span class="nav-number">1.</span> <span class="nav-text">跳跃表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#插入"><span class="nav-number">1.1.</span> <span class="nav-text">插入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#位图"><span class="nav-number">2.</span> <span class="nav-text">位图</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
 
       
 
@@ -628,7 +656,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共93.5k字</span>
+  <span class="post-count">博客全站共94.1k字</span>
 </div>
 
         

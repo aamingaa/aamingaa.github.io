@@ -79,16 +79,18 @@
 
 
 
-<meta name="description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的内存可见性; 2 . 禁止指令重排序 volatile关键字如何满足并发编程的三大特性的？重提volatile变量规则： 对一个 volatile 变量的写操作先行发生于后面对这个变量的读操作。就是如果一个变量声明成是volatile的，那么">
+<meta name="description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的内存可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了">
 <meta property="og:type" content="article">
 <meta property="og:title" content="volatile的性质">
 <meta property="og:url" content="http://aamingaa.github.io/2020/06/24/volatile%E7%9A%84%E6%80%A7%E8%B4%A8/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的内存可见性; 2 . 禁止指令重排序 volatile关键字如何满足并发编程的三大特性的？重提volatile变量规则： 对一个 volatile 变量的写操作先行发生于后面对这个变量的读操作。就是如果一个变量声明成是volatile的，那么">
+<meta property="og:description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的内存可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
 <meta property="article:published_time" content="2020-06-24T03:12:06.000Z">
-<meta property="article:modified_time" content="2020-06-26T04:53:55.220Z">
+<meta property="article:modified_time" content="2020-07-19T16:03:22.876Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
 
 
 
@@ -373,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  817
+                  1.1k
                 </span>
               
 
@@ -389,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  4
                 </span>
               
             </div>
@@ -414,13 +416,38 @@
 <h2 id="说说你对volatile关键字的理解"><a href="#说说你对volatile关键字的理解" class="headerlink" title="说说你对volatile关键字的理解"></a>说说你对volatile关键字的理解</h2><p>就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性：</p>
 <p>1 . 保证了不同线程对该变量操作的内存可见性;</p>
 <p>2 . 禁止指令重排序</p>
-<h2 id="volatile关键字如何满足并发编程的三大特性的？"><a href="#volatile关键字如何满足并发编程的三大特性的？" class="headerlink" title="volatile关键字如何满足并发编程的三大特性的？"></a>volatile关键字如何满足并发编程的三大特性的？</h2><p>重提volatile变量规则： 对一个 volatile 变量的写操作先行发生于后面对这个变量的读操作。就是如果一个变量声明成是volatile的，那么当我读变量时，总是能读到它的最新值，这里最新值是指不管其它哪个线程对该变量做了写操作，都会立刻被更新到主存里，我也能从主存里读到这个刚写入的值。也就是说volatile关键字可以保证可见性以及有序性。</p>
-<h2 id="volatile可以保证原子性么？"><a href="#volatile可以保证原子性么？" class="headerlink" title="volatile可以保证原子性么？"></a>volatile可以保证原子性么？</h2><p>不能。比如对于volatile++操作,这里的操作inc++是个复合操作：</p>
-<p><strong>i++的过程可以分为三步，首先获取i的值，其次对i的值进行加1，最后将得到的新值写会到缓存中。</strong></p>
-<p>首先线程A读取了i的变量的值，i为10,  这个时候线程切换到了B，线程B同样从主内存中读取i的值，由于线程A没有对i做过任何修改，此时线程B获取到的i仍然是10。线程B为i执行了加1的操作，但是没有刷新到主内存中，这个时候又切换到了A线程，A线程直接对工作内存中的10进行加1运输（因为A线程已经读取过i的值了），由于线程B并未写入i的最新值，这个时候A线程的工内存中的10不会失效。 最后，线程A将i=11写入主内存中，线程B也将i=11写入主内存中。 始终需要记住，i++ 的操作是3步骤</p>
-<p>有人说，<strong>volatile不是会使缓存行无效的吗</strong>？但是这里线程A读取到线程B也进行操作之前，并没有修改inc值，所以线程B读取的时候，还是读的10。</p>
-<p>又有人说，线程B将11写回主存，<strong>不会把线程A的缓存行设为无效吗</strong>？但是线程A的读取操作已经做过了啊，只有在做读取操作时，发现自己缓存行无效，才会去读主存的值，所以这里线程A只能继续做自增了。</p>
-<p>综上所述，在这种复合操作的情景下，原子性的功能是维持不了了。</p>
+<h2 id="volatile关键字如何保证可见性的？"><a href="#volatile关键字如何保证可见性的？" class="headerlink" title="volatile关键字如何保证可见性的？"></a>volatile关键字如何保证可见性的？</h2><p>要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道<strong>CPU的运算速度</strong>要比<strong>内存的读写速度</strong>快很多，这就造成了内存无法跟上CPU的情况。为了解决这类问题，出现了针对CPU的缓存协议。</p>
+<p>Intel开发了缓存一致性协议，也就是MESI协议</p>
+<p>①当CPU写数据时，如果发现操作的变量是共享变量，即在其他CPU中也存在该变量的副本，那么他会发出信号通知其他CPU将该变量的缓存行设置为无效状态。</p>
+<p>②当其他CPU使用这个变量时，首先会去嗅探是否有对该变量更改的信号，当发现这个变量的缓存行已经无效时，会从新从内存中读取这个变量。</p>
+<p>了解了上面的内容，就可以很容易的理解volatile是如何实现的了。</p>
+<ol>
+<li>被 volatile 修饰的共享变量，在翻译成为机器码的过程中为其<code>赋值操作</code>添加特殊机器码指令前缀<code>Lock xxxx</code></li>
+<li>当CPU发现这个指令时，立即做两件事：<ul>
+<li>使本CPU的缓存写入内存</li>
+<li>上面的写入动作也会引起别的CPU或别的内核中的缓存无效，</li>
+</ul>
+</li>
+</ol>
+<p><strong>volatile关键字的变量写操作时，强制缓存和主存同步，其他线程读时候发现缓存失效，就去读主存，由此保证了变量的可见性。</strong></p>
+<h2 id="volatile关键字如何保证有序性的？"><a href="#volatile关键字如何保证有序性的？" class="headerlink" title="volatile关键字如何保证有序性的？"></a>volatile关键字如何保证有序性的？</h2><p>在JMM的逻辑实现中，当操作一个变量 执行为变量赋值 时，JVM会检查此变量是否是被volatile修饰的，如果是的话，JVM会为该变量添加内存屏障。保证该变量操作之前的操作不会乱序到其后</p>
+<ol>
+<li>在每个volatile写操作前插入StoreStore屏障，在写操作后插入StoreLoad屏障。</li>
+<li>在每个volatile读操作前插入LoadLoad屏障，在读操作后插入LoadStore屏障。</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp" alt="img"></p>
+<h2 id="volatile可以保证原子性么？"><a href="#volatile可以保证原子性么？" class="headerlink" title="volatile可以保证原子性么？"></a>volatile可以保证原子性么？</h2><p>例如我们常碰到的i++的问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">i &#x3D; 1; &#x2F;&#x2F;原子性操作，不用使用volatile也不会出现线程安全问题。</span><br><span class="line">复制代码</span><br><span class="line">volatile int i &#x3D; 0;</span><br><span class="line">i++; &#x2F;&#x2F;非原子性操作</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>如果我们开启200个线程并发执行<code>i++</code>这行代码，每个线程中只执行一遍。如果volatile可以保证原子性的话，那么i的最终结果应该是200；而实际上我们发现这个值是会小于200的，原因是什么呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; i++ 其可以被拆解为</span><br><span class="line">1、线程读取i</span><br><span class="line">2、temp &#x3D; i + 1</span><br><span class="line">3、i &#x3D; temp</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>例如当 i=5 的时候A,B两个线程同时读入了 i 的值</li>
+<li>然后A线程执行了 <code>temp = i + 1</code>的操作， 要注意，此时的 i 的值还没有变化，然后B线程也执行了<code>temp = i + 1</code>的操作，注意，此时A，B两个线程保存的 i 的值都是5，temp 的值都是6</li>
+<li>然后A线程执行了 <code>i = temp</code> （6）的操作，此时i的值会立即刷新到主存并通知其他线程保存的 i 值失效， 此时B线程需要重新读取 i 的值那么此时B线程保存的 i 就是6</li>
+<li>同时B线程保存的 temp 还仍然是6， 然后B线程执行 <code>i=temp</code> （6），所以导致了计算结果比预期少了1。<br>链接：<a href="https://juejin.im/post/5e01b9aa518825126f373b58" target="_blank" rel="noopener">https://juejin.im/post/5e01b9aa518825126f373b58</a></li>
+</ol>
 <h2 id="volatile底层的实现机制？"><a href="#volatile底层的实现机制？" class="headerlink" title="volatile底层的实现机制？"></a>volatile底层的实现机制？</h2><p>如果把加入volatile关键字的代码和未加入volatile关键字的代码都生成汇编代码，会发现加入volatile关键字的代码会多出一个lock前缀指令。</p>
 <p>lock前缀指令实际相当于一个内存屏障，内存屏障提供了以下功能：</p>
 <p>1 . 重排序时不能把后面的指令重排序到内存屏障之前的位置 </p>
@@ -605,7 +632,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说说你对volatile关键字的理解"><span class="nav-number">1.</span> <span class="nav-text">说说你对volatile关键字的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile关键字如何满足并发编程的三大特性的？"><span class="nav-number">2.</span> <span class="nav-text">volatile关键字如何满足并发编程的三大特性的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile可以保证原子性么？"><span class="nav-number">3.</span> <span class="nav-text">volatile可以保证原子性么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile底层的实现机制？"><span class="nav-number">4.</span> <span class="nav-text">volatile底层的实现机制？</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说说你对volatile关键字的理解"><span class="nav-number">1.</span> <span class="nav-text">说说你对volatile关键字的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile关键字如何保证可见性的？"><span class="nav-number">2.</span> <span class="nav-text">volatile关键字如何保证可见性的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile关键字如何保证有序性的？"><span class="nav-number">3.</span> <span class="nav-text">volatile关键字如何保证有序性的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile可以保证原子性么？"><span class="nav-number">4.</span> <span class="nav-text">volatile可以保证原子性么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile底层的实现机制？"><span class="nav-number">5.</span> <span class="nav-text">volatile底层的实现机制？</span></a></li></ol></div>
             
 
           </div>
@@ -655,7 +682,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共93.5k字</span>
+  <span class="post-count">博客全站共94.1k字</span>
 </div>
 
         
