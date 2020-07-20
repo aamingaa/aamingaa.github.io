@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的内存可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了">
+<meta name="description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了解决">
 <meta property="og:type" content="article">
 <meta property="og:title" content="volatile的性质">
 <meta property="og:url" content="http://aamingaa.github.io/2020/06/24/volatile%E7%9A%84%E6%80%A7%E8%B4%A8/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的内存可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了">
+<meta property="og:description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了解决">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
 <meta property="article:published_time" content="2020-06-24T03:12:06.000Z">
-<meta property="article:modified_time" content="2020-07-19T16:03:22.876Z">
+<meta property="article:modified_time" content="2020-07-20T05:03:49.746Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.1k
+                  1.2k
                 </span>
               
 
@@ -414,7 +414,7 @@
       
         <p>[TOC]</p>
 <h2 id="说说你对volatile关键字的理解"><a href="#说说你对volatile关键字的理解" class="headerlink" title="说说你对volatile关键字的理解"></a>说说你对volatile关键字的理解</h2><p>就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性：</p>
-<p>1 . 保证了不同线程对该变量操作的内存可见性;</p>
+<p>1 . 保证了不同线程对该变量操作的可见性;</p>
 <p>2 . 禁止指令重排序</p>
 <h2 id="volatile关键字如何保证可见性的？"><a href="#volatile关键字如何保证可见性的？" class="headerlink" title="volatile关键字如何保证可见性的？"></a>volatile关键字如何保证可见性的？</h2><p>要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道<strong>CPU的运算速度</strong>要比<strong>内存的读写速度</strong>快很多，这就造成了内存无法跟上CPU的情况。为了解决这类问题，出现了针对CPU的缓存协议。</p>
 <p>Intel开发了缓存一致性协议，也就是MESI协议</p>
@@ -425,7 +425,7 @@
 <li>被 volatile 修饰的共享变量，在翻译成为机器码的过程中为其<code>赋值操作</code>添加特殊机器码指令前缀<code>Lock xxxx</code></li>
 <li>当CPU发现这个指令时，立即做两件事：<ul>
 <li>使本CPU的缓存写入内存</li>
-<li>上面的写入动作也会引起别的CPU或别的内核中的缓存无效，</li>
+<li>上面的写入动作也会引起别的CPU中的缓存无效，</li>
 </ul>
 </li>
 </ol>
@@ -453,6 +453,7 @@
 <p>1 . 重排序时不能把后面的指令重排序到内存屏障之前的位置 </p>
 <p>2.将当前处理器缓存行的数据写回到系统内存。</p>
 <p>3.这个写回内存的操作会使其他在CPU里缓存了该内存地址的数据无效。</p>
+<h2 id="有了mesi还要volatile吗？"><a href="#有了mesi还要volatile吗？" class="headerlink" title="有了mesi还要volatile吗？"></a>有了mesi还要volatile吗？</h2><p>因为 MESI只是保证了多核cpu的独占cache(L1,L2,L3)之间的一致性，但是cpu的并不是直接把数据写入L1 cache的，中间还可能有store buffer或者invalid queue等</p>
 
       
     </div>
@@ -632,7 +633,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说说你对volatile关键字的理解"><span class="nav-number">1.</span> <span class="nav-text">说说你对volatile关键字的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile关键字如何保证可见性的？"><span class="nav-number">2.</span> <span class="nav-text">volatile关键字如何保证可见性的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile关键字如何保证有序性的？"><span class="nav-number">3.</span> <span class="nav-text">volatile关键字如何保证有序性的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile可以保证原子性么？"><span class="nav-number">4.</span> <span class="nav-text">volatile可以保证原子性么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile底层的实现机制？"><span class="nav-number">5.</span> <span class="nav-text">volatile底层的实现机制？</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说说你对volatile关键字的理解"><span class="nav-number">1.</span> <span class="nav-text">说说你对volatile关键字的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile关键字如何保证可见性的？"><span class="nav-number">2.</span> <span class="nav-text">volatile关键字如何保证可见性的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile关键字如何保证有序性的？"><span class="nav-number">3.</span> <span class="nav-text">volatile关键字如何保证有序性的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile可以保证原子性么？"><span class="nav-number">4.</span> <span class="nav-text">volatile可以保证原子性么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile底层的实现机制？"><span class="nav-number">5.</span> <span class="nav-text">volatile底层的实现机制？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有了mesi还要volatile吗？"><span class="nav-number">6.</span> <span class="nav-text">有了mesi还要volatile吗？</span></a></li></ol></div>
             
 
           </div>
