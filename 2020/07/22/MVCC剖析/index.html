@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19852d16845?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf198532476f5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-07-22T01:17:13.000Z">
-<meta property="article:modified_time" content="2020-07-22T08:35:16.471Z">
+<meta property="article:modified_time" content="2020-07-22T08:39:23.376Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19851d3dce6?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -381,7 +381,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.9k
+                  4k
                 </span>
               
 
@@ -431,6 +431,8 @@
 <li>如果被访问版本的<code>trx_id</code>属性值大于<code>m_ids</code>列表中最大的事务id，表明生成该版本的事务在生成<code>ReadView</code>后才生成，所以该版本不可以被当前事务访问。</li>
 <li>如果被访问版本的<code>trx_id</code>属性值在<code>m_ids</code>列表中最大的事务id和最小事务id之间，那就需要判断一下<code>trx_id</code>属性值是不是在<code>m_ids</code>列表中，如果在，说明创建<code>ReadView</code>时生成该版本的事务还是活跃的，该版本不可以被访问；如果不在，说明创建<code>ReadView</code>时生成该版本的事务已经被提交，该版本可以被访问。</li>
 </ul>
+<p><code>READ COMMITTED</code> — 每次读取数据前都生成一个ReadView</p>
+<p><code>REPEATABLE READ</code> —在第一次读取数据时生成一个ReadView</p>
 <p>比方说我们的表<code>t</code>现在只包含一条记录：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM t;</span><br><span class="line">+----+--------+</span><br><span class="line">| id | c      |</span><br><span class="line">+----+--------+</span><br><span class="line">|  1 | 刘备   |</span><br><span class="line">+----+--------+</span><br><span class="line">1 row in set (0.01 sec)</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
@@ -755,7 +757,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共98.7k字</span>
+  <span class="post-count">博客全站共98.8k字</span>
 </div>
 
         
