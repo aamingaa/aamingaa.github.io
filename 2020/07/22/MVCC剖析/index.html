@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 版本链对于使用InnoDB存储引擎的表来说，它的聚簇索引记录中都包含两个必要的隐藏列（row_id并不是必要的，我们创建的表中有主键或者非NULL唯一键时都不会包含row_id列）：  trx_id：每次对某条聚簇索引记录进行改动时，都会把对应的事务id赋值给trx_id隐藏列。 roll_pointer：每次对某条聚簇索引记录进行改动时，都会把旧的版本写入到undo日志中，然后这个隐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MVCC剖析">
+<meta property="og:url" content="http://aamingaa.github.io/2020/07/22/MVCC%E5%89%96%E6%9E%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 版本链对于使用InnoDB存储引擎的表来说，它的聚簇索引记录中都包含两个必要的隐藏列（row_id并不是必要的，我们创建的表中有主键或者非NULL唯一键时都不会包含row_id列）：  trx_id：每次对某条聚簇索引记录进行改动时，都会把对应的事务id赋值给trx_id隐藏列。 roll_pointer：每次对某条聚簇索引记录进行改动时，都会把旧的版本写入到undo日志中，然后这个隐">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19851d3dce6?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf198519aee7e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf198524e1b34?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19852d16845?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf198532476f5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19852d16845?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf198532476f5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="article:published_time" content="2020-07-22T01:17:13.000Z">
+<meta property="article:modified_time" content="2020-07-22T04:25:07.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19851d3dce6?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2020/07/22/MVCC剖析/"/>
+
+
+
+
+
+  <title>MVCC剖析 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/07/22/MVCC%E5%89%96%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MVCC剖析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-22T09:17:13+08:00">
+                2020-07-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="版本链"><a href="#版本链" class="headerlink" title="版本链"></a>版本链</h3><p>对于使用<code>InnoDB</code>存储引擎的表来说，它的聚簇索引记录中都包含两个必要的隐藏列（<code>row_id</code>并不是必要的，我们创建的表中有主键或者非NULL唯一键时都不会包含<code>row_id</code>列）：</p>
+<ul>
+<li><code>trx_id</code>：每次对某条聚簇索引记录进行改动时，都会把对应的事务id赋值给<code>trx_id</code>隐藏列。</li>
+<li><code>roll_pointer</code>：每次对某条聚簇索引记录进行改动时，都会把旧的版本写入到<code>undo日志</code>中，然后这个隐藏列就相当于一个指针，可以通过它来找到该记录修改前的信息。</li>
+</ul>
+<p>比方说我们的表<code>t</code>现在只包含一条记录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM t;</span><br><span class="line">+----+--------+</span><br><span class="line">| id | c      |</span><br><span class="line">+----+--------+</span><br><span class="line">|  1 | 刘备   |</span><br><span class="line">+----+--------+</span><br><span class="line">1 row in set (0.01 sec)</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>假设插入该记录的事务id为<code>80</code>，那么此刻该条记录的示意图如下所示：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/27/169bf19851d3dce6?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image_1d6vemvvn1db6h431ekvsp158m19.png-15kB"></p>
+<p>假设之后两个<code>id</code>分别为<code>100</code>、<code>200</code>的事务对这条记录进行<code>UPDATE</code>操作，操作流程如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/27/169bf198519aee7e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image_1d6vfo4g814h019mj1jqb1ggu72o3j.png-106.5kB"></p>
+<blockquote>
+<p>小贴士： 能不能在两个事务中交叉更新同一条记录呢？哈哈，这是不可以滴，第一个事务更新了某条记录后，就会给这条记录加锁，另一个事务再次更新时就需要等待第一个事务提交了，把锁释放之后才可以继续更新。本篇文章不是讨论锁的，有关锁的更多细节我们之后再说。</p>
+</blockquote>
+<p>每次对记录进行改动，都会记录一条<code>undo日志</code>，每条<code>undo日志</code>也都有一个<code>roll_pointer</code>属性（<code>INSERT</code>操作对应的<code>undo日志</code>没有该属性，因为该记录并没有更早的版本），可以将这些<code>undo日志</code>都连起来，串成一个链表，所以现在的情况就像下图一样：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/27/169bf198524e1b34?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image_1d6vfrv111j4guetptcts1qgp40.png-57.1kB"></p>
+<p>对该记录每次更新后，都会将旧值放到一条<code>undo日志</code>中，就算是该记录的一个旧版本，随着更新次数的增多，所有的版本都会被<code>roll_pointer</code>属性连接成一个链表，我们把这个链表称之为<code>版本链</code>，版本链的头节点就是当前记录最新的值。另外，每个版本中还包含生成该版本时对应的事务id，这个信息很重要，我们稍后就会用到。</p>
+<h3 id="ReadView"><a href="#ReadView" class="headerlink" title="ReadView"></a>ReadView</h3><p>对于使用<code>READ UNCOMMITTED</code>隔离级别的事务来说，直接读取记录的最新版本就好了，对于使用<code>SERIALIZABLE</code>隔离级别的事务来说，使用加锁的方式来访问记录。对于使用<code>READ COMMITTED</code>和<code>REPEATABLE READ</code>隔离级别的事务来说，就需要用到我们上边所说的<code>版本链</code>了，核心问题就是：需要判断一下版本链中的哪个版本是当前事务可见的。所以设计<code>InnoDB</code>的大叔提出了一个<code>ReadView</code>的概念，这个<code>ReadView</code>中主要包含当前系统中还有哪些活跃的读写事务，把它们的事务id放到一个列表中，我们把这个列表命名为为<code>m_ids</code>。这样在访问某条记录时，只需要按照下边的步骤判断记录的某个版本是否可见：</p>
+<ul>
+<li>如果被访问版本的<code>trx_id</code>属性值小于<code>m_ids</code>列表中最小的事务id，表明生成该版本的事务在生成<code>ReadView</code>前已经提交，所以该版本可以被当前事务访问。</li>
+<li>如果被访问版本的<code>trx_id</code>属性值大于<code>m_ids</code>列表中最大的事务id，表明生成该版本的事务在生成<code>ReadView</code>后才生成，所以该版本不可以被当前事务访问。</li>
+<li>如果被访问版本的<code>trx_id</code>属性值在<code>m_ids</code>列表中最大的事务id和最小事务id之间，那就需要判断一下<code>trx_id</code>属性值是不是在<code>m_ids</code>列表中，如果在，说明创建<code>ReadView</code>时生成该版本的事务还是活跃的，该版本不可以被访问；如果不在，说明创建<code>ReadView</code>时生成该版本的事务已经被提交，该版本可以被访问。</li>
+</ul>
+<p>如果某个版本的数据对当前事务不可见的话，那就顺着版本链找到下一个版本的数据，继续按照上边的步骤判断可见性，依此类推，直到版本链中的最后一个版本，如果最后一个版本也不可见的话，那么就意味着该条记录对该事务不可见，查询结果就不包含该记录。</p>
+<p>在<code>MySQL</code>中，<code>READ COMMITTED</code>和<code>REPEATABLE READ</code>隔离级别的的一个非常大的区别就是它们生成<code>ReadView</code>的时机不同，我们来看一下。</p>
+<h4 id="READ-COMMITTED-—-每次读取数据前都生成一个ReadView"><a href="#READ-COMMITTED-—-每次读取数据前都生成一个ReadView" class="headerlink" title="READ COMMITTED — 每次读取数据前都生成一个ReadView"></a>READ COMMITTED — 每次读取数据前都生成一个ReadView</h4><p>比方说现在系统里有两个<code>id</code>分别为<code>100</code>、<code>200</code>的事务在执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 100</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;关羽&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;张飞&#39; WHERE id &#x3D; 1;</span><br><span class="line">复制代码</span><br><span class="line"># Transaction 200</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># 更新了一些别的表的记录</span><br><span class="line">...</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>小贴士： 事务执行过程中，只有在第一次真正修改记录时（比如使用INSERT、DELETE、UPDATE语句），才会被分配一个单独的事务id，这个事务id是递增的。</p>
+</blockquote>
+<p>此刻，表<code>t</code>中<code>id</code>为<code>1</code>的记录得到的版本链表如下所示：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/27/169bf19852d16845?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image_1d6vgdl0j1c9d16rbelo1deh17324d.png-42.2kB"></p>
+<p>假设现在有一个使用<code>READ COMMITTED</code>隔离级别的事务开始执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 使用READ COMMITTED隔离级别的事务</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># SELECT1：Transaction 100、200未提交</span><br><span class="line">SELECT * FROM t WHERE id &#x3D; 1; # 得到的列c的值为&#39;刘备&#39;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>SELECT1</code>的执行过程如下：</p>
+<ul>
+<li>在执行<code>SELECT</code>语句时会先生成一个<code>ReadView</code>，<code>ReadView</code>的<code>m_ids</code>列表的内容就是<code>[100, 200]</code>。</li>
+<li>然后从版本链中挑选可见的记录，从图中可以看出，最新版本的列<code>c</code>的内容是<code>&#39;张飞&#39;</code>，该版本的<code>trx_id</code>值为<code>100</code>，在<code>m_ids</code>列表内，所以不符合可见性要求，根据<code>roll_pointer</code>跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;关羽&#39;</code>，该版本的<code>trx_id</code>值也为<code>100</code>，也在<code>m_ids</code>列表内，所以也不符合要求，继续跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;刘备&#39;</code>，该版本的<code>trx_id</code>值为<code>80</code>，小于<code>m_ids</code>列表中最小的事务id<code>100</code>，所以这个版本是符合要求的，最后返回给用户的版本就是这条列<code>c</code>为<code>&#39;刘备&#39;</code>的记录。</li>
+</ul>
+<p>之后，我们把事务id为<code>100</code>的事务提交一下，就像这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 100</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;关羽&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;张飞&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">COMMIT;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>然后再到事务id为<code>200</code>的事务中更新一下表<code>t</code>中<code>id</code>为1的记录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 200</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># 更新了一些别的表的记录</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;赵云&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;诸葛亮&#39; WHERE id &#x3D; 1;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>此刻，表<code>t</code>中<code>id</code>为<code>1</code>的记录的版本链就长这样：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/27/169bf198532476f5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image_1d6vgrt5jeh2itl5e41ocl944q.png-57.6kB"></p>
+<p>然后再到刚才使用<code>READ COMMITTED</code>隔离级别的事务中继续查找这个id为<code>1</code>的记录，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 使用READ COMMITTED隔离级别的事务</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># SELECT1：Transaction 100、200均未提交</span><br><span class="line">SELECT * FROM t WHERE id &#x3D; 1; # 得到的列c的值为&#39;刘备&#39;</span><br><span class="line"></span><br><span class="line"># SELECT2：Transaction 100提交，Transaction 200未提交</span><br><span class="line">SELECT * FROM t WHERE id &#x3D; 1; # 得到的列c的值为&#39;张飞&#39;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>SELECT2</code>的执行过程如下：</p>
+<ul>
+<li>在执行<code>SELECT</code>语句时会先生成一个<code>ReadView</code>，<code>ReadView</code>的<code>m_ids</code>列表的内容就是<code>[200]</code>（事务id为<code>100</code>的那个事务已经提交了，所以生成快照时就没有它了）。</li>
+<li>然后从版本链中挑选可见的记录，从图中可以看出，最新版本的列<code>c</code>的内容是<code>&#39;诸葛亮&#39;</code>，该版本的<code>trx_id</code>值为<code>200</code>，在<code>m_ids</code>列表内，所以不符合可见性要求，根据<code>roll_pointer</code>跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;赵云&#39;</code>，该版本的<code>trx_id</code>值为<code>200</code>，也在<code>m_ids</code>列表内，所以也不符合要求，继续跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;张飞&#39;</code>，该版本的<code>trx_id</code>值为<code>100</code>，比<code>m_ids</code>列表中最小的事务id<code>200</code>还要小，所以这个版本是符合要求的，最后返回给用户的版本就是这条列<code>c</code>为<code>&#39;张飞&#39;</code>的记录。</li>
+</ul>
+<p>以此类推，如果之后事务id为<code>200</code>的记录也提交了，再此在使用<code>READ COMMITTED</code>隔离级别的事务中查询表<code>t</code>中<code>id</code>值为<code>1</code>的记录时，得到的结果就是<code>&#39;诸葛亮&#39;</code>了，具体流程我们就不分析了。总结一下就是：使用READ COMMITTED隔离级别的事务在每次查询开始时都会生成一个独立的ReadView。</p>
+<h4 id="REPEATABLE-READ-—在第一次读取数据时生成一个ReadView"><a href="#REPEATABLE-READ-—在第一次读取数据时生成一个ReadView" class="headerlink" title="REPEATABLE READ —在第一次读取数据时生成一个ReadView"></a><code>REPEATABLE READ</code> —在第一次读取数据时生成一个ReadView</h4><p>对于使用<code>REPEATABLE READ</code>隔离级别的事务来说，只会在第一次执行查询语句时生成一个<code>ReadView</code>，之后的查询就不会重复生成了。我们还是用例子看一下是什么效果。</p>
+<p>比方说现在系统里有两个<code>id</code>分别为<code>100</code>、<code>200</code>的事务在执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 100</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;关羽&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;张飞&#39; WHERE id &#x3D; 1;</span><br><span class="line">复制代码</span><br><span class="line"># Transaction 200</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># 更新了一些别的表的记录</span><br><span class="line">...</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>此刻，表<code>t</code>中<code>id</code>为<code>1</code>的记录得到的版本链表如下所示：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/27/169bf19852d16845?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image_1d6vgdl0j1c9d16rbelo1deh17324d.png-42.2kB"></p>
+<p>假设现在有一个使用<code>REPEATABLE READ</code>隔离级别的事务开始执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 使用REPEATABLE READ隔离级别的事务</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># SELECT1：Transaction 100、200未提交</span><br><span class="line">SELECT * FROM t WHERE id &#x3D; 1; # 得到的列c的值为&#39;刘备&#39;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>SELECT1</code>的执行过程如下：</p>
+<ul>
+<li>在执行<code>SELECT</code>语句时会先生成一个<code>ReadView</code>，<code>ReadView</code>的<code>m_ids</code>列表的内容就是<code>[100, 200]</code>。</li>
+<li>然后从版本链中挑选可见的记录，从图中可以看出，最新版本的列<code>c</code>的内容是<code>&#39;张飞&#39;</code>，该版本的<code>trx_id</code>值为<code>100</code>，在<code>m_ids</code>列表内，所以不符合可见性要求，根据<code>roll_pointer</code>跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;关羽&#39;</code>，该版本的<code>trx_id</code>值也为<code>100</code>，也在<code>m_ids</code>列表内，所以也不符合要求，继续跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;刘备&#39;</code>，该版本的<code>trx_id</code>值为<code>80</code>，小于<code>m_ids</code>列表中最小的事务id<code>100</code>，所以这个版本是符合要求的，最后返回给用户的版本就是这条列<code>c</code>为<code>&#39;刘备&#39;</code>的记录。</li>
+</ul>
+<p>之后，我们把事务id为<code>100</code>的事务提交一下，就像这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 100</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;关羽&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;张飞&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">COMMIT;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>然后再到事务id为<code>200</code>的事务中更新一下表<code>t</code>中<code>id</code>为1的记录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 200</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># 更新了一些别的表的记录</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;赵云&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;诸葛亮&#39; WHERE id &#x3D; 1;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>此刻，表<code>t</code>中<code>id</code>为<code>1</code>的记录的版本链就长这样：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/27/169bf198532476f5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image_1d6vgrt5jeh2itl5e41ocl944q.png-57.6kB"></p>
+<p>然后再到刚才使用<code>REPEATABLE READ</code>隔离级别的事务中继续查找这个id为<code>1</code>的记录，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 使用REPEATABLE READ隔离级别的事务</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># SELECT1：Transaction 100、200均未提交</span><br><span class="line">SELECT * FROM t WHERE id &#x3D; 1; # 得到的列c的值为&#39;刘备&#39;</span><br><span class="line"></span><br><span class="line"># SELECT2：Transaction 100提交，Transaction 200未提交</span><br><span class="line">SELECT * FROM t WHERE id &#x3D; 1; # 得到的列c的值仍为&#39;刘备&#39;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>SELECT2</code>的执行过程如下：</p>
+<ul>
+<li>因为之前已经生成过<code>ReadView</code>了，所以此时直接复用之前的<code>ReadView</code>，之前的<code>ReadView</code>中的<code>m_ids</code>列表就是<code>[100, 200]</code>。</li>
+<li>然后从版本链中挑选可见的记录，从图中可以看出，最新版本的列<code>c</code>的内容是<code>&#39;诸葛亮&#39;</code>，该版本的<code>trx_id</code>值为<code>200</code>，在<code>m_ids</code>列表内，所以不符合可见性要求，根据<code>roll_pointer</code>跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;赵云&#39;</code>，该版本的<code>trx_id</code>值为<code>200</code>，也在<code>m_ids</code>列表内，所以也不符合要求，继续跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;张飞&#39;</code>，该版本的<code>trx_id</code>值为<code>100</code>，而<code>m_ids</code>列表中是包含值为<code>100</code>的事务id的，所以该版本也不符合要求，同理下一个列<code>c</code>的内容是<code>&#39;关羽&#39;</code>的版本也不符合要求。继续跳到下一个版本。</li>
+<li>下一个版本的列<code>c</code>的内容是<code>&#39;刘备&#39;</code>，该版本的<code>trx_id</code>值为<code>80</code>，<code>80</code>小于<code>m_ids</code>列表中最小的事务id<code>100</code>，所以这个版本是符合要求的，最后返回给用户的版本就是这条列<code>c</code>为<code>&#39;刘备&#39;</code>的记录。</li>
+</ul>
+<p>也就是说两次<code>SELECT</code>查询得到的结果是重复的，记录的列<code>c</code>值都是<code>&#39;刘备&#39;</code>，这就是<code>可重复读</code>的含义。如果我们之后再把事务id为<code>200</code>的记录提交了，之后再到刚才使用<code>REPEATABLE READ</code>隔离级别的事务中继续查找这个id为<code>1</code>的记录，得到的结果还是<code>&#39;刘备&#39;</code>，具体执行过程大家可以自己分析一下。</p>
+<h3 id="MVCC总结"><a href="#MVCC总结" class="headerlink" title="MVCC总结"></a>MVCC总结</h3><p>从上边的描述中我们可以看出来，所谓的MVCC（Multi-Version Concurrency Control ，多版本并发控制）指的就是在使用<code>READ COMMITTD</code>、<code>REPEATABLE READ</code>这两种隔离级别的事务在执行普通的<code>SEELCT</code>操作时访问记录的版本链的过程，这样子可以使不同事务的<code>读-写</code>、<code>写-读</code>操作并发执行，从而提升系统性能。<code>READ COMMITTD</code>、<code>REPEATABLE READ</code>这两个隔离级别的一个很大不同就是生成<code>ReadView</code>的时机不同，<code>READ COMMITTD</code>在每一次进行普通<code>SELECT</code>操作前都会生成一个<code>ReadView</code>，而<code>REPEATABLE READ</code>只在第一次进行普通<code>SELECT</code>操作前生成一个<code>ReadView</code>，之后的查询操作都重复这个<code>ReadView</code>就好了</p>
+<p>作者：小孩子4919<br>链接：<a href="https://juejin.im/post/5c9b1b7df265da60e21c0b57" target="_blank" rel="noopener">https://juejin.im/post/5c9b1b7df265da60e21c0b57</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/18/Semaphore%E5%89%96%E6%9E%90/" rel="next" title="Semaphore剖析">
+                <i class="fa fa-chevron-left"></i> Semaphore剖析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">96</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#版本链"><span class="nav-number">1.</span> <span class="nav-text">版本链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReadView"><span class="nav-number">2.</span> <span class="nav-text">ReadView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#READ-COMMITTED-—-每次读取数据前都生成一个ReadView"><span class="nav-number">2.1.</span> <span class="nav-text">READ COMMITTED — 每次读取数据前都生成一个ReadView</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#REPEATABLE-READ-—在第一次读取数据时生成一个ReadView"><span class="nav-number">2.2.</span> <span class="nav-text">REPEATABLE READ —在第一次读取数据时生成一个ReadView</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC总结"><span class="nav-number">3.</span> <span class="nav-text">MVCC总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共98.3k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
