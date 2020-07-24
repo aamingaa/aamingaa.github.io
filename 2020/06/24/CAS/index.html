@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 阻塞同步和非阻塞同步阻塞同步需要线程阻塞和唤醒所带来的性能问题，它属于一种悲观的并发策略，总是认为只要不去做正确的同步措施，那就肯定会出现问题。无论共享数据是否真的会出现竞争，它都要进行加锁（这里讨论的是概念模型，实际上虚拟机会优化掉很大一部分不必要的加锁）、用户态核心态转换、维护锁计数器和检查是否有被阻塞的线程需要唤醒等操作。 CAS是什么我们可以使用基于冲突检测的乐观并发策略：先进">
 <meta property="article:published_time" content="2020-06-24T03:12:49.000Z">
-<meta property="article:modified_time" content="2020-06-24T03:35:25.243Z">
+<meta property="article:modified_time" content="2020-07-24T08:26:01.663Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  781
+                  775
                 </span>
               
 
@@ -412,7 +412,8 @@
       
         <p>[TOC]</p>
 <h2 id="阻塞同步和非阻塞同步"><a href="#阻塞同步和非阻塞同步" class="headerlink" title="阻塞同步和非阻塞同步"></a>阻塞同步和非阻塞同步</h2><p>阻塞同步需要线程阻塞和唤醒所带来的性能问题，它属于一种悲观的并发策略，总是认为只要不去做正确的同步措施，那就肯定会出现问题。无论共享数据是否真的会出现竞争，它都要进行加锁（这里讨论的是概念模型，实际上虚拟机会优化掉很大一部分不必要的加锁）、用户态核心态转换、维护锁计数器和检查是否有被阻塞的线程需要唤醒等操作。</p>
-<h2 id="CAS是什么"><a href="#CAS是什么" class="headerlink" title="CAS是什么"></a>CAS是什么</h2><p>我们可以使用基于冲突检测的乐观并发策略：先进行操作，如果没有其它线程争用共享数<br>据，那操作就成功了，否则采取补偿措施（不断地重试，直到成功为止）。这种乐观的并发策略的许多实现都不需要<br>将线程阻塞，因此这种同步操作称为非阻塞同步。<br>乐观锁需要操作和冲突检测这两个步骤具备原子性，这里就不能再使用互斥同步来保证了，只能靠硬件来完成。硬件<br>支持的原子性操作最典型的是：比较并交换（Compare-and-Swap，CAS）。CAS 指令需要有 3 个操作数，分别是<br>内存地址 V、旧的预期值 A 和新值 B。当执行操作时，只有当 V 的值等于 A，才将 V 的值更新为 B。</p>
+<h2 id="CAS是什么"><a href="#CAS是什么" class="headerlink" title="CAS是什么"></a>CAS是什么</h2><p>我们可以使用基于冲突检测的乐观并发策略：先进行操作，如果没有其它线程争用共享数<br>据，那操作就成功了，否则采取补偿措施（不断地重试，直到成功为止）。这种乐观的并发策略的许多实现都不需要<br>将线程阻塞，因此这种同步操作称为非阻塞同步。</p>
+<p>CAS 表示 Compare And Swap，比较并交换，CAS 需要三个操作数，分别是内存位置 V、旧的预期值 A 和准备设置的新值 B。CAS 指令执行时，当且仅当 V 符合 A 时，处理器才会用 B 更新 V 的值，否则它就不执行更新。但不管是否更新都会返回 V 的旧值，这些处理过程是原子操作，执行期间不会被其他线程打断。</p>
 <h2 id="AtomicInteger"><a href="#AtomicInteger" class="headerlink" title="AtomicInteger"></a>AtomicInteger</h2><p>J.U.C 包里面的整数原子类 AtomicInteger 的方法调用了 Unsafe 类的 CAS 操作。<br>以下代码使用了 AtomicInteger 执行了自增的操作。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> AtomicInteger cnt = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   cnt.incrementAndGet();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -544,7 +545,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">96</span>
+                  <span class="site-state-item-count">97</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -653,7 +654,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共100.1k字</span>
+  <span class="post-count">博客全站共100.8k字</span>
 </div>
 
         
