@@ -86,14 +86,14 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 概念AQS全称是AbstractQueuedSynchronizer，即抽象同步队列。下面看一下AQS的类图结构：  为了方便下面几个关键点的理解，大家先熟悉一下AQS的类图结构。 AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它使用一个 volatile int state 变量作为共享资源。如果线程获取资源失败，则进入同步队列等待；如果获取成功就执行临界区代码，释放资源时">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/21/16c151e53fa38334?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/30/16c418eb1664d74f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="http://aamingaa.github.io/2020/07/01/AQS%E6%98%AF%E4%BB%80%E4%B9%88/1.jpg">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/31/16c4545ea0b027b9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/31/16c454d3d62d9108?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/30/16c4214fad310ccf?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/30/16c42890d2ec5e01?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/7/31/16c45d2d8320a2c4?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-07-01T08:23:51.000Z">
-<meta property="article:modified_time" content="2020-07-18T12:42:30.148Z">
+<meta property="article:modified_time" content="2020-09-11T13:08:04.205Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/7/21/16c151e53fa38334?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -434,7 +434,10 @@
 <li>compareAndSetState（）方法采用乐观锁思想的CAS算法，也是采用final修饰的，不允许子类重写。</li>
 </ul>
 <h2 id="CLH队列"><a href="#CLH队列" class="headerlink" title="CLH队列"></a>CLH队列</h2><p>谈到CLH队列，我们结合以上state状态，先来看一下<strong>AQS原理图</strong>：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/30/16c418eb1664d74f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
+<img src="/2020/07/01/AQS%E6%98%AF%E4%BB%80%E4%B9%88/1.jpg" class title="this is AQS">
+
+
+
 <p><strong>CLH(Craig, Landin, and Hagersten locks) 同步队列</strong> 是一个FIFO双向队列，其<strong>内部通过节点head和tail</strong>记录队首和队尾元素，队列元素的类型为Node。AQS依赖它来完成<strong>同步状态state</strong>的管理，当前线程如果获取同步状态失败时，AQS则会将当前线程已经等待状态等信息构造成一个节点（Node）并将其加入到CLH同步队列，同时会阻塞当前线程，当同步状态释放时，会把首节点唤醒（公平锁），使其再次尝试获取同步状态。</p>
 <h3 id="Node节点"><a href="#Node节点" class="headerlink" title="Node节点"></a>Node节点</h3><p>CLH同步队列中，一个节点表示一个线程，它保存着线程的引用（thread）、状态（waitStatus）、前驱节点（prev）、后继节点（next），condition队列的后续节点（nextWaiter）如下图：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/7/31/16c4545ea0b027b9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
