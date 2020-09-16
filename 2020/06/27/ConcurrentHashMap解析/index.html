@@ -89,7 +89,7 @@
 <meta property="og:image" content="http://aamingaa.github.io/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/2.png">
 <meta property="og:image" content="http://aamingaa.github.io/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/3.png">
 <meta property="article:published_time" content="2020-06-27T01:53:39.000Z">
-<meta property="article:modified_time" content="2020-07-19T02:50:02.362Z">
+<meta property="article:modified_time" content="2020-09-16T12:04:38.948Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/1.png">
@@ -377,7 +377,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.8k
+                  2.4k
                 </span>
               
 
@@ -393,7 +393,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  8
+                  11
                 </span>
               
             </div>
@@ -431,11 +431,13 @@
 <p>HashEntry跟HashMap差不多的，但是不同点是，他使用volatile去修饰了他的数据Value还有下一个节点next。</p>
 <h2 id="并发度高的原因"><a href="#并发度高的原因" class="headerlink" title="并发度高的原因"></a>并发度高的原因</h2><p>原理上来说，ConcurrentHashMap 采用了<strong>分段锁</strong>技术，其中 Segment 继承于 ReentrantLock。</p>
 <p>不会像 HashTable 那样不管是 put 还是 get 操作都需要做同步处理，理论上 ConcurrentHashMap 支持 CurrencyLevel (Segment 数组数量)的线程并发。每当一个线程占用锁访问一个 Segment 时，不会影响到其他的 Segment。</p>
-<h3 id="put"><a href="#put" class="headerlink" title="put"></a>put</h3><p>put 方法首先定位到 Segment</p>
-<p>1.尝试自旋获取锁。</p>
-<p>2.如果重试的次数达到了 <code>MAX_SCAN_RETRIES</code> 则改为阻塞锁获取，保证能获取成功。</p>
-<p>然后进行插入操作，第一步判断是否需要对 Segment 里的 HashEntry 数组进行扩容，第二步定位添加元素的位置，然后将其放入数组</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public V put(K key, V value) &#123;</span><br><span class="line">    Segment&lt;K,V&gt; s;</span><br><span class="line">    if (value &#x3D;&#x3D; null)</span><br><span class="line">        throw new NullPointerException();</span><br><span class="line">    int hash &#x3D; hash(key);</span><br><span class="line">    int j &#x3D; (hash &gt;&gt;&gt; segmentShift) &amp; segmentMask;</span><br><span class="line">    if ((s &#x3D; (Segment&lt;K,V&gt;)UNSAFE.getObject          &#x2F;&#x2F; nonvolatile; recheck</span><br><span class="line">         (segments, (j &lt;&lt; SSHIFT) + SBASE)) &#x3D;&#x3D; null) &#x2F;&#x2F;  in ensureSegment</span><br><span class="line">        s &#x3D; ensureSegment(j);</span><br><span class="line">    return s.put(key, hash, value, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="put"><a href="#put" class="headerlink" title="put"></a>put</h3><p>put 方法首先定位到 Segment。调用segment的put方法在对应的segment做插入操作。segment put实现过程：</p>
+<ol>
+<li>获取锁，保证put操作的线程安全；</li>
+<li>定位到HashEntry数组中具体的HashEntry；</li>
+</ol>
+<p>然后进行插入操作，第一步判断是否需要对 Segment 里的 HashEntry 数组进行扩容，在扩容的时候，首先创建一个容量是原来容量两倍的数组，将原数组的元素再散列后插入到新的数组里。为了高效，ConcurrentHashMap只对某个Segment进行扩容，不会对整个容器扩容。第二步定位添加元素的位置，然后将其放入数组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;ConcurrentHashMap#put</span><br><span class="line">public V put(K key, V value) &#123;</span><br><span class="line">　　Segment&lt;K,V&gt; s;</span><br><span class="line">　　if (value &#x3D;&#x3D; null)</span><br><span class="line">　　　　throw new NullPointerException();</span><br><span class="line">　　int hash &#x3D; hash(key);&#x2F;&#x2F;根据散列函数，计算出key值的散列值</span><br><span class="line">　　int j &#x3D; (hash &gt;&gt;&gt; segmentShift) &amp; segmentMask;&#x2F;&#x2F;这个操作就是定位Segment的数组下标，jdk1.7之前是segmentFor返回Segment，1.7之后直接就取消了这个方法，直接计算数组下标，然后通过偏移量底层操作获取Segment</span><br><span class="line">　　if ((s &#x3D; (Segment&lt;K,V&gt;)UNSAFE.getObject          &#x2F;&#x2F; nonvolatile; recheck</span><br><span class="line">　　　　　　(segments, (j &lt;&lt; SSHIFT) + SBASE)) &#x3D;&#x3D; null) &#x2F;&#x2F;  in ensureSegment</span><br><span class="line">　　　　s &#x3D; ensureSegment(j);&#x2F;&#x2F;通过便宜量定位不到就调用ensureSegment方法定位Segment</span><br><span class="line">　　return s.put(key, hash, value, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>通过key定位到Segment，之后在对应的Segment中进行具体的put</li>
@@ -459,7 +461,8 @@
 
 <img src="/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/2.png" class title="如图">
 
-<h3 id="get-1"><a href="#get-1" class="headerlink" title="get"></a>get</h3><p>1.根据计算出来的 hashcode 寻址，如果就在桶上那么直接返回值。</p>
+<h3 id="get-1"><a href="#get-1" class="headerlink" title="get"></a>get</h3><p><code>get</code> 同样不需要同步</p>
+<p>1.根据计算出来的 hashcode 寻址，如果就在桶上那么直接返回值。</p>
 <p>2.如果是红黑树那就按照树的方式获取值。</p>
 <p>3.就不满足那就按照链表的方式遍历获取值。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public V get(Object key) &#123;</span><br><span class="line">      Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; e, p; int n, eh; K ek;</span><br><span class="line">      int h &#x3D; spread(key.hashCode());</span><br><span class="line">      if ((tab &#x3D; table) !&#x3D; null &amp;&amp; (n &#x3D; tab.length) &gt; 0 &amp;&amp;</span><br><span class="line">          (e &#x3D; tabAt(tab, (n - 1) &amp; h)) !&#x3D; null) &#123;</span><br><span class="line">          if ((eh &#x3D; e.hash) &#x3D;&#x3D; h) &#123;</span><br><span class="line">              if ((ek &#x3D; e.key) &#x3D;&#x3D; key || (ek !&#x3D; null &amp;&amp; key.equals(ek)))</span><br><span class="line">                  return e.val;</span><br><span class="line">          &#125;</span><br><span class="line">          else if (eh &lt; 0)</span><br><span class="line">              return (p &#x3D; e.find(h, key)) !&#x3D; null ? p.val : null;</span><br><span class="line">          while ((e &#x3D; e.next) !&#x3D; null) &#123;</span><br><span class="line">              if (e.hash &#x3D;&#x3D; h &amp;&amp;</span><br><span class="line">                  ((ek &#x3D; e.key) &#x3D;&#x3D; key || (ek !&#x3D; null &amp;&amp; key.equals(ek))))</span><br><span class="line">                  return e.val;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      return null;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
@@ -467,6 +470,15 @@
 
 
 <img src="/2020/06/27/ConcurrentHashMap%E8%A7%A3%E6%9E%90/3.png" class title="如图">
+
+<h2 id="扩容时候遇到put操作怎么办"><a href="#扩容时候遇到put操作怎么办" class="headerlink" title="扩容时候遇到put操作怎么办"></a>扩容时候遇到put操作怎么办</h2><p>get，无锁操作仅需要保证可见性，扩容过程中 get 操作拿到的是 ForwardingNode 它会让 get 操作在新 table 进行搜索</p>
+<p><strong>ForwardingNode</strong>： 是临时节点，这个节点会出现在扩容的时候，不存储实际的数据数据。</p>
+<p>如果Hash桶被迁移到新的table中，会在旧的table插入一个ForwardingNode临时节点，内部会指向新的table。</p>
+<p>当读操作碰到ForwardingNode，会通过ForwardingNode内部的nextTable找到新的table，继续读。</p>
+<p>当写操作碰到ForwadingNode，加入帮助扩容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 首先要说明的是，方法参数 size 传进来的时候就已经翻了倍了</span><br><span class="line">private final void tryPresize(int size) &#123;</span><br><span class="line">    &#x2F;&#x2F; c：size 的 1.5 倍，再加 1，再往上取最近的 2 的 n 次方。</span><br><span class="line">    int c &#x3D; (size &gt;&#x3D; (MAXIMUM_CAPACITY &gt;&gt;&gt; 1)) ? MAXIMUM_CAPACITY :</span><br><span class="line">        tableSizeFor(size + (size &gt;&gt;&gt; 1) + 1);</span><br><span class="line">    int sc;</span><br><span class="line">    while ((sc &#x3D; sizeCtl) &gt;&#x3D; 0) &#123;</span><br><span class="line">        Node&lt;K,V&gt;[] tab &#x3D; table; int n;</span><br><span class="line">        &#x2F;&#x2F; 这个 if 分支和之前说的初始化数组的代码基本上是一样的</span><br><span class="line">        if (tab &#x3D;&#x3D; null || (n &#x3D; tab.length) &#x3D;&#x3D; 0) &#123;</span><br><span class="line">            n &#x3D; (sc &gt; c) ? sc : c;</span><br><span class="line">            if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    if (table &#x3D;&#x3D; tab) &#123;</span><br><span class="line">                        @SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">                        Node&lt;K,V&gt;[] nt &#x3D; (Node&lt;K,V&gt;[])new Node&lt;?,?&gt;[n];</span><br><span class="line">                        table &#x3D; nt;</span><br><span class="line">                        sc &#x3D; n - (n &gt;&gt;&gt; 2); &#x2F;&#x2F; 0.75 * n</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    sizeCtl &#x3D; sc;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (c &lt;&#x3D; sc || n &gt;&#x3D; MAXIMUM_CAPACITY)</span><br><span class="line">            break;</span><br><span class="line">        else if (tab &#x3D;&#x3D; table) &#123;</span><br><span class="line">            int rs &#x3D; resizeStamp(n);</span><br><span class="line">            if (sc &lt; 0) &#123;</span><br><span class="line">                Node&lt;K,V&gt;[] nt;</span><br><span class="line">                if ((sc &gt;&gt;&gt; RESIZE_STAMP_SHIFT) !&#x3D; rs || sc &#x3D;&#x3D; rs + 1 ||</span><br><span class="line">                    sc &#x3D;&#x3D; rs + MAX_RESIZERS || (nt &#x3D; nextTable) &#x3D;&#x3D; null ||</span><br><span class="line">                    transferIndex &lt;&#x3D; 0)</span><br><span class="line">                    break;</span><br><span class="line">                &#x2F;&#x2F; 2. 用 CAS 将 sizeCtl 加 1，然后执行 transfer 方法</span><br><span class="line">                &#x2F;&#x2F; 此时 nextTab 不为 null</span><br><span class="line">                if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))</span><br><span class="line">                    transfer(tab, nt);</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F; 1. 将 sizeCtl 设置为 (rs &lt;&lt; RESIZE_STAMP_SHIFT) + 2)</span><br><span class="line">            &#x2F;&#x2F; 调用 transfer 方法，此时 nextTab 参数为 null</span><br><span class="line">            else if (U.compareAndSwapInt(this, SIZECTL, sc,</span><br><span class="line">                                         (rs &lt;&lt; RESIZE_STAMP_SHIFT) + 2))</span><br><span class="line">                transfer(tab, null);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
       
     </div>
     
@@ -645,7 +657,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#存储结构"><span class="nav-number">1.</span> <span class="nav-text">存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发度高的原因"><span class="nav-number">2.</span> <span class="nav-text">并发度高的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put"><span class="nav-number">2.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get"><span class="nav-number">2.2.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#size"><span class="nav-number">2.3.</span> <span class="nav-text">size</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jdk1-8他的数据结构"><span class="nav-number">3.</span> <span class="nav-text">jdk1.8他的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put-1"><span class="nav-number">3.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-1"><span class="nav-number">3.2.</span> <span class="nav-text">get</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#存储结构"><span class="nav-number">1.</span> <span class="nav-text">存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发度高的原因"><span class="nav-number">2.</span> <span class="nav-text">并发度高的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put"><span class="nav-number">2.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get"><span class="nav-number">2.2.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#size"><span class="nav-number">2.3.</span> <span class="nav-text">size</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jdk1-8他的数据结构"><span class="nav-number">3.</span> <span class="nav-text">jdk1.8他的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put-1"><span class="nav-number">3.1.</span> <span class="nav-text">put</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-1"><span class="nav-number">3.2.</span> <span class="nav-text">get</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩容时候遇到put操作怎么办"><span class="nav-number">4.</span> <span class="nav-text">扩容时候遇到put操作怎么办</span></a></li></ol></div>
             
 
           </div>
@@ -695,7 +707,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共107.3k字</span>
+  <span class="post-count">博客全站共109.2k字</span>
 </div>
 
         

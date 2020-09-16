@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="平衡二叉搜索树插入算法  对于给定的数据，找出比这个数大的最小回文数（正反读都一样的数），如 12310 -&gt; 12321  对一个奇数位升序，偶数位降序的链表，进行排序，例如 1-&gt;100-&gt;20-&gt;80-&gt;40-&gt;30  从一个数 l 一直 与 操作到 r ，怎么做最快，复杂度最小  输出交错后的链表(比如链表a-b-c-d-e,交错后输出为a-e-b-d">
 <meta property="article:published_time" content="2020-08-06T12:20:25.000Z">
-<meta property="article:modified_time" content="2020-08-07T04:37:41.121Z">
+<meta property="article:modified_time" content="2020-09-14T13:57:57.030Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k
+                  1.7k
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  7
                 </span>
               
             </div>
@@ -497,6 +497,98 @@
 </li>
 <li><p>三个线程循环打印ABC**</p>
 </li>
+<li><pre><code>public class hello {
+    //1-&gt;100-&gt;20-&gt;80-&gt;40-&gt;30    1-&gt;20-30-&gt;40-&gt;80-&gt;100
+    static class ListNode
+    {
+        int val;
+        ListNode(int x)
+        {
+            val=x;
+        }
+        ListNode next;
+    }
+    public static void main(String[] args) {
+        ListNode l1=new ListNode(1);
+        ListNode l2=new ListNode(100);
+        ListNode l3=new ListNode(20);
+        ListNode l4=new ListNode(80);
+        l1.next=l2;
+        l2.next=l3;
+        l3.next=l4;
+        l4.next=null;
+//        while(l1!=null)
+//        {
+//            System.out.println(l1.val);
+//            l1=l1.next;
+//        }
+        help(l1);
+        while(l1!=null)
+        {
+            System.out.println(l1.val);
+            l1=l1.next;
+        }
+    }
+    public static ListNode help(ListNode head)
+    {
+        if(head==null || head.next==null)
+        {
+            return head;
+        }
+        ListNode h1=head,t1=head;
+        ListNode h2=head.next,t2=h2;
+        while(t1.next!=null &amp;&amp; t2.next!=null)
+        {
+            t1.next=t2.next;
+            t1=t1.next;
+            t2.next=t1.next;
+            t2=t2.next;
+        }
+        t1.next=null;
+        ListNode temp=reverse(h2);
+        ListNode res=mergeTwoLists(temp,h1);
+        return res;
+
+    }
+    public static ListNode reverse(ListNode head)
+    {
+       if(head==null || head.next==null) return head;
+       ListNode temp=reverse(head.next);
+       head.next.next=head;
+       head.next=null;
+       return temp;
+    }
+    public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if(l1==null) return l2;
+        if(l2==null) return l1;
+        ListNode dummy=new ListNode(0);
+        ListNode curr=dummy;
+        ListNode p=l1,q=l2;
+        while(p!=null&amp;&amp;q!=null)
+        {
+            int x=p.val;
+            int y=q.val;
+            if(x&lt;y)
+            {
+                curr.next=p;
+                p=p.next;
+
+            }
+            else
+            {
+                curr.next=q;
+                q=q.next;
+
+            }
+            curr=curr.next;
+        }
+        if(p!=null) curr.next=p;
+        if(q!=null) curr.next=q;
+        return dummy.next;
+    }
+}
+</code></pre></li>
+<li></li>
 </ol>
 
       
@@ -702,7 +794,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共107.3k字</span>
+  <span class="post-count">博客全站共109.2k字</span>
 </div>
 
         

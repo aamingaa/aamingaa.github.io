@@ -101,7 +101,7 @@
 <meta property="og:image" content="https://camo.githubusercontent.com/c7a73630d6aa169d98cae7209f604c12414c9541/68747470733a2f2f692e6c6f6c692e6e65742f323031392f30352f30382f356364316432643232633663622e6a7067">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200713192652430.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70">
 <meta property="article:published_time" content="2020-07-13T11:24:13.000Z">
-<meta property="article:modified_time" content="2020-07-14T11:24:01.623Z">
+<meta property="article:modified_time" content="2020-09-12T13:21:47.912Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://camo.githubusercontent.com/51e51a0e34f51ceda409cac151e34156169e3d53/68747470733a2f2f692e6c6f6c692e6e65742f323031392f30352f30382f356364316432626537373935382e6a7067">
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.6k
+                  3.9k
                 </span>
               
 
@@ -405,7 +405,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  16
+                  17
                 </span>
               
             </div>
@@ -448,6 +448,13 @@
 <li>Map在使用过程中不断的往里面存放数据，当数量达到了<code>16 * 0.75 = 12</code>就需要将当前16的容量进行扩容，而扩容这个过程涉及到rehash（重新哈希）、复制数据等操作，所有非常消耗性能。</li>
 <li>因此通常建议能提前预估HashMap的大小最好，尽量的减少扩容带来的额外性能损耗。</li>
 </ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Ideally, under random hashCodes, the frequency of</span><br><span class="line"></span><br><span class="line">nodes in bins follows a Poisson distribution</span><br><span class="line">(http:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Poisson_distribution) with a</span><br><span class="line">parameter of about 0.5 on average for the default resizing</span><br><span class="line">threshold of 0.75, although with a large variance because of</span><br><span class="line">resizing granularity. Ignoring variance, the expected</span><br><span class="line">occurrences of list size k are (exp(-0.5) * pow(0.5, k) &#x2F;</span><br><span class="line">factorial(k)). The first values are:</span><br><span class="line">0: 0.60653066</span><br><span class="line">1: 0.30326533</span><br><span class="line">2: 0.07581633</span><br><span class="line">3: 0.01263606</span><br><span class="line">4: 0.00157952</span><br><span class="line">5: 0.00015795</span><br><span class="line">6: 0.00001316</span><br><span class="line">7: 0.00000094</span><br><span class="line">8: 0.00000006</span><br><span class="line">more: less than 1 in ten million</span><br><span class="line">注意wiki链接中的关键字：Poisson_distribution</span><br><span class="line">泊淞分布啊</span><br></pre></td></tr></table></figure>
+
+<p>简单翻译一下就是在理想情况下,使用随机哈希码,节点出现的频率在hash桶中遵循泊松分布，同时给出了桶中元素个数和概率的对照表。</p>
+<p>从上面的表中可以看到当桶中元素到达8个的时候，概率已经变得非常小，也就是说用0.75作为加载因子，每个碰撞位置的链表长度超过８个是几乎不可能的。</p>
+<p>好了，再深挖就要挖到统计学那边去了，就此打住，重申一下使用hash容器请尽量指定初始容量，且是2的幂次方。</p>
+<p>关于泊淞分布的知识请看</p>
+<p><a href="http://www.ruanyifeng.com/blog/2015/06/poisson-distribution.html#comment-356111" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2015/06/poisson-distribution.html#comment-356111</a></p>
 <h4 id="Entry"><a href="#Entry" class="headerlink" title="Entry"></a>Entry</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transient Entry&lt;K,V&gt;[] table &#x3D; (Entry&lt;K,V&gt;[]) EMPTY_TABLE;</span><br></pre></td></tr></table></figure>
 
 <p>如何定义呢？<a href="https://camo.githubusercontent.com/d4896d60a3183274a1e559b0a66a29ffedfb7a44/68747470733a2f2f692e6c6f6c692e6e65742f323031392f30352f30382f356364316432633038653639332e6a7067" target="_blank" rel="noopener"><img src="https://camo.githubusercontent.com/d4896d60a3183274a1e559b0a66a29ffedfb7a44/68747470733a2f2f692e6c6f6c692e6e65742f323031392f30352f30382f356364316432633038653639332e6a7067" alt="img"></a></p>
@@ -845,7 +852,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共107.3k字</span>
+  <span class="post-count">博客全站共109.2k字</span>
 </div>
 
         
