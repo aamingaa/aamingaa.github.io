@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19852d16845?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf198532476f5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-07-22T01:17:13.000Z">
-<meta property="article:modified_time" content="2020-07-22T08:39:23.376Z">
+<meta property="article:modified_time" content="2020-09-27T14:13:08.037Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/3/27/169bf19851d3dce6?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -493,7 +493,7 @@
 <li>下一个版本的列<code>c</code>的内容是<code>&#39;张飞&#39;</code>，该版本的<code>trx_id</code>值为<code>100</code>，比<code>m_ids</code>列表中最小的事务id<code>200</code>还要小，所以这个版本是符合要求的，最后返回给用户的版本就是这条列<code>c</code>为<code>&#39;张飞&#39;</code>的记录。</li>
 </ul>
 <p>以此类推，如果之后事务id为<code>200</code>的记录也提交了，再此在使用<code>READ COMMITTED</code>隔离级别的事务中查询表<code>t</code>中<code>id</code>值为<code>1</code>的记录时，得到的结果就是<code>&#39;诸葛亮&#39;</code>了，具体流程我们就不分析了。总结一下就是：使用READ COMMITTED隔离级别的事务在每次查询开始时都会生成一个独立的ReadView。</p>
-<h4 id="REPEATABLE-READ-—在第一次读取数据时生成一个ReadView"><a href="#REPEATABLE-READ-—在第一次读取数据时生成一个ReadView" class="headerlink" title="REPEATABLE READ —在第一次读取数据时生成一个ReadView"></a><code>REPEATABLE READ</code> —在第一次读取数据时生成一个ReadView</h4><p>对于使用<code>REPEATABLE READ</code>隔离级别的事务来说，只会在第一次执行查询语句时生成一个<code>ReadView</code>，之后的查询就不会重复生成了。我们还是用例子看一下是什么效果。</p>
+<h4 id="REPEATABLE-READ-—在第一次读取数据时生成一个ReadView"><a href="#REPEATABLE-READ-—在第一次读取数据时生成一个ReadView" class="headerlink" title="REPEATABLE READ —在第一次读取数据时生成一个ReadView"></a>REPEATABLE READ —在第一次读取数据时生成一个ReadView</h4><p>对于使用<code>REPEATABLE READ</code>隔离级别的事务来说，只会在第一次执行查询语句时生成一个<code>ReadView</code>，之后的查询就不会重复生成了。我们还是用例子看一下是什么效果。</p>
 <p>比方说现在系统里有两个<code>id</code>分别为<code>100</code>、<code>200</code>的事务在执行：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 100</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;关羽&#39; WHERE id &#x3D; 1;</span><br><span class="line"></span><br><span class="line">UPDATE t SET c &#x3D; &#39;张飞&#39; WHERE id &#x3D; 1;</span><br><span class="line">复制代码</span><br><span class="line"># Transaction 200</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># 更新了一些别的表的记录</span><br><span class="line">...</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
@@ -652,7 +652,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">107</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -761,7 +761,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共109.2k字</span>
+  <span class="post-count">博客全站共137.8k字</span>
 </div>
 
         

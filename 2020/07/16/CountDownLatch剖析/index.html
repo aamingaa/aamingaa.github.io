@@ -88,7 +88,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/5/1/16317a37eda063fc?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/5/1/16317a37edbaecf8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-07-16T07:55:12.000Z">
-<meta property="article:modified_time" content="2020-07-18T09:25:57.538Z">
+<meta property="article:modified_time" content="2020-09-28T08:11:19.698Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/5/1/16317a37eda063fc?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -421,11 +421,11 @@
 <p><img src="https://user-gold-cdn.xitu.io/2018/5/1/16317a37eda063fc?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image.png"></p>
 <p>该类是一个独立的类，没有继承别的类，有一个内部类 Sync，这个类继承了 AQS 抽象类，其实，在之前的文章中，我们说过，AQS 是 JUC 所有锁的实现，定义了锁的基本操作。这个内部类重写了 tryAcquireShared 方法和 tryReleaseShared 方法。</p>
 <p>然后呢？我们看看构造方法。</p>
-<h2 id="构造方法："><a href="#构造方法：" class="headerlink" title="构造方法："></a>构造方法：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public CountDownLatch(int count) &#123;</span><br><span class="line">    if (count &lt; 0) throw new IllegalArgumentException(&quot;count &lt; 0&quot;);</span><br><span class="line">    this.sync &#x3D; new Sync(count);</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h2 id="构造方法："><a href="#构造方法：" class="headerlink" title="构造方法："></a>构造方法：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public CountDownLatch(int count) &#123;</span><br><span class="line">    if (count &lt; 0) throw new IllegalArgumentException(&quot;count &lt; 0&quot;);</span><br><span class="line">    this.sync &#x3D; new Sync(count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>内部实现还是继承了 AQS 的 Sync 类。</p>
 <p>Sync 构造方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Sync(int count) &#123;</span><br><span class="line">    setState(count);</span><br><span class="line">&#125;</span><br><span class="line">protected final void setState(int newState) &#123;</span><br><span class="line">    state &#x3D; newState;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;**</span><br><span class="line"> * The synchronization state.</span><br><span class="line"> *&#x2F;</span><br><span class="line">private volatile int state;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Sync(int count) &#123;</span><br><span class="line">    setState(count);</span><br><span class="line">&#125;</span><br><span class="line">protected final void setState(int newState) &#123;</span><br><span class="line">    state &#x3D; newState;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;**</span><br><span class="line"> * The synchronization state.</span><br><span class="line"> *&#x2F;</span><br><span class="line">private volatile int state;</span><br></pre></td></tr></table></figure>
 
 <p>设置了这个 State 变量，我们之前分析过 AQS 的源码，这个变量可以说是 AQS 实现的核心，通过控制这个变量，能够实现共享共享锁或者独占锁。</p>
 <p>那么，如果让我们来设计这个CountDownLatch ，我们该如何设计呢？</p>
@@ -433,7 +433,7 @@
 <p>不知道 Doug Lea 是不是这么设计的？我们去看看。</p>
 <h3 id="await-方法"><a href="#await-方法" class="headerlink" title="await 方法"></a>await 方法</h3><p>主线程会调用这个方法，让自己阻塞，直到被唤醒。</p>
 <p>看看这个方法的实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public void await() throws InterruptedException &#123;</span><br><span class="line">    sync.acquireSharedInterruptibly(1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public final void acquireSharedInterruptibly(int arg)</span><br><span class="line">        throws InterruptedException &#123;</span><br><span class="line">    if (Thread.interrupted())</span><br><span class="line">        throw new InterruptedException();</span><br><span class="line">    if (tryAcquireShared(arg) &lt; 0)</span><br><span class="line">        doAcquireSharedInterruptibly(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public void await() throws InterruptedException &#123;</span><br><span class="line">       sync.acquireSharedInterruptibly(1);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   public final void acquireSharedInterruptibly(int arg)</span><br><span class="line">           throws InterruptedException &#123;</span><br><span class="line">       if (Thread.interrupted())</span><br><span class="line">           throw new InterruptedException();</span><br><span class="line">       if (tryAcquireShared(arg) &lt; 0)</span><br><span class="line">           doAcquireSharedInterruptibly(arg);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
 <p>await 方法调用的是 Syn的  acquireSharedInterruptibly 方法，如果返回值不是大于等于 0 ，说明当前线程不能获取锁，那么就调用 doAcquireSharedInterruptibly 方法。这个方法内部会将当前线程挂起，直到 state 变成 0，才会被唤醒。</p>
 <p>而 <strong>tryAcquireShared</strong> 方法是需要子类自己实现的。我们看看 CountDown 是如何实现的：</p>
@@ -458,7 +458,7 @@
 <p>调用了  AQS 需要子类实现 tryReleaseShared 方法。看看 CountDownLatch 是怎么实现的：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">protected boolean tryReleaseShared(int releases) &#123;</span><br><span class="line">    &#x2F;&#x2F; Decrement count; signal when transition to zero</span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        int c &#x3D; getState();</span><br><span class="line">        if (c &#x3D;&#x3D; 0)</span><br><span class="line">            return false;</span><br><span class="line">        int nextc &#x3D; c-1;</span><br><span class="line">        if (compareAndSetState(c, nextc))</span><br><span class="line">            return nextc &#x3D;&#x3D; 0;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
-<p>该方法很简单，就是将 state 变量减 1，只要减过之后， state 不是 0，就返回 fasle。</p>
+<p><strong>该方法很简单，就是将 state 变量减 1，只要减过之后， state 不是 0，就返回 fasle。</strong></p>
 <p>回到 releaseShared 方法中，当 tryReleaseShared 返回值是 true 时，也就是 state 是 0，就需要执行 doReleaseShared 方法 ，唤醒阻塞在 CountDown 上的线程了。</p>
 <p>唤醒代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private void doReleaseShared() &#123;</span><br><span class="line"></span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        Node h &#x3D; head;</span><br><span class="line">        if (h !&#x3D; null &amp;&amp; h !&#x3D; tail) &#123;</span><br><span class="line">            int ws &#x3D; h.waitStatus;</span><br><span class="line">            if (ws &#x3D;&#x3D; Node.SIGNAL) &#123;</span><br><span class="line">                if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))</span><br><span class="line">                    continue;            &#x2F;&#x2F; loop to recheck cases</span><br><span class="line">                unparkSuccessor(h);</span><br><span class="line">            &#125;</span><br><span class="line">            else if (ws &#x3D;&#x3D; 0 &amp;&amp;</span><br><span class="line">                     !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))</span><br><span class="line">                continue;                &#x2F;&#x2F; loop on failed CAS</span><br><span class="line">        &#125;</span><br><span class="line">        if (h &#x3D;&#x3D; head)                   &#x2F;&#x2F; loop if head changed</span><br><span class="line">            break;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
@@ -589,7 +589,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">107</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -698,7 +698,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共109.2k字</span>
+  <span class="post-count">博客全站共137.8k字</span>
 </div>
 
         

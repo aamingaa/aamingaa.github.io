@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="平衡二叉搜索树插入算法  对于给定的数据，找出比这个数大的最小回文数（正反读都一样的数），如 12310 -&gt; 12321  对一个奇数位升序，偶数位降序的链表，进行排序，例如 1-&gt;100-&gt;20-&gt;80-&gt;40-&gt;30  从一个数 l 一直 与 操作到 r ，怎么做最快，复杂度最小  输出交错后的链表(比如链表a-b-c-d-e,交错后输出为a-e-b-d">
 <meta property="article:published_time" content="2020-08-06T12:20:25.000Z">
-<meta property="article:modified_time" content="2020-09-14T13:57:57.030Z">
+<meta property="article:modified_time" content="2020-09-29T03:22:57.096Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.7k
+                  2.2k
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  10
                 </span>
               
             </div>
@@ -587,10 +587,107 @@
         return dummy.next;
     }
 }
-</code></pre></li>
-<li></li>
-</ol>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">43. **平方后，数组当中有多少不同的数字**</span><br></pre></td></tr></table></figure>
+public class Solution {
+public int diffSquareNum(int nums[]) {
+    int n = nums.length;
+    if(n == 0 || nums == null){
+        return 0;
+    }
+    int sum = 0;
+    int left = 0;
+    int right = n - 1;
+    while(left &lt;= right){
+        if(nums[left] + nums[right] == 0){
+            sum++;
+            int temp = nums[left];
+            //这里开始去掉后面重复的数字
+            while(left &lt;= right &amp;&amp; nums[left] == temp)
+                left++;
+            while(left &lt;= right &amp;&amp; nums[right] == -temp)
+                right--;
+        }
+        else if(nums[left] + nums[right] &lt; 0){
+            sum++;
+            int temp = nums[left];
+            while(left &lt;= right &amp;&amp; nums[left] == temp)
+                left++;
+        }
+        else {
+            sum++;
+            int temp = nums[right];
+            while(left &lt;= right &amp;&amp; nums[right] == temp)
+                right--;
+        }
+    }
+    return sum;
+}
+}
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">43</span><br><span class="line"></span><br><span class="line">给定m个不重复的字符 [a, b, c, d]，以及一个长度为n的字符串tbcacbdata，问能否在这个字符串中找到一个长度为m的连续子串，使得这个子串刚好由上面m个字符组成，顺序无所谓，返回任意满足条件的一个子串的起始位置，未找到返回-1。比如上面这个例子，acbd，</span><br></pre></td></tr></table></figure>
+public class hello {
+public static void main(String[] args) {
+char[] c={&apos;a&apos;,&apos;c&apos;,&apos;b&apos;,&apos;d&apos;};
+String s=&quot;tbcacbdata&quot;;
+int res=help(c,s);
+System.out.println(res);
+}
+public static int help(char[] ch,String s)
+{
+
+    if(ch.length &gt; s.length()){
+        return -1;
+    }
+    for(int i = 0; i &lt;= s.length() - ch.length+1; i++){
+        //每次匹配长度为m的子串
+        if(matchs(ch,s.substring(i,i+ch.length)))
+            return i;
+    }
+    return -1;
+}
+private static boolean matchs(char[] ch,String s){
+    for(int i = 0; i &lt; s.length();i++){
+        //返回-1说明字符串中不包含这个字符
+        if(s.indexOf(ch[i]) == -1)
+            return false;
+    }
+    return true;
+}
+
+</code></pre></li>
+</ol>
+<p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">44.一个有序数组，从随机一位截断，把前段放在后边，如 4 5 6 7 1 2 3求中位数</span><br></pre></td></tr></table></figure>
+<p>public class findNumInRotateArr {</p>
+<pre><code>public static double minNumberInRotateArray(int[] nums) {
+    if (nums == null || nums.length == 0) {
+        return 0;
+    }
+    int left = 0;
+    int right = nums.length - 1;
+    while (left &lt; right) {
+        int mid = left + ((right - left) &gt;&gt; 1);
+        if (nums[mid] &lt; nums[right]) {
+            right = mid;
+        } else if (nums[mid] &gt; nums[right]) {
+            left = mid + 1;
+        } else {
+            right--;
+        }
+    }
+    int size = nums.length;
+    if (size % 2 == 1) {
+        return nums[(left + size / 2) % size];
+    } else {
+        return (double) (nums[(left + size / 2) % size] + nums[(left + (size - 1) / 2) % size]) / 2;
+    }
+}
+
+public static void main(String[] args) {
+    int[] arr = {6, 7, 8, 1, 2, 3, 4, 5};
+    System.out.println(minNumberInRotateArray(arr));
+}</code></pre><p>}</p>
+<pre><code></code></pre>
       
     </div>
     
@@ -701,7 +798,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">107</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -794,7 +891,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共109.2k字</span>
+  <span class="post-count">博客全站共137.8k字</span>
 </div>
 
         

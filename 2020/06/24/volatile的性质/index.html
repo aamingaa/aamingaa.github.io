@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了解决">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
 <meta property="article:published_time" content="2020-06-24T03:12:06.000Z">
-<meta property="article:modified_time" content="2020-07-20T05:03:49.746Z">
+<meta property="article:modified_time" content="2020-09-27T11:39:56.226Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
@@ -417,9 +417,8 @@
 <p>1 . 保证了不同线程对该变量操作的可见性;</p>
 <p>2 . 禁止指令重排序</p>
 <h2 id="volatile关键字如何保证可见性的？"><a href="#volatile关键字如何保证可见性的？" class="headerlink" title="volatile关键字如何保证可见性的？"></a>volatile关键字如何保证可见性的？</h2><p>要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道<strong>CPU的运算速度</strong>要比<strong>内存的读写速度</strong>快很多，这就造成了内存无法跟上CPU的情况。为了解决这类问题，出现了针对CPU的缓存协议。</p>
-<p>Intel开发了缓存一致性协议，也就是MESI协议</p>
-<p>①当CPU写数据时，如果发现操作的变量是共享变量，即在其他CPU中也存在该变量的副本，那么他会发出信号通知其他CPU将该变量的缓存行设置为无效状态。</p>
-<p>②当其他CPU使用这个变量时，首先会去嗅探是否有对该变量更改的信号，当发现这个变量的缓存行已经无效时，会从新从内存中读取这个变量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Intel开发了缓存一致性协议，也就是MESI协议</span><br><span class="line"></span><br><span class="line">①当CPU写数据时，如果发现操作的变量是共享变量，即在其他CPU中也存在该变量的副本，那么他会发出信号通知其他CPU将该变量的缓存行设置为无效状态。</span><br><span class="line"></span><br><span class="line">②当其他CPU使用这个变量时，首先会去嗅探是否有对该变量更改的信号，当发现这个变量的缓存行已经无效时，会从新从内存中读取这个变量。</span><br></pre></td></tr></table></figure>
+
 <p>了解了上面的内容，就可以很容易的理解volatile是如何实现的了。</p>
 <ol>
 <li>被 volatile 修饰的共享变量，在翻译成为机器码的过程中为其<code>赋值操作</code>添加特殊机器码指令前缀<code>Lock xxxx</code></li>
@@ -574,7 +573,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">107</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -683,7 +682,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共109.2k字</span>
+  <span class="post-count">博客全站共137.8k字</span>
 </div>
 
         
