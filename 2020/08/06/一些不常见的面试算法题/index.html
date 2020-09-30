@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="平衡二叉搜索树插入算法  对于给定的数据，找出比这个数大的最小回文数（正反读都一样的数），如 12310 -&gt; 12321  对一个奇数位升序，偶数位降序的链表，进行排序，例如 1-&gt;100-&gt;20-&gt;80-&gt;40-&gt;30  从一个数 l 一直 与 操作到 r ，怎么做最快，复杂度最小  输出交错后的链表(比如链表a-b-c-d-e,交错后输出为a-e-b-d">
 <meta property="article:published_time" content="2020-08-06T12:20:25.000Z">
-<meta property="article:modified_time" content="2020-09-29T14:36:32.892Z">
+<meta property="article:modified_time" content="2020-09-30T13:03:27.394Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.9k
+                  3k
                 </span>
               
 
@@ -715,7 +715,11 @@ public int getMax(){
 }</code></pre><p>}<br>用最大值标记，存入数据栈中，空间复杂度降到O(1)<br>public class MaxStack {<br>    private Stack<Integer> stack;<br>    public MaxStack(){<br>        stack = new Stack&lt;&gt;();<br>    }<br>    int max = Integer.MIN_VALUE;<br>    public void push(int x){<br>        if(max &lt;= x){<br>            if(!stack.isEmpty()){<br>                stack.push(max);<br>            }<br>            max = x;<br>        }<br>        stack.push(x);<br>    }<br>    public void pop(){<br>        if(stack.peek() == max){<br>            stack.pop();<br>            max = stack.pop();<br>        }else{<br>            stack.pop();<br>        }<br>    }<br>    public int getMax(){<br>        return max;<br>    }<br>}</Integer></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">48. 链表实现一个栈</span><br></pre></td></tr></table></figure>
 <p>public class ListNode{<br>    int val;<br>    ListNode next;<br>    ListNode(int val){<br>        this.val =val;<br>    }<br>}<br>public class ListToStack{<br>    public ListToStack(){<br>        ListNode head;<br>    }<br>    public void push(int x){<br>        ListNode node = new ListNode(x);<br>        node.next = head.next;<br>        head.next = node;<br>    }<br>    public int pop(){<br>        ListNode node = head.next;<br>        head.next = node.next;<br>        node.next = null;<br>        return node.val;<br>    }<br>    public int peek(){<br>        return head.next.val;<br>    }<br>}</p>
-<pre><code></code></pre>
+<pre><code>
+### 48.一个形如 123456789101112……的字符串，输入一个n（很大很大），输出字符串第n个字符
+
+## 49.版本数字比较，比如&quot;1.10.0&quot;版本比&quot;1.8.1&quot;版本新，不允许使用split等函数
+</code></pre>
       
     </div>
     
@@ -826,7 +830,7 @@ public int getMax(){
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">110</span>
+                  <span class="site-state-item-count">111</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -919,7 +923,7 @@ public int getMax(){
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共142.8k字</span>
+  <span class="post-count">博客全站共145.1k字</span>
 </div>
 
         
