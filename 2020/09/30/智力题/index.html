@@ -96,7 +96,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190707211603830.png">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200518/66153173_1589803055420_16F6C01C102793BA75D2E74EDCF64397">
 <meta property="article:published_time" content="2020-09-30T01:45:09.000Z">
-<meta property="article:modified_time" content="2020-09-30T12:43:25.696Z">
+<meta property="article:modified_time" content="2020-10-01T03:21:15.372Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190707193021763.png">
@@ -384,7 +384,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4k
+                  5.2k
                 </span>
               
 
@@ -400,7 +400,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  14
+                  19
                 </span>
               
             </div>
@@ -524,7 +524,35 @@
 <li>连接池中允许处于空闲状态的连接的最大<a href>项目</a>。假定允许的最长空闲时间为十分钟，并且允许空闲状态的连接最大数目为5， </li>
 </ol>
 <p>​      那么当连接池中有n个(n&gt;5)连接处于空闲状态的时间超过十分钟时，     <strong>就应该把n-5个连接关闭，并且从连接池中删除，</strong>     这样才能更有效的利用系统资源。</p>
-<h2 id="14-扫码登录"><a href="#14-扫码登录" class="headerlink" title="14.扫码登录"></a>14.扫码登录</h2><p><strong>扫码登录是如何实现的？</strong></p>
+<h2 id="14-扫码登录"><a href="#14-扫码登录" class="headerlink" title="14.扫码登录"></a>14.扫码登录</h2><h3 id="15-砝码秤盐"><a href="#15-砝码秤盐" class="headerlink" title="15.砝码秤盐"></a>15.砝码秤盐</h3><p>140g盐,一天平,7g 、2g砝码各一个,如何只利用这些东西3次把盐分成50g和90g?</p>
+<ul>
+<li><p>第一次： 7g、2g砝码称出9g盐，结果盐分成9g与131g</p>
+</li>
+<li><p>第二次：将9g盐与7g、2g都作为砝码，结果将盐分为18g与113g （注意：这时盐已经分为三份：9g、18g、113g，还有两个砝码）</p>
+</li>
+<li><p>第三次：将18g盐与7g砝码发在左托盘，将2g砝码放在右托盘，然后在113g盐中取盐添置右托盘中，可获取23g盐。</p>
+</li>
+</ul>
+<p>  这时盐分为9g，18g，23g与90g。  </p>
+<p>  即三次，可以得到90g与（9+18+23）50g。</p>
+<h3 id="16-九球称重"><a href="#16-九球称重" class="headerlink" title="16.九球称重"></a>16.九球称重</h3><blockquote>
+<h3 id="有-9-个球，其中-8-个球质量相同，有-1-个球比较重。要求用-2-次天平，找出比较重的那个球。"><a href="#有-9-个球，其中-8-个球质量相同，有-1-个球比较重。要求用-2-次天平，找出比较重的那个球。" class="headerlink" title="有 9 个球，其中 8 个球质量相同，有 1 个球比较重。要求用 2 次天平，找出比较重的那个球。"></a>有 9 个球，其中 8 个球质量相同，有 1 个球比较重。要求用 2 次天平，找出比较重的那个球。</h3></blockquote>
+<p> 将这些球均分成 3 个一组共 3 组，选出 2 组称重，如果 1 组比较重，那么重球在比较重的那 1 组；如果 1 组重量相等，那么重球在另外 1 组。 </p>
+<p> 对比较重的那 1 组的 3 个球再分成 3 组，重复上面的步骤。 </p>
+<h3 id="17-药丸称重"><a href="#17-药丸称重" class="headerlink" title="17.药丸称重"></a>17.药丸称重</h3><blockquote>
+<h3 id="有-20-瓶药丸，其中-19-瓶药丸质量相同为-1-克，剩下一瓶药丸质量为-1-1-克。瓶子中有无数个药丸。要求用一次天平找出药丸质量-1-1-克的药瓶。"><a href="#有-20-瓶药丸，其中-19-瓶药丸质量相同为-1-克，剩下一瓶药丸质量为-1-1-克。瓶子中有无数个药丸。要求用一次天平找出药丸质量-1-1-克的药瓶。" class="headerlink" title="有 20 瓶药丸，其中 19 瓶药丸质量相同为 1 克，剩下一瓶药丸质量为 1.1 克。瓶子中有无数个药丸。要求用一次天平找出药丸质量 1.1 克的药瓶。"></a>有 20 瓶药丸，其中 19 瓶药丸质量相同为 1 克，剩下一瓶药丸质量为 1.1 克。瓶子中有无数个药丸。要求用一次天平找出药丸质量 1.1 克的药瓶。</h3></blockquote>
+<p> 可以从药丸的数量上来制造差异：从第 i 瓶药丸中取出 i 个药丸，然后一起称重。可以知道，如果第 i 瓶药丸重 1.1 克/粒，那么称重结果就会比正常情况下重 0.1 * i 克。 </p>
+<h3 id="18-得到-4-升的水"><a href="#18-得到-4-升的水" class="headerlink" title="18.得到 4 升的水"></a>18.得到 4 升的水</h3><blockquote>
+<h3 id="有两个杯子，容量分别为-5-升和-3-升，水的供应不断。问怎么用这两个杯子得到-4-升的水。"><a href="#有两个杯子，容量分别为-5-升和-3-升，水的供应不断。问怎么用这两个杯子得到-4-升的水。" class="headerlink" title="有两个杯子，容量分别为 5 升和 3 升，水的供应不断。问怎么用这两个杯子得到 4 升的水。"></a>有两个杯子，容量分别为 5 升和 3 升，水的供应不断。问怎么用这两个杯子得到 4 升的水。</h3></blockquote>
+<ul>
+<li>1、将3升的装满倒入5升的；<br>2、再一次将3升的转满，倒入5升的，把5升装满；<br>3、3升杯里剩下的就是1升水；<br>4、倒掉5升的，把1升水倒入5升杯；<br>5、第三次加满3升杯，倒入5升杯，得到4升水。 </li>
+</ul>
+<h3 id="19-扔鸡蛋"><a href="#19-扔鸡蛋" class="headerlink" title="19.扔鸡蛋"></a>19.扔鸡蛋</h3><blockquote>
+<h3 id="一栋楼有-100-层，在第-N-层或者更高扔鸡蛋会破，而第-N-层往下则不会。给-2-个鸡蛋，求-N，要求最差的情况下扔鸡蛋的次数最少。"><a href="#一栋楼有-100-层，在第-N-层或者更高扔鸡蛋会破，而第-N-层往下则不会。给-2-个鸡蛋，求-N，要求最差的情况下扔鸡蛋的次数最少。" class="headerlink" title="一栋楼有 100 层，在第 N 层或者更高扔鸡蛋会破，而第 N 层往下则不会。给 2 个鸡蛋，求 N，要求最差的情况下扔鸡蛋的次数最少。"></a>一栋楼有 100 层，在第 N 层或者更高扔鸡蛋会破，而第 N 层往下则不会。给 2 个鸡蛋，求 N，要求最差的情况下扔鸡蛋的次数最少。</h3></blockquote>
+<p>14次</p>
+<p>首先，让我们试着从10层开始扔鸡蛋，然后是20层，等等。<br>如果鸡蛋1第一次扔下楼（10层）就破掉了，那么，最多需要扔10次。<br>如果鸡蛋1最后一次扔下楼（100层）才破掉，那么，最多要扔19次（10、20、…、90、100层，然后是91到99层）。<br>这么做也挺不错，但我们只考虑了绝对最差情况。我们应该进行“负载均衡”，让这两种情况下扔鸡蛋的次数更均匀。 我们的目标是设计一种扔鸡蛋的方法，使得扔鸡蛋1时，不论是在第一次还是最后一次扔下楼才破掉，次数越稳定越好。<br>(1) 完美负载均衡的方法应该是，扔鸡蛋1的次数加上扔鸡蛋2的次数，不论什么时候都一样，不管鸡蛋1是从哪层楼扔下时破掉的。<br>(2) 若有这种扔法，每次鸡蛋1多扔一次，鸡蛋2就可以少扔一次。<br>(3) 因此，每丢一次鸡蛋1，就应该减少鸡蛋2可能需要扔下楼的次数。例如，如果鸡蛋1先从20层往下扔（不破），然后从30层扔下楼（破），此时鸡蛋2可能就要扔9次（从21到29 一次次试）。若鸡蛋1再扔一次，我们必须让鸡蛋2扔下楼的次数降为8次。也就是说，我们必须让鸡蛋1从39层扔下楼。<br>(4) 由此可知，鸡蛋1必须从X层开始往下扔，然后再往上增加X-1层……直至到达100层。<br>(5) 求解方程式X + (X-1) + (X-2) + … + 1 = 100，得到X (X + 1) / 2 = 100 → X = 14。 （直接设要X次，假如X 和X-1这两次了 则再加X-2 总共还是X次， 次数总为X）<br>我们先从14层开始，然后是27层，接着是39层，依此类推，最差情况下鸡蛋要扔14次。 </p>
+<p>其他情况也是一样的只需要求X (X + 1) / 2 = 楼层数量的X大约值即可。</p>
+<h3 id="20-一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样）"><a href="#20-一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样）" class="headerlink" title="20.一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样）"></a>20.<strong>一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样）</strong></h3><p>1/3<br>样本空间为（男男）（女女）（男女）（女男）<br>A＝（已知其中一个是女孩）＝）（女女）（男女）（女男）<br>B＝（另一个也是女孩）＝（女女）<br>于是P（B／A）＝P（AB）／P（A）＝（1／4）／（3／4）＝1／3</p>
 
       
     </div>
@@ -704,7 +732,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-三门问题（Monty-Hall-problem）"><span class="nav-number">1.</span> <span class="nav-text">1.三门问题（Monty Hall problem）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-桶装水"><span class="nav-number">2.</span> <span class="nav-text">2.桶装水</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-瞎子分牌"><span class="nav-number">3.</span> <span class="nav-text">3.瞎子分牌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-赛马问题"><span class="nav-number">4.</span> <span class="nav-text">4.赛马问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-老鼠死亡问题"><span class="nav-number">5.</span> <span class="nav-text">5.老鼠死亡问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-石头称重"><span class="nav-number">6.</span> <span class="nav-text">6.石头称重</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-抛硬币"><span class="nav-number"></span> <span class="nav-text">7.抛硬币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-蚊香"><span class="nav-number"></span> <span class="nav-text">8.蚊香</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-海盗分金币"><span class="nav-number"></span> <span class="nav-text">9.海盗分金币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-54张扑克牌，平均分成3份，大小王在一份的概率"><span class="nav-number"></span> <span class="nav-text">10. 54张扑克牌，平均分成3份，大小王在一份的概率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。"><span class="nav-number"></span> <span class="nav-text">11.让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-分布式多个机器生成id，如何保证不重复"><span class="nav-number"></span> <span class="nav-text">12.分布式多个机器生成id，如何保证不重复?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-数据库连接池怎么设计"><span class="nav-number"></span> <span class="nav-text">13.数据库连接池怎么设计?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-扫码登录"><span class="nav-number"></span> <span class="nav-text">14.扫码登录</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-三门问题（Monty-Hall-problem）"><span class="nav-number">1.</span> <span class="nav-text">1.三门问题（Monty Hall problem）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-桶装水"><span class="nav-number">2.</span> <span class="nav-text">2.桶装水</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-瞎子分牌"><span class="nav-number">3.</span> <span class="nav-text">3.瞎子分牌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-赛马问题"><span class="nav-number">4.</span> <span class="nav-text">4.赛马问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-老鼠死亡问题"><span class="nav-number">5.</span> <span class="nav-text">5.老鼠死亡问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-石头称重"><span class="nav-number">6.</span> <span class="nav-text">6.石头称重</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-抛硬币"><span class="nav-number"></span> <span class="nav-text">7.抛硬币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-蚊香"><span class="nav-number"></span> <span class="nav-text">8.蚊香</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-海盗分金币"><span class="nav-number"></span> <span class="nav-text">9.海盗分金币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-54张扑克牌，平均分成3份，大小王在一份的概率"><span class="nav-number"></span> <span class="nav-text">10. 54张扑克牌，平均分成3份，大小王在一份的概率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。"><span class="nav-number"></span> <span class="nav-text">11.让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-分布式多个机器生成id，如何保证不重复"><span class="nav-number"></span> <span class="nav-text">12.分布式多个机器生成id，如何保证不重复?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-数据库连接池怎么设计"><span class="nav-number"></span> <span class="nav-text">13.数据库连接池怎么设计?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-扫码登录"><span class="nav-number"></span> <span class="nav-text">14.扫码登录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-砝码秤盐"><span class="nav-number">1.</span> <span class="nav-text">15.砝码秤盐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-九球称重"><span class="nav-number">2.</span> <span class="nav-text">16.九球称重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有-9-个球，其中-8-个球质量相同，有-1-个球比较重。要求用-2-次天平，找出比较重的那个球。"><span class="nav-number">3.</span> <span class="nav-text">有 9 个球，其中 8 个球质量相同，有 1 个球比较重。要求用 2 次天平，找出比较重的那个球。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-药丸称重"><span class="nav-number">4.</span> <span class="nav-text">17.药丸称重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有-20-瓶药丸，其中-19-瓶药丸质量相同为-1-克，剩下一瓶药丸质量为-1-1-克。瓶子中有无数个药丸。要求用一次天平找出药丸质量-1-1-克的药瓶。"><span class="nav-number">5.</span> <span class="nav-text">有 20 瓶药丸，其中 19 瓶药丸质量相同为 1 克，剩下一瓶药丸质量为 1.1 克。瓶子中有无数个药丸。要求用一次天平找出药丸质量 1.1 克的药瓶。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-得到-4-升的水"><span class="nav-number">6.</span> <span class="nav-text">18.得到 4 升的水</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有两个杯子，容量分别为-5-升和-3-升，水的供应不断。问怎么用这两个杯子得到-4-升的水。"><span class="nav-number">7.</span> <span class="nav-text">有两个杯子，容量分别为 5 升和 3 升，水的供应不断。问怎么用这两个杯子得到 4 升的水。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-扔鸡蛋"><span class="nav-number">8.</span> <span class="nav-text">19.扔鸡蛋</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一栋楼有-100-层，在第-N-层或者更高扔鸡蛋会破，而第-N-层往下则不会。给-2-个鸡蛋，求-N，要求最差的情况下扔鸡蛋的次数最少。"><span class="nav-number">9.</span> <span class="nav-text">一栋楼有 100 层，在第 N 层或者更高扔鸡蛋会破，而第 N 层往下则不会。给 2 个鸡蛋，求 N，要求最差的情况下扔鸡蛋的次数最少。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样）"><span class="nav-number">10.</span> <span class="nav-text">20.一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样）</span></a></li></ol></div>
             
 
           </div>
@@ -754,7 +782,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共145.1k字</span>
+  <span class="post-count">博客全站共148.7k字</span>
 </div>
 
         
