@@ -96,7 +96,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190707211603830.png">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200518/66153173_1589803055420_16F6C01C102793BA75D2E74EDCF64397">
 <meta property="article:published_time" content="2020-09-30T01:45:09.000Z">
-<meta property="article:modified_time" content="2020-10-02T03:21:44.192Z">
+<meta property="article:modified_time" content="2020-10-02T08:17:09.171Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190707193021763.png">
@@ -384,7 +384,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  11.7k
+                  14.6k
                 </span>
               
 
@@ -400,7 +400,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  42
+                  52
                 </span>
               
             </div>
@@ -683,6 +683,77 @@
 <h2 id="41-蚂蚁走树枝"><a href="#41-蚂蚁走树枝" class="headerlink" title="41. 蚂蚁走树枝"></a>41. 蚂蚁走树枝</h2><p> 问题：放N只蚂蚁在一条长度为M树枝上，蚂蚁与蚂蚁之间碰到就各自往反方向走，问总距离或者时间。 </p>
 <p> 答案：这个其实就一个诀窍：蚂蚁相碰就往反方向走，可以直接看做没有发生任何事：大家都相当于独立的 </p>
 <p>  A蚂蚁与B蚂蚁相碰后你可以看做没有发生这次碰撞，这样无论是求时间还是距离都很简单了。</p>
+<h2 id="42-三个火枪手"><a href="#42-三个火枪手" class="headerlink" title="42.三个火枪手"></a>42.三个火枪手</h2><p>问题：彼此痛恨的甲、乙、丙三个枪手准备决斗。甲枪法最好，十发八中；乙枪法次之，十发六中；丙枪法最差，十发四中。如果三人同时***，并且每人每轮只发一枪；那么枪战后，谁活下来的机会大一些？ </p>
+<p> 答案： </p>
+<p> 一般人认为甲的枪法好，活下来的可能性大一些。但合乎推理的结论是，枪法最糟糕的丙活下来的几率最大。 </p>
+<p> 那么我们先来分析一下各个枪手的策略。 </p>
+<p> 如同田忌赛马一般，枪手甲一定要对枪手乙先***。因为乙对甲的威胁要比丙对甲的威胁更大，甲应该首先干掉乙，这是甲的最佳策略。 </p>
+<p> 同样的道理，枪手乙的最佳策略是第一枪瞄准甲。乙一旦将甲干掉，乙和丙进行对决，乙胜算的概率自然大很多。 </p>
+<p> 枪手丙的最佳策略也是先对甲***。乙的枪法毕竟比甲差一些，丙先把甲干掉再与乙进行对决，丙的存活概率还是要高一些。 </p>
+<p> 我们根据分析来计算一下三个枪手在上述情况下的存活几率：<br> 第一轮：甲射乙，乙射甲，丙射甲。<br> 甲的活率为24%（40% X 60%） </p>
+<p> 乙的活率为20%(100% - 80%) </p>
+<p> 丙的活率为100%（无人射丙）。 </p>
+<p> 由于丙100％存活率，因此根据上轮甲乙存活的情况来计算三人第二轮的存活几率： </p>
+<p> 情况1：甲活乙死（24% X 80% = 19.2%）<br> 甲射丙，丙射甲：甲的活率为60%，丙的活率为20%。<br> 情况2：乙活甲死（20% X 76% = 15.2%）<br> 乙射丙，丙射乙：乙的活率为60%，丙的活率为40%。<br> 情况3：甲乙同活（24% X 20% = 4.8%）<br> 重复第一轮。<br> 情况4：甲乙同死（76% X 80% = 60.8%）<br> 枪战结束。 </p>
+<p> 据此来计算三人活率：<br> 甲的活率为(19.2% X 60%) + (4.8% X 24%) = 12.672%<br> 乙的活率为(15.2% X 60%) + (4.8% X 20%) = 10.08%<br> 丙的活率为(19.2% X 20%) + (15.2% X 40%) + (4.8% X 100%) + (60.8% X 100%) = 75.52% </p>
+<p> 通过对两轮枪战的详细概率计算，我们发现枪法最差的丙存活的几率最大，枪法较好的甲和乙的存活几率却远低于丙的存活几率。</p>
+<h2 id="43-囚犯拿豆子"><a href="#43-囚犯拿豆子" class="headerlink" title="43.囚犯拿豆子"></a>43.囚犯拿豆子</h2><p>问题：有5个囚犯被判了死刑，他们请求上诉，于是法官愿意给他们一个机会。 </p>
+<p> 犯人抽签分好顺序，按序每人从100粒豆子中随意抓取，最多可以全抓，最少可以不抓，可以和别人抓的一样多。 </p>
+<p> 最终，抓的最多的和最少的要被处死。 </p>
+<p> 1、他们都是非常聪明且自私的人。 </p>
+<p> 2、他们的原则是先求保命。如果不能保命，就拉人陪葬。 </p>
+<p> 3、100颗不必都分完。 </p>
+<p> 4、若有重复的情况，则也算最大或最小，一并处死（中间重复不算）。 </p>
+<p> 假设每个犯人都足够聪明，但每个犯人并不知道其他犯人足够聪明。那么，谁活下来的可能性最大？</p>
+<p>根据题意，一号知道有五个人抓豆子，为保性命，他只要让豆子在20颗以内就可以了。但是他足够聪明的话他一定拿20颗，因为无论多拿一颗：2,3,4号的人一定会拿20颗最后死的人就会是最多的1号和最少的5号  还是少拿一颗：2,3,4号拿20个后，5号选择也拿20个拉上1234号垫背。（下面会说为什么多拿少拿也只会相差一颗） </p>
+<p> 2号是知道1号抓了几颗豆子(20)的。那么，对于2号来说，只有2种选择：与1号一样多，或者不一样多。我们就从这里入手。 </p>
+<p> 情况一，假如2号选择与1号的豆子数不一样多，也就是说2号选择比1号多或者比1号少。 </p>
+<p> 我们先要证明，如果2号选择比1号多或者比1号少，那么他一定会选择比1号只多1颗或者只少1颗。 </p>
+<p> 要证明这个并不算太难。因为每个囚犯的第一选择是先求保命，要保命就要尽量使自己的豆子数既不是最多也不是最少。当2号决定选择比1号多的时候，他已经可以保证自己不是最少，为了尽量使自己不是最多，当然比1号多出来的数量越小越好。因为这个数量如果与一号相差大于1的话，那么3号就有机会抓到的居中数，相差越大，二号成为最多的可能性也就越大。反之，当2号决定选择比1号少的时候，也是同样的道理，他会选择只比1号少1颗。既然2号只会会选择比1号多1颗或者比1号少1颗，那么1、2号的豆子数一定是2个连续的自然数，和一定是2n+1（其中1个人是n,另1人是n+1）。 </p>
+<p> 轮到3号的时候，他可以从剩下的豆子数知道1、2号的数量和，也就不难计算出n的值。而3号也只有2个选择：n颗或者n+1颗。为什么呢？这与上面的证明是一样的道理，保命原则，取最接近的数量，这里不再赘述。 </p>
+<p> 不过，3号选择的时候会有一个特殊情况，在这一情况下，他一定会选择较小的n，而不是较大的n+1。这一特殊情况就是，当3号知道自己选择了n后(已保证自己不是最多)，剩下的豆子数由于数量有限，4、5号中一定有人比n要少，这样自己一定可以活下来。计算的话就是 [100-(3n+1)]/2&lt;=n ，不难算出，在这个特殊情况下，n&gt;=20。也就是说，当1、2号选择了20或21颗的时候，3号只要选择20颗，就可以保证自己活下来。 </p>
+<p> 这样一来剩下的豆子只剩39颗，4、5号至少有一人少于20颗的（这个人当然是后选的5号），这样死的将是5号和1、2号中选21颗的那个人。当然，1号、2号肯定不会有人选择21这一“倒霉”的数字（因为他们都是聪明人），这样的话，上述“特殊情况（即3号选择n）”就不会发生了。 </p>
+<p> 综上所述，2345这四个人不难从剩下的豆子数知道前面几个人的数量总和，也就不难进而计算出n的值，而这样一来他们也只有n或者n+1这两种选择。最后的5号也是不难算出n的。在前4个人只选择了2个数字(n和n+1)的情况下，5号已是必死无疑，这时,根据“死也要拉几个垫背”的条件，5号会选择n或n+1，选择5个人一起完蛋。 </p>
+<p> 情况二，如果2号选择了与1号不一样多的话，最终结果是5个人一起死，那么2号只有选择与1号一样多了。 </p>
+<p> 那么1、2号的和就是2n，而3号如果选择n+1或者n -1的话，就又回到第一点的情况去了(前3个人的和是3m+1或3m+2)，于是3号也只能选择n ，当然，4号还是只能选n，最后的结果仍旧是5个人一起完蛋。 </p>
+<p> “最后处死抓的最多和最少的囚犯”严格执行这句话的话，除非有人舍己为人，死二留三。但这是足够聪明且自私的囚犯，所以这五个聪明人的下场是全死，这道题只不过是找了一个处死所有人的借口罢了. . . . . . </p>
+<p> 变种问题：如果每个囚犯都知道其他囚犯足够聪明，事情会怎么发展？ </p>
+<p> 答案： </p>
+<p> 这样的情况下囚犯一也会像我们一样推导出前面的结论，那么根据自私的规定，他会直接拿完100个，大家一起完蛋(反正结局已定) </p>
+<h2 id="44-学生猜生日-lt-笔试高频-gt"><a href="#44-学生猜生日-lt-笔试高频-gt" class="headerlink" title="44.学生猜生日&lt;笔试高频&gt;"></a>44.学生猜生日&lt;笔试高频&gt;</h2><p>这种题目笔试中出现的次数比较多，用排除法比较好解决</p>
+<h3 id="1"><a href="#1" class="headerlink" title="1."></a>1.</h3><p> 小明和小强都是张老师的学生，张老师的生日是M月N日, </p>
+<p> 2人都知道张老师的生日是下列10组中的一天，张老师把M值告诉了小明, </p>
+<p> 把N值告诉了小强，张老师问他们知道他的生日是那一天吗? </p>
+<p> 3月4日 3月5日 3月8日 </p>
+<p> 6月4日 6月7日 </p>
+<p> 9月1日 9月5日 </p>
+<p> 12月1日 12月2日 12月8日 </p>
+<p> 小明说:如果我不知道的话，小强肯定也不知道. </p>
+<p> 小强说:本来我也不知道，但是现在我知道了. </p>
+<p> 小明说:哦，那我也知道了. </p>
+<p> 请根据以上对话推断出张老师的生日是哪一天? </p>
+<p> 答案：9月1日 </p>
+<p> 排除法： </p>
+<p> 1.小明肯定小强不知道是哪天，排除所有月份里有单独日的月份：6月和12月&lt;因为如果小强的M是2或者7的话，小强就知道了，所以把6月7日与12月2日排除&gt;，所以小明拿到的是3或者9 </p>
+<p> 2.小强本来不知道，所以小强拿到的不是2或者7，但是小强现在知道了，说明把6月与12月排除后，小强拿到的是1,4,8中的一个&lt;这里小强肯定没拿到5，否则他不会知道是哪天的&gt; </p>
+<p> 3.小明现在也知道了，说明小明拿到的不是3，否则他不会知道是3月4日还是3月8日的，所以小明拿到的是9才能唯一确定生日 </p>
+<p> 综上，答案是9月1日 </p>
+<h3 id="2"><a href="#2" class="headerlink" title="2."></a>2.</h3><p> 小明和小强是赵老师的学生，张老师的生日是M月N日，张老师 </p>
+<p> 把M值告诉小明，N值告诉小强 </p>
+<p> 给他们六个选项 </p>
+<p> 3月1日 3月3日 7月3日 7月5日  </p>
+<p> 9月1日 11月7日 </p>
+<p> 小明说:我猜不出来 </p>
+<p> 小强说:本来我也猜不出来，但是现在我知道了 </p>
+<p> 问:张老师生日多少 </p>
+<p> 答案：3月1日 </p>
+<p> 排除法： </p>
+<p> 1.小明说猜不出来，说明小明拿到的不是单独出现的9或者11，说明老师生日只能是3月或者7月 </p>
+<p> 2.小强原本不知道，说明小强拿到的不是单独出现的5或者7，说明老是生日是1日或3日 </p>
+<p> 3.小强现在知道了，说明小强拿到的是1，因为如果拿到的是3，那么小强就不知道是3月3日还是7月3日了 </p>
+<p>   综上，老师生日是3月1日  </p>
+<h2 id="45-火车开车问题"><a href="#45-火车开车问题" class="headerlink" title="45.火车开车问题"></a>45.火车开车问题</h2><p>有一辆火车以每小时15公里的速度离开洛杉矶直奔纽约，另一辆火车以每小时20公里的速度从纽约开往洛杉矶。如果有一只鸟，以外30公里每小时的速度和两辆火车现时启动，从洛杉矶出发，碰到另一辆车后返回，依次在两辆火车来回的飞行，直道两面辆火车相遇，假设洛杉矶到纽约的距离为s, 请问，这只小鸟飞行了多长距离？</p>
+<p>那小鸟飞行的距离就是(s/(15+20))*30。 时间 * 速度</p>
 
       
     </div>
@@ -862,7 +933,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-三门问题（Monty-Hall-problem）"><span class="nav-number">1.</span> <span class="nav-text">1.三门问题（Monty Hall problem）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-桶装水"><span class="nav-number">2.</span> <span class="nav-text">2.桶装水</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-瞎子分牌"><span class="nav-number">3.</span> <span class="nav-text">3.瞎子分牌</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-赛马问题"><span class="nav-number">4.</span> <span class="nav-text">4.赛马问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-老鼠死亡问题"><span class="nav-number">5.</span> <span class="nav-text">5.老鼠死亡问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-石头称重"><span class="nav-number">6.</span> <span class="nav-text">6.石头称重</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-抛硬币"><span class="nav-number">7.</span> <span class="nav-text">7.抛硬币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-蚊香"><span class="nav-number">8.</span> <span class="nav-text">8.蚊香</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-海盗分金币"><span class="nav-number">9.</span> <span class="nav-text">9.海盗分金币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-54张扑克牌，平均分成3份，大小王在一份的概率"><span class="nav-number">10.</span> <span class="nav-text">10. 54张扑克牌，平均分成3份，大小王在一份的概率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。"><span class="nav-number">11.</span> <span class="nav-text">11.让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-分布式多个机器生成id，如何保证不重复"><span class="nav-number">12.</span> <span class="nav-text">12.分布式多个机器生成id，如何保证不重复?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-数据库连接池怎么设计"><span class="nav-number">13.</span> <span class="nav-text">13.数据库连接池怎么设计?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-扫码登录"><span class="nav-number">14.</span> <span class="nav-text">14.扫码登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-砝码秤盐"><span class="nav-number">15.</span> <span class="nav-text">15.砝码秤盐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-九球称重"><span class="nav-number">16.</span> <span class="nav-text">16.九球称重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#有-9-个球，其中-8-个球质量相同，有-1-个球比较重。要求用-2-次天平，找出比较重的那个球。"><span class="nav-number">16.1.</span> <span class="nav-text">有 9 个球，其中 8 个球质量相同，有 1 个球比较重。要求用 2 次天平，找出比较重的那个球。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-药丸称重"><span class="nav-number">17.</span> <span class="nav-text">17.药丸称重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#有-20-瓶药丸，其中-19-瓶药丸质量相同为-1-克，剩下一瓶药丸质量为-1-1-克。瓶子中有无数个药丸。要求用一次天平找出药丸质量-1-1-克的药瓶。"><span class="nav-number">17.1.</span> <span class="nav-text">有 20 瓶药丸，其中 19 瓶药丸质量相同为 1 克，剩下一瓶药丸质量为 1.1 克。瓶子中有无数个药丸。要求用一次天平找出药丸质量 1.1 克的药瓶。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-得到-4-升的水"><span class="nav-number">18.</span> <span class="nav-text">18.得到 4 升的水</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#有两个杯子，容量分别为-5-升和-3-升，水的供应不断。问怎么用这两个杯子得到-4-升的水。"><span class="nav-number">18.1.</span> <span class="nav-text">有两个杯子，容量分别为 5 升和 3 升，水的供应不断。问怎么用这两个杯子得到 4 升的水。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-扔鸡蛋"><span class="nav-number">19.</span> <span class="nav-text">19.扔鸡蛋</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一栋楼有-100-层，在第-N-层或者更高扔鸡蛋会破，而第-N-层往下则不会。给-2-个鸡蛋，求-N，要求最差的情况下扔鸡蛋的次数最少"><span class="nav-number">19.1.</span> <span class="nav-text">一栋楼有 100 层，在第 N 层或者更高扔鸡蛋会破，而第 N 层往下则不会。给 2 个鸡蛋，求 N，要求最差的情况下扔鸡蛋的次数最少</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样"><span class="nav-number">20.</span> <span class="nav-text">20.一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-分金条"><span class="nav-number">21.</span> <span class="nav-text">21.分金条</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-假钱问题"><span class="nav-number">22.</span> <span class="nav-text">22.假钱问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#23-取硬币问题"><span class="nav-number">23.</span> <span class="nav-text">23.取硬币问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#24-旅馆问题"><span class="nav-number">24.</span> <span class="nav-text">24.旅馆问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#25-蓝眼睛问题"><span class="nav-number">25.</span> <span class="nav-text">25.蓝眼睛问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-疯狗问题"><span class="nav-number">26.</span> <span class="nav-text">26.疯狗问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#27-耳光问题（跟蓝眼睛一样）"><span class="nav-number">27.</span> <span class="nav-text">27.耳光问题（跟蓝眼睛一样）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#28-红球篮球"><span class="nav-number">28.</span> <span class="nav-text">28.红球篮球</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#29-猜数字"><span class="nav-number">29.</span> <span class="nav-text">29.猜数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#30-水果标签问题"><span class="nav-number">30.</span> <span class="nav-text">30.水果标签问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#31-便士标签问题（和水果标签一样）"><span class="nav-number">31.</span> <span class="nav-text">31.便士标签问题（和水果标签一样）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#32-吃药问题"><span class="nav-number">32.</span> <span class="nav-text">32.吃药问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#33-硬币问题"><span class="nav-number">33.</span> <span class="nav-text">33.硬币问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#34-灯管问题"><span class="nav-number">34.</span> <span class="nav-text">34.灯管问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#35-盲人问题"><span class="nav-number">35.</span> <span class="nav-text">35.盲人问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#36-最大钻石问题"><span class="nav-number">36.</span> <span class="nav-text">36.最大钻石问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#37-飞机飞行的问题"><span class="nav-number">37.</span> <span class="nav-text">37.飞机飞行的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#38-犯人猜颜色"><span class="nav-number">38.</span> <span class="nav-text">38.犯人猜颜色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#39-猴子搬香蕉"><span class="nav-number">39.</span> <span class="nav-text">39.猴子搬香蕉</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#40-轮流拿石头"><span class="nav-number">40.</span> <span class="nav-text">40.轮流拿石头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#41-蚂蚁走树枝"><span class="nav-number">41.</span> <span class="nav-text">41. 蚂蚁走树枝</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-三门问题（Monty-Hall-problem）"><span class="nav-number">1.</span> <span class="nav-text">1.三门问题（Monty Hall problem）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-桶装水"><span class="nav-number">2.</span> <span class="nav-text">2.桶装水</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-瞎子分牌"><span class="nav-number">3.</span> <span class="nav-text">3.瞎子分牌</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-赛马问题"><span class="nav-number">4.</span> <span class="nav-text">4.赛马问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-老鼠死亡问题"><span class="nav-number">5.</span> <span class="nav-text">5.老鼠死亡问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-石头称重"><span class="nav-number">6.</span> <span class="nav-text">6.石头称重</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-抛硬币"><span class="nav-number">7.</span> <span class="nav-text">7.抛硬币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-蚊香"><span class="nav-number">8.</span> <span class="nav-text">8.蚊香</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-海盗分金币"><span class="nav-number">9.</span> <span class="nav-text">9.海盗分金币</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-54张扑克牌，平均分成3份，大小王在一份的概率"><span class="nav-number">10.</span> <span class="nav-text">10. 54张扑克牌，平均分成3份，大小王在一份的概率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。"><span class="nav-number">11.</span> <span class="nav-text">11.让你设计一个微信发红包的api，你会怎么设计，不能有人领到的红包里面没钱，红包数值精确到分。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-分布式多个机器生成id，如何保证不重复"><span class="nav-number">12.</span> <span class="nav-text">12.分布式多个机器生成id，如何保证不重复?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-数据库连接池怎么设计"><span class="nav-number">13.</span> <span class="nav-text">13.数据库连接池怎么设计?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-扫码登录"><span class="nav-number">14.</span> <span class="nav-text">14.扫码登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-砝码秤盐"><span class="nav-number">15.</span> <span class="nav-text">15.砝码秤盐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-九球称重"><span class="nav-number">16.</span> <span class="nav-text">16.九球称重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#有-9-个球，其中-8-个球质量相同，有-1-个球比较重。要求用-2-次天平，找出比较重的那个球。"><span class="nav-number">16.1.</span> <span class="nav-text">有 9 个球，其中 8 个球质量相同，有 1 个球比较重。要求用 2 次天平，找出比较重的那个球。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-药丸称重"><span class="nav-number">17.</span> <span class="nav-text">17.药丸称重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#有-20-瓶药丸，其中-19-瓶药丸质量相同为-1-克，剩下一瓶药丸质量为-1-1-克。瓶子中有无数个药丸。要求用一次天平找出药丸质量-1-1-克的药瓶。"><span class="nav-number">17.1.</span> <span class="nav-text">有 20 瓶药丸，其中 19 瓶药丸质量相同为 1 克，剩下一瓶药丸质量为 1.1 克。瓶子中有无数个药丸。要求用一次天平找出药丸质量 1.1 克的药瓶。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-得到-4-升的水"><span class="nav-number">18.</span> <span class="nav-text">18.得到 4 升的水</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#有两个杯子，容量分别为-5-升和-3-升，水的供应不断。问怎么用这两个杯子得到-4-升的水。"><span class="nav-number">18.1.</span> <span class="nav-text">有两个杯子，容量分别为 5 升和 3 升，水的供应不断。问怎么用这两个杯子得到 4 升的水。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-扔鸡蛋"><span class="nav-number">19.</span> <span class="nav-text">19.扔鸡蛋</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一栋楼有-100-层，在第-N-层或者更高扔鸡蛋会破，而第-N-层往下则不会。给-2-个鸡蛋，求-N，要求最差的情况下扔鸡蛋的次数最少"><span class="nav-number">19.1.</span> <span class="nav-text">一栋楼有 100 层，在第 N 层或者更高扔鸡蛋会破，而第 N 层往下则不会。给 2 个鸡蛋，求 N，要求最差的情况下扔鸡蛋的次数最少</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样"><span class="nav-number">20.</span> <span class="nav-text">20.一个家庭有两个小孩，其中有一个是女孩，问另一个也是女孩的概率（假定生男生女的概率一样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-分金条"><span class="nav-number">21.</span> <span class="nav-text">21.分金条</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-假钱问题"><span class="nav-number">22.</span> <span class="nav-text">22.假钱问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#23-取硬币问题"><span class="nav-number">23.</span> <span class="nav-text">23.取硬币问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#24-旅馆问题"><span class="nav-number">24.</span> <span class="nav-text">24.旅馆问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#25-蓝眼睛问题"><span class="nav-number">25.</span> <span class="nav-text">25.蓝眼睛问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-疯狗问题"><span class="nav-number">26.</span> <span class="nav-text">26.疯狗问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#27-耳光问题（跟蓝眼睛一样）"><span class="nav-number">27.</span> <span class="nav-text">27.耳光问题（跟蓝眼睛一样）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#28-红球篮球"><span class="nav-number">28.</span> <span class="nav-text">28.红球篮球</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#29-猜数字"><span class="nav-number">29.</span> <span class="nav-text">29.猜数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#30-水果标签问题"><span class="nav-number">30.</span> <span class="nav-text">30.水果标签问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#31-便士标签问题（和水果标签一样）"><span class="nav-number">31.</span> <span class="nav-text">31.便士标签问题（和水果标签一样）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#32-吃药问题"><span class="nav-number">32.</span> <span class="nav-text">32.吃药问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#33-硬币问题"><span class="nav-number">33.</span> <span class="nav-text">33.硬币问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#34-灯管问题"><span class="nav-number">34.</span> <span class="nav-text">34.灯管问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#35-盲人问题"><span class="nav-number">35.</span> <span class="nav-text">35.盲人问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#36-最大钻石问题"><span class="nav-number">36.</span> <span class="nav-text">36.最大钻石问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#37-飞机飞行的问题"><span class="nav-number">37.</span> <span class="nav-text">37.飞机飞行的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#38-犯人猜颜色"><span class="nav-number">38.</span> <span class="nav-text">38.犯人猜颜色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#39-猴子搬香蕉"><span class="nav-number">39.</span> <span class="nav-text">39.猴子搬香蕉</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#40-轮流拿石头"><span class="nav-number">40.</span> <span class="nav-text">40.轮流拿石头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#41-蚂蚁走树枝"><span class="nav-number">41.</span> <span class="nav-text">41. 蚂蚁走树枝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#42-三个火枪手"><span class="nav-number">42.</span> <span class="nav-text">42.三个火枪手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#43-囚犯拿豆子"><span class="nav-number">43.</span> <span class="nav-text">43.囚犯拿豆子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#44-学生猜生日-lt-笔试高频-gt"><span class="nav-number">44.</span> <span class="nav-text">44.学生猜生日&lt;笔试高频&gt;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1"><span class="nav-number">44.1.</span> <span class="nav-text">1.</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2"><span class="nav-number">44.2.</span> <span class="nav-text">2.</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#45-火车开车问题"><span class="nav-number">45.</span> <span class="nav-text">45.火车开车问题</span></a></li></ol></div>
             
 
           </div>
@@ -912,7 +983,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共155.2k字</span>
+  <span class="post-count">博客全站共158.1k字</span>
 </div>
 
         
