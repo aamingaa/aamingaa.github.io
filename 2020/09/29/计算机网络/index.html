@@ -87,8 +87,11 @@
 <meta property="og:description" content="[TOC] 网络协议分层国际标准化组织 ISO 提出了 OSI 开放互连的七层计算机网络模型，从上到下分别是应用层、表示层、会话层、运输层、网络层、链路层和物理层。OSI 模型的概念清楚，理论也比较完善，但是既复杂又不实用。还有一种是 TCP&#x2F;IP 体系结构，它分为四层，从上到下分别是应用层、运输层、网际层和网络接口层，不过从实质上将只有三层，因为最下面的网络接口层并没有什么具体内容。因特网的协议">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021487780_27194088468_4cb0141fc8_b.jpg">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021488550_u16143127921954581760fm26gp0.jpg">
+<meta property="og:image" content="http://aamingaa.github.io/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201024091740786.png">
+<meta property="og:image" content="http://aamingaa.github.io/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201024091751743.png">
+<meta property="og:image" content="http://aamingaa.github.io/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201024091706330.png">
 <meta property="article:published_time" content="2020-09-29T07:42:56.000Z">
-<meta property="article:modified_time" content="2020-09-29T08:49:36.232Z">
+<meta property="article:modified_time" content="2020-10-24T01:17:53.971Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021487780_27194088468_4cb0141fc8_b.jpg">
@@ -376,7 +379,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  27.7k
+                  28.5k
                 </span>
               
 
@@ -392,7 +395,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  96
+                  99
                 </span>
               
             </div>
@@ -431,11 +434,14 @@
 <p>提供了即插即用的连网方式，用户不再需要手动配置 IP 地址等信息。</p>
 <p>DHCP 配置的内容不仅是 IP 地址，还包括子网掩码、网关 IP 地址。</p>
 <ol>
-<li><p>客户端发送 Discover 报文，该报文的目的地址为 255.255.255.255:67，源地址为 0.0.0.0:68，被放入 UDP中，该报文被广播到同一个子网的所有主机上。如果客户端和 DHCP 服务器不在同一个子网，就需要使用中继代理。</p>
-</li>
-<li><p>DHCP 服务器收到 Discover 报文之后，发送 Offer 报文给客户端，该报文包含了客户端所需要的信息。因为客户端可能收到多个 DHCP 服务器提供的信息，因此客户端需要进行选择。如果客户端选择了某个 DHCP 服务器提供的信息，那么就发送 Request 报文给该 DHCP 服务器。DHCP 服务器发送 Ack 报文，表示客户端此时可以使用提供给它的信息。</p>
-</li>
+<li>客户端发送 Discover 报文，该报文的目的地址为 255.255.255.255:67，源地址为 0.0.0.0:68，被放入 UDP中，该报文被广播到同一个子网的所有主机上。如果客户端和 DHCP 服务器不在同一个子网，就需要使用中继代理。</li>
+<li>DHCP 服务器收到 Discover 报文之后，发送 Offer 报文给客户端，该报文包含了客户端所需要的信息。因为客户端可能收到多个 DHCP 服务器提供的信息，因此客户端需要进行选择。如果客户端选择了某个 DHCP 服务器提供的信息，那么就发送 Request 报文给该 DHCP 服务器。DHCP 服务器发送 Ack 报文，表示客户端此时可以使用提供给它的信息。</li>
 </ol>
+<p><strong>子网掩码的作用</strong></p>
+<p>子网掩码的作用: </p>
+<p>1、用于将一个大的IP网络划分为若干小的子网络：</p>
+<p>因为随着互联网的发展，越来越多的网络产生，有的网络多则几百台，有的只有区区几台，这样就浪费了很多IP地址，所以要划分子网。使用子网可以提高网络应用的效率。</p>
+<p>2、用于屏蔽IP地址的一部分以区别网络标识和主机标识，并说明该IP地址是在局域网上，还是在远程网上：</p>
 <hr>
 <h3 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a>运输层</h3><p>运输层的任务就是<strong>负责向两台主机中进程之间的通信提供通用的数据传输服务</strong>，应用进程利用该服务来传送应用层报文。由于一台主机同时可以运行多个进程，因此运输层具有复用和分用的功能，复用就是多个应用层进程可以同时使用下面运输层的服务，分用就是把运输层收到的信息分别交付给上面应用层中的对应进程。</p>
 <p>运输层主要使用两种协议：① 用户数据报协议 UDP，这是一种提供无连接的、尽最大努力交付的数据传输服务，不保证数据传输的可靠性，数据传输单位是用户数据报。② 传输控制协议 TCP，这是一种面向连接的、可靠的数据传输服务，数据传输单元是报文。</p>
@@ -451,19 +457,19 @@
 <p>RIP 是分布式的基于距离向量的路由选择协议，只适用于小型互联网。RIP 按照固定的时间间隔与相邻路由器交换信息，交换的信息是当前路由表。OSPF 是分布式的链路状态协议，适用于大型互联网，只在链路状态发生变化时才向本自治系统中的所有路由器用洪泛法发送与本路由器相邻的所有路由器的链路状态信息。</p>
 <p>BGP-4 是不同自治系统的路由器之间交换路由信息的协议，是一种路径向量路由选择协议。其目标是寻找一条能够到达目的网络且比较好的路由而不是最佳路由。</p>
 <p><strong>网际控制报文协议 ICMP</strong></p>
-<p>ICMP 报文作为 IP 数据报的数据，加上首部后组成 IP 数据报发送出去，使用 ICMP 并非为了实现可靠传输，ICMP 允许主机或路由器报告差错情况和提供有关异常情况的报告。ICMP 报文的种类有两种，即 ICMP 差错报告报文和 ICMP 询问报文。</p>
+<p>ICMP 报文作为 IP 数据报的数据，加上首部后组成 IP 数据报发送出去，<strong>使用 ICMP 并非为了实现可靠传输</strong>，ICMP 允许主机或路由器报告差错情况和提供有关异常情况的报告。ICMP 报文的种类有两种，即 ICMP 差错报告报文和 ICMP 询问报文。</p>
 <p>ICMP 的一个重要应用就是分组间探测 PING，用来测试两台主机之间的连通性，PING 使用了 ICMP 回送请求与回送回答报文。</p>
 <p><strong>Ping</strong></p>
-<p>Ping 是 ICMP 的一个重要应用，主要用来测试两台主机之间的连通性。<br>Ping 的原理是通过向目的主机发送 ICMP Echo 请求报文，目的主机收到之后会发送 Echo 回答报文。Ping 会根据时间和成功响应的次数估算出数据包往返时间以及丢包率。<br>在规定的时候间内，源主机如果没有接到 ICMP 的应答包，则说明目标主机不可达；如果接收到了 ICMP 应答包，则说明目标主机可达。应答数据包的类型字段为 0，构建新的ICMP数据包，发回给主机A，此时，源主机会检查，用当前时刻减去该数据包最初从源主机上发出的时刻，就是 ICMP 数据包的时间延迟。</p>
-<p><strong>Traceroute</strong></p>
-<p>Traceroute 是 ICMP 的另一个应用，用来跟踪一个分组从源点到终点的路径。<br>Traceroute 发送的 IP 数据报封装的是无法交付的 UDP 用户数据报，并由目的主机发送终点不可达差错报告报文</p>
+<p>Ping 是 ICMP 的一个重要应用，主要用来测试两台主机之间的连通性。</p>
+<p>Ping 的原理是通过向目的主机发送 ICMP Echo 请求报文，目的主机收到之后会发送 Echo 回答报文。Ping 会根据时间和成功响应的次数估算出数据包往返时间以及丢包率。</p>
+<p>在规定的时候间内，源主机如果没有接到 ICMP 的应答包，则说明目标主机不可达；如果接收到了 ICMP 应答包，则说明目标主机可达。应答数据包的类型字段为 0，构建新的ICMP数据包，发回给主机A，此时，源主机会检查，用当前时刻减去该数据包最初从源主机上发出的时刻，就是 ICMP 数据包的时间延迟。</p>
+<p><strong>Traceroute</strong><br>Traceroute 发送的 IP 数据报封装的是无法交付的 UDP 用户数据报，并由目的主机发送终点不可达差错报告报文</p>
 <ul>
 <li><p>Traceroute 的第一个作用就是故意设置特殊的 TTL，来追踪去往目的地时沿途经过的路由器。Traceroute 的参数指向某个目的 IP 地址，它会发送一个 UDP 的数据包。将TTL 设置成 1，也就是说一旦遇到一个路由器或者一个关卡，就表示它“牺牲”了。如果中间的路由器不止一个，当然碰到第一个就“牺牲”。于是，返回一个 ICMP 包，也就是网络差错包，类型是时间超时。接下来，将 TTL 设置为2.。。这样，Traceroute 就拿到了所有的路由器 IP。怎么知道 UDP 有没有到达目的主机呢？Traceroute 程序会发送一份 UDP 数据报给目的主机，但它会选择一个不可能的值作为 UDP 端口号（大于 30000）。当该数据报到达时，将使目的主机的 UDP 模块产生一份“端口不可达”错误 ICMP 报文。如果数据报没有到达，则可能是超时</p>
 </li>
-<li><p>Traceroute 还有一个作用是故意设置不分片，从而确定路径的 MTU。要做的工作首先是发送分组，并设置“不分片”标志。发送的第一个分组的长度正好与出口 MTU 相等。如果</p>
+<li><p>Traceroute 还有一个作用是故意设置不分片，从而确定路径的 MTU。要做的工作首先是发送分组，并设置“不分片”标志。发送的第一个分组的长度正好与出口 MTU 相等。如果中间遇到窄的关口会被卡住，会发送 ICMP 网络差错包.</p>
 </li>
 </ul>
-<p>中间遇到窄的关口会被卡住，会发送 ICMP 网络差错包，</p>
 <p><strong>网际组管理协议 IGMP</strong></p>
 <p>IP 多播使用 IGMP 协议，IGMP 并非在互联网范围内对所有多播组成员进行管理，它不知道 IP 多播组包含的成员个数也不知道这些成员都分布在哪些网络上。</p>
 <p>IGMP 协议是让连接在本地局域网上的多播路由器知道本局域网上是否有主机上的某个进程参加或推出了某个多播组。</p>
@@ -574,9 +580,19 @@
 <p>当 B 发送完数据后准备释放连接时，就向 A 发送连接终止报文，FIN=1，同时还要重发ACK=1，ack=u+1，seq=w，seq 不是 v 的原因是在半关闭状态 B 可能又发送了一些数据，之后 B 进入 LAST-ACK 状态。</p>
 <p>A 收到连接终止报文后还要再进行一次确认，确认报文中 ACK=1，ack=w+1，seq=u+1。发送完之后进入 TIME-WAIT 状态，等待 2MSL之后进入 CLOSED 状态，B 收到该确认后进入 CLOSED 状态，服务器端会稍早于客户端释放连接。</p>
 <p><strong>四次挥手的原因</strong></p>
-<p>第一点原因是为了保证被动关闭方可以进入 CLOSED 状态。MSL 是最大报文段寿命，等待 2MSL 可以保证 A 发送的最后一个确认报文能被 B 接收，如果该报文丢失，B 没有收到就会超时重传之前的 FIN+ACK 报文，而如果 A 在发送确认报文后就立即释放连接就无法收到 B 超时重传的报文，因而也不会再一次发送确认报文段，B 就无法正常进入 CLOSED 状态。</p>
-<p>第二点原因是 2MSL 时间之后，本连接中的所有报文就都会从网络中消失，可以防止已失效连接的请求数据包与正常连接的请求数据包混淆而发生异常。</p>
-<p>除此之外，TCP 还设有一个保活计时器，用于解决客户端主机故障的问题，服务器每收到一次客户的数据就重新设置保活计时器，时间为 2 小时。如果 2 小时内没有收到就间隔 75 秒发送一次探测报文，连续 10 次都没有响应后就关闭连接。</p>
+<p>tcp是全双工通信，服务端和客服端都能发送和接收数据。</p>
+<p>tcp在断开连接时，需要服务端和客服端都确定对方将不再发送数据。</p>
+<p><strong>第1次挥手</strong></p>
+<p>由客户端向服务端发起，服务端收到信息后就能确定客户端已经停止发送数据。</p>
+<p><strong>第2次挥手</strong></p>
+<p>由服务端向客户端发起，客户端收到消息后就能确定服务端已经知道客户端不会再发送数据。</p>
+<p><strong>第3次握手</strong></p>
+<p>由服务端向客户端发起，客户端收到消息后就能确定服务端已经停止发送数据。</p>
+<p><strong>第4次挥手</strong></p>
+<p>由客户端向服务端发起，服务端收到信息后就能确定客户端已经知道服务端不会再发送数据。</p>
+<p><strong>为什么不是3次挥手</strong></p>
+<p>在客服端第1次挥手时，服务端可能还在发送数据。</p>
+<p>所以第2次挥手和第3次挥手不能合并。</p>
 <p><strong>大量 TIME-WAIT 的原因、导致的问题、处理</strong></p>
 <p>在高并发短连接的 TCP 服务器上，服务器处理完请求后立刻主动正常关闭连接，这个场景下会出现大量 socket 处于 TIME-WAIT 状态。</p>
 <p>TIME-WAIT 状态无法真正释放句柄资源，socket 使用的本地端口在默认情况下不能再被使用，会限制有效连接数量，成为性能瓶颈。</p>
@@ -1072,6 +1088,19 @@
 <p>①资源剥夺法：挂起某些死锁进程并剥夺其资源。</p>
 <p>②撤销进程法：撤销一个甚至全部死锁进程并剥夺其资源。</p>
 <p>③进程回退法：让一个或多个进程回到不至于造成死锁的状态。</p>
+<h2 id="分页分段"><a href="#分页分段" class="headerlink" title="分页分段"></a>分页分段</h2><p>传统存储管理方式：操作系统引入了虚拟内存的概念，利用计算机的空间局部性和时间局部性原理，将程序分的一部分装入内存运行，其余部分留在外存，等需要的时候再讲外存的程序装入内存继续运行。</p>
+<h3 id="虚拟内存实现方式："><a href="#虚拟内存实现方式：" class="headerlink" title="虚拟内存实现方式："></a>虚拟内存实现方式：</h3><p>请求分页，请求分段，请求段页式存储管理。请求分页存储管理中，将虚拟地址内存空间划分为大小相等的页块，同时内存地址空间，也划分为等大小的页块。系统维持一个页表，存储这虚拟页号到物理快块号的映射。程序中的逻辑地址由两部分组成：页号P和页内位移量W。块号*块大小加上页内偏移得到物理地址。</p>
+<p>如果程序执行时，调用到不再内存中的虚拟页面时，发生缺页中断，将页由外存调入内存。如果内存已满，采用页面置换算法将老的淘汰，载入新的。页面置换算法常见的有FIFO,LRU。</p>
+<p><img src="/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201024091740786.png" alt="image-20201024091740786"></p>
+<p>优点：没有外碎片，每个内碎片不超过页的大小。</p>
+<p>缺点：程序全部装入内存，要求有相应的硬件支持，如地址变换机构缺页中断的产生和选择淘汰页面等都要求有相应的硬件支持。增加了机器成本和系统开销。</p>
+<h3 id="请求分段存储管理："><a href="#请求分段存储管理：" class="headerlink" title="请求分段存储管理："></a>请求分段存储管理：</h3><p>将用户程序地址空间分成若干个大小不等的段，每段能够定义一组相对完整的逻辑信息。存储分配时，以段为单位，段内地址连续，段间不连续。虚拟地址由段号和段内地址组成，虚拟地址到实存地址的变换通过段表来实现。 分页对程序猿而言是不可见的。而分段通常对程序猿而言是可见的，因而分段为组织程序和数据提供了方便。段页式存储组织是分段式和分页式结合的存储组织方法。这样可充分利用分段管理和分页管理的长处。</p>
+<p><img src="/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201024091751743.png" alt="image-20201024091751743"></p>
+<p>优点：可以分别编写和编译，可以针对不同类型的段采取不同的保护，可以按段为单位来进行共享，包括通过动态链接进行代码共享。</p>
+<p>缺点：会产生碎片。</p>
+<h3 id="段页式"><a href="#段页式" class="headerlink" title="段页式"></a>段页式</h3><p>程序的地址空间划分成多个拥有独立地址空间的段，每个段上的地址空间划分成大小相同的页。这样既拥有分段系统</p>
+<p>的共享和保护，又拥有分页系统的虚拟内存功能。</p>
+<p><img src="/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201024091706330.png" alt="image-20201024091706330"></p>
 
       
     </div>
@@ -1192,7 +1221,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">112</span>
+                  <span class="site-state-item-count">115</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1251,7 +1280,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络协议分层"><span class="nav-number">1.</span> <span class="nav-text">网络协议分层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用层"><span class="nav-number">1.1.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层"><span class="nav-number">1.2.</span> <span class="nav-text">运输层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络层"><span class="nav-number">1.3.</span> <span class="nav-text">网络层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链路层"><span class="nav-number">1.4.</span> <span class="nav-text">链路层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#物理层"><span class="nav-number">1.5.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表示层"><span class="nav-number">1.6.</span> <span class="nav-text">表示层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#会话层"><span class="nav-number">1.7.</span> <span class="nav-text">会话层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP"><span class="nav-number">2.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-特点"><span class="nav-number">2.1.</span> <span class="nav-text">TCP 特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-报文结构"><span class="nav-number">2.2.</span> <span class="nav-text">TCP 报文结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可靠传输协议-ARQ"><span class="nav-number">2.3.</span> <span class="nav-text">可靠传输协议 ARQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#停止等待协议"><span class="nav-number">2.3.1.</span> <span class="nav-text">停止等待协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回退-N-步协议"><span class="nav-number">2.3.2.</span> <span class="nav-text">回退 N 步协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择重传协议"><span class="nav-number">2.3.3.</span> <span class="nav-text">选择重传协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-可靠原理"><span class="nav-number">2.4.</span> <span class="nav-text">TCP 可靠原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#滑动窗口"><span class="nav-number">2.4.1.</span> <span class="nav-text">滑动窗口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流量控制"><span class="nav-number">2.4.2.</span> <span class="nav-text">流量控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞控制"><span class="nav-number">2.4.3.</span> <span class="nav-text">拥塞控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接和释放机制"><span class="nav-number">2.5.</span> <span class="nav-text">TCP 连接和释放机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手"><span class="nav-number">2.5.1.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四次挥手"><span class="nav-number">2.5.2.</span> <span class="nav-text">四次挥手</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-和-UDP-的区别"><span class="nav-number">2.6.</span> <span class="nav-text">TCP 和 UDP 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP和UDP的传送信息单位的区别？"><span class="nav-number">2.7.</span> <span class="nav-text">TCP和UDP的传送信息单位的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP粘包？"><span class="nav-number">2.8.</span> <span class="nav-text">TCP粘包？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原因"><span class="nav-number">2.8.1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理方法："><span class="nav-number">2.8.2.</span> <span class="nav-text">处理方法：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP"><span class="nav-number">3.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP"><span class="nav-number">4.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-概况"><span class="nav-number">4.1.</span> <span class="nav-text">HTTP 概况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非持续连接和持续连接"><span class="nav-number">4.2.</span> <span class="nav-text">非持续连接和持续连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-报文格式"><span class="nav-number">4.3.</span> <span class="nav-text">HTTP 报文格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie"><span class="nav-number">4.4.</span> <span class="nav-text">cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-缓存"><span class="nav-number">4.5.</span> <span class="nav-text">Web 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入一个-url-发生的事"><span class="nav-number">4.6.</span> <span class="nav-text">输入一个 url 发生的事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS"><span class="nav-number">4.7.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP1-0、1-1、2-0之间的区别"><span class="nav-number">4.8.</span> <span class="nav-text">HTTP1.0、1.1、2.0之间的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http1-0和http1-1的主要区别如下："><span class="nav-number">4.9.</span> <span class="nav-text">http1.0和http1.1的主要区别如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http1-1和http2-0的主要区别："><span class="nav-number">4.10.</span> <span class="nav-text">http1.1和http2.0的主要区别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？"><span class="nav-number">4.11.</span> <span class="nav-text">HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS链接建立的过程："><span class="nav-number">4.12.</span> <span class="nav-text">HTTPS链接建立的过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对称加密算法："><span class="nav-number">4.13.</span> <span class="nav-text">对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非对称加密算法："><span class="nav-number">4.14.</span> <span class="nav-text">非对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP请求有哪些。get和Post区别。"><span class="nav-number">4.15.</span> <span class="nav-text">HTTP请求有哪些。get和Post区别。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP常见响应状态码，从1xx到5xx"><span class="nav-number">4.16.</span> <span class="nav-text">HTTP常见响应状态码，从1xx到5xx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向和转发区别"><span class="nav-number">4.17.</span> <span class="nav-text">重定向和转发区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络安全"><span class="nav-number">5.</span> <span class="nav-text">网络安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络攻击"><span class="nav-number">5.1.</span> <span class="nav-text">网络攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#密码技术"><span class="nav-number">5.2.</span> <span class="nav-text">密码技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字签名"><span class="nav-number">5.3.</span> <span class="nav-text">数字签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#报文鉴别"><span class="nav-number">5.4.</span> <span class="nav-text">报文鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端点鉴别"><span class="nav-number">5.5.</span> <span class="nav-text">端点鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全协议"><span class="nav-number">5.6.</span> <span class="nav-text">安全协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙和入侵检测"><span class="nav-number">5.7.</span> <span class="nav-text">防火墙和入侵检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程和线程"><span class="nav-number">6.</span> <span class="nav-text">进程和线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">6.1.</span> <span class="nav-text">进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">6.2.</span> <span class="nav-text">线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">7.</span> <span class="nav-text">死锁</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络协议分层"><span class="nav-number">1.</span> <span class="nav-text">网络协议分层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用层"><span class="nav-number">1.1.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层"><span class="nav-number">1.2.</span> <span class="nav-text">运输层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络层"><span class="nav-number">1.3.</span> <span class="nav-text">网络层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链路层"><span class="nav-number">1.4.</span> <span class="nav-text">链路层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#物理层"><span class="nav-number">1.5.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表示层"><span class="nav-number">1.6.</span> <span class="nav-text">表示层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#会话层"><span class="nav-number">1.7.</span> <span class="nav-text">会话层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP"><span class="nav-number">2.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-特点"><span class="nav-number">2.1.</span> <span class="nav-text">TCP 特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-报文结构"><span class="nav-number">2.2.</span> <span class="nav-text">TCP 报文结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可靠传输协议-ARQ"><span class="nav-number">2.3.</span> <span class="nav-text">可靠传输协议 ARQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#停止等待协议"><span class="nav-number">2.3.1.</span> <span class="nav-text">停止等待协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回退-N-步协议"><span class="nav-number">2.3.2.</span> <span class="nav-text">回退 N 步协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择重传协议"><span class="nav-number">2.3.3.</span> <span class="nav-text">选择重传协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-可靠原理"><span class="nav-number">2.4.</span> <span class="nav-text">TCP 可靠原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#滑动窗口"><span class="nav-number">2.4.1.</span> <span class="nav-text">滑动窗口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流量控制"><span class="nav-number">2.4.2.</span> <span class="nav-text">流量控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞控制"><span class="nav-number">2.4.3.</span> <span class="nav-text">拥塞控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接和释放机制"><span class="nav-number">2.5.</span> <span class="nav-text">TCP 连接和释放机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手"><span class="nav-number">2.5.1.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四次挥手"><span class="nav-number">2.5.2.</span> <span class="nav-text">四次挥手</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-和-UDP-的区别"><span class="nav-number">2.6.</span> <span class="nav-text">TCP 和 UDP 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP和UDP的传送信息单位的区别？"><span class="nav-number">2.7.</span> <span class="nav-text">TCP和UDP的传送信息单位的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP粘包？"><span class="nav-number">2.8.</span> <span class="nav-text">TCP粘包？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原因"><span class="nav-number">2.8.1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理方法："><span class="nav-number">2.8.2.</span> <span class="nav-text">处理方法：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP"><span class="nav-number">3.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP"><span class="nav-number">4.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-概况"><span class="nav-number">4.1.</span> <span class="nav-text">HTTP 概况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非持续连接和持续连接"><span class="nav-number">4.2.</span> <span class="nav-text">非持续连接和持续连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-报文格式"><span class="nav-number">4.3.</span> <span class="nav-text">HTTP 报文格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie"><span class="nav-number">4.4.</span> <span class="nav-text">cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-缓存"><span class="nav-number">4.5.</span> <span class="nav-text">Web 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入一个-url-发生的事"><span class="nav-number">4.6.</span> <span class="nav-text">输入一个 url 发生的事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS"><span class="nav-number">4.7.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP1-0、1-1、2-0之间的区别"><span class="nav-number">4.8.</span> <span class="nav-text">HTTP1.0、1.1、2.0之间的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http1-0和http1-1的主要区别如下："><span class="nav-number">4.9.</span> <span class="nav-text">http1.0和http1.1的主要区别如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http1-1和http2-0的主要区别："><span class="nav-number">4.10.</span> <span class="nav-text">http1.1和http2.0的主要区别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？"><span class="nav-number">4.11.</span> <span class="nav-text">HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS链接建立的过程："><span class="nav-number">4.12.</span> <span class="nav-text">HTTPS链接建立的过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对称加密算法："><span class="nav-number">4.13.</span> <span class="nav-text">对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非对称加密算法："><span class="nav-number">4.14.</span> <span class="nav-text">非对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP请求有哪些。get和Post区别。"><span class="nav-number">4.15.</span> <span class="nav-text">HTTP请求有哪些。get和Post区别。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP常见响应状态码，从1xx到5xx"><span class="nav-number">4.16.</span> <span class="nav-text">HTTP常见响应状态码，从1xx到5xx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向和转发区别"><span class="nav-number">4.17.</span> <span class="nav-text">重定向和转发区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络安全"><span class="nav-number">5.</span> <span class="nav-text">网络安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络攻击"><span class="nav-number">5.1.</span> <span class="nav-text">网络攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#密码技术"><span class="nav-number">5.2.</span> <span class="nav-text">密码技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字签名"><span class="nav-number">5.3.</span> <span class="nav-text">数字签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#报文鉴别"><span class="nav-number">5.4.</span> <span class="nav-text">报文鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端点鉴别"><span class="nav-number">5.5.</span> <span class="nav-text">端点鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全协议"><span class="nav-number">5.6.</span> <span class="nav-text">安全协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙和入侵检测"><span class="nav-number">5.7.</span> <span class="nav-text">防火墙和入侵检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程和线程"><span class="nav-number">6.</span> <span class="nav-text">进程和线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">6.1.</span> <span class="nav-text">进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">6.2.</span> <span class="nav-text">线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">7.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分页分段"><span class="nav-number">8.</span> <span class="nav-text">分页分段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟内存实现方式："><span class="nav-number">8.1.</span> <span class="nav-text">虚拟内存实现方式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求分段存储管理："><span class="nav-number">8.2.</span> <span class="nav-text">请求分段存储管理：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段页式"><span class="nav-number">8.3.</span> <span class="nav-text">段页式</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1301,7 +1330,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共158.8k字</span>
+  <span class="post-count">博客全站共199.2k字</span>
 </div>
 
         
