@@ -79,16 +79,17 @@
 
 
 
-<meta name="description" content="[TOC] 本文知识脑图如下：  一、Redis的数据模型用 键值对 name：&quot;小明&quot;来展示Redis的数据模型如下：   dictEntry:   在一些编程语言中，键值对的数据结构被称为字典，而在Redis中，会给每一个key-value键值对分配一个字典实体，就是“dicEntry”。dicEntry包含三部分： key的指针、val的指针、next指针，next指针指">
+<meta name="description" content="[TOC] https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;6855129008091332615 本文知识脑图如下：  一、Redis的数据模型用 键值对 name：&quot;小明&quot;来展示Redis的数据模型如下：   dictEntry:   在一些编程语言中，键值对的数据结构被称为字典，而在Redis中，会给每一个key-value键值对分配一个字典实体，就是“dicEntry”。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis源码剖析">
 <meta property="og:url" content="http://aamingaa.github.io/2020/10/24/redis%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 本文知识脑图如下：  一、Redis的数据模型用 键值对 name：&quot;小明&quot;来展示Redis的数据模型如下：   dictEntry:   在一些编程语言中，键值对的数据结构被称为字典，而在Redis中，会给每一个key-value键值对分配一个字典实体，就是“dicEntry”。dicEntry包含三部分： key的指针、val的指针、next指针，next指针指">
+<meta property="og:description" content="[TOC] https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;6855129008091332615 本文知识脑图如下：  一、Redis的数据模型用 键值对 name：&quot;小明&quot;来展示Redis的数据模型如下：   dictEntry:   在一些编程语言中，键值对的数据结构被称为字典，而在Redis中，会给每一个key-value键值对分配一个字典实体，就是“dicEntry”。">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758550e143b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758534a337a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b4475857ff2a94?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b447584f4b52d1?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1432634/201907/1432634-20190724185636136-1199490260.png">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b447584f3e35a4?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758547bc9c5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b447586c898442?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -105,11 +106,19 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/30/1739da6ae08fb489?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/30/1739da6b451b7570?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758921c661d?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b447589308af53?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b4475896fc5b3c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758a74414f3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200413141708514.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9mZW5nMTAzMzAxMTE=,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200413191759762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9mZW5nMTAzMzAxMTE=,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412161658898">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412174412181">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412194049758">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412195202083">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412195458493">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412201553302">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412201857509">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412202104618">
+<meta property="og:image" content="https://img-blog.csdn.net/20160412202419032">
 <meta property="article:published_time" content="2020-10-24T02:34:07.000Z">
-<meta property="article:modified_time" content="2020-10-24T02:56:05.601Z">
+<meta property="article:modified_time" content="2020-10-25T02:15:14.417Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758550e143b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -397,7 +406,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6.5k
+                  9.7k
                 </span>
               
 
@@ -413,7 +422,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  25
+                  36
                 </span>
               
             </div>
@@ -435,6 +444,7 @@
 
       
         <p>[TOC]</p>
+<p><a href="https://juejin.im/post/6855129008091332615" target="_blank" rel="noopener">https://juejin.im/post/6855129008091332615</a></p>
 <p>本文知识脑图如下：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/6/11/16b44758550e143b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="在这里插入图片描述"></p>
 <h2 id="一、Redis的数据模型"><a href="#一、Redis的数据模型" class="headerlink" title="一、Redis的数据模型"></a>一、Redis的数据模型</h2><p>用 键值对 <code>name：&quot;小明&quot;</code>来展示Redis的数据模型如下：</p>
@@ -536,11 +546,14 @@
 <p><img src="https://user-gold-cdn.xitu.io/2019/6/11/16b447584f4b52d1?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="在这里插入图片描述"></p>
 <p><strong>content[]</strong> 存储的是字符串的内容，<strong>capacity</strong>表示数组分配的长度，<strong>len</strong>表示字符串的实际长度。</p>
 <p>字符串的编码类型有int、embstr和raw三种，如上表所示，那么这三种编码类型有什么不同呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">struct sdshdr &#123;    &#x2F;&#x2F;简单动态字符串(simple dynamic string, SDS)的抽象类型</span><br><span class="line">  &#x2F;&#x2F; 用于记录buf数组中使用的字节的数目</span><br><span class="line">  &#x2F;&#x2F; 和SDS存储的字符串的长度相等  </span><br><span class="line">	int len;    </span><br><span class="line">  &#x2F;&#x2F; 用于记录buf数组中没有使用的字节的数目   </span><br><span class="line">	int free;    </span><br><span class="line">  &#x2F;&#x2F; 字节数组，用于储存字符串</span><br><span class="line">	char buf[];   &#x2F;&#x2F;buf的大小等于len+free+1，其中多余的1个字节是用来存储’\0’的。</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li><strong>int 编码</strong>：保存的是可以用 long 类型表示的整数值。</li>
 <li><strong>raw 编码</strong>：保存长度大于44字节的字符串（redis3.2版本之前是39字节，之后是44字节）。</li>
 <li><strong>embstr 编码</strong>：保存长度小于44字节的字符串（redis3.2版本之前是39字节，之后是44字节）。</li>
 </ul>
+<p><img src="https://img2018.cnblogs.com/blog/1432634/201907/1432634-20190724185636136-1199490260.png" alt="img"></p>
 <p>设置一个值测试一下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set num 300</span><br><span class="line">127.0.0.1:6379&gt; object encoding num</span><br><span class="line">&quot;int&quot;</span><br><span class="line">127.0.0.1:6379&gt; set key1 wealwaysbyhappyhahaha</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; object encoding key1</span><br><span class="line">&quot;embstr&quot;</span><br><span class="line">127.0.0.1:6379&gt; set key2 hahahahahahahaahahahahahahahahahahahaha</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; strlen key2</span><br><span class="line">(integer) 39</span><br><span class="line">127.0.0.1:6379&gt; object encoding key2</span><br><span class="line">&quot;embstr&quot;</span><br><span class="line">127.0.0.1:6379&gt; set key2 hahahahahahahaahahahahahahahahahahahahahahaha</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; object encoding key2</span><br><span class="line">&quot;raw&quot;</span><br><span class="line">127.0.0.1:6379&gt; strlen key2</span><br><span class="line">(integer) 45</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
@@ -584,12 +597,13 @@
 <h3 id="2-2-List"><a href="#2-2-List" class="headerlink" title="2.2 List"></a>2.2 List</h3><p>Redis中List对象的底层是由quicklist(快速列表)实现的，快速列表支持从链表头和尾添加元素，并且可以获取指定位置的元素内容。</p>
 <p>那么，快速列表的底层是如何实现的呢？为什么能够达到如此快的性能？</p>
 <p>罗马不是一日建成的，quicklist也不是一日实现的，起初redis的list的底层是ziplist（压缩列表）或者是  linkedlist（双端列表）。先分别介绍这两种数据结构。</p>
-<h4 id="ziplist-压缩列表"><a href="#ziplist-压缩列表" class="headerlink" title="ziplist 压缩列表"></a>ziplist 压缩列表</h4><p>当一个列表中只包含少量列表项，且是小整数值或长度比较短的字符串时，redis就使用ziplist（压缩列表）来做列表键的底层实现。</p>
+<h4 id="ziplist-压缩列表"><a href="#ziplist-压缩列表" class="headerlink" title="ziplist 压缩列表"></a>ziplist 压缩列表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当一个列表中只包含少量列表项，且是小整数值或长度比较短的字符串时，redis就使用ziplist（压缩列表）来做列表键的底层实现。压缩列表顾名思义是进行了压缩，每一个节点之间没有指针的指向，而是多个元素相邻，没有缝隙。</span><br></pre></td></tr></table></figure>
+
 <p>测试：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; rpush dotahero sf qop doom</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; object encoding dotahero</span><br><span class="line">&quot;ziplist&quot;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
 <p>此处使用老版本redis进行测试，向dota英雄列表中加入了qop痛苦女王、sf影魔、doom末日使者三个英雄，数据结构编码使用的是ziplist。</p>
-<p>压缩列表顾名思义是进行了压缩，每一个节点之间没有指针的指向，而是多个元素相邻，没有缝隙。<strong>所以 ziplist是Redis为了节约内存而开发的</strong>，是由一系列特殊编码的连续内存块组成的顺序型数据结构。具体结构相对比较复杂，大家有兴趣地话可以深入了解。</p>
+<p><strong>所以 ziplist是Redis为了节约内存而开发的</strong>，是由一系列特殊编码的连续内存块组成的顺序型数据结构。具体结构相对比较复杂，大家有兴趣地话可以深入了解。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct ziplist&lt;T&gt; &#123;</span><br><span class="line">    int32 zlbytes; &#x2F;&#x2F; 整个压缩列表占用字节数</span><br><span class="line">    int32 zltail_offset; &#x2F;&#x2F; 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</span><br><span class="line">    int16 zllength; &#x2F;&#x2F; 元素个数</span><br><span class="line">    T[] entries; &#x2F;&#x2F; 元素内容列表，挨个挨个紧凑存储</span><br><span class="line">    int8 zlend; &#x2F;&#x2F; 标志压缩列表的结束，值恒为 0xFF</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
 
@@ -677,8 +691,7 @@
 <p><img src="https://user-gold-cdn.xitu.io/2020/7/30/1739da6ae08fb489?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Redis五种数据类型"></p>
 <p><img src="https://user-gold-cdn.xitu.io/2020/7/30/1739da6b451b7570?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Redis五种数据类型"></p>
 <p>因为 dictEntry 节点组成的链表没有指向链表表尾的指针， 所以为了速度考虑， 程序总是将新节点添加到链表的表头位置（复杂度为 O(1)）， 排在其他已有节点的前面。</p>
-<p>3.rehash</p>
-<p>rehash 操作不是一次性完成，而是采用渐进方式，这是为了避免一次性执行过多的 rehash 操作给服务器带来过大<br>的负担。<br>渐进式 rehash 通过记录 dict 的 rehashidx 完成，它从 0 开始，然后每执行一次 rehash 都会递增。例如在一次<br>rehash 中，要把 dict[0] rehash 到 dict[1]，这一次会把 dict[0] 上 table[rehashidx] 的键值对 rehash 到 dict[1]<br>上，dict[0] 的 table[rehashidx] 指向 null，并令 rehashidx++。<br>在 rehash 期间，每次对字典执行添加、删除、查找或者更新操作时，都会执行一次渐进式 rehash。<br>采用渐进式 rehash 会导致字典中的数据分散在两个 dictht 上，因此对字典的查找操作也需要到对应的 dictht 去执<br>行。</p>
+<h4 id="3-rehash"><a href="#3-rehash" class="headerlink" title="3.rehash"></a>3.rehash</h4><p>rehash 操作不是一次性完成，而是采用渐进方式，这是为了避免一次性执行过多的 rehash 操作给服务器带来过大<br>的负担。<br>渐进式 rehash 通过记录 dict 的 rehashidx 完成，它从 0 开始，然后每执行一次 rehash 都会递增。例如在一次<br>rehash 中，要把 dict[0] rehash 到 dict[1]，这一次会把 dict[0] 上 table[rehashidx] 的键值对 rehash 到 dict[1]<br>上，dict[0] 的 table[rehashidx] 指向 null，并令 rehashidx++。<br>在 rehash 期间，每次对字典执行添加、删除、查找或者更新操作时，都会执行一次渐进式 rehash。<br>采用渐进式 rehash 会导致字典中的数据分散在两个 dictht 上，因此对字典的查找操作也需要到对应的 dictht 去执<br>行。</p>
 <h2 id="四、要点总结"><a href="#四、要点总结" class="headerlink" title="四、要点总结"></a>四、要点总结</h2><blockquote>
 <p>1.字典 ht 属性是包含两个哈希表项的数组，一般情况下， 字典只使用 ht[0]， ht[1] 哈希表只会在对 ht[0] 哈希表进行 rehash (下节分析) 时使用</p>
 </blockquote>
@@ -697,23 +710,104 @@
 </blockquote>
 <h3 id="2-5-Zset"><a href="#2-5-Zset" class="headerlink" title="2.5 Zset"></a>2.5 Zset</h3><p>Redis中的Zset，也叫做<strong>有序集合</strong>。它的底层是ziplist（压缩列表）或 <strong>skiplist</strong>（跳跃表）。</p>
 <p>压缩列表前文已经介绍过了，同理是在元素数量比较少的时候使用。此处主要介绍跳跃列表。</p>
-<h4 id="跳表"><a href="#跳表" class="headerlink" title="跳表"></a>跳表</h4><p>跳跃列表，顾名思义是可以跳的，跳着查询自己想要查到的元素。大家可能对这种数据结构比较陌生，虽然平时接触的少，但它确实<strong>是一个各方面性能都很好的数据结构，可以支持快速的查询、插入、删除操作，开发难度也比红黑树要容易的多</strong>。</p>
-<p>为什么跳表有如此高的性能呢？它究竟是如何“跳”的呢？跳表利用了二分的思想，在数组中可以用二分法来快速进行查找，在链表中也是可以的。</p>
-<p>举个例子，链表如下：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/11/16b447589308af53?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="在这里插入图片描述"></p>
-<p>假设要找到10这个节点，需要一个一个去遍历，判断是不是要找的节点。那如何提高效率呢？mysql索引相信大家都很熟悉，可以提高效率，这里也可以使用索引。抽出一个索引层来：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/11/16b4475896fc5b3c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="在这里插入图片描述"></p>
-<p>这样只需要找到9然后再找10就可以了，大大节省了查找的时间。</p>
-<p>还可以再抽出来一层索引，可以更好地节约时间:</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/11/16b44758a74414f3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="在这里插入图片描述"></p>
-<p>这样基于链表的“二分查找”支持快速的插入、删除，时间复杂度都是O(logn)。</p>
-<p>由于跳表的快速查找效率，以及实现的简单、易读。所以Redis放弃了红黑树而选择了更为简单的跳表。</p>
-<p>Redis中的跳跃表：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">typedef struct zskiplist &#123;</span><br><span class="line">     &#x2F;&#x2F; 表头节点和表尾节点</span><br><span class="line">    struct zskiplistNode *header, *tail;</span><br><span class="line">    &#x2F;&#x2F; 表中节点的数量</span><br><span class="line">    unsigned long length;</span><br><span class="line">    &#x2F;&#x2F; 表中层数最大的节点的层数</span><br><span class="line">    int level;</span><br><span class="line"> &#125; zskiplist;</span><br><span class="line">typedef struct zskiplistNode &#123;</span><br><span class="line">    &#x2F;&#x2F; 成员对象</span><br><span class="line">    robj *obj;</span><br><span class="line">    &#x2F;&#x2F; 分值</span><br><span class="line">    double score;</span><br><span class="line">     &#x2F;&#x2F; 后退指针</span><br><span class="line">    struct zskiplistNode *backward;</span><br><span class="line">    &#x2F;&#x2F; 层</span><br><span class="line">    struct zskiplistLevel &#123;</span><br><span class="line">        &#x2F;&#x2F; 前进指针</span><br><span class="line">        struct zskiplistNode *forward;</span><br><span class="line">         &#x2F;&#x2F; 跨度---前进指针所指向节点与当前节点的距离</span><br><span class="line">        unsigned int span;</span><br><span class="line">    &#125; level[];</span><br><span class="line">&#125; zskiplistNode;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<hr>
+<p>  跳跃表(skiplist)是一种有序数据结构，它通过在每个节点中维持多个指向其他节点的指针，从而达到快速访问节点的目的。</p>
+<p>  跳跃表支持平均O(logN)、最坏O(N)复杂度的节点查找，还可以通过顺序性操作来批量处理节点。</p>
+<p>  在大部分情况下，跳跃表的效率可以和平衡树相媲美，并且因为跳跃表的实现比平衡树要来得更为简单，所以有不少程序都使用跳跃表来代替平衡树。</p>
+<p>  Redis使用跳跃表作为有序集合键的底层实现之一，如果一个有序集合包含的元素数量比较多，又或者有序集合中元素的成员(member)是比较长的字符串时，Redis就会使用跳跃表来作为有序集合键的底层实现。</p>
+<p>  和链表、字典等数据结构被广泛地应用在Redis内部不同，Redis只在两个地方用到了跳跃表，一个是实现有序集合键，另一个是在集群节点中用作内部数据结构，除此之外，跳跃表在Redis里面没有其他用途。</p>
+<hr>
+<h3 id="跳跃表的实现"><a href="#跳跃表的实现" class="headerlink" title="跳跃表的实现"></a>跳跃表的实现</h3><p>跳跃表（skiplist）是一种<strong>有序数据链表结构</strong>， 它通过在每个节点中维持多个指向其他节点的指针， 从而达到快速访问节点的目的。查询平均性能为O(logN)，最坏的情况会出现O(N)情况，而redis中的zset在数据较多的时候底层就是采用跳跃表去实现的，元素较少的时候会进行小对象压缩采用压缩列表实现。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200413141708514.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9mZW5nMTAzMzAxMTE=,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>从上述图我们可以看出跳跃表有以下几个特点：</p>
+<ul>
+<li><p>跳跃表的每个节点都有多层构成。</p>
+</li>
+<li><p>跳跃表存在一个头结点，该头结点有64层结构，每层都包含指向下个节点的指针，指向本层下个节点中间所跨越的节点个数为跨度（span）。</p>
+</li>
+<li><p>除头结点以外，层高最高的节点为该跳跃表的level，图中的跳跃表level为3。</p>
+</li>
+<li><p>每层都是一个有序链表。</p>
+</li>
+<li><p>最底层的有序链表包含所有的节点数，也即是整个跳跃表的长度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">typedef struct zskiplistNode &#123;</span><br><span class="line">    robj *obj;  &#x2F;*成员对象*&#x2F;</span><br><span class="line">    double score;   &#x2F;*分值*&#x2F;</span><br><span class="line">    struct zskiplistNode *backward; &#x2F;*后退指针*&#x2F;</span><br><span class="line">    struct zskiplistLevel &#123; &#x2F;*层*&#x2F;</span><br><span class="line">        struct zskiplistNode *forward;  &#x2F;*前进指针*&#x2F;</span><br><span class="line">        unsigned int span;  &#x2F;*跨度*&#x2F;</span><br><span class="line">    &#125; level[];</span><br><span class="line">&#125; zskiplistNode;</span><br></pre></td></tr></table></figure>
 
-<p>zadd—zslinsert—平均O(logN), 最坏O(N)</p>
-<p>zrem—zsldelete—平均O(logN), 最坏O(N)</p>
-<p>zrank–zslGetRank—平均O(logN), 最坏O(N)</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct zskiplist &#123;</span><br><span class="line">    struct zskiplistNode *header, *tail;    &#x2F;&#x2F;header指向跳跃表的表头节点，tail指向跳跃表的表尾节点</span><br><span class="line">    unsigned long length;   &#x2F;&#x2F;记录跳跃表的长度，也即是，跳跃表目前包含节点的数量(表头节点不计算在内)</span><br><span class="line">    int level;  &#x2F;&#x2F;记录目前跳跃表内，层数最大的那个节点的层数(表头节点的层数不计算在内)</span><br><span class="line">&#125; zskiplist;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>跳跃表<strong><em>\</em>每个节点都维护了多个指向其他节点的指针\</strong>，*<em>所以在进行查询、更新、删除等操作的时候不需要进行整条链表的遍历*</em>，*<em>可以通过维护的指针过滤掉中间的很多节点，从而达到很快速的访问效果***</em>，一般情况来说跳跃表的性能能与平衡树相媲美的，而且跳跃表实现较为简单，所以这也是<strong><em>\</em>redis为什么采用跳跃表来作为zset底层的数据结构实现**</strong>。</p>
+<p><strong>查找过程</strong></p>
+<p>跳跃表的查询，跳跃表有多层的情况下查询复杂度为O(logN)，如果跳跃表就一层那么查询复杂度会上升为O(N)，接下来我们就用图1的实例来模拟下查询score为70的节点的具体查询过程。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200413191759762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9mZW5nMTAzMzAxMTE=,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>如图所示我们需要找到score为70的节点，查找首先从header开始，因为level为3我们先从L2开始往后开始遍历，查找到第一个节点，发现score比70小，继续往后遍历查找到第五个节点，发现score比70大，于是从当前节点往下一层进行查找，查找到节点3，以此类推，最终查询到score为70的节点。</p>
+<p><strong>插入以及更新过程</strong><br>插入过程：跳跃表插入节点的时候，首先需要通过score找到自己的位置，也就是需要先走一步查找过程，找到新节点所处的位置的时候就创建一个新节点，并对新节点分配一个层数（这里层数的分配redis采用的是random随机机制，分配层数从1开始，每次晋升为上一层的概率为0.25），层数分配完了之后将前后指针进行赋值将新节点与旧节点串起来，<strong><em>\</em>如果层数大于当前的level还需要进行level的更新操作。**</strong></p>
+<p>更新过程：更新过程会稍微复杂一些，更新其实就是插入，只不过插入的时候发现value已经存在了，只是<strong>需要调整一下score值</strong>，如果更新的score值不会带来位置上的改变，那么直接更新score就行不需要进行调整位置，但是如果新score会导致排序改变，那么就需要调整位置了，redis采用的方式比较直接就是先删除这个元素然后再插入这个元素即可，前后需要两次路径搜索</p>
+<p>  Redis的跳跃表由redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构用于表示跳跃表节点，而zskiplist结构则用于保存跳跃表节点的相关信息，比如节点的数量，以及指向表头节点和表尾节点的指针等等。</p>
+<p><img src="https://img-blog.csdn.net/20160412161658898" alt="一个跳跃表"></p>
+<p>  上图展示了一个跳跃表示例，位于图片最左边的是zskiplist结构，该结构包含以下属性：</p>
+<ul>
+<li>header：指向跳跃表的表头节点</li>
+<li>tail：指向跳跃表的表尾节点</li>
+<li>level：记录目前跳跃表内，层数最大的那个节点的层数(表头节点的层数不计算在内)</li>
+<li>length：记录跳跃表的长度，也即是，跳跃表目前包含节点的数量(表头节点不计算在内)</li>
+</ul>
+<p>  位于zskiplist结构右方的是四个zskiplistNode结构，该结构包含以下属性：</p>
+<ul>
+<li>层(level)：节点中用L1、L2、L3等字样标记节点的各个层，L1代表第一层，L2代表第二层，依次类推。每个层都带有两个属性：前进指针和跨度。前进指针用于访问位于表尾方向的其他节点，而跨度则记录了前进指针所指向节点和当前节点的距离。在上面的图片中，连线上带有数字的箭头就代表前进指针，而那个数字就是跨度。当程序从表头向表尾进行遍历时，访问会沿着层的前进指针进行。</li>
+<li>后退(backward)指针：节点中用BW字样标记节点的后退指针，它指向位于当前节点的前一个节点。后退指针在程序从表尾向表头遍历时使用。</li>
+<li>分值(score)：各个节点中的1.0、2.0和3.0是节点所保存的分值。在跳跃表中，节点按各自所保存的分值从小到大排列。</li>
+<li>成员对象(obj)：各个节点中的o1、o2和o3是节点所保存的成员对象。</li>
+</ul>
+<p>  注意表头节点和其他节点的构造是一样的：表头节点也有后退指针、分值和成员对象，不过表头节点的这些属性都不会被用到，所以图中省略了这些部分，只显示了表头节点的各个层。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#### **跳跃表节点**</span><br><span class="line"></span><br><span class="line">  跳跃表节点的实现由redis.h&#x2F;zskiplistNode结构定义：</span><br><span class="line"></span><br><span class="line">​&#96;&#96;&#96;c</span><br><span class="line">&#x2F;* ZSETs use a specialized version of Skiplists *&#x2F;</span><br><span class="line">typedef struct zskiplistNode &#123;</span><br><span class="line">    robj *obj;  &#x2F;*成员对象*&#x2F;</span><br><span class="line">    double score;   &#x2F;*分值*&#x2F;</span><br><span class="line">    struct zskiplistNode *backward; &#x2F;*后退指针*&#x2F;</span><br><span class="line">    struct zskiplistLevel &#123; &#x2F;*层*&#x2F;</span><br><span class="line">        struct zskiplistNode *forward;  &#x2F;*前进指针*&#x2F;</span><br><span class="line">        unsigned int span;  &#x2F;*跨度*&#x2F;</span><br><span class="line">    &#125; level[];</span><br><span class="line">&#125; zskiplistNode;12345678910</span><br><span class="line">​</span><br></pre></td></tr></table></figure>
+
+<p>  1、分值和成员</p>
+<p>  节点的分值(score属性)是一个double类型的浮点数，跳跃表中的所有节点都按分值从小到大来排序。</p>
+<p>  节点的成员对象(obj属性)是一个指针，它指向一个字符串对象，而字符串对象则保存着一个SDS值。</p>
+<p>  在同一个跳跃表中，各个节点保存的成员对象必须是唯一的，但是多个节点保存的分值却可以是相同的：分至相同的节点将按照成员对象在字典中的大小来进行排序，成员对象较小的节点会排在前面(靠近表头的方向)，而成员对象较大的节点则会排在后面(靠近表尾的方向)。</p>
+<p>  举个例子，在下图中所示的跳跃表中，三个跳跃表节点都保存了相同的分值10086.0，但保存成员对象o1的节点却排在保存成员对象o2和o3的节点的前面，而保存成员对象o2的节点又排在保存成员对象o3的节点之前，由此可见，o1、o2、o3三个成员对象在字典中的排序为o1&lt;=o2&lt;=o3。</p>
+<p><img src="https://img-blog.csdn.net/20160412174412181" alt="三个带有相同分值的跳跃表节点"></p>
+<p>  2、后退指针</p>
+<p>  节点的后退指针(backward属性)用于从表尾向表头方向访问节点：跟可以一次跳过多个节点的前进指针不同，因为每个节点只有一个后退指针，所以每次只能后退至前一个节点。</p>
+<p>  下图用虚线展示了如何从表尾向表头遍历跳跃表中的所有节点：程序首先通过跳跃表的tail指针访问表尾节点，然后通过后退指针访问倒数第二个节点，之后再沿着后退指针访问倒数第三个节点，再之后遇到指向NULL的后退指针，于是访问结束。</p>
+<p><img src="https://img-blog.csdn.net/20160412194049758" alt="从表尾向表头方向遍历跳跃表"></p>
+<p>  3、层</p>
+<p>  跳跃表节点的level数组可以包含多个元素，每个元素都包含一个指向其他节点的指针，程序可以通过这些层来加快访问其他节点的速度，一般来说，层的数量越多，访问其他节点的速度就越快。</p>
+<p>  每次创建一个新跳跃表节点的时候，程序根据幂次定律(power law，越大的数出现的概率越小)随机生成一个介于1和32之间的值作为level数组的大小，这个大小就是层的“高度”。</p>
+<p>  下图分别展示了三个高度为1层、3层和5层的节点，因为C语言的数组索引总是从0开始的，所以节点的第一层是level[0]，而第二层是level[1]，依次类推。</p>
+<p><img src="https://img-blog.csdn.net/20160412195202083" alt="带有不同层高的节点"></p>
+<p>  4、前进指针</p>
+<p>  每个层都有一个指向表尾方向的前进指针(level[i].forward属性)，用于从表头向表尾方向访问节点。下图用虚线表示出了程序从表头向表尾方向，遍历跳跃表中所有节点的路径：</p>
+<p><img src="https://img-blog.csdn.net/20160412195458493" alt="遍历整个跳跃表"></p>
+<p>  1) 迭代程序首先访问跳跃表的第一个节点(表头)，然后从第四层的前进指针移动到表中的第二个节点。<br>  2) 在第二个节点时，程序沿着第二层的前进指针移动到表中的第三个节点。<br>  3) 在第三个节点时，程序同样沿着第二层的前进指针移动到表中的第四个节点。<br>  4) 当程序再次沿着第四个节点的前进指针移动时，它碰到一个NULL，程序知道这时已经到达了跳跃表的表尾，于是结束这次遍历。</p>
+<p>  5、跨度</p>
+<p>  层的跨度(level[i].span属性)用于记录两个节点之间的距离：</p>
+<ul>
+<li>两个节点之间的跨度越大，它们相距得就越远。</li>
+<li>指向NULL的所有前进指针的跨度都为0，因为它们没有连向任何节点。</li>
+</ul>
+<p>  初看上去，很容易以为跨度和遍历操作有关，但实际上并不是这样的，遍历操作只使用前进指针就可以完成了，跨度实际上是用来计算排位(rank)的：在查找某个节点的过程中，将沿途访问过的所有层的跨度累计起来，得到的结果就是目标节点在跳跃表中的排位。</p>
+<p>  举个例子，下图用虚线标记了在跳跃表中查找分值为3.0、成员对象为o3的节点时，沿途经历的层：查找的过程只经过了一个层，并且层的跨度为3，所以目标节点在跳跃表中的排位为3。</p>
+<p><img src="https://img-blog.csdn.net/20160412201553302" alt="计算节点的排位"></p>
+<p>  再举个例子，下图用虚线标记了在跳跃表中查找分值为2.0、成员对象为o2的节点时，沿途经历的层：在查找节点的过程中，程序经过了两个跨度为1的节点，因此可以计算出，目标节点在跳跃表中的排位为2。</p>
+<p><img src="https://img-blog.csdn.net/20160412201857509" alt="另一个计算节点排位的例子"></p>
+<h4 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a><strong>跳跃表</strong></h4><p>  仅靠多个跳跃表节点就可以组成一个跳跃表，如下图所示：</p>
+<p><img src="https://img-blog.csdn.net/20160412202104618" alt="多个跳跃节点组成的跳跃表"></p>
+<p>  但通过使用一个zskiplist结构来持有这些节点，程序可以更方便地对整个跳跃表进行处理，比如快速访问跳跃表的表头节点和表尾节点，或者快速地获取跳跃表节点的数量(也即是跳跃表的长度)等信息，如下图所示：</p>
+<p><img src="https://img-blog.csdn.net/20160412202419032" alt="带有zskiplist结构的跳跃表"></p>
+<p>  zskiplist结构的定义如下：</p>
+<p>​<code>c
+typedef struct zskiplist {
+    struct zskiplistNode *header, *tail;    //header指向跳跃表的表头节点，tail指向跳跃表的表尾节点
+    unsigned long length;   //记录跳跃表的长度，也即是，跳跃表目前包含节点的数量(表头节点不计算在内)
+    int level;  //记录目前跳跃表内，层数最大的那个节点的层数(表头节点的层数不计算在内)
+} zskiplist;12345
+​</code></p>
+<p>  这样获取表头、表尾节点，表长，以及表中最高层数的复杂度均为O(1)。</p>
+<p>```</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文大概介绍了Redis的5种常用数据类型的底层实现，希望大家结合源码和资料更深入地了解。</p>
 <p>数据结构之美在Redis中体现得淋漓尽致，从String到压缩列表、快速列表、散列表、跳表，这些数据结构都适用在了不同的地方，各司其职。</p>
 <p>不仅如此，Redis将这些数据结构加以升级、结合，将内存存储的效率性能达到了极致，正因为如此，Redis才能成为众多互联网公司不可缺少的高性能、秒级的key-value内存数据库。</p>
@@ -751,6 +845,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/10/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9/" rel="prev" title="基础知识大杂烩">
+                基础知识大杂烩 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -834,7 +932,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">115</span>
+                  <span class="site-state-item-count">116</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -893,7 +991,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Redis的数据模型"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Redis支持的数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis支持的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-string字符串"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 string字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#raw类型和embstr类型对比"><span class="nav-number">2.1.1.</span> <span class="nav-text">raw类型和embstr类型对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-List"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 List</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ziplist-压缩列表"><span class="nav-number">2.2.1.</span> <span class="nav-text">ziplist 压缩列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#双端列表（linkedlist）"><span class="nav-number">2.2.2.</span> <span class="nav-text">双端列表（linkedlist）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速列表（quicklist）"><span class="nav-number">2.2.3.</span> <span class="nav-text">快速列表（quicklist）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Hash"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Hash</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis中的字典"><span class="nav-number">2.3.1.</span> <span class="nav-text">Redis中的字典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现分析"><span class="nav-number">2.3.2.</span> <span class="nav-text">实现分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希表结构"><span class="nav-number">2.3.3.</span> <span class="nav-text">1.哈希表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-哈希表节点"><span class="nav-number">2.3.4.</span> <span class="nav-text">2.哈希表节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-字典结构实现"><span class="nav-number">2.3.5.</span> <span class="nav-text">3.字典结构实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哈希表分析"><span class="nav-number">2.3.6.</span> <span class="nav-text">哈希表分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希算法"><span class="nav-number">2.3.7.</span> <span class="nav-text">1.哈希算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-键冲突解决"><span class="nav-number">2.3.8.</span> <span class="nav-text">2.键冲突解决</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、要点总结"><span class="nav-number">3.</span> <span class="nav-text">四、要点总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Set"><span class="nav-number">3.1.</span> <span class="nav-text">2.4 Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Zset"><span class="nav-number">3.2.</span> <span class="nav-text">2.5 Zset</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#跳表"><span class="nav-number">3.2.1.</span> <span class="nav-text">跳表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Redis的数据模型"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Redis支持的数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis支持的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-string字符串"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 string字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#raw类型和embstr类型对比"><span class="nav-number">2.1.1.</span> <span class="nav-text">raw类型和embstr类型对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-List"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 List</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ziplist-压缩列表"><span class="nav-number">2.2.1.</span> <span class="nav-text">ziplist 压缩列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#双端列表（linkedlist）"><span class="nav-number">2.2.2.</span> <span class="nav-text">双端列表（linkedlist）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速列表（quicklist）"><span class="nav-number">2.2.3.</span> <span class="nav-text">快速列表（quicklist）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Hash"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Hash</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis中的字典"><span class="nav-number">2.3.1.</span> <span class="nav-text">Redis中的字典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现分析"><span class="nav-number">2.3.2.</span> <span class="nav-text">实现分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希表结构"><span class="nav-number">2.3.3.</span> <span class="nav-text">1.哈希表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-哈希表节点"><span class="nav-number">2.3.4.</span> <span class="nav-text">2.哈希表节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-字典结构实现"><span class="nav-number">2.3.5.</span> <span class="nav-text">3.字典结构实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哈希表分析"><span class="nav-number">2.3.6.</span> <span class="nav-text">哈希表分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希算法"><span class="nav-number">2.3.7.</span> <span class="nav-text">1.哈希算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-键冲突解决"><span class="nav-number">2.3.8.</span> <span class="nav-text">2.键冲突解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-rehash"><span class="nav-number">2.3.9.</span> <span class="nav-text">3.rehash</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、要点总结"><span class="nav-number">3.</span> <span class="nav-text">四、要点总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Set"><span class="nav-number">3.1.</span> <span class="nav-text">2.4 Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Zset"><span class="nav-number">3.2.</span> <span class="nav-text">2.5 Zset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跳跃表的实现"><span class="nav-number">3.3.</span> <span class="nav-text">跳跃表的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#跳跃表"><span class="nav-number">3.3.1.</span> <span class="nav-text">跳跃表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
@@ -943,7 +1041,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共199.2k字</span>
+  <span class="post-count">博客全站共204k字</span>
 </div>
 
         
