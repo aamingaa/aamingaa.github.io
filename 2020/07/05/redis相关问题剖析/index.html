@@ -92,12 +92,11 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200115173640248.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200115173630730.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20191213103148681.png">
+<meta property="og:image" content="https://snailclimb.gitee.io/javaguide/docs/database/Redis/images/redis-all/%E5%8A%A0%E5%85%A5%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8%E5%90%8E%E7%9A%84%E7%BC%93%E5%AD%98%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190429094050254.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0J1dHRlcmZseV9yZXN0aW5n,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190516194203755.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190516194215468.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Rpd2Vpa2FuZw==,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190516194238372.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Rpd2Vpa2FuZw==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://snailclimb.gitee.io/javaguide/docs/database/Redis/images/redis-all/redis%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%99%A8.png">
 <meta property="article:published_time" content="2020-07-05T12:19:55.000Z">
-<meta property="article:modified_time" content="2020-10-25T08:43:36.700Z">
+<meta property="article:modified_time" content="2020-10-25T14:45:51.083Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200115174006561.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
@@ -385,7 +384,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  23.7k
+                  19k
                 </span>
               
 
@@ -401,7 +400,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  85
+                  69
                 </span>
               
             </div>
@@ -1100,72 +1099,56 @@
 <p>使用SETNX命令获取锁，若返回0（key已存在，锁已存在）则获取失败，反之获取成功</p>
 <p>为了防止获取锁后程序出现异常，导致其他线程/进程调用SETNX命令总是返回0而进入死锁状态，需要为该key设置一个“合理”的过期时间</p>
 <p>释放锁，使用DEL命令将锁数据删除</p>
-<h3 id="如何解决-Redis-的并发竞争-Key-问题"><a href="#如何解决-Redis-的并发竞争-Key-问题" class="headerlink" title="如何解决 Redis 的并发竞争 Key 问题"></a>如何解决 Redis 的并发竞争 Key 问题</h3><p>所谓 Redis 的并发竞争 Key 的问题也就是多个系统同时对一个 key 进行操作，但是最后执行的顺序和我们期望的顺序不同，这样也就导致了结果的不同！</p>
-<p>推荐一种方案：分布式锁（zookeeper 和 redis 都可以实现分布式锁）。（如果不存在 Redis 的并发竞争 Key 问题，不要使用分布式锁，这样会影响性能）</p>
-<p>基于zookeeper临时有序节点可以实现的分布式锁。大致思想为：每个客户端对某个方法加锁时，在zookeeper上的与该方法对应的指定节点的目录下，生成一个唯一的瞬时有序节点。 判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。 当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。完成业务流程后，删除对应的子节点释放锁。</p>
-<p>在实践中，当然是从以可靠性为主。所以首推Zookeeper。</p>
-<p>参考：<a href="https://www.jianshu.com/p/8bddd381de06" target="_blank" rel="noopener">https://www.jianshu.com/p/8bddd381de06</a></p>
-<h3 id="分布式Redis是前期做还是后期规模上来了再做好？为什么？"><a href="#分布式Redis是前期做还是后期规模上来了再做好？为什么？" class="headerlink" title="分布式Redis是前期做还是后期规模上来了再做好？为什么？"></a>分布式Redis是前期做还是后期规模上来了再做好？为什么？</h3><p>既然Redis是如此的轻量（单实例只使用1M内存），为防止以后的扩容，最好的办法就是一开始就启动较多实例。即便你只有一台服务器，你也可以一开始就让Redis以分布式的方式运行，使用分区，在同一台服务器上启动多个实例。</p>
-<p>一开始就多设置几个Redis实例，例如32或者64个实例，对大多数用户来说这操作起来可能比较麻烦，但是从长久来看做这点牺牲是值得的。</p>
-<p>这样的话，当你的数据不断增长，需要更多的Redis服务器时，你需要做的就是仅仅将Redis实例从一台服务迁移到另外一台服务器而已（而不用考虑重新分区的问题）。一旦你添加了另一台服务器，你需要将你一半的Redis实例从第一台机器迁移到第二台机器。</p>
-<h3 id="什么是-RedLock"><a href="#什么是-RedLock" class="headerlink" title="什么是 RedLock"></a>什么是 RedLock</h3><p>Redis 官方站提出了一种权威的基于 Redis 实现分布式锁的方式名叫 <em>Redlock</em>，此种方式比原先的单节点的方法更安全。它可以保证以下特性：</p>
+<h2 id="缓存异常"><a href="#缓存异常" class="headerlink" title="缓存异常"></a>缓存异常</h2><h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><ol>
+<li><p><strong>针对 Redis 服务不可用的情况：</strong></p>
 <ol>
-<li>安全特性：互斥访问，即永远只有一个 client 能拿到锁</li>
-<li>避免死锁：最终 client 都可能拿到锁，不会出现死锁的情况，即使原本锁住某资源的 client crash 了或者出现了网络分区</li>
-<li>容错性：只要大部分 Redis 节点存活就可以正常提供服务</li>
+<li>采用 Redis 集群，避免单机出现问题整个缓存服务都没办法使用。</li>
+<li>限流，避免同时处理大量的请求。</li>
 </ol>
-<h2 id="缓存异常"><a href="#缓存异常" class="headerlink" title="缓存异常"></a>缓存异常</h2><h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p><strong>缓存雪崩</strong>是指缓存同一时间大面积的失效，所以，后面的请求都会落到数据库上，造成数据库短时间内承受大量请求而崩掉。</p>
-<p><strong>解决方案</strong></p>
+<p><strong>针对热点缓存失效的情况：</strong></p>
 <ol>
-<li>缓存数据的过期时间设置随机，防止同一时间大量数据过期现象发生。</li>
-<li>一般并发量不是特别多的时候，使用最多的解决方案是加锁排队。</li>
-<li>给每一个缓存数据增加相应的缓存标记，记录缓存的是否失效，如果缓存标记失效，则更新数据缓存。</li>
+<li>设置不同的失效时间比如随机设置缓存的失效时间。</li>
+<li>缓存永不失效。</li>
 </ol>
-<h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p><strong>缓存穿透</strong>是指缓存和数据库中都没有的数据，导致所有的请求都落到数据库上，造成数据库短时间内承受大量请求而崩掉。</p>
-<p><strong>解决方案</strong></p>
-<ol>
-<li>接口层增加校验，如用户鉴权校验，id做基础校验，id&lt;=0的直接拦截；</li>
-<li>从缓存取不到的数据，在数据库中也没有取到，这时也可以将key-value对写为key-null，缓存有效时间可以设置短点，如30秒（设置太长会导致正常情况也没法使用）。这样可以防止攻击用户反复用同一个id暴力攻击</li>
-<li>采用布隆过滤器，将所有可能存在的数据哈希到一个足够大的 bitmap 中，一个一定不存在的数据会被这个 bitmap 拦截掉，从而避免了对底层存储系统的查询压力</li>
+</li>
 </ol>
-<p><strong>附加</strong></p>
-<p>对于空间的利用到达了一种极致，那就是Bitmap和布隆过滤器(Bloom Filter)。<br>Bitmap： 典型的就是哈希表<br>缺点是，Bitmap对于每个元素只能记录1bit信息，如果还想完成额外的功能，恐怕只能靠牺牲更多的空间、时间来完成了。</p>
-<p>布隆过滤器（推荐）</p>
-<p>就是引入了k(k&gt;1)k(k&gt;1)个相互独立的哈希函数，保证在给定的空间、误判率下，完成元素判重的过程。<br>它的优点是空间效率和查询时间都远远超过一般的算法，缺点是有一定的误识别率和删除困难。<br>Bloom-Filter算法的核心思想就是利用多个不同的Hash函数来解决“冲突”。<br>Hash存在一个冲突（碰撞）的问题，用同一个Hash得到的两个URL的值有可能相同。为了减少冲突，我们可以多引入几个Hash，如果通过其中的一个Hash值我们得出某元素不在集合中，那么该元素肯定不在集合中。只有在所有的Hash函数告诉我们该元素在集合中时，才能确定该元素存在于集合中。这便是Bloom-Filter的基本思想。<br>Bloom-Filter一般用于在大数据量的集合中判定某元素是否存在。</p>
 <h3 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h3><p><strong>缓存击穿</strong>是指缓存中没有但数据库中有的数据（一般是缓存时间到期），这时由于并发用户特别多，同时读缓存没读到数据，又同时去数据库去取数据，引起数据库压力瞬间增大，造成过大压力。和缓存雪崩不同的是，缓存击穿指并发查同一条数据，缓存雪崩是不同数据都过期了，很多数据都查不到从而查数据库。</p>
 <p><strong>解决方案</strong></p>
 <ol>
 <li>设置热点数据永远不过期。</li>
 <li>加互斥锁，互斥锁</li>
 </ol>
-<h3 id="缓存预热"><a href="#缓存预热" class="headerlink" title="缓存预热"></a>缓存预热</h3><p><strong>缓存预热</strong>就是系统上线后，将相关的缓存数据直接加载到缓存系统。这样就可以避免在用户请求的时候，先查询数据库，然后再将数据缓存的问题！用户直接查询事先被预热的缓存数据！</p>
-<p><strong>解决方案</strong></p>
+<p>最基本的就是首先做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。比如查询的数据库 id 不能小于 0、传入的邮箱格式不对的时候直接返回错误消息给客户端等等。</p>
+<p><strong>1）缓存无效 key</strong></p>
+<p>如果缓存和数据库都查不到某个 key 的数据就写一个到 Redis 中去并设置过期时间，具体命令如下： <code>SET key value EX 10086</code> 。这种方式可以解决请求的 key 变化不频繁的情况，如果黑客恶意攻击，每次构建不同的请求 key，会导致 Redis 中缓存大量无效的 key 。很明显，这种方案并不能从根本上解决此问题。如果非要用这种方式来解决穿透问题的话，尽量将无效的 key 的过期时间设置短一点比如 1 分钟。</p>
+<p>另外，这里多说一嘴，一般情况下我们是这样设计 key 的： <code>表名:列名:主键名:主键值</code> 。</p>
+<p>如果用 Java 代码展示的话，差不多是下面这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getObjectInclNullById</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从缓存中获取数据</span></span><br><span class="line">    Object cacheValue = cache.get(id);</span><br><span class="line">    <span class="comment">// 缓存为空</span></span><br><span class="line">    <span class="keyword">if</span> (cacheValue == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 从数据库中获取</span></span><br><span class="line">        Object storageValue = storage.get(key);</span><br><span class="line">        <span class="comment">// 缓存空对象</span></span><br><span class="line">        cache.set(key, storageValue);</span><br><span class="line">        <span class="comment">// 如果存储数据为空，需要设置一个过期时间(300秒)</span></span><br><span class="line">        <span class="keyword">if</span> (storageValue == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 必须设置过期时间，否则有被攻击的风险</span></span><br><span class="line">            cache.expire(key, <span class="number">60</span> * <span class="number">5</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> storageValue;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cacheValue;</span><br><span class="line">&#125;Copy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）布隆过滤器</strong></p>
+<p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地判断一个给定数据是否存在于海量数据中。我们需要的就是判断 key 是否合法，有没有感觉布隆过滤器就是我们想要找的那个“人”。</p>
+<p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话才会走下面的流程。</p>
+<p>加入布隆过滤器之后的缓存处理流程图如下。</p>
+<p><img src="https://snailclimb.gitee.io/javaguide/docs/database/Redis/images/redis-all/%E5%8A%A0%E5%85%A5%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8%E5%90%8E%E7%9A%84%E7%BC%93%E5%AD%98%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png" alt="image"></p>
+<p>但是，需要注意的是布隆过滤器可能会存在误判的情况。总结来说就是： <strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，那么这个元素一定不在。</strong></p>
+<p><em>为什么会出现误判的情况呢? 我们还要从布隆过滤器的原理来说！</em></p>
+<p>我们先来看一下，<strong>当一个元素加入布隆过滤器中的时候，会进行哪些操作：</strong></p>
 <ol>
-<li>直接写个缓存刷新页面，上线时手工操作一下；</li>
-<li>数据量不大，可以在项目启动的时候自动进行加载；</li>
-<li>定时刷新缓存；</li>
+<li>使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</li>
+<li>根据得到的哈希值，在位数组中把对应下标的值置为 1。</li>
 </ol>
-<h3 id="缓存降级"><a href="#缓存降级" class="headerlink" title="缓存降级"></a>缓存降级</h3><p>当访问量剧增、服务出现问题（如响应时间慢或不响应）或非核心服务影响到核心流程的性能时，仍然需要保证服务还是可用的，即使是有损服务。系统可以根据一些关键数据进行自动降级，也可以配置开关实现人工降级。</p>
-<p><strong>缓存降级</strong>的最终目的是保证核心服务可用，即使是有损的。而且有些服务是无法降级的（如加入购物车、结算）。</p>
-<p>在进行降级之前要对系统进行梳理，看看系统是不是可以丢卒保帅；从而梳理出哪些必须誓死保护，哪些可降级；比如可以参考日志级别设置预案：</p>
+<p>我们再来看一下，<strong>当我们需要判断一个元素是否存在于布隆过滤器的时候，会进行哪些操作：</strong></p>
 <ol>
-<li>一般：比如有些服务偶尔因为网络抖动或者服务正在上线而超时，可以自动降级；</li>
-<li>警告：有些服务在一段时间内成功率有波动（如在95~100%之间），可以自动降级或人工降级，并发送告警；</li>
-<li>错误：比如可用率低于90%，或者数据库连接池被打爆了，或者访问量突然猛增到系统能承受的最大阀值，此时可以根据情况自动降级或者人工降级；</li>
-<li>严重错误：比如因为特殊原因数据错误了，此时需要紧急人工降级。</li>
+<li>对给定元素再次进行相同的哈希计算；</li>
+<li>得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</li>
 </ol>
-<p>服务降级的目的，是为了防止Redis服务故障，导致数据库跟着一起发生雪崩问题。因此，对于不重要的缓存数据，可以采取服务降级策略，例如一个比较常见的做法就是，Redis出现问题，不去数据库查询，而是直接返回默认值给用户。</p>
-<h3 id="热点数据和冷数据"><a href="#热点数据和冷数据" class="headerlink" title="热点数据和冷数据"></a>热点数据和冷数据</h3><p>热点数据，缓存才有价值</p>
-<p>对于冷数据而言，大部分数据可能还没有再次访问到就已经被挤出内存，不仅占用内存，而且价值不大。频繁修改的数据，看情况考虑使用缓存</p>
-<p>对于热点数据，比如我们的某IM产品，生日祝福模块，当天的寿星列表，缓存以后可能读取数十万次。再举个例子，某导航产品，我们将导航信息，缓存以后可能读取数百万次。</p>
-<p>数据更新前至少读取两次，缓存才有意义。这个是最基本的策略，如果缓存还没有起作用就失效了，那就没有太大价值了。</p>
-<p>那存不存在，修改频率很高，但是又不得不考虑缓存的场景呢？有！比如，这个读取接口对数据库的压力很大，但是又是热点数据，这个时候就需要考虑通过缓存手段，减少数据库的压力，比如我们的某助手产品的，点赞数，收藏数，分享数等是非常典型的热点数据，但是又不断变化，此时就需要将数据同步保存到Redis缓存，减少数据库压力。</p>
-<h3 id="缓存热点key"><a href="#缓存热点key" class="headerlink" title="缓存热点key"></a>缓存热点key</h3><p>缓存中的一个Key(比如一个促销商品)，在某个时间点过期的时候，恰好在这个时间点对这个Key有大量的并发请求过来，这些请求发现缓存过期一般都会从后端DB加载数据并回设到缓存，这个时候大并发的请求可能会瞬间把后端DB压垮。</p>
-<p><strong>解决方案</strong></p>
-<p>对缓存查询加锁，如果KEY不存在，就加锁，然后查DB入缓存，然后解锁；其他进程如果发现有锁就等待，然后等解锁后返回数据或者进入DB查询</p>
-<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><h4 id="连接池"><a href="#连接池" class="headerlink" title="连接池"></a>连接池</h4><p>之前的连接方式是直连方式，所谓直连是指 Jedis 每次都会新建 TCP 连接，使用后再断开连接，对于频繁访问 Redis 的场景显然不是高效的使用方式。</p>
-<p>生产方式中一般使用连接池的方式对 Jedis 连接进行管理，所有 Jedis 对象预先放在池子中，每次要连接 Redis，只需要在池子中借，用完了再归还给池子。</p>
-<p>客户端连接 Redis 使用 TCP 连接，直连的方式每次需要建立 TCP 连接，而连接池的方式是可以预先初始化好的 Jedis 连接，所以每次只需要从 Jedis 连接池借用即可，而借用和归还操作是在本地进行的，只有少量的并发同步开销，远远小于新建 TCP 连接的开销。另外直连的方式无法限制 Jedis 对象的个数，在极端情况下可能会造成连接泄露，而连接池的形式可以有效的保护和控制资源的使用。</p>
+<p>然后，一定会出现这样一种情况：<strong>不同的字符串可能哈希出来的位置相同。</strong> （可以适当增加位数组大小或者调整我们的哈希函数来降低概率）</p>
+<p>更多关于布隆过滤器的内容可以看我的这篇原创：<a href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/dataStructures-algorithms/data-structure/bloom-filter.md" target="_blank" rel="noopener">《不了解布隆过滤器？一文给你整的明明白白！》</a> ，强烈推荐，个人感觉网上应该找不到总结的这么明明白白的文章了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">**缓存穿透**是指缓存和数据库中都没有的数据，导致所有的请求都落到数据库上，造成数据库短时间内承受大量请求而崩掉。</span><br><span class="line"></span><br><span class="line">**解决方案**</span><br><span class="line"></span><br><span class="line">1. 接口层增加校验，如用户鉴权校验，id做基础校验，id&lt;&#x3D;0的直接拦截；</span><br><span class="line">2. 从缓存取不到的数据，在数据库中也没有取到，这时也可以将key-value对写为key-null，缓存有效时间可以设置短点，如30秒（设置太长会导致正常情况也没法使用）。这样可以防止攻击用户反复用同一个id暴力攻击</span><br><span class="line">3. 采用布隆过滤器，将所有可能存在的数据哈希到一个足够大的 bitmap 中，一个一定不存在的数据会被这个 bitmap 拦截掉，从而避免了对底层存储系统的查询压力</span><br><span class="line"></span><br><span class="line">**附加**</span><br><span class="line"></span><br><span class="line">对于空间的利用到达了一种极致，那就是Bitmap和布隆过滤器(Bloom Filter)。</span><br><span class="line">Bitmap： 典型的就是哈希表</span><br><span class="line">缺点是，Bitmap对于每个元素只能记录1bit信息，如果还想完成额外的功能，恐怕只能靠牺牲更多的空间、时间来完成了。</span><br><span class="line"></span><br><span class="line">布隆过滤器（推荐）</span><br><span class="line"></span><br><span class="line">就是引入了k(k&gt;1)k(k&gt;1)个相互独立的哈希函数，保证在给定的空间、误判率下，完成元素判重的过程。</span><br><span class="line">它的优点是空间效率和查询时间都远远超过一般的算法，缺点是有一定的误识别率和删除困难。</span><br><span class="line">Bloom-Filter算法的核心思想就是利用多个不同的Hash函数来解决“冲突”。</span><br><span class="line">Hash存在一个冲突（碰撞）的问题，用同一个Hash得到的两个URL的值有可能相同。为了减少冲突，我们可以多引入几个Hash，如果通过其中的一个Hash值我们得出某元素不在集合中，那么该元素肯定不在集合中。只有在所有的Hash函数告诉我们该元素在集合中时，才能确定该元素存在于集合中。这便是Bloom-Filter的基本思想。</span><br><span class="line">Bloom-Filter一般用于在大数据量的集合中判定某元素是否存在。</span><br></pre></td></tr></table></figure>
+
+
+
+<p>is 对象的个数，在极端情况下可能会造成连接泄露，而连接池的形式可以有效的保护和控制资源的使用。</p>
 <table>
 <thead>
 <tr>
@@ -1185,127 +1168,47 @@
 <td>相对于直连比较麻烦，尤其在资源的管理上需要很多参数来保证，一旦规划不合理也会出现问题</td>
 </tr>
 </tbody></table>
-<p>使用 Jedis 连接池操作的示例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 使用默认连接池配置</span></span><br><span class="line">    GenericObjectPoolConfig poolConfig = <span class="keyword">new</span> GenericObjectPoolConfig();</span><br><span class="line">    <span class="comment">// 初始化连接池</span></span><br><span class="line">    JedisPool jedisPool = <span class="keyword">new</span> JedisPool(poolConfig, <span class="string">"127.0.0.1"</span>, <span class="number">6379</span>);</span><br><span class="line">    <span class="comment">// 获取 Jedis 对象</span></span><br><span class="line">    Jedis jedis = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        jedis = jedisPool.getResource();</span><br><span class="line">        <span class="comment">//。。。</span></span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(jedis!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="comment">// 不是关闭连接，而是归还连接池</span></span><br><span class="line">            jedis.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><ul>
+<li><p>很多时候我们需要持久化数据也就是将内存中的数据写入到硬盘里面，大部分原因是为了之后重用数据（比如重启机器、机器故障之后恢复数据），或者是为了防止系统故障而将数据备份到一个远程位置。</p>
+<p>Redis 不同于 Memcached 的很重要一点就是，Redis 支持持久化，而且支持两种不同的持久化操作。<strong>Redis 的一种持久化方式叫快照（snapshotting，RDB），另一种方式是只追加文件（append-only file, AOF）</strong>。这两种方法各有千秋，下面我会详细这两种持久化方法是什么，怎么用，如何选择适合自己的持久化方法。</p>
+<p><strong>快照（snapshotting）持久化（RDB）</strong></p>
+<p>Redis 可以通过创建快照来获得存储在内存里面的数据在某个时间点上的副本。Redis 创建快照之后，可以对快照进行备份，可以将快照复制到其他服务器从而创建具有相同数据的服务器副本（Redis 主从结构，主要用来提高 Redis 性能），还可以将快照留在原地以便重启服务器的时候使用。</p>
+<p>快照持久化是 Redis 默认采用的持久化方式，在 Redis.conf 配置文件中默认有此下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">save 900 1           #在900秒(15分钟)之后，如果至少有1个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span><br><span class="line"></span><br><span class="line">save 300 10          #在300秒(5分钟)之后，如果至少有10个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span><br><span class="line"></span><br><span class="line">save 60 10000        #在60秒(1分钟)之后，如果至少有10000个key发生变化，Redis就会自动触发BGSAVE命令创建快照。Copy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>Redis 支持 RDB 和 AOF 两种持久化机制，持久化功能有效地避免因进程退出造成的数据丢失问题，当下次重启时利用之前持久化的文件即可实现数据恢复。</p>
-<ul>
-<li>RDB：快照形式是直接把内存中的数据保存到一个dump的文件中，定时保存，保存策略。 当Redis需要做持久化时，Redis会fork一个子进程，子进程将数据写到磁盘上一个临时RDB文件中。当子进程完成写临时文件后，将原来的RDB替换掉。</li>
-<li>AOF：把所有的对Redis的服务器进行修改的命令都存到一个文件里，命令的集合。 使用AOF做持久化，每一个写命令都通过<strong>write函数</strong>追加到appendonly.aof中。aof的<strong><em>\</em>默认策略是每秒钟fsync一次，在这种配置下，就算发生故障停机，也最多丢失一秒钟的数据**</strong>。 缺点是<strong>对于相同的数据集来说，AOF的文件体积通常要大于RDB文件的体积。</strong>根据所使用的fsync策略，AOF的速度可能会慢于RDB。</li>
-</ul>
-<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p>RDB 持久化是把当前进程数据生成快照保存到硬盘的过程，触发 RDB 持久化过程分为手动触发和自动触发。</p>
-<h4 id="触发机制"><a href="#触发机制" class="headerlink" title="触发机制"></a>触发机制</h4><p>手动触发分别对应 save 和 bgsave 命令：</p>
-<ul>
-<li>save：阻塞当前 Redis 服务器，直到 RDB 过程完成为止，对于内存比较大的实例会造成长时间阻塞，线上环境不建议使用。</li>
-<li>bgasve：Redis 进程执行 fork 操作创建子进程，RDB 持久化过程由子进程负责，完成后自动结束。阻塞只发生在 fork 阶段，一般时间很短。</li>
-</ul>
-<p>bgsave 是针对 save 阻塞问题做的优化，因此 Redis 内部所有涉及 RDB 的操作都采用 bgsave 的方式，而 save 方式已经废弃。除了手动触发外，Redis 内部还存在自动触发 RDB 的持久化机制，例如：</p>
-<ul>
-<li>使用 save 相关配置，如 save m n，表示 m 秒内数据集存在 n 次修改时，自动触发 bgsave。</li>
-<li>如果从节点执行全量复制操作，主节点自动执行 bgsave 生成 RDB 文件并发送给从节点。</li>
-<li>执行 debug reload 命令重新加载 Redis 时也会自动触发 save 操作。</li>
-<li>默认情况下执行 shutdown 命令时，如果没有开启 AOF 持久化功能则自动执行 bgsave。</li>
-</ul>
-<hr>
-<h4 id="流程说明"><a href="#流程说明" class="headerlink" title="流程说明"></a>流程说明</h4><p>bgsave 是主流的触发 RDB 持久化的方式，运作流程如下：</p>
-<ul>
-<li>执行 bgsave 命令，Redis 父进程判断当前是否存在正在执行的子进程，如 RDB/AOF 子进程，如果存在 bgsave 命令直接返回。</li>
-<li>父进程执行 fork 操作创建子进程，fork 操作过程中父进程会阻塞，通过 info stats 命令查看 latest_fork_usec 选项，可以获取最近一个 fork 操作的耗时，单位微秒。</li>
-<li>父进程 fork 完成后，bgsave 命令返回”Background saving started”信息并不再阻塞父进程，可以继续响应其他命令。</li>
-<li>子进程创建 RDB 文件，根据父进程内存生成临时快照文件，完成后对原有文件进行原子替换。执行 lastsave 命令可以获取最后一次生成 RDB 的时间，对应 info 统计的 rdb_last_save_time 选项。</li>
-<li>进程发送信号给父进程表示完成，父进程更新统计信息，具体见 info Persistence 下的 rdb_* 相关信息。</li>
-</ul>
-<hr>
-<h4 id="RDB-文件的保存"><a href="#RDB-文件的保存" class="headerlink" title="RDB 文件的保存"></a>RDB 文件的保存</h4><p><strong>保存</strong></p>
-<p>RDB 文件保存在 dir 配置指定的目录下，文件名通过 dbfilename 配置指定。可以通过执行 <code>config  set dir {newDir}</code> 和 <code>config set dbfilename {newFileName}</code> 运行期动态执行，当下次运行 RDB 文件会保存到新目录。</p>
-<p>当遇到坏盘或磁盘写满情况时，可以通过 <code>config  set dir {newDir}</code>  在线修改文件路径到可用磁盘路径，之后执行 bgsave 进行磁盘切换，同样适用于 AOF 持久化文件。</p>
-<p><strong>压缩</strong></p>
-<p>Redis 默认采用 LZF 算法对生成的 RDB 文件做压缩处理，压缩后的文件远远小于内存大小，默认开启，可以通过参数 <code>config set rdbcompression {yes|no}</code> 动态修改。</p>
-<p>虽然 RDB 会消耗 CPU，但可大幅降低文件的体积，方便保存到硬盘或通过网络发送给从节点，因此线上建议开启。</p>
-<p><strong>校验</strong></p>
-<p>如果 Redis 加载损坏的 RDB 文件时拒绝执行，可以使用 redis-check-dump 工具检测 RDB 文件并获取对应的错误报告。</p>
-<hr>
-<h4 id="RDB-的优缺点"><a href="#RDB-的优缺点" class="headerlink" title="RDB 的优缺点"></a>RDB 的优缺点</h4><p><strong>优点</strong></p>
-<p>RDB 是一个紧凑压缩的二进制文件，代表 Redis 在某个时间点上的数据快照。非常适合于备份，全量复制等场景。例如每 6 个消时执行 bgsave 备份，并把 RDB 文件拷贝到远程机器或者文件系统中，用于灾难恢复。</p>
-<p>Redis 加载 RDB 恢复数据远远快于 AOF 的方式。</p>
-<p><strong>缺点</strong></p>
-<p>RDB 方式数据无法做到实时持久化/秒级持久化，因为 bgsave 每次运行都要执行 fork 操作创建子进程，属于重量级操作，频繁执行成本过高。针对 RDB 不适合实时持久化的问题，Redis 提供了 AOF 持久化方式。</p>
-<p>RDB 文件使用特定二进制格式保存，Redis 版本演进过程中有多个格式的 RDB 版本，存在老版本 Redis 服务无法兼容新版 RDB 格式的问题。</p>
-<hr>
-<h3 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h3><p>AOF 持久化以独立日志的方式记录每次写命令，重启时再重新执行 AOF 文件中的命令达到恢复数据的目的。AOF 的主要作用是解决了数据持久化的实时性，目前是 Redis 持久化的主流方式。</p>
-<h4 id="使用-AOF"><a href="#使用-AOF" class="headerlink" title="使用 AOF"></a>使用 AOF</h4><p>开启 AOF 功能需要设置：<code>appendonly yes</code>，默认不开启。AOF 文件名通过 appendfilename 配置，默认文件名 <code>appendonly.aof</code> 。保存路径同 RDB 方式一致，通过 dir 配置指定。</p>
-<p>AOF 的工作流程操作：命令写入 append、文件同步 sync、文件重写 rewrite、重启加载 load：</p>
-<ul>
-<li>所有的写入命令会追加到 aof_buf 缓冲区中。</li>
-<li>AOF 缓冲区根据对应的策略向硬盘做同步操作。</li>
-<li>随着 AOF 文件越来越大，需要定期对 AOF 文件进行重写，达到压缩的目的。</li>
-<li>当 Redis 服务器重启时，可以加载 AOF 文件进行数据恢复。</li>
-</ul>
-<hr>
-<h4 id="命令写入"><a href="#命令写入" class="headerlink" title="命令写入"></a>命令写入</h4><p>AOF 命令写入的内容直接是文本协议格式，采用文本协议格式的理由如下：</p>
-<ul>
-<li>文本协议具有很好的兼容性。</li>
-<li>开启 AOF 后，所有写入命令都包含追加操作，直接采用协议格式，避免了二次处理开销。</li>
-<li>文本协议具有可读性，方便直接修改和处理。</li>
-</ul>
-<p>AOF 把命令追加到缓冲区的原因：</p>
-<p>Redis 使用单线程响应命令，如果每次写 AOF 文件命令都直接追加到硬盘，那么性能完全取决于当前硬盘负载。先写入缓冲区中还有另一个好处，Redis 可以提供多种缓冲区同步硬盘策略，在性能和安全性方面做出平衡。</p>
-<hr>
-<h4 id="文件同步"><a href="#文件同步" class="headerlink" title="文件同步"></a>文件同步</h4><p>Redis 提供了多种 AOF 缓冲区文件同步策略，由参数 appendfsync 控制，不同值的含义如下：</p>
-<ul>
-<li><p>always：命令写入缓冲区后调用系统 fsync 操作同步到 AOF 文件，fsync 完成后线程返回。</p>
-<p>配置为 always 时，每次写入都要同步 AOF，性能较低，不建议配置。</p>
-</li>
-<li><p>everysec：命令写入缓冲区后调用系统 write 操作，write 完成后线程返回。fsync 同步文件操作由专门线程每秒调用一次。</p>
-<p>配置为 everysec 是建议的策略，也是默认配置，做到兼顾性能和数据安全。</p>
-</li>
-<li><p>no：命令写入缓冲区后调用系统 write 操作，不对 AOF 文件做 fsync 同步，同步硬盘操作由操作系统负责，周期通常最长 30 秒。</p>
-<p>配置为 no 时，由于操作系统每次同步 AOF 文件的周期不可控，而且会加大每次同步硬盘的数据量，虽然提升了性能，但安全性无法保证。</p>
-</li>
-</ul>
-<p>write 会触发延迟写机制，Linux 内核提供页缓冲区来提高磁盘 IO 性能。write 操作在写入系统缓冲区后直接返回，同步硬盘操作依赖于系统调度机制，同步文件之前如果系统故障，缓冲区内数据将丢失。</p>
-<p>fsync 针对单个文件操作，强制硬盘同步，将阻塞直到写入硬盘完成后返回，保证了数据持久化。</p>
-<hr>
-<h4 id="重写机制"><a href="#重写机制" class="headerlink" title="重写机制"></a>重写机制</h4><p>随着命令不断写入 AOF，文件会越来越大，为了解决这个问题，使用重写机制来压缩文件体积。AOF 文件重写是把 Redis 进程内的数据转化为写命令同步到新 AOF 文件的过程。</p>
-<p>重写后 AOF 文件变小的原因：</p>
-<ul>
-<li>进程内已经超时的数据不再写入文件。</li>
-<li>旧的 AOF 文件含有无效命令，重写使用进程内数据直接生成，这样新的 AOF 文件只保留最终数据写入命令。</li>
-<li>多条写命令可以合并为一个，为了防止单条命令过大造成客户端缓冲区溢出，对于 list、set、hash、zset 等类型操作，以 64 个元素为界拆分为多条。</li>
-</ul>
-<p>AOF 重写降低了文件占用空间，另一个目的是：更小的 AOF 文件可以更快地被 Redis 加载。</p>
-<p>AOF 重写分为手动触发和自动触发：</p>
-<ul>
-<li>手动触发：直接调用 bgrewriteaof 命令。</li>
-<li>自动触发：根据 auto-aof-rewrite-min-size 和  auto-aof-rewrite-percentage 参数确定自动触发时机。</li>
-</ul>
-<p><strong>AOF 重写流程</strong></p>
-<ul>
-<li><p>执行 AOF 重写请求，如果当前进程正在执行 AOF 重写，请求不执行并返回，如果当前进程正在执行 bgsave 操作，重写命令延迟到 bgsave 完成之后再执行。</p>
-</li>
-<li><p>父进程执行 fork 创建子进程，开销等同于 bgsave 过程。</p>
-</li>
-<li><p>主进程 fork 操作完成之后继续响应其他命令，所有修改命令依然写入 AOF 缓冲区并同步到硬盘，保证原有 AOF 机制正确性。</p>
-<p>由于 fork 操作运用写时复制技术，子进程只能共享 fork 操作时的内存数据。由于父进程依然响应命令，Redis 使用 AOF 重写缓冲区保存这部分新数据，防止新 AOF 文件生成期间丢失这部分数据。</p>
-</li>
-<li><p>子进程根据内存快照，按照命令合并规则写入到新的 AOF 文件。每次批量写入数据量默认为 32 MB，防止单次刷盘数据过多造成硬盘阻塞。</p>
-</li>
-<li><p>新 AOF 文件写入完成后，子进程发送信号给父进程，父进程更新统计信息。</p>
-<p>父进程把 AOF 重写缓冲区的数据写入到新的 AOF 文件，使用新的 AOF 文件替换旧文件，完成重写。</p>
+<p><strong>AOF（append-only file）持久化</strong></p>
+<p>与快照持久化相比，AOF 持久化 的实时性更好，因此已成为主流的持久化方案。默认情况下 Redis 没有开启 AOF（append only file）方式的持久化，可以通过 appendonly 参数开启：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">appendonly yesCopy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
+
+<p>开启 AOF 持久化后每执行一条会更改 Redis 中的数据的命令，Redis 就会将该命令写入硬盘中的 AOF 文件。AOF 文件的保存位置和 RDB 文件的位置相同，都是通过 dir 参数设置的，默认的文件名是 appendonly.aof。</p>
+<p>在 Redis 的配置文件中存在三种不同的 AOF 持久化方式，它们分别是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">appendfsync always    #每次有数据修改发生时都会写入AOF文件,这样会严重降低Redis的速度</span><br><span class="line">appendfsync everysec  #每秒钟同步一次，显示地将多个写命令同步到硬盘</span><br><span class="line">appendfsync no        #让操作系统决定何时进行同步Copy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
+
+<p>为了兼顾数据和写入性能，用户可以考虑 appendfsync everysec 选项 ，让 Redis 每秒同步一次 AOF 文件，Redis 性能几乎没受到任何影响。而且这样即使出现系统崩溃，用户最多只会丢失一秒之内产生的数据。当硬盘忙于执行写入操作的时候，Redis 还会优雅的放慢自己的速度以便适应硬盘的最大写入速度。</p>
+<p><strong>相关 issue</strong> ：<a href="https://github.com/Snailclimb/JavaGuide/issues/783" target="_blank" rel="noopener">783：Redis 的 AOF 方式</a></p>
+<p><strong>拓展：Redis 4.0 对于持久化机制的优化</strong></p>
+<p>Redis 4.0 开始支持 RDB 和 AOF 的混合持久化（默认关闭，可以通过配置项 <code>aof-use-rdb-preamble</code> 开启）。</p>
+<p>如果把混合持久化打开，AOF 重写的时候就直接把 RDB 的内容写到 AOF 文件开头。这样做的好处是可以结合 RDB 和 AOF 的优点, 快速加载同时避免丢失过多的数据。当然缺点也是有的， AOF 里面的 RDB 部分是压缩格式不再是 AOF 格式，可读性较差。</p>
+<p><strong>补充内容：AOF 重写</strong></p>
+<p>AOF 重写可以产生一个新的 AOF 文件，这个新的 AOF 文件和原有的 AOF 文件所保存的数据库状态一样，但体积更小。</p>
+<p>AOF 重写是一个有歧义的名字，该功能是通过读取数据库中的键值对来实现的，程序无须对现有 AOF 文件进行任何读入、分析或者写入操作。</p>
+<p>在执行 BGREWRITEAOF 命令时，Redis 服务器会维护一个 AOF 重写缓冲区，该缓冲区会在子进程创建新 AOF 文件期间，记录服务器执行的所有写命令。当子进程完成创建新 AOF 文件的工作之后，服务器会将重写缓冲区中的所有内容追加到新 AOF 文件的末尾，使得新旧两个 AOF 文件所保存的数据库状态一致。最后，服务器用新的 AOF 文件替换旧的 AOF 文件，以此来完成 AOF 文件重写操作</p>
 </li>
 </ul>
 <hr>
-<p><strong>重启加载</strong></p>
-<p>AOF 和 RDB 文件都可以用于服务器重启时的数据恢复。Redis 持久化文件的加载流程：</p>
-<ul>
-<li>AOF 持久化开启且存在 AOF 文件时，优先加载 AOF 文件。</li>
-<li>AOF 关闭时且存在 RDB 文件时，记载 RDB 文件。</li>
-<li>加载 AOF/RDB 文件成功后，Redis 启动成功。</li>
-<li>AOF/RDB 文件存在错误导致加载失败时，Redis 启动失败并打印错误信息。</li>
-</ul>
-<hr>
-<h2 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h2><h4 id="Redis线程模型"><a href="#Redis线程模型" class="headerlink" title="Redis线程模型"></a>Redis线程模型</h4><p>文件事件处理器包括分别是<strong>套接字、 I/O 多路复用程序、 文件事件分派器（dispatcher）、 以及事件处理器</strong>。使用 I/O 多路复用程序来同时监听多个套接字， 并根据套接字目前执行的任务来为套接字关联不同的事件处理器。当被监听的套接字准备好执行连接应答（accept）、读取（read）、写入（write）、关闭（close）等操作时， 与操作相对应的文件事件就会产生， 这时文件事件处理器就会调用套接字之前关联好的事件处理器来处理这些事件。<br>I/O 多路复用程序负责监听多个套接字， 并向文件事件分派器传送那些产生了事件的套接字。<br><strong>工作原理：</strong><br>1)I/O 多路复用程序负责监听多个套接字， 并向文件事件分派器传送那些产生了事件的套接字。<br>尽管多个文件事件可能会并发地出现， 但 I/O 多路复用程序总是会将所有产生事件的套接字都入队到一个队列里面， 然后通过这个队列， 以有序（sequentially）、同步（synchronously）、每次一个套接字的方式向文件事件分派器传送套接字： 当上一个套接字产生的事件被处理完毕之后（该套接字为事件所关联的事件处理器执行完毕）， I/O 多路复用程序才会继续向文件事件分派器传送下一个套接字。如果一个套接字又可读又可写的话， 那么服务器将先读套接字， 后写套接字.<br><img src="https://img-blog.csdnimg.cn/20190429094050254.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0J1dHRlcmZseV9yZXN0aW5n,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h2><h3 id="事务-1"><a href="#事务-1" class="headerlink" title="事务"></a>事务</h3><p>Redis 可以通过 MULTI，EXEC，DISCARD 和 WATCH 等命令来实现事务(transaction)功能。</p>
+<blockquote>
+<p>MULTI<br>OK<br>INCR foo<br>QUEUED<br>INCR bar<br>QUEUED<br>EXEC</p>
+</blockquote>
+<p>1) (integer) 1<br>2) (integer) 1<br>Copy to clipboardErrorCopied<br>使用 MULTI命令后可以输入多个命令。Redis不会立即执行这些命令，而是将它们放到队列，当调用了EXEC命令将执行所有命令。</p>
+<p>Redis官网相关介绍 <a href="https://redis.io/topics/transactions" target="_blank" rel="noopener">https://redis.io/topics/transactions</a> 如下：</p>
+<p>redis事务</p>
+<p>但是，Redis 的事务和我们平时理解的关系型数据库的事务不同。我们知道事务具有四大特性： 1. 原子性，2. 隔离性，3. 持久性，4. 一致性。</p>
+<p>原子性（Atomicity）： 事务是最小的执行单位，不允许分割。事务的原子性确保动作要么全部完成，要么完全不起作用；<br>隔离性（Isolation）： 并发访问数据库时，一个用户的事务不被其他事务所干扰，各并发事务之间数据库是独立的；<br>持久性（Durability）： 一个事务被提交之后。它对数据库中数据的改变是持久的，即使数据库发生故障也不应该对其有任何影响。<br>一致性（Consistency）： 执行事务前后，数据保持一致，多个事务对同一个数据读取的结果是相同的；<br>Redis 是不支持 roll back 的，因而不满足原子性的（而且不满足持久性）。</p>
+<p>Redis官网也解释了自己为啥不支持回滚。简单来说就是Redis开发者们觉得没必要支持回滚，这样更简单便捷并且性能更好。Redis开发者觉得即使命令执行错误也应该在开发过程中就被发现而不是生产过程中。</p>
+<p>redis roll back</p>
+<p>你可以将Redis中的事务就理解为 ：Redis事务提供了一种将多个命令请求打包的功能。然后，再按顺序执行打包的所有命令，并且不会被中途打断。</p>
+<h3 id="Redis线程模型"><a href="#Redis线程模型" class="headerlink" title="Redis线程模型"></a>Redis线程模型</h3><p>文件事件处理器包括分别是<strong>套接字、 I/O 多路复用程序、 文件事件分派器（dispatcher）、 以及事件处理器</strong>。使用 I/O 多路复用程序来同时监听多个套接字， 并根据套接字目前执行的任务来为套接字关联不同的事件处理器。当被监听的套接字准备好执行连接应答（accept）、读取（read）、写入（write）、关闭（close）等操作时， 与操作相对应的文件事件就会产生， 这时文件事件处理器就会调用套接字之前关联好的事件处理器来处理这些事件。<br>I/O 多路复用程序负责监听多个套接字， 并向文件事件分派器传送那些产生了事件的套接字。<br><strong>工作原理：</strong><br>1)I/O 多路复用程序负责监听多个套接字， 并向文件事件分派器传送那些产生了事件的套接字。<br>尽管多个文件事件可能会并发地出现， 但 I/O 多路复用程序总是会将所有产生事件的套接字都入队到一个队列里面， 然后通过这个队列， 以有序（sequentially）、同步（synchronously）、每次一个套接字的方式向文件事件分派器传送套接字： 当上一个套接字产生的事件被处理完毕之后（该套接字为事件所关联的事件处理器执行完毕）， I/O 多路复用程序才会继续向文件事件分派器传送下一个套接字。如果一个套接字又可读又可写的话， 那么服务器将先读套接字， 后写套接字.<br><img src="https://img-blog.csdnimg.cn/20190429094050254.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0J1dHRlcmZseV9yZXN0aW5n,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <h3 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h3><p>redis 提供 6种数据淘汰策略：</p>
 <ul>
 <li>volatile-lru：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰</li>
@@ -1356,103 +1259,37 @@
 <li>用底层模型不同：它们之间底层实现方式以及与客户端之间通信的应用协议不一样。redis直接自己构建了VM机制，因为一般的系统调用系统函数的话，会浪费一定的时间去移动和请求。</li>
 <li>value的大小：<strong><em>\</em>redis可以达到1GB，而memcache只有1MB**</strong>。</li>
 </ul>
-<h3 id="如何保证缓存与数据库双写时的数据一致性？"><a href="#如何保证缓存与数据库双写时的数据一致性？" class="headerlink" title="如何保证缓存与数据库双写时的数据一致性？"></a>如何保证缓存与数据库双写时的数据一致性？</h3><p>你只要用缓存，就可能会涉及到缓存与数据库双存储双写，你只要是双写，就一定会有数据一致性的问题，那么你如何解决一致性问题？</p>
-<p>一般来说，就是如果你的系统不是严格要求缓存+数据库必须一致性的话，缓存可以稍微的跟数据库偶尔有不一致的情况，最好不要做这个方案，读请求和写请求串行化，串到一个内存队列里去，这样就可以保证一定不会出现不一致的情况</p>
-<p>串行化之后，就会导致系统的吞吐量会大幅度的降低，用比正常情况下多几倍的机器去支撑线上的一个请求。</p>
-<p>还有一种方式就是可能会暂时产生不一致的情况，但是发生的几率特别小，就是<strong>先更新数据库，然后再删除缓存。</strong></p>
+<h3 id="如何保证缓存与数据库双写时的数据一致性？"><a href="#如何保证缓存与数据库双写时的数据一致性？" class="headerlink" title="如何保证缓存与数据库双写时的数据一致性？"></a>如何保证缓存与数据库双写时的数据一致性？</h3><p>Cache Aside Pattern 中遇到写请求是这样的：更新 DB，然后直接删除 cache 。</p>
+<p>如果更新数据库成功，而删除缓存这一步失败的情况的话，简单说两个解决方案：</p>
+<ol>
+<li><strong>缓存失效时间变短（不推荐，治标不治本）</strong> ：我们让缓存数据的过期时间变短，这样的话缓存就会从数据库中加载数据。另外，这种解决办法对于先操作缓存后操作数据库的场景不适用。</li>
+<li><strong>增加cache更新重试机制（常用）</strong>： 如果 cache 服务当前不可用导致缓存删除失败的话，我们就隔一段时间进行重试，重试次数可以自己定。如果多次重试还是失败的话，我们可以把当前更新失败的 key 存入队列中，等缓存服务可用之后，再将 缓存中对应的 key 删除即可。</li>
+</ol>
 <table>
 <thead>
 <tr>
-<th>问题场景</th>
-<th>描述</th>
-<th>解决</th>
+<th></th>
+<th></th>
+<th></th>
 </tr>
 </thead>
 <tbody><tr>
-<td>先写缓存，再写数据库，缓存写成功，数据库写失败</td>
-<td>缓存写成功，但写数据库失败或者响应延迟，则下次读取（并发读）缓存时，就出现脏读</td>
-<td>这个写缓存的方式，本身就是错误的，需要改为先写数据库，把旧缓存置为失效；读取数据的时候，如果缓存不存在，则读取数据库再写缓存</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>先写数据库，再写缓存，数据库写成功，缓存写失败</td>
-<td>写数据库成功，但写缓存失败，则下次读取（并发读）缓存时，则读不到数据</td>
-<td>缓存使用时，假如读缓存失败，先读数据库，再回写缓存的方式实现</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>需要缓存异步刷新</td>
-<td>指数据库操作和写缓存不在一个操作步骤中，比如在分布式场景下，无法做到同时写缓存或需要异步刷新（补救措施）时候</td>
-<td>确定哪些数据适合此类场景，根据经验值确定合理的数据不一致时间，用户数据刷新的时间间隔</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody></table>
 <h3 id="假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><a href="#假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？" class="headerlink" title="假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"></a>假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</h3><p>使用keys指令可以扫出指定模式的key列表。<br>对方接着追问：如果这个redis正在给线上的业务提供服务，那使用keys指令会有什么问题？<br>这个时候你要回答redis关键的一个特性：redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。这个时候可以使用scan指令，scan指令可以无阻塞的提取出指定模式的key列表，但是会有一定的重复概率，在客户端做一次去重就可以了，但是整体所花费的时间会比直接用keys指令长。</p>
-<h3 id="使用Redis做过异步队列吗，是如何实现的"><a href="#使用Redis做过异步队列吗，是如何实现的" class="headerlink" title="使用Redis做过异步队列吗，是如何实现的"></a>使用Redis做过异步队列吗，是如何实现的</h3><p>使用list类型保存数据信息，rpush生产消息，lpop消费消息，当lpop没有消息时，可以sleep一段时间，然后再检查有没有信息，如果不想sleep的话，可以使用blpop, 在没有信息的时候，会一直阻塞，直到信息的到来。redis可以通过pub/sub主题订阅模式实现一个生产者，多个消费者，当然也存在一定的缺点，当消费者下线时，生产的消息会丢失。</p>
-<h3 id="Redis如何实现延时队列"><a href="#Redis如何实现延时队列" class="headerlink" title="Redis如何实现延时队列"></a>Redis如何实现延时队列</h3><p>使用sortedset，使用时间戳做score, 消息内容作为key,调用zadd来生产消息，消费者使用zrangbyscore获取n秒之前的数据做轮询处理。</p>
-<h3 id="Redis回收进程如何工作的？"><a href="#Redis回收进程如何工作的？" class="headerlink" title="Redis回收进程如何工作的？"></a>Redis回收进程如何工作的？</h3><ol>
-<li>一个客户端运行了新的命令，添加了新的数据。</li>
-<li>Redis检查内存使用情况，如果大于maxmemory的限制， 则根据设定好的策略进行回收。</li>
-<li>一个新的命令被执行，等等。</li>
-<li>所以我们不断地穿越内存限制的边界，通过不断达到边界然后不断地回收回到边界以下。</li>
-</ol>
-<p>如果一个命令的结果导致大量内存被使用（例如很大的集合的交集保存到一个新的键），不用多久内存限制就会被这个内存使用量超越。</p>
-<h3 id="集群的故障转移机制"><a href="#集群的故障转移机制" class="headerlink" title="集群的故障转移机制"></a>集群的故障转移机制</h3><p>高可用首先需要解决集群部分失败的场景：当集群内少量节点出现故障时通过自动故障转移保证集群可以正常对外提供服务。</p>
-<p> （高可用首先需要解决集群部分失败的场景：当集群内少量节点出现故障时通过自动故障转移保证集群可以正常对外提供服务。主要针对Redis Cluster来分析：</p>
-<p>详细的知识见：<a href="https://blog.csdn.net/xiaofeng10330111/article/details/90384502#（一）故障发现" target="_blank" rel="noopener">https://blog.csdn.net/xiaofeng10330111/article/details/90384502</a></p>
-<p><strong><em>\</em>故障发现**</strong></p>
-<p>redis的各个节点通过ping/pong进行消息通信，不需要Sentinel，转播槽的信息和节点状态信息，故障发现也是通过这个动作发现的，跟Sentinel一样，有主观下线和客观下线。</p>
-<ul>
-<li>主观下线：某个节点认为另一个节点不可用，“偏见”，但不是最终的故障判断。</li>
-<li>客观下线：标志着一个节点真正的下线，即半数以上持有槽的主节点都标记某节点主观下线，如果是持有槽的主节点故障，需要为该节点进行故障转移。</li>
-<li>尝试客观下线：通知集群内所有节点标记故障节点为客观下线，通过故障节点的从节点触发故障转移流程。</li>
-</ul>
-<p><strong><em>\</em>故障恢复**</strong></p>
-<p>故障节点变为客观下线后，如果下线节点是持有槽的主节点则需要在它的从节点中选出一个替换它，从而保证集群的高可用。<strong><em>\</em>下线主节点的所有从节点承担故障恢复的义务**</strong>，当从节点通过内部定时任务发现自身复制的主节 点进入客观下线时，将会触发故障恢复流程：资格检查–&gt;准备选举时间–&gt;发起选举–&gt;选举投票–&gt;替换主节点。</p>
-<h3 id="Redis集群中某个master节点挂了，后面流程怎么判断？"><a href="#Redis集群中某个master节点挂了，后面流程怎么判断？" class="headerlink" title="Redis集群中某个master节点挂了，后面流程怎么判断？"></a>Redis集群中某个master节点挂了，后面流程怎么判断？</h3><p>具体还是9上的回答，更为具体的见：<a href="https://blog.csdn.net/xiaofeng10330111/article/details/90384502#（一）故障发现" target="_blank" rel="noopener">https://blog.csdn.net/xiaofeng10330111/article/details/90384502</a></p>
-<p><strong><em>\</em>可以从以下三个方面分析：**</strong></p>
-<p><strong>redis集群如何判断一个主节点挂了：</strong></p>
-<ul>
-<li>集群中的每个节点都会顶起地向集群中的其他节点发送PING消息</li>
-<li>默认每隔1s中发送一次PING</li>
-<li>默认随机选择5个集群中的其他主节点，规则为最长时间未PING以及PONG时间超过timeout/2</li>
-<li>如果发送PING的主节点1，在timeout时间内没收到主节点2的PONG消息，那么主节点1会将主节点2的状态标记为pfail</li>
-<li>主节点1在后续发送PING消息时，会带上主节点2的pfail状态，收到这个消息的主节点会在clusterNode里下线报告fail_reports中将主节点2标记为pfail</li>
-<li>当某个主节点被标记为pfail的个数大于集群总主节点个数的一半时，会被标记为fail, 并向整个集群广播一条PONG消息，说明该主节点下线。</li>
-<li>其他主节点收到广播消息后，将该主节点状态标记为fail,</li>
-<li>集群进入故障转移阶段</li>
-</ul>
-<p><strong><em>\</em>故障转移阶段流程：**</strong></p>
-<ul>
-<li>当一个从节点发现自己正在复制的主节点进入已下线状态时，从节点将开始对下线主节点进行故障转移</li>
-<li>复制下线主节点的所有从节点里面，会有一个从节点被选为新的主节点</li>
-<li>新的主节点从撤销所有已下线主节点的槽位指派，并将这些槽位指给自己</li>
-<li>新的主节点会向集群广播一条PONG消息，告知其他节点自己已由从节点转为主节点，并接管相应的槽位</li>
-<li>故障转移完成</li>
-</ul>
-<p><strong><em>\</em>选举新的主节点**</strong></p>
-<ul>
-<li>集群的纪元时一个自增的计数器，初始值为0</li>
-<li>当集群里的某个节点开始一次故障转移操作时，集群的纪元会加一</li>
-<li>对于每个纪元，集群里每个复制处理槽位的主节点都有一次投票机会，而第一次向主节点要求投票的从节点将获得主节点的投票</li>
-<li>什么时候开始投票？ 当从节点发现自己正在复制的主节点进入已下线状态，从节点会向集群广播一条CLUSTERMSG_TYPE_FAILOVER_AUTH_REQUEST消息，收到该消息的主节点可以开始投票</li>
-<li>主节点投票后返回CLUSTERMSG_TYPE_FAILOVER_AUTH_ACK消息</li>
-<li>当某个从节点的票数大于投票总节点数的一半时，被选为新的主节点</li>
-<li>若每个获得足够的票数，进入下一轮投票</li>
-</ul>
-<h3 id="Redis的缓存优化方向有哪些？你们怎么理解的？对热点键的注意事项设计什么？"><a href="#Redis的缓存优化方向有哪些？你们怎么理解的？对热点键的注意事项设计什么？" class="headerlink" title="Redis的缓存优化方向有哪些？你们怎么理解的？对热点键的注意事项设计什么？"></a>Redis的缓存优化方向有哪些？你们怎么理解的？对热点键的注意事项设计什么？</h3><p><strong>缓存的主要优势和成本：</strong></p>
-<ul>
-<li>缓存收益：加速读写、降低后端存储负载；</li>
-<li>缓存成本：缓存和存储数据不一致性、代码维护成本、运维成本；</li>
-</ul>
-<p><strong>优化方向：</strong></p>
-<ul>
-<li><strong><em>\</em>Redis 的数据过期策略**</strong>：<strong><em>\</em>采用定期删除+惰性删除策略结合起来，以及采用淘汰策略来兜底。**</strong></li>
-<li>缓存粒度控制：全部属性更好or部分重要属性更好？</li>
-<li>缓存穿透优化：缓存空对象 + 布隆过滤器拦截（通过很小的内存来实现对数据的过滤。）</li>
-<li>缓存雪崩优化：保证缓存高可用性，例如 Redis Cluster、Redis Sentinel、VIP；依赖隔离组件为后端限流；提前演练，例如压力测试。</li>
-<li>无底洞问题优化：命令本身优化，例如慢查询 keys、hgetall bigkey；减少网络通信次数；降低接入成本，例如客户端使用长连接/连接池、NIO 等 。</li>
-<li><strong><em>\</em>热点key优化**</strong>：避免 bigkey；热键不要用 hash_tag，因为 hash_tag 会落到一个节点上；如果真有热点 key 而且业务对一致性要求不高时，可以用本地缓存 + MQ 解决。</li>
-<li><strong>热点key重建优化</strong>：<strong><em>\</em>互斥锁（mutex key）**</strong>，查询数据源 -&gt; 重建缓存 这个过程加互斥锁；<strong>永不过期</strong>，<strong>缓存层面</strong>不设置过期时间（没有用 expire），<strong>功能层面</strong>为每个 value 添加逻辑过期时间，但发现超过逻辑过期时间后，会<strong>使用单独的线程</strong>去构建缓存。</li>
-</ul>
-<p><strong>对热点键的注意事项，如上热点key优化和热点key重建优化。</strong></p>
 <h3 id="高并发情况下，对于Redis的更新操作有哪些注意事项？"><a href="#高并发情况下，对于Redis的更新操作有哪些注意事项？" class="headerlink" title="高并发情况下，对于Redis的更新操作有哪些注意事项？"></a>高并发情况下，对于Redis的更新操作有哪些注意事项？</h3><p>操作：先更新数据库，再删除缓存<br>正常的情况是这样的：  </p>
 <ul>
 <li>1、 先操作数据库，成功</li>
@@ -1469,17 +1306,26 @@
 <li>放满之后，每次如果有新的key需要放入，需要将pool中lru最大的一个key取出。</li>
 <li><strong><em>\</em>淘汰的时候，直接从pool中选取一个lru最小的值然后将其淘汰**</strong>。</li>
 </ul>
-<h2 id="Redis的IO复用"><a href="#Redis的IO复用" class="headerlink" title="Redis的IO复用"></a>Redis的IO复用</h2><p><strong>为什么 Redis 中要使用 I/O 多路复用这种技术呢？</strong></p>
-<p>首先，Redis 是跑在单线程中的，所有的操作都是按照顺序线性执行的，但是由于读写操作等待用户输入或输出都是阻塞的，所以 I/O 操作在一般情况下往往不能直接返回，这会导致某一文件的 I/O 阻塞导致整个进程无法对其它客户提供服务，而 <strong>I/O 多路复用</strong>就是为了解决这个问题而出现的。</p>
-<h3 id="什么是I-O-多路复用"><a href="#什么是I-O-多路复用" class="headerlink" title="什么是I/O 多路复用"></a>什么是I/O 多路复用</h3><p>I/O 多路复用其实是在单个线程中通过记录跟踪每一个sock（I/O流） 的状态来管理多个I/O流。结合下图可以清晰地理解I/O多路复用。</p>
-<p><img src="https://img-blog.csdnimg.cn/20190516194203755.png" alt="img"></p>
-<p>select, poll, epoll 都是I/O多路复用的具体的实现。epoll性能比其他几者要好。redis中的I/O多路复用的所有功能通过包装常见的select、epoll、evport和kqueue这些I/O多路复用函数库来实现的。</p>
-<h3 id="多路分离函数select"><a href="#多路分离函数select" class="headerlink" title="多路分离函数select"></a>多路分离函数select</h3><p>IO多路复用模型是建立在内核提供的多路分离函数select基础之上的，使用select函数可以避免同步非阻塞IO模型中轮询等待的问题。</p>
-<p><img src="https://img-blog.csdnimg.cn/20190516194215468.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Rpd2Vpa2FuZw==,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>如上图所示，用户线程发起请求的时候，首先会将socket添加到select中，这时阻塞等待select函数返回。当数据到达时，select被激活，select函数返回，此时用户线程才正式发起read请求，读取数据并继续执行。</p>
-<p>从流程上来看，使用select函数进行I/O请求和同步阻塞模型没有太大的区别，甚至还多了添加监视socket，以及调用select函数的额外操作，效率更差。但是，使用select以后最大的优势是用户可以在一个线程内同时处理多个socket的I/O请求。用户可以注册多个socket，然后不断地调用select读取被激活的socket，即可达到在同一个线程内同时处理多个I/O请求的目的。而在同步阻塞模型中，必须通过多线程的方式才能达到这个目的。</p>
-<h3 id="Reactor（反应器模式）"><a href="#Reactor（反应器模式）" class="headerlink" title="Reactor（反应器模式）"></a>Reactor（反应器模式）</h3><p><img src="https://img-blog.csdnimg.cn/20190516194238372.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Rpd2Vpa2FuZw==,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>如上图，I/O多路复用模型使用了Reactor设计模式实现了这一机制。通过Reactor的方式，可以将用户线程轮询I/O操作状态的工作统一交给handle_events事件循环进行处理。用户线程注册事件处理器之后可以继续执行做其他的工作（异步），而Reactor线程负责调用内核的select函数检查socket状态。当有socket被激活时，则通知相应的用户线程（或执行用户线程的回调函数），执行handle_event进行数据读取、处理的工作。由于select函数是阻塞的，因此多路I/O复用模型也被称为<strong>异步阻塞I/O模型</strong>。注意，这里的所说的阻塞是指select函数执行时线程被阻塞，而不是指socket。一般在使用I/O多路复用模型时，socket都是设置为NONBLOCK的，不过这并不会产生影响，因为用户发起I/O请求时，数据已经到达了，用户线程一定不会被阻塞。</p>
+<h3 id="Redis的IO复用"><a href="#Redis的IO复用" class="headerlink" title="Redis的IO复用"></a>Redis的IO复用</h3><p><strong>Redis 基于 Reactor 模式来设计开发了自己的一套高效的事件处理模型</strong> （Netty 的线程模型也基于 Reactor 模式，Reactor 模式不愧是高性能 IO 的基石），这套事件处理模型对应的是 Redis 中的文件事件处理器（file event handler）。由于文件事件处理器（file event handler）是单线程方式运行的，所以我们一般都说 Redis 是单线程模型。</p>
+<p><strong>既然是单线程，那怎么监听大量的客户端连接呢？</strong></p>
+<p>Redis 通过<strong>IO 多路复用程序</strong> 来监听来自客户端的大量连接（或者说是监听多个 socket），它会将感兴趣的事件及类型(读、写）注册到内核中并监听每个事件是否发生。</p>
+<p>这样的好处非常明显： <strong>I/O 多路复用技术的使用让 Redis 不需要额外创建多余的线程来监听客户端的大量连接，降低了资源的消耗</strong>（和 NIO 中的 <code>Selector</code> 组件很像）。</p>
+<p>另外， Redis 服务器是一个事件驱动程序，服务器需要处理两类事件： 1. 文件事件; 2. 时间事件。</p>
+<p>时间事件不需要多花时间了解，我们接触最多的还是 <strong>文件事件</strong>（客户端进行读取写入等操作，涉及一系列网络通信）。</p>
+<p>《Redis 设计与实现》有一段话是如是介绍文件事件的，我觉得写得挺不错。</p>
+<blockquote>
+<p>Redis 基于 Reactor 模式开发了自己的网络事件处理器：这个处理器被称为文件事件处理器（file event handler）。文件事件处理器使用 I/O 多路复用（multiplexing）程序来同时监听多个套接字，并根据 套接字目前执行的任务来为套接字关联不同的事件处理器。</p>
+<p>当被监听的套接字准备好执行连接应答（accept）、读取（read）、写入（write）、关 闭（close）等操作时，与操作相对应的文件事件就会产生，这时文件事件处理器就会调用套接字之前关联好的事件处理器来处理这些事件。</p>
+<p><strong>虽然文件事件处理器以单线程方式运行，但通过使用 I/O 多路复用程序来监听多个套接字</strong>，文件事件处理器既实现了高性能的网络通信模型，又可以很好地与 Redis 服务器中其他同样以单线程方式运行的模块进行对接，这保持了 Redis 内部单线程设计的简单性。</p>
+</blockquote>
+<p>可以看出，文件事件处理器（file event handler）主要是包含 4 个部分：</p>
+<ul>
+<li>多个 socket（客户端连接）</li>
+<li>IO 多路复用程序（支持多个客户端连接的关键）</li>
+<li>文件事件分派器（将 socket 关联到相应的事件处理器）</li>
+<li>事件处理器（连接应答处理器、命令请求处理器、命令回复处理器）</li>
+</ul>
+<p><img src="https://snailclimb.gitee.io/javaguide/docs/database/Redis/images/redis-all/redis%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%99%A8.png" alt="img"></p>
 <h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>I/O 多路复用模型是利用select、poll、epoll可以同时监察多个流的 I/O 事件的能力，在空闲的时候，会把当前线程阻塞掉，当有一个或多个流有I/O事件时，就从阻塞态中唤醒，于是程序就会轮询一遍所有的流（epoll是只轮询那些真正发出了事件的流），依次顺序的处理就绪的流，这种做法就避免了大量的无用操作。这里“多路”指的是多个网络连接，“复用”指的是复用同一个线程。采用多路 I/O 复用技术可以让单个线程高效的处理多个连接请求（尽量减少网络IO的时间消耗），且Redis在内存中操作数据的速度非常快（内存内的操作不会成为这里的性能瓶颈），主要以上两点造就了Redis具有很高的吞吐量。</p>
 
       
@@ -1660,7 +1506,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-学习笔记"><span class="nav-number">1.</span> <span class="nav-text">Redis 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初识-Redis"><span class="nav-number">1.1.</span> <span class="nav-text">初识 Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的特性"><span class="nav-number">1.1.1.</span> <span class="nav-text">Redis 的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的使用场景"><span class="nav-number">1.1.2.</span> <span class="nav-text">Redis 的使用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-的理解和使用"><span class="nav-number">1.2.</span> <span class="nav-text">API 的理解和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串"><span class="nav-number">1.2.1.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不常用命令"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">不常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#典型使用场景"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">典型使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希"><span class="nav-number">1.2.2.</span> <span class="nav-text">哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表"><span class="nav-number">1.2.3.</span> <span class="nav-text">列表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-1"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-2"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-1"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合"><span class="nav-number">1.2.4.</span> <span class="nav-text">集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-2"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-3"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-2"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有序集合"><span class="nav-number">1.2.5.</span> <span class="nav-text">有序集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-3"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-4"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-3"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#键管理"><span class="nav-number">1.2.6.</span> <span class="nav-text">键管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单个键管理"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">单个键管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遍历键"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">遍历键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库管理"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">数据库管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.7.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级功能"><span class="nav-number">1.3.</span> <span class="nav-text">高级功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务"><span class="nav-number">1.3.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmaps"><span class="nav-number">1.3.2.</span> <span class="nav-text">Bitmaps</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-4"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">1.3.3.</span> <span class="nav-text">HyperLogLog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布订阅"><span class="nav-number">1.3.4.</span> <span class="nav-text">发布订阅</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-5"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-4"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO"><span class="nav-number">1.3.5.</span> <span class="nav-text">GEO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结-1"><span class="nav-number">1.3.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集群"><span class="nav-number">1.4.</span> <span class="nav-text">集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#哨兵模式"><span class="nav-number">1.4.1.</span> <span class="nav-text">哨兵模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#官方Redis-Cluster-方案-服务端路由查询"><span class="nav-number">1.4.2.</span> <span class="nav-text">官方Redis Cluster 方案(服务端路由查询)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-主从架构"><span class="nav-number">1.4.3.</span> <span class="nav-text">Redis 主从架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于客户端分配"><span class="nav-number">1.4.4.</span> <span class="nav-text">基于客户端分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于代理服务器分片"><span class="nav-number">1.4.5.</span> <span class="nav-text">基于代理服务器分片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式"><span class="nav-number">1.5.</span> <span class="nav-text">分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis实现分布式锁"><span class="nav-number">1.5.1.</span> <span class="nav-text">Redis实现分布式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何解决-Redis-的并发竞争-Key-问题"><span class="nav-number">1.5.2.</span> <span class="nav-text">如何解决 Redis 的并发竞争 Key 问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式Redis是前期做还是后期规模上来了再做好？为什么？"><span class="nav-number">1.5.3.</span> <span class="nav-text">分布式Redis是前期做还是后期规模上来了再做好？为什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是-RedLock"><span class="nav-number">1.5.4.</span> <span class="nav-text">什么是 RedLock</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存异常"><span class="nav-number">1.6.</span> <span class="nav-text">缓存异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存雪崩"><span class="nav-number">1.6.1.</span> <span class="nav-text">缓存雪崩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存穿透"><span class="nav-number">1.6.2.</span> <span class="nav-text">缓存穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存击穿"><span class="nav-number">1.6.3.</span> <span class="nav-text">缓存击穿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存预热"><span class="nav-number">1.6.4.</span> <span class="nav-text">缓存预热</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存降级"><span class="nav-number">1.6.5.</span> <span class="nav-text">缓存降级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#热点数据和冷数据"><span class="nav-number">1.6.6.</span> <span class="nav-text">热点数据和冷数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存热点key"><span class="nav-number">1.6.7.</span> <span class="nav-text">缓存热点key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端"><span class="nav-number">1.7.</span> <span class="nav-text">客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#连接池"><span class="nav-number">1.7.0.1.</span> <span class="nav-text">连接池</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持久化"><span class="nav-number">1.8.</span> <span class="nav-text">持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDB"><span class="nav-number">1.8.1.</span> <span class="nav-text">RDB</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#触发机制"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">触发机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流程说明"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">流程说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RDB-文件的保存"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">RDB 文件的保存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RDB-的优缺点"><span class="nav-number">1.8.1.4.</span> <span class="nav-text">RDB 的优缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOF"><span class="nav-number">1.8.2.</span> <span class="nav-text">AOF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-AOF"><span class="nav-number">1.8.2.1.</span> <span class="nav-text">使用 AOF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命令写入"><span class="nav-number">1.8.2.2.</span> <span class="nav-text">命令写入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件同步"><span class="nav-number">1.8.2.3.</span> <span class="nav-text">文件同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重写机制"><span class="nav-number">1.8.2.4.</span> <span class="nav-text">重写机制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他问题"><span class="nav-number">1.9.</span> <span class="nav-text">其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis线程模型"><span class="nav-number">1.9.0.1.</span> <span class="nav-text">Redis线程模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#淘汰策略"><span class="nav-number">1.9.1.</span> <span class="nav-text">淘汰策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis与Memcached的区别"><span class="nav-number">1.9.2.</span> <span class="nav-text">Redis与Memcached的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证缓存与数据库双写时的数据一致性？"><span class="nav-number">1.9.3.</span> <span class="nav-text">如何保证缓存与数据库双写时的数据一致性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><span class="nav-number">1.9.4.</span> <span class="nav-text">假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Redis做过异步队列吗，是如何实现的"><span class="nav-number">1.9.5.</span> <span class="nav-text">使用Redis做过异步队列吗，是如何实现的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis如何实现延时队列"><span class="nav-number">1.9.6.</span> <span class="nav-text">Redis如何实现延时队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis回收进程如何工作的？"><span class="nav-number">1.9.7.</span> <span class="nav-text">Redis回收进程如何工作的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群的故障转移机制"><span class="nav-number">1.9.8.</span> <span class="nav-text">集群的故障转移机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis集群中某个master节点挂了，后面流程怎么判断？"><span class="nav-number">1.9.9.</span> <span class="nav-text">Redis集群中某个master节点挂了，后面流程怎么判断？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis的缓存优化方向有哪些？你们怎么理解的？对热点键的注意事项设计什么？"><span class="nav-number">1.9.10.</span> <span class="nav-text">Redis的缓存优化方向有哪些？你们怎么理解的？对热点键的注意事项设计什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高并发情况下，对于Redis的更新操作有哪些注意事项？"><span class="nav-number">1.9.11.</span> <span class="nav-text">高并发情况下，对于Redis的更新操作有哪些注意事项？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LRU"><span class="nav-number">1.9.12.</span> <span class="nav-text">LRU</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis的IO复用"><span class="nav-number">1.10.</span> <span class="nav-text">Redis的IO复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是I-O-多路复用"><span class="nav-number">1.10.1.</span> <span class="nav-text">什么是I&#x2F;O 多路复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多路分离函数select"><span class="nav-number">1.10.2.</span> <span class="nav-text">多路分离函数select</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reactor（反应器模式）"><span class="nav-number">1.10.3.</span> <span class="nav-text">Reactor（反应器模式）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-2"><span class="nav-number">1.11.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-学习笔记"><span class="nav-number">1.</span> <span class="nav-text">Redis 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初识-Redis"><span class="nav-number">1.1.</span> <span class="nav-text">初识 Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的特性"><span class="nav-number">1.1.1.</span> <span class="nav-text">Redis 的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的使用场景"><span class="nav-number">1.1.2.</span> <span class="nav-text">Redis 的使用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-的理解和使用"><span class="nav-number">1.2.</span> <span class="nav-text">API 的理解和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串"><span class="nav-number">1.2.1.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不常用命令"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">不常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#典型使用场景"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">典型使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希"><span class="nav-number">1.2.2.</span> <span class="nav-text">哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表"><span class="nav-number">1.2.3.</span> <span class="nav-text">列表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-1"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-2"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-1"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合"><span class="nav-number">1.2.4.</span> <span class="nav-text">集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-2"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-3"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-2"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有序集合"><span class="nav-number">1.2.5.</span> <span class="nav-text">有序集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-3"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-4"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-3"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#键管理"><span class="nav-number">1.2.6.</span> <span class="nav-text">键管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单个键管理"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">单个键管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遍历键"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">遍历键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库管理"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">数据库管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.7.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级功能"><span class="nav-number">1.3.</span> <span class="nav-text">高级功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务"><span class="nav-number">1.3.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmaps"><span class="nav-number">1.3.2.</span> <span class="nav-text">Bitmaps</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-4"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">1.3.3.</span> <span class="nav-text">HyperLogLog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布订阅"><span class="nav-number">1.3.4.</span> <span class="nav-text">发布订阅</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-5"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-4"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO"><span class="nav-number">1.3.5.</span> <span class="nav-text">GEO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结-1"><span class="nav-number">1.3.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集群"><span class="nav-number">1.4.</span> <span class="nav-text">集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#哨兵模式"><span class="nav-number">1.4.1.</span> <span class="nav-text">哨兵模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#官方Redis-Cluster-方案-服务端路由查询"><span class="nav-number">1.4.2.</span> <span class="nav-text">官方Redis Cluster 方案(服务端路由查询)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-主从架构"><span class="nav-number">1.4.3.</span> <span class="nav-text">Redis 主从架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于客户端分配"><span class="nav-number">1.4.4.</span> <span class="nav-text">基于客户端分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于代理服务器分片"><span class="nav-number">1.4.5.</span> <span class="nav-text">基于代理服务器分片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式"><span class="nav-number">1.5.</span> <span class="nav-text">分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis实现分布式锁"><span class="nav-number">1.5.1.</span> <span class="nav-text">Redis实现分布式锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存异常"><span class="nav-number">1.6.</span> <span class="nav-text">缓存异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存雪崩"><span class="nav-number">1.6.1.</span> <span class="nav-text">缓存雪崩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存击穿"><span class="nav-number">1.6.2.</span> <span class="nav-text">缓存击穿</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持久化"><span class="nav-number">1.7.</span> <span class="nav-text">持久化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他问题"><span class="nav-number">1.8.</span> <span class="nav-text">其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务-1"><span class="nav-number">1.8.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis线程模型"><span class="nav-number">1.8.2.</span> <span class="nav-text">Redis线程模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#淘汰策略"><span class="nav-number">1.8.3.</span> <span class="nav-text">淘汰策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis与Memcached的区别"><span class="nav-number">1.8.4.</span> <span class="nav-text">Redis与Memcached的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证缓存与数据库双写时的数据一致性？"><span class="nav-number">1.8.5.</span> <span class="nav-text">如何保证缓存与数据库双写时的数据一致性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><span class="nav-number">1.8.6.</span> <span class="nav-text">假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高并发情况下，对于Redis的更新操作有哪些注意事项？"><span class="nav-number">1.8.7.</span> <span class="nav-text">高并发情况下，对于Redis的更新操作有哪些注意事项？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LRU"><span class="nav-number">1.8.8.</span> <span class="nav-text">LRU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis的IO复用"><span class="nav-number">1.8.9.</span> <span class="nav-text">Redis的IO复用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-2"><span class="nav-number">1.9.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1710,7 +1556,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共201.7k字</span>
+  <span class="post-count">博客全站共202k字</span>
 </div>
 
         
