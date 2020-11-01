@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了解决">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
 <meta property="article:published_time" content="2020-06-24T03:12:06.000Z">
-<meta property="article:modified_time" content="2020-09-27T11:39:56.226Z">
+<meta property="article:modified_time" content="2020-10-29T13:30:13.613Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.2k
+                  1.3k
                 </span>
               
 
@@ -452,7 +452,10 @@
 <p>1 . 重排序时不能把后面的指令重排序到内存屏障之前的位置 </p>
 <p>2.将当前处理器缓存行的数据写回到系统内存。</p>
 <p>3.这个写回内存的操作会使其他在CPU里缓存了该内存地址的数据无效。</p>
-<h2 id="有了mesi还要volatile吗？"><a href="#有了mesi还要volatile吗？" class="headerlink" title="有了mesi还要volatile吗？"></a>有了mesi还要volatile吗？</h2><p>因为 MESI只是保证了多核cpu的独占cache(L1,L2,L3)之间的一致性，但是cpu的并不是直接把数据写入L1 cache的，中间还可能有store buffer或者invalid queue等</p>
+<h2 id="有了mesi还要volatile吗？"><a href="#有了mesi还要volatile吗？" class="headerlink" title="有了mesi还要volatile吗？"></a>有了mesi还要volatile吗？</h2><p>在Java中，volatile是个很高层面的规范，保证了指令不会被重排序+对volatile变量的写使得当前cpu缓存中的所有变量写回到主存中，从而保证了内存可见性。</p>
+<p>还是有用的，就算在实现了mesi的cpu上，volatile一样不可或缺。除了禁止指令重排序的作用外，由于mesi只是保证了L1-3 的cache之间的可见性，但是cpu和L1之间</p>
+<p>还有像storebuffer之类的缓存，而volatile规范保证了对它修饰的变量的写指令会使得当前cpu所有缓存写到被mesi保证可见性的L1-3cache中。</p>
+<p>因为 MESI只是保证了多核cpu的独占cache(L1,L2,L3)之间的一致性，但是cpu的并不是直接把数据写入L1 cache的，中间还可能有store buffer或者invalid queue等</p>
 
       
     </div>
@@ -573,7 +576,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">121</span>
+                  <span class="site-state-item-count">124</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -682,7 +685,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共220.6k字</span>
+  <span class="post-count">博客全站共225.1k字</span>
 </div>
 
         
