@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 1MB&#x3D;2^20B 1KB&#x3D;2^10B&#x3D;10^3B 1.共同URL给定 a、b 两个文件，各存放 50 亿个 URL，每个 URL 各占 64B，内存限制是 4G。请找出 a、b 两个文件共同的 URL。 解答思路每个 URL 占 64B，那么 50 亿个 URL占用的空间大小约为 320GB。  5,000,000,000 * 64B ≈ 5GB * 64 &#x3D; 320GB  由于内存">
 <meta property="article:published_time" content="2020-09-30T13:04:22.000Z">
-<meta property="article:modified_time" content="2020-10-02T08:31:41.157Z">
+<meta property="article:modified_time" content="2020-11-03T02:30:43.917Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -447,16 +447,16 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i in range(8):if bits[i] &#x3D;&#x3D; 1:print(i)</span><br></pre></td></tr></table></figure>
 
 <p>这样我们其实就已经实现了排序。</p>
-<p>对于整数相关的算法的求解，<strong>位图法</strong>是一种非常实用的算法。假设 int 整数占用 4B，即 32bit，那么我们可以表示的整数的个数为 232。</p>
+<p>对于整数相关的算法的求解，<strong>位图法</strong>是一种非常实用的算法。假设 int 整数占用 4B，即 32bit，那么我们可以表示的整数的个数为 2^32。</p>
 <p><strong>那么对于这道题</strong>，我们用 2 个 bit 来表示各个数字的状态：</p>
 <p>•00 表示这个数字没出现过；•01 表示这个数字出现过一次（即为题目所找的不重复整数）；•10 表示这个数字出现了多次。</p>
-<p>那么这 232 个整数，总共所需内存为 232*2b=1GB。因此，当可用内存超过 1GB 时，可以采用位图法。假设内存满足位图法需求，进行下面的操作：</p>
+<p>那么这 232 个整数，总共所需内存为 2^32*2b=1GB。因此，当可用内存超过 1GB 时，可以采用位图法。假设内存满足位图法需求，进行下面的操作：</p>
 <p>遍历 2.5 亿个整数，查看位图中对应的位，如果是 00，则变为 01，如果是 01 则变为 10，如果是 10 则保持不变。遍历结束后，查看位图，把对应位是 01 的整数输出即可。</p>
 <h3 id="方法总结-2"><a href="#方法总结-2" class="headerlink" title="方法总结"></a>方法总结</h3><p><strong>判断数字是否重复的问题</strong>，位图法是一种非常高效的方法。</p>
-<h2 id="4-1亿个正整数-范围是0-42亿。求出现次数是2的数字，空间复杂度"><a href="#4-1亿个正整数-范围是0-42亿。求出现次数是2的数字，空间复杂度" class="headerlink" title="4.1亿个正整数,范围是0-42亿。求出现次数是2的数字，空间复杂度"></a>4.1亿个正整数,范围是0-42亿。求出现次数是2的数字，空间复杂度</h2><p>使用位图bitMap     。位图是以     bit     位为单位进行数据存储，这样每个字节8个位就可以存储8个数字，普通的一个int占4个字节，32位，用了位图之后可以将空间节省32倍。     </p>
+<h2 id="4-1亿个正整数-范围是0-42亿。求出现次数是2的数字，空间复杂度"><a href="#4-1亿个正整数-范围是0-42亿。求出现次数是2的数字，空间复杂度" class="headerlink" title="4.1亿个正整数,范围是0-42亿。求出现次数是2的数字，空间复杂度"></a>4.1亿个正整数,范围是0-42亿。求出现次数是2的数字，空间复杂度</h2><p>使用位图bitMap     。位图是以 bit     位为单位进行数据存储，这样每个字节8个位就可以存储8个数字，普通的一个int占4个字节，32位，用了位图之后可以将空间节省32倍。     </p>
 <p>​      开一个42亿大小的位图，将这一亿个数字存进数字大小对应的位置，一个bit每存进去一个数字，就将value+1,比如第一次存8，就将索引为8的位置的value置为1，第二次就置为2，存完之后搜索value为2的key是多少。     </p>
 <p>​      32位机器最大能表示的数字是42亿9千多万。     </p>
-<p>​      42亿bit /(8<em>1024</em>1024) = 500MB</p>
+<p>​      42亿bit /(8 * 1024 * 1024) = 500MB</p>
 <h2 id="5-有一个IP地址库，假设有几十万条ip，如何判断某个ip地址是否在这个库中？"><a href="#5-有一个IP地址库，假设有几十万条ip，如何判断某个ip地址是否在这个库中？" class="headerlink" title="5.有一个IP地址库，假设有几十万条ip，如何判断某个ip地址是否在这个库中？"></a>5.有一个IP地址库，假设有几十万条ip，如何判断某个ip地址是否在这个库中？</h2><p>思路一：分治法，将ip地址根据前三位分成256份，然后看这个ip地址对应的网段，只比对这个网段里面是否有这个ip，当然还可以继续分下去，根据数据量来决定分成多少份。     </p>
 <p>​      思路二：位图，将每一条ip对应位图中的一个位，2^32次方(42亿多)个数据只需要512M空间。可以实现O(1)的时间搜索，O(n)的时间存储。     </p>
 <h2 id="6-2g内存，要求一个10g文件的中位数"><a href="#6-2g内存，要求一个10g文件的中位数" class="headerlink" title="6. 2g内存，要求一个10g文件的中位数**"></a>6. 2g内存，要求一个10g文件的中位数**</h2><p>如题 “在一个文件中有 10G 个整数,乱序排列,要求找出中位数(内存限制为 2G)”</p>
@@ -596,7 +596,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">124</span>
+                  <span class="site-state-item-count">128</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -705,7 +705,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共225.1k字</span>
+  <span class="post-count">博客全站共234.9k字</span>
 </div>
 
         
