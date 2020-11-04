@@ -85,10 +85,12 @@
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/04/sleep%E5%92%8Cwait%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 区别1.sleep() 方法正在执行的线程主动让出 cpu（然后 cpu 就可以去执行其他任务），在 sleep 指定时间后 cpu 再回到该线程继续往下执行（注意：sleep 方法只让出了 cpu，而并不会释放同步资源锁）；wait() 是 Object 的方法，调用会放弃对象锁，进入等待队列，待调用 notify()&#x2F;notifyAll() 唤醒指定的线程或者所有线程，才会进入锁池">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1743446/201907/1743446-20190729174119167-1716466123.png">
 <meta property="article:published_time" content="2020-07-03T16:50:52.000Z">
-<meta property="article:modified_time" content="2020-07-19T01:46:47.147Z">
+<meta property="article:modified_time" content="2020-11-04T00:36:31.194Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2018.cnblogs.com/blog/1743446/201907/1743446-20190729174119167-1716466123.png">
 
 
 
@@ -373,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  406
+                  929
                 </span>
               
 
@@ -389,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  3
                 </span>
               
             </div>
@@ -413,7 +415,19 @@
         <p>[TOC]</p>
 <h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><p>1.sleep() 方法正在执行的线程主动让出 cpu（然后 cpu 就可以去执行其他任务），在 sleep 指定时间后 cpu 再回到该线程继续往下执行（注意：sleep 方法只让出了 cpu，而并不会释放同步资源锁）；wait() 是 Object 的方法，调用会放弃对象锁，进入等待队列，待调用 notify()/notifyAll() 唤醒指定的线程或者所有线程，才会进入锁池，不再次获得对象锁才会进入运行状态。（注意：notify 的作用相当于叫醒睡着的人，而并不会给他分配任务，就是说 notify 只是让之前调用 wait 的线程有权利重新参与线程的调度）；</p>
 <p>2.sleep() 方法可以在任何地方使用，而 wait() 方法则只能在同步方法或同步块中使用；</p>
-<h2 id="wait和notify"><a href="#wait和notify" class="headerlink" title="wait和notify"></a>wait和notify</h2><p>调用 wait() 使得线程等待某个条件满足，线程在等待时会被挂起并释放锁。当其他线程的运行使得这个条件满足时，其它线程<br>会调用 notify() 。<br>它们都属于 Object 的一部分，而不属于 Thread。只能用在同步方法或者同步控制块中使用，</p>
+<h2 id="wait和notify"><a href="#wait和notify" class="headerlink" title="wait和notify"></a>wait和notify</h2><p><strong>wait、notify原理</strong></p>
+<p>在前面以经说到对象锁的本质，重量级锁模式时对象头是一个指向互斥量的指针，实际上互斥量就是一个监视器锁（ObjectMonitor）的数据结构，此时对象的hashCode、分代年龄等信息都会保存到对应的ObjectMonitor中，ObjectMonitor还有一些属性如recursion记录本锁被重入的次数，EntrySet记录想获取本锁的线程集合，WaitSet记录等待本锁的线程，TheOwner记录拥有本锁的线程对象。如下：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1743446/201907/1743446-20190729174119167-1716466123.png" alt="img"></p>
+<p>（图片来源于网络）</p>
+<p>几个线程一起竞争对象的锁（EntrySet），只有一个能成功（acquire），成功的线程记录在The Owner中。调用wait、notify运行流程如下：</p>
+<p>​    （1） 现有一个对象o，锁正在被线程 t1 持有，调用wait()方法后，线程 t1 将会被”晾到” (实际上仅仅是记录到) Wait Set 结构中。</p>
+<p>​    （2）然后将会有另一个线程 t2 获取到锁，The Owner记录的变成了 t2 线程。</p>
+<p>​    （3）t2 线程不需要 o的锁时，调用o.notify()/o.notifyAll()方法，对象o就会告诉 Wait Set结构中记录的线程们：你们又可以来竞争我啦，我的锁现在没被人持有。</p>
+<p><strong>简单的说就是：wait是对象通知持有自己锁的线程释放我的锁，notify()/notifyAll()就是对象通知刚刚被自己晾在一边的线程又可以来竞争我的锁了。</strong>我想到了一个比较贴切的比喻：</p>
+<p>​    客人（线程）来拜访主人（对象），必须获得主人的时间权（锁），且主人同时只能接待一人（互斥）。</p>
+<p>​    正在客厅接待一名客人时，因为一些原因主人必须先接待另一位客人，这时主人请当前客人去另一间房里等待，让出自己的时间权（wait方法）</p>
+<p>​    主人在客厅接待另一位客人，接待完毕后，让前一位（也可能有几位）在另一间房等待的客人再来到客厅，继续接待（notify/notifyAll方法）</p>
+<p>调用 wait() 使得线程等待某个条件满足，线程在等待时会被挂起并释放锁。当其他线程的运行使得这个条件满足时，其它线程<br>会调用 notify() 。<br>它们都属于 Object 的一部分，而不属于 Thread。只能用在同步方法或者同步控制块中使用，</p>
 <p>notify不会释放锁</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"> <span class="keyword">final</span> Object object = <span class="keyword">new</span> Object();</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                    System.out.println(<span class="string">"T1 start!"</span>);</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        object.wait();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                    System.out.println(<span class="string">"T1 end!"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                    System.out.println(<span class="string">"T2 start!"</span>);</span><br><span class="line">                    object.notify();</span><br><span class="line">                    System.out.println(<span class="string">"T2 end!"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        </span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line"> </span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -539,7 +553,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">128</span>
+                  <span class="site-state-item-count">135</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -551,7 +565,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -648,7 +662,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共234.9k字</span>
+  <span class="post-count">博客全站共242.2k字</span>
 </div>
 
         
