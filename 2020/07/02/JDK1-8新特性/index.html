@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="[TOC] Lambda表达式123456789101112131415&#x2F;&#x2F;匿名内部类Comparator&lt;Integer&gt; cpt &#x3D; new Comparator&lt;Integer&gt;() &amp;#123;    @Override    public int compare(Integer o1, Integer o2) &amp;#123;        return Intege">
+<meta name="description" content="[TOC] Lambda表达式lambda表达式允许你通过表达式来代替功能接口。 1(parameters) -&gt; expression 或 (parameters) -&gt;&amp;#123; statements; &amp;#125;  123456789101112131415&#x2F;&#x2F;匿名内部类Comparator&lt;Integer&gt; cpt &#x3D; new Comparator&lt;Int">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JDK1.8新特性">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/02/JDK1-8%E6%96%B0%E7%89%B9%E6%80%A7/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] Lambda表达式123456789101112131415&#x2F;&#x2F;匿名内部类Comparator&lt;Integer&gt; cpt &#x3D; new Comparator&lt;Integer&gt;() &amp;#123;    @Override    public int compare(Integer o1, Integer o2) &amp;#123;        return Intege">
+<meta property="og:description" content="[TOC] Lambda表达式lambda表达式允许你通过表达式来代替功能接口。 1(parameters) -&gt; expression 或 (parameters) -&gt;&amp;#123; statements; &amp;#125;  123456789101112131415&#x2F;&#x2F;匿名内部类Comparator&lt;Integer&gt; cpt &#x3D; new Comparator&lt;Int">
 <meta property="article:published_time" content="2020-07-02T13:40:32.000Z">
-<meta property="article:modified_time" content="2020-07-02T14:05:41.002Z">
+<meta property="article:modified_time" content="2020-11-07T13:59:31.799Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  524
+                  553
                 </span>
               
 
@@ -411,7 +411,10 @@
 
       
         <p>[TOC]</p>
-<h2 id="Lambda表达式"><a href="#Lambda表达式" class="headerlink" title="Lambda表达式"></a>Lambda表达式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//匿名内部类</span></span><br><span class="line">Comparator&lt;Integer&gt; cpt = <span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Integer.compare(o1,o2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">TreeSet&lt;Integer&gt; set = <span class="keyword">new</span> TreeSet&lt;&gt;(cpt);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"========================="</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用lambda表达式</span></span><br><span class="line">Comparator&lt;Integer&gt; cpt2 = (x,y) -&gt; Integer.compare(x,y);</span><br><span class="line">TreeSet&lt;Integer&gt; set2 = <span class="keyword">new</span> TreeSet&lt;&gt;(cpt2);</span><br></pre></td></tr></table></figure>
+<h2 id="Lambda表达式"><a href="#Lambda表达式" class="headerlink" title="Lambda表达式"></a>Lambda表达式</h2><p>lambda表达式允许你通过表达式来代替功能接口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(parameters) -&gt; expression 或 (parameters) -&gt;&#123; statements; &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//匿名内部类</span></span><br><span class="line">Comparator&lt;Integer&gt; cpt = <span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Integer.compare(o1,o2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">TreeSet&lt;Integer&gt; set = <span class="keyword">new</span> TreeSet&lt;&gt;(cpt);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"========================="</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用lambda表达式</span></span><br><span class="line">Comparator&lt;Integer&gt; cpt2 = (x,y) -&gt; Integer.compare(x,y);</span><br><span class="line">TreeSet&lt;Integer&gt; set2 = <span class="keyword">new</span> TreeSet&lt;&gt;(cpt2);</span><br></pre></td></tr></table></figure>
 
 <h2 id="Stream-API"><a href="#Stream-API" class="headerlink" title="Stream API"></a>Stream API</h2><p>Stream操作的三个步骤</p>
 <ul>
@@ -557,7 +560,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">135</span>
+                  <span class="site-state-item-count">148</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -569,7 +572,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -666,7 +669,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共242.2k字</span>
+  <span class="post-count">博客全站共262k字</span>
 </div>
 
         

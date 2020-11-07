@@ -102,7 +102,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/4/18/16a2f56d34ff739e?w=3528&h=1060&f=png&s=414467">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/4/18/16a2f69776d551b3?w=2608&h=776&f=png&s=445068">
 <meta property="article:published_time" content="2020-11-02T07:34:48.000Z">
-<meta property="article:modified_time" content="2020-11-02T08:44:27.845Z">
+<meta property="article:modified_time" content="2020-11-05T14:00:43.990Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/4/18/16a2ff3e4c3b8b46?w=2368&h=788&f=png&s=226339">
@@ -390,7 +390,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4.2k
+                  4.1k
                 </span>
               
 
@@ -441,13 +441,13 @@
 </ul>
 <hr>
 <h3 id="二、-redo-log-与-undo-log介绍"><a href="#二、-redo-log-与-undo-log介绍" class="headerlink" title="二、 redo log 与 undo log介绍"></a>二、 redo log 与 undo log介绍</h3><h4 id="1-redo-log"><a href="#1-redo-log" class="headerlink" title="1. redo log"></a>1. redo log</h4><p><strong>什么是redo log ?</strong></p>
-<p>redo log叫做<strong>重做</strong>日志，是用来实现事务的持久性。该日志文件由两部分组成：重做日志缓冲（redo log buffer）以及重做日志文件（redo log）,前者是在内存中，后者在磁盘中。当<strong>事务提交之后</strong>会把所有修改信息都会存到该日志中。假设有个表叫做tb1(id,username) 现在要插入数据（3，ceshi）</p>
+<p>redo log叫做<strong>重做</strong>日志，是用来实现事务的持久性。该日志文件由两部分组成：重做日志缓冲（redo log buffer）以及重做日志文件（redo log）,前者是在内存中，后者在磁盘中。当<strong>事务提交之后</strong>会把所有修改信息都会存到该日志中。当数据发生修改时，InnoDB不仅会修改Buffer Pool中的数据，也会在redo log buffer记录这次操作；当事务提交时，会对redo log buffer进行刷盘，记录到redo log file中(WAL)。如果MySQL宕机，重启时可以读取redo log file中的数据，对数据库进行恢复。这样就不需要每次提交事务都实时进行刷脏了</p>
+<p>假设有个表叫做tb1(id,username) 现在要插入数据（3，ceshi）</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/4/18/16a2ff3e4c3b8b46?w=2368&h=788&f=png&s=226339" alt="img"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">start transaction;</span><br><span class="line">select balance from bank where name&#x3D;&quot;zhangsan&quot;;</span><br><span class="line">&#x2F;&#x2F; 生成 重做日志 balance&#x3D;600</span><br><span class="line">update bank set balance &#x3D; balance - 400; </span><br><span class="line">&#x2F;&#x2F; 生成 重做日志 amount&#x3D;400</span><br><span class="line">update finance set amount &#x3D; amount + 400;</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
 
-<hr>
-<p>为了提高性能，和数据页类似，redo log 也包括两部分：一是内存中的日志缓冲(redo log buffer)，该部分日志是易失性的；二是磁盘上的重做日志文件(redo log file)，该部分日志是持久的。redo log是物理日志，记录的是数据库中物理页的情况 。</p>
-<p>当数据发生修改时，InnoDB不仅会修改Buffer Pool中的数据，也会在redo log buffer记录这次操作；当事务提交时，会对redo log buffer进行刷盘，记录到redo log file中。如果MySQL宕机，重启时可以读取redo log file中的数据，对数据库进行恢复。这样就不需要每次提交事务都实时进行刷脏了</p>
+
+
 <h3 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h3><p><img src="https://img-blog.csdnimg.cn/20201030172624806.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTMzMTQ2Nzk=,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
 <p>注意点：</p>
 <ul>
@@ -705,7 +705,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">135</span>
+                  <span class="site-state-item-count">148</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -717,7 +717,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -814,7 +814,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共242.2k字</span>
+  <span class="post-count">博客全站共262k字</span>
 </div>
 
         

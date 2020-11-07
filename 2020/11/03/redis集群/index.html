@@ -79,29 +79,23 @@
 
 
 
-<meta name="description" content="[TOC] 集群哨兵模式一、检测主观下线状态 在默认情况下，Sentinel会以每秒一次的频率向所有与它创建了命令连接的实例（包括主服务器、从服务器、其他Sentinel在内）发送PING命令，并通过实例返回的PING命令回复来判断实例是否在线  二、检测客观下线状态 当Sentinel将一个主服务器判断为主观下线之后，为了确认这个主服务器是否真的下线 了，它会向同样监视这一主服务器的其他Sent">
+<meta name="description" content="[TOC] Redis 主从架构单机的 redis，能够承载的 QPS 大概就在上万到几万不等。对于缓存来说，一般都是用来支撑读高并发的。因此架构做成主从(master-slave)架构，一主多从，主负责写，并且将数据复制到其它的 slave 节点，从节点负责读。所有的读请求全部走从节点。这样也可以很轻松实现水平扩容，支撑读高并发。  主节点和从节点数据同步，也就复制的问题 哨兵模式消息通知：实例">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis集群">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/03/redis%E9%9B%86%E7%BE%A4/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 集群哨兵模式一、检测主观下线状态 在默认情况下，Sentinel会以每秒一次的频率向所有与它创建了命令连接的实例（包括主服务器、从服务器、其他Sentinel在内）发送PING命令，并通过实例返回的PING命令回复来判断实例是否在线  二、检测客观下线状态 当Sentinel将一个主服务器判断为主观下线之后，为了确认这个主服务器是否真的下线 了，它会向同样监视这一主服务器的其他Sent">
+<meta property="og:description" content="[TOC] Redis 主从架构单机的 redis，能够承载的 QPS 大概就在上万到几万不等。对于缓存来说，一般都是用来支撑读高并发的。因此架构做成主从(master-slave)架构，一主多从，主负责写，并且将数据复制到其它的 slave 节点，从节点负责读。所有的读请求全部走从节点。这样也可以很轻松实现水平扩容，支撑读高并发。  主节点和从节点数据同步，也就复制的问题 哨兵模式消息通知：实例">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200115180329317.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200806112902246.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200531152212286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20200806112949871.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/2020053118555180.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20200531231926655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20200531232320823.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20200806113128921.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20200806113146529.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20200115180329317.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20200115180337645.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200115173640248.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200115173630730.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="http://aamingaa.github.io/2020/11/03/redis%E9%9B%86%E7%BE%A4/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201106202450535.png">
 <meta property="article:published_time" content="2020-11-03T00:59:31.000Z">
-<meta property="article:modified_time" content="2020-11-03T02:24:10.655Z">
+<meta property="article:modified_time" content="2020-11-06T12:34:31.611Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200806112902246.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200115180329317.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 
 
 
@@ -386,7 +380,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.4k
+                  2.7k
                 </span>
               
 
@@ -402,7 +396,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  12
+                  9
                 </span>
               
             </div>
@@ -424,15 +418,29 @@
 
       
         <p>[TOC]</p>
-<h2 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h2><h3 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h3><h4 id="一、检测主观下线状态"><a href="#一、检测主观下线状态" class="headerlink" title="一、检测主观下线状态"></a>一、检测主观下线状态</h4><ul>
+<h3 id="Redis-主从架构"><a href="#Redis-主从架构" class="headerlink" title="Redis 主从架构"></a>Redis 主从架构</h3><p>单机的 redis，能够承载的 QPS 大概就在上万到几万不等。对于缓存来说，一般都是用来支撑<strong>读高并发</strong>的。因此架构做成主从(master-slave)架构，一主多从，主负责写，并且将数据复制到其它的 slave 节点，从节点负责读。所有的<strong>读请求全部走从节点</strong>。这样也可以很轻松实现水平扩容，<strong>支撑读高并发</strong>。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200115180329317.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70" alt="redis-master-slave"></p>
+<p><strong>主节点和从节点数据同步，也就复制的问题</strong></p>
+<h3 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h3><p>消息通知：实例故障了通知管理员和客户端新的地址</p>
+<p>故障发现</p>
+<p>故障转移</p>
+<h4 id="故障发现"><a href="#故障发现" class="headerlink" title="故障发现"></a>故障发现</h4><h5 id="一、检测主观下线状态"><a href="#一、检测主观下线状态" class="headerlink" title="一、检测主观下线状态"></a>一、检测主观下线状态</h5><ul>
 <li>在默认情况下，Sentinel会<strong>以每秒一次的频率</strong>向所有与它创建了命令连接的实例（<strong>包括主服务器、从服务器、其他Sentinel在内</strong>）发送<strong>PING命令</strong>，并通过实例返回的PING命令回复来判断实例是否在线</li>
 </ul>
-<h4 id="二、检测客观下线状态"><a href="#二、检测客观下线状态" class="headerlink" title="二、检测客观下线状态"></a>二、检测客观下线状态</h4><ul>
+<h5 id="二、检测客观下线状态"><a href="#二、检测客观下线状态" class="headerlink" title="二、检测客观下线状态"></a>二、检测客观下线状态</h5><ul>
 <li>当Sentinel将一个主服务器判断为主观下线之后，为了确认这个主服务器是否真的下线 了，它会<strong>向同样监视这一主服务器的其他Sentinel进行询问</strong>，看它们是否也认为主服务器已经进入了下线状态（可以是主观下线或者客观下线）。当Sentinel从其他Sentinel那里<strong>接收到足够数量的已下线判断之后</strong>，Sentinel就会将从服务器判定为客观下线，并对主服务器<strong>执行故障转移操作</strong></li>
 </ul>
-<p>当一个主服务器被判断为客观下线时，监视这个下线主服务器的<strong>各个Sentinel会进行协商</strong>，选举出一个领头Sentinel，当某个sentinel被半数以上的sentinel设置成为领头sentinel，那么这个sentinel称为领头sentinel并由领头Sentinel<strong>对下线主服务器执行故障转移操作</strong></p>
-<p>领头的sentinel负责故障转移<br>从从服务器列表中选择一个节点作为新节点<br>1.过滤掉：下线、5s内没有回应ping、与主服务器失联超过down-after-milliseconds的从服务器<br>2.选择从服务器中优先级最高的。若具有多个同样优先级的，则继续<br>3.选择复制偏移量最大的从节点。若具有多个复制偏移量相同的，则继续<br>4.选择runid最小的从服务器<br>sentinel会对1中选出的从服务器发送slaveof no one使其成为主服务器<br>sentinel向其余从服务器发送命令，让他们成为新主服务器的从服务器，并同步数据<br>sentinel会关注刚刚下线的主服务器，并让它成为从服务器，当它恢复的时候就去同步数据</p>
-<h3 id="官方Redis-Cluster-方案-服务端路由查询"><a href="#官方Redis-Cluster-方案-服务端路由查询" class="headerlink" title="官方Redis Cluster 方案(服务端路由查询)"></a>官方Redis Cluster 方案(服务端路由查询)</h3><ul>
+<p>当一个主服务器被判断为客观下线时，监视这个下线主服务器的<strong>各个Sentinel会进行协商</strong>，选举出一个领头Sentinel，当某个sentinel被半数以上的sentinel设置成为领头sentinel，那么这个sentinel称为领头sentinel并由领头Sentinel<strong>对下线主服务器执行故障转移操作</strong>(raft)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Raft算法</span><br></pre></td></tr></table></figure>
+<h4 id="故障自动转移"><a href="#故障自动转移" class="headerlink" title="故障自动转移"></a>故障自动转移</h4><p>领头的sentinel负责故障转移<br>从从服务器列表中选择一个节点作为新节点</p>
+<p>1 过滤掉：下线、5s内没有回应InFO、与主服务器失联超过down-after-milliseconds的从服务器<br>2 选择从服务器中优先级最高的。若具有多个同样优先级的，则继续<br>3 选择复制偏移量最大的从节点。若具有多个复制偏移量相同的，则继续<br>4 选择 run id最小的从服务器</p>
+<p>sentinel会对1中选出的从服务器发送slaveof no one使其成为主服务器<br>sentinel向其余从服务器发送命令，让他们成为新主服务器的从服务器，并同步数据<br>sentinel会关注刚刚下线的主服务器，并让它成为从服务器，当它恢复的时候就去同步数据</p>
+<h3 id="官方Redis-Cluster-方案-服务端路由查询"><a href="#官方Redis-Cluster-方案-服务端路由查询" class="headerlink" title="官方Redis Cluster 方案(服务端路由查询)"></a>官方Redis Cluster 方案(服务端路由查询)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.主从复制不能实现高可用</span><br><span class="line">2.随着公司发展，用户数量增多，并发越来越多，业务需要更高的QPS，而主从复制中单机的QPS可能无法满足业务需求</span><br><span class="line">3.数据量的考虑，现有服务器内存不能满足业务数据的需要时，单纯向服务器添加内存不能达到要求，此时需要考虑分布式需求，把数据分布到不同服务器上</span><br></pre></td></tr></table></figure>
+
+<p>redis cluster在设计的时候，就考虑到了去中心化，去中间件，也就是说，集群中的每个节点都是平等的关系，都是对等的，每个节点都保存各自的数据和整个集群的状态。每个节点都和其他所有节点连接，而且这些连接保持活跃，这样就保证了我们只需要连接集群中的任意一个节点，就可以获取到其他节点的数据。</p>
+<p>那么redis 是如何合理分配这些节点和数据的呢？</p>
+<p>Redis 集群没有并使用传统的一致性哈希来分配数据，而是采用另外一种叫做<code>哈希槽 (hash slot)</code>的方式来分配的。redis cluster 默认分配了 16384 个slot，当我们set一个key 时，会用<code>CRC16</code>算法来取模得到所属的<code>slot</code>，然后将这个key 分到哈希槽区间的节点上，具体算法就是：<code>CRC16(key) % 16384</code>。</p>
+<ul>
 <li><strong>Redis集群采用P2P的Gossip（流言）协议，</strong> Gossip协议工作原理就是节点彼此不断通信交换信息，一段时间后所有的节点都会知道集群完整的信息，这种方式类似流言传播，如下图所示：</li>
 </ul>
 <p><img src="https://img-blog.csdnimg.cn/20200806112902246.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
@@ -459,109 +467,6 @@
 </ul>
 <p><img src="https://img-blog.csdnimg.cn/20200531152212286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
 </blockquote>
-<h4 id="集群伸缩"><a href="#集群伸缩" class="headerlink" title="集群伸缩"></a>集群伸缩</h4><ul>
-<li><strong><em>\</em>集群伸缩详情请参阅：**</strong><a href="https://blog.csdn.net/qq_41453285/article/details/106460256" target="_blank" rel="noopener">https://blog.csdn.net/qq_41453285/article/details/106460256</a></li>
-</ul>
-<blockquote>
-<h3 id="伸缩原理"><a href="#伸缩原理" class="headerlink" title="伸缩原理"></a>伸缩原理</h3><ul>
-<li><strong>Redis集群提供了灵活的节点扩容和收缩方案。</strong>在不影响集群对外服务的情况下，可以为集群添加节点进行扩容也可以下线部分节点进行缩容，如下图所示：</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20200806112949871.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
-</blockquote>
-<blockquote>
-<h3 id="集群扩容"><a href="#集群扩容" class="headerlink" title="集群扩容"></a>集群扩容</h3><ul>
-<li><strong>扩容是分布式存储最常见的需求，Redis集群扩容操作可分为如下步骤：</strong><ul>
-<li>准备新节点</li>
-<li>加入集群</li>
-<li>迁移槽和数据</li>
-</ul>
-</li>
-</ul>
-</blockquote>
-<blockquote>
-<h3 id="集群收缩"><a href="#集群收缩" class="headerlink" title="集群收缩"></a>集群收缩</h3><ul>
-<li>收缩集群<strong>意味着缩减规模，</strong>需要从现有集群中<strong><em>\</em>安全下线部分节点**</strong>。安全下线节点流程如下图所示：</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/2020053118555180.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
-<ul>
-<li><strong>流程说明：</strong><ul>
-<li>1）首先需要确定下线节点是否有负责的槽，如果是，需要把槽迁移到 其他节点，保证节点下线后整个集群槽节点映射的完整性</li>
-<li>2）当下线节点不再负责槽或者本身是从节点时，就可以通知集群内其 他节点忘记下线节点，当所有的节点忘记该节点后可以正常关闭</li>
-</ul>
-</li>
-</ul>
-</blockquote>
-<h4 id="请求重定向-MOVED-、ASK重定向"><a href="#请求重定向-MOVED-、ASK重定向" class="headerlink" title="请求重定向(MOVED)、ASK重定向"></a>请求重定向(MOVED)、ASK重定向</h4><ul>
-<li><strong>关于这两个知识点请参阅：</strong><a href="https://blog.csdn.net/qq_41453285/article/details/106463895" target="_blank" rel="noopener">https://blog.csdn.net/qq_41453285/article/details/106463895</a></li>
-</ul>
-<blockquote>
-<h3 id="请求重定向-MOVED"><a href="#请求重定向-MOVED" class="headerlink" title="请求重定向(MOVED)"></a>请求重定向(MOVED)</h3><ul>
-<li>在集群模式下，Redis接收任何键相关命令时首先计算键对应的槽，再根据槽找出所对应的节点，如果节点是自身，则处理键命令；否则<strong><em>\</em>回复MOVED重定向错误，通知客户端请求正确的节点**</strong></li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20200531231926655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
-<ul>
-<li><strong>演示案例如下：</strong><ul>
-<li>client在127.0.0.1:6379节点上调用set命令创建”key:test:2”键，发现该键位于9252槽上，于是给client回送一个moved错误，告诉client端9252槽归属于127.0.0.1:6380管理</li>
-<li>于是client重新连接127.0.0.1:6380节点，然后再次调用命令</li>
-</ul>
-</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20200531232320823.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
-</blockquote>
-<blockquote>
-<h3 id="ASK重定向"><a href="#ASK重定向" class="headerlink" title="ASK重定向"></a>ASK重定向</h3><ul>
-<li>Redis集群支持<strong>在线迁移槽（slot）和数据来完成水平伸缩</strong>，当slot对应的数据从源节点到目标节点迁移过程中，客户端需要做到智能识别，保证键命令可正常执行。例如当一个slot数据从源节点迁移到目标节点时，期间可能出现一部分数据在源节点，而另一部分在目标节点，如下图所示</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20200806113128921.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
-<ul>
-<li><strong>当出现上述情况时，客户端键命令执行流程将发生变化，如下所示：</strong><ul>
-<li>1）客户端根据本地slots缓存发送命令到源节点，如果存在键对象则直接执行并返回结果给客户端</li>
-<li>2）如果键对象不存在，则可能存在于目标节点，这时源节点会回复ASK重定向异常。格式如下：(error) ASK {slot} {targetIP}:{targetPort}</li>
-<li>3）客户端从ASK重定向异常提取出目标节点信息，发送asking命令到目标节点打开客户端连接标识，再执行键命令。如果存在则执行，不存在则返回不存在信息</li>
-</ul>
-</li>
-<li><strong>ASK重定向整体流程如下图所示：</strong></li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20200806113146529.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
-</blockquote>
-<ul>
-<li><strong>ASK与MOVED虽然都是对客户端的重定向控制，但是有着本质区别：</strong><ul>
-<li>ASK重定向说明集群正在进行slot数据迁移，<strong>客户端无法知道什么时候迁移完成，因此只能是临时性的重定向</strong>，客户端不会更新slots缓存</li>
-<li>但是MOVED重定向说明键<strong>对应的槽已经明确指定到新的节点</strong>，因此需要更新slots缓存</li>
-</ul>
-</li>
-</ul>
-<h3 id="Redis-主从架构"><a href="#Redis-主从架构" class="headerlink" title="Redis 主从架构"></a>Redis 主从架构</h3><p>单机的 redis，能够承载的 QPS 大概就在上万到几万不等。对于缓存来说，一般都是用来支撑<strong>读高并发</strong>的。因此架构做成主从(master-slave)架构，一主多从，主负责写，并且将数据复制到其它的 slave 节点，从节点负责读。所有的<strong>读请求全部走从节点</strong>。这样也可以很轻松实现水平扩容，<strong>支撑读高并发</strong>。</p>
-<p><img src="https://img-blog.csdnimg.cn/20200115180329317.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70" alt="redis-master-slave"></p>
-<p>redis replication -&gt; 主从架构 -&gt; 读写分离 -&gt; 水平扩容支撑读高并发</p>
-<p><strong>redis replication 的核心机制</strong></p>
-<ul>
-<li>redis 采用<strong>异步方式</strong>复制数据到 slave 节点，不过 redis2.8 开始，slave node 会周期性地确认自己每次复制的数据量；</li>
-<li>一个 master node 是可以配置多个 slave node 的；</li>
-<li>slave node 也可以连接其他的 slave node；</li>
-<li>slave node 做复制的时候，不会 block master node 的正常工作；</li>
-<li>slave node 在做复制的时候，也不会 block 对自己的查询操作，它会用旧的数据集来提供服务；但是复制完成的时候，需要删除旧数据集，加载新数据集，这个时候就会暂停对外服务了；</li>
-<li>slave node 主要用来进行横向扩容，做读写分离，扩容的 slave node 可以提高读的吞吐量。</li>
-</ul>
-<p>注意，如果采用了主从架构，那么建议必须<strong>开启</strong> master node 的持久化，不建议用 slave node 作为 master node 的数据热备，因为那样的话，如果你关掉 master 的持久化，可能在 master 宕机重启的时候数据是空的，然后可能一经过复制， slave node 的数据也丢了。</p>
-<p>另外，master 的各种备份方案，也需要做。万一本地的所有文件丢失了，从备份中挑选一份 rdb 去恢复 master，这样才能<strong>确保启动的时候，是有数据的</strong>，即使采用了后续讲解的高可用机制，slave node 可以自动接管 master node，但也可能 sentinel 还没检测到 master failure，master node 就自动重启了，还是可能导致上面所有的 slave node 数据被清空。</p>
-<p><strong>redis 主从复制的核心原理</strong></p>
-<p>当启动一个 slave node 的时候，它会发送一个 <code>PSYNC</code> 命令给 master node。</p>
-<p>如果这是 slave node 初次连接到 master node，那么会触发一次 <code>full resynchronization</code> 全量复制。此时 master 会启动一个后台线程，开始生成一份 <code>RDB</code> 快照文件，</p>
-<p>同时还会将从客户端 client 新收到的所有写命令缓存在内存中。<code>RDB</code> 文件生成完毕后， master 会将这个 <code>RDB</code> 发送给 slave，slave 会先<strong>写入本地磁盘，然后再从本地磁盘加载到内存</strong>中，</p>
-<p>接着 master 会将内存中缓存的写命令发送到 slave，slave 也会同步这些数据。</p>
-<p>slave node 如果跟 master node 有网络故障，断开了连接，会自动重连，连接之后 master node 仅会复制给 slave 部分缺少的数据。</p>
-<p><img src="https://img-blog.csdnimg.cn/20200115180337645.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70" alt="redis-master-slave-replication"></p>
-<p><strong>过程原理</strong></p>
-<ol>
-<li>当从库和主库建立MS关系后，会向主数据库发送SYNC命令</li>
-<li>主库接收到SYNC命令后会开始在后台保存快照(RDB持久化过程)，并将期间接收到的写命令缓存起来</li>
-<li>当快照完成后，主Redis会将快照文件和所有缓存的写命令发送给从Redis</li>
-<li>从Redis接收到后，会载入快照文件并且执行收到的缓存的命令</li>
-<li>之后，主Redis每当接收到写命令时就会将命令发送从Redis，从而保证数据的一致</li>
-</ol>
-<p><strong>缺点</strong></p>
-<p>所有的slave节点数据的复制和同步都由master节点来处理，会照成master节点压力太大，使用主从从结构来解决</p>
 <h3 id="基于客户端分配"><a href="#基于客户端分配" class="headerlink" title="基于客户端分配"></a>基于客户端分配</h3><p><img src="https://img-blog.csdnimg.cn/20200115173640248.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70" alt="img"></p>
 <p><strong>简介</strong></p>
 <p>Redis Sharding是Redis Cluster出来之前，业界普遍使用的多Redis实例集群方法。其主要思想是采用哈希算法将Redis数据的key进行散列，通过hash函数，特定的key会映射到特定的Redis节点上。Java redis客户端驱动jedis，支持Redis Sharding功能，即ShardedJedis以及结合缓存池的ShardedJedisPool</p>
@@ -586,6 +491,16 @@
 <li>Twtter开源的Twemproxy</li>
 <li>豌豆荚开源的Codis</li>
 </ul>
+<h3 id="hash方法"><a href="#hash方法" class="headerlink" title="hash方法"></a>hash方法</h3><p>哈希分布就是将数据计算哈希值之后，按照哈希值分配到不同的节点上。例如有 N 个节点，数据的主键为 key，则将<br>该数据分配的节点序号为：hash(key)%N。<br>传统的哈希分布算法存在一个问题：当节点数量变化时，也就是 N 值变化，那么几乎所有的数据都需要重新分布，<br>将导致大量的数据迁移。</p>
+<h3 id="顺序分布"><a href="#顺序分布" class="headerlink" title="顺序分布"></a>顺序分布</h3><p>将数据划分为多个连续的部分，按数据的 ID 或者时间分布到不同节点上。例如 User 表的 ID 范围为 1 ~ 7000，使用<br>顺序分布可以将其划分成多个子表，对应的主键范围为 1 ~ 1000，1001 ~ 2000，…，6001 ~ 7000。<br>顺序分布相比于哈希分布的主要优点如下：</p>
+<ul>
+<li>能保持数据原有的顺序；</li>
+<li>并且能够准确控制每台服务器存储的数据量，从而使得存储空间的利用率最大。</li>
+</ul>
+<h3 id="一致性hash"><a href="#一致性hash" class="headerlink" title="一致性hash"></a>一致性hash</h3><p>将哈希空间 [0, 2n-1] 看成一个哈希环，每个服务器节点都配置到哈希环上。每个数据对象通过哈希取模得到哈希值<br>之后，存放到哈希环中顺时针方向第一个大于等于该哈希值的节点上。一致性哈希在增加或者删除节点时只会影响到哈希环中相邻的节点，例如下图中新增节点 X，只需要将它前一个节点C 上的数据重新进行分布即可，对于节点 A、B、D 都没有影响。</p>
+<p><img src="/2020/11/03/redis%E9%9B%86%E7%BE%A4/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201106202450535.png" alt="image-20201106202450535"></p>
+<p>虚拟节点</p>
+<p>上面描述的一致性哈希存在数据分布不均匀的问题，节点存储的数据量有可能会存在很大的不同。<br>数据不均匀主要是因为节点在哈希环上分布的不均匀，这种情况在节点数量很少的情况下尤其明显。<br>解决方式是通过增加虚拟节点，然后将虚拟节点映射到真实节点上。虚拟节点的数量比真实节点来得多，那么虚拟节<br>点在哈希环上分布的均匀性就会比原来的真实节点好，从而使得数据分布也更加均匀。</p>
 
       
     </div>
@@ -706,7 +621,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">135</span>
+                  <span class="site-state-item-count">148</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -718,7 +633,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -765,7 +680,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#集群"><span class="nav-number">1.</span> <span class="nav-text">集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#哨兵模式"><span class="nav-number">1.1.</span> <span class="nav-text">哨兵模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、检测主观下线状态"><span class="nav-number">1.1.1.</span> <span class="nav-text">一、检测主观下线状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、检测客观下线状态"><span class="nav-number">1.1.2.</span> <span class="nav-text">二、检测客观下线状态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#官方Redis-Cluster-方案-服务端路由查询"><span class="nav-number">1.2.</span> <span class="nav-text">官方Redis Cluster 方案(服务端路由查询)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gossip消息"><span class="nav-number">1.3.</span> <span class="nav-text">Gossip消息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#集群伸缩"><span class="nav-number">1.3.1.</span> <span class="nav-text">集群伸缩</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#伸缩原理"><span class="nav-number">1.4.</span> <span class="nav-text">伸缩原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群扩容"><span class="nav-number">1.5.</span> <span class="nav-text">集群扩容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群收缩"><span class="nav-number">1.6.</span> <span class="nav-text">集群收缩</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#请求重定向-MOVED-、ASK重定向"><span class="nav-number">1.6.1.</span> <span class="nav-text">请求重定向(MOVED)、ASK重定向</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求重定向-MOVED"><span class="nav-number">1.7.</span> <span class="nav-text">请求重定向(MOVED)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ASK重定向"><span class="nav-number">1.8.</span> <span class="nav-text">ASK重定向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-主从架构"><span class="nav-number">1.9.</span> <span class="nav-text">Redis 主从架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于客户端分配"><span class="nav-number">1.10.</span> <span class="nav-text">基于客户端分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于代理服务器分片"><span class="nav-number">1.11.</span> <span class="nav-text">基于代理服务器分片</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-主从架构"><span class="nav-number">1.</span> <span class="nav-text">Redis 主从架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哨兵模式"><span class="nav-number">2.</span> <span class="nav-text">哨兵模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#故障发现"><span class="nav-number">2.1.</span> <span class="nav-text">故障发现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、检测主观下线状态"><span class="nav-number">2.1.1.</span> <span class="nav-text">一、检测主观下线状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、检测客观下线状态"><span class="nav-number">2.1.2.</span> <span class="nav-text">二、检测客观下线状态</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#故障自动转移"><span class="nav-number">2.2.</span> <span class="nav-text">故障自动转移</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#官方Redis-Cluster-方案-服务端路由查询"><span class="nav-number">3.</span> <span class="nav-text">官方Redis Cluster 方案(服务端路由查询)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gossip消息"><span class="nav-number">4.</span> <span class="nav-text">Gossip消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于客户端分配"><span class="nav-number">5.</span> <span class="nav-text">基于客户端分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于代理服务器分片"><span class="nav-number">6.</span> <span class="nav-text">基于代理服务器分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hash方法"><span class="nav-number">7.</span> <span class="nav-text">hash方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序分布"><span class="nav-number">8.</span> <span class="nav-text">顺序分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一致性hash"><span class="nav-number">9.</span> <span class="nav-text">一致性hash</span></a></li></ol></div>
             
 
           </div>
@@ -815,7 +730,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共242.2k字</span>
+  <span class="post-count">博客全站共262k字</span>
 </div>
 
         
