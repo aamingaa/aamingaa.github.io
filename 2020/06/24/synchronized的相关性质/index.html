@@ -79,19 +79,21 @@
 
 
 
-<meta name="description" content="[TOC] 同步原理反编译后,synchronized 同步语句块的实现使用的是 monitorenter 和 monitorexit 指令，其中 monitorenter 指令指向同步代码块的开始位置，monitorexit 指令则指明同步代码块的结束位置。 当执行 monitorenter 指令时，线程试图获取锁也就是获取 monitor(monitor对象存在于每个Java对象的对象头).当">
+<meta name="description" content="[TOC] 对象布局 对象填充，是将一个对象大小不足 8 个字节的倍数时，使用 0 填充补齐，为了更高效效率的读取数据，64 java 虚拟机，一次读取是 64 bit（8 字节）。 &#x2F;&#x2F; monitor也是class, 其实例会存储在堆中，MarkWord中保存的是它的指针 Mark Word：默认存储对象的 HashCode，分代年龄和锁标志位信息。这些信息都是与对象自身定义无关的数据，所以">
 <meta property="og:type" content="article">
 <meta property="og:title" content="synchronized的相关性质">
 <meta property="og:url" content="http://aamingaa.github.io/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 同步原理反编译后,synchronized 同步语句块的实现使用的是 monitorenter 和 monitorexit 指令，其中 monitorenter 指令指向同步代码块的开始位置，monitorexit 指令则指明同步代码块的结束位置。 当执行 monitorenter 指令时，线程试图获取锁也就是获取 monitor(monitor对象存在于每个Java对象的对象头).当">
+<meta property="og:description" content="[TOC] 对象布局 对象填充，是将一个对象大小不足 8 个字节的倍数时，使用 0 填充补齐，为了更高效效率的读取数据，64 java 虚拟机，一次读取是 64 bit（8 字节）。 &#x2F;&#x2F; monitor也是class, 其实例会存储在堆中，MarkWord中保存的是它的指针 Mark Word：默认存储对象的 HashCode，分代年龄和锁标志位信息。这些信息都是与对象自身定义无关的数据，所以">
+<meta property="og:image" content="http://aamingaa.github.io/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201108194840943.png">
+<meta property="og:image" content="http://aamingaa.github.io/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201108195403335.png">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/4/30/16315cd5fa7cf91c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%862.png">
 <meta property="article:published_time" content="2020-06-24T03:18:44.000Z">
-<meta property="article:modified_time" content="2020-10-29T03:14:09.799Z">
+<meta property="article:modified_time" content="2020-11-08T11:59:42.850Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/4/30/16315cd5fa7cf91c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta name="twitter:image" content="http://aamingaa.github.io/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201108194840943.png">
 
 
 
@@ -376,7 +378,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.3k
+                  3.2k
                 </span>
               
 
@@ -392,7 +394,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  12
                 </span>
               
             </div>
@@ -414,6 +416,11 @@
 
       
         <p>[TOC]</p>
+<h2 id="对象布局"><a href="#对象布局" class="headerlink" title="对象布局"></a>对象布局</h2><p><img src="/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201108194840943.png" alt="image-20201108194840943"></p>
+<p>对象填充，是将一个对象大小不足 8 个字节的倍数时，使用 0 填充补齐，为了更高效效率的读取数据，64 java 虚拟机，一次读取是 64 bit（8 字节）。 // monitor也是class, 其实例会存储在堆中，MarkWord中保存的是它的指针</p>
+<p><strong>Mark Word</strong>：默认存储对象的 HashCode，分代年龄和锁标志位信息。这些信息都是与对象自身定义无关的数据，所以 Mark Word 被设计成一个非固定的数据结构以便在极小的空间内存存储尽量多的数据。它会根据对象的状态复用自己的存储空间，也就是说在运行期间 Mark Word 里存储的数据会随着锁标志位的变化而变化。</p>
+<p><img src="/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201108195403335.png" alt="image-20201108195403335"></p>
+<p><strong>Klass Point</strong>：对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。</p>
 <h2 id="同步原理"><a href="#同步原理" class="headerlink" title="同步原理"></a>同步原理</h2><p><strong>反编译后,synchronized 同步语句块的实现使用的是 monitorenter 和 monitorexit 指令，其中 monitorenter 指令指向同步代码块的开始位置，monitorexit 指令则指明同步代码块的结束位置。</strong> 当执行 monitorenter 指令时，线程试图获取锁也就是获取 monitor(monitor对象存在于每个Java对象的对象头).当计数器为0则可以成功获取，获取后将锁计数器设为1也就是加1。相应的在执行 monitorexit 指令后，将锁计数器设为0，表明锁被释放。</p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/4/30/16315cd5fa7cf91c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="对象，对象监视器，同步队列和线程状态的关系"></p>
 <p>`<img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%862.png" alt="synchronized关键字原理"></p>
@@ -435,7 +442,6 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="和volatile的对比"><a href="#和volatile的对比" class="headerlink" title="和volatile的对比"></a>和volatile的对比</h2><h2 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h2><p>这里的锁优化主要是指 JVM 对 synchronized 的优化。</p>
-<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>互斥同步进入阻塞状态的开销都很大，应该尽量避免。自旋锁的思想是让一个线程在请求一个共享数据的锁时自旋一段时间，如果在这段时间内能获得锁，就可以避免进入阻塞状态。<br>自旋锁虽然能避免进入阻塞状态从而减少开销，但是它需要进行循环操作占用 CPU 时间，它只适用于共享数据的<br>锁定状态很短的场景。<br>在 JDK 1.6 中引入了自适应的自旋锁。自适应意味着自旋的次数不再固定了，而是由前一次在同一个锁上的自旋次数<br>及锁的拥有者的状态来决定。</p>
 <h3 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h3><p>锁消除是指对于被检测出不可能存在竞争的共享数据的锁进行消除。<br>锁消除主要是通过逃逸分析来支持，如果堆上的共享数据不可能逃逸出去被其它线程访问到，那么就可以把它们当成<br>私有数据对待，也就可以将它们的锁进行消除。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static String concatString(String s1, String s2, String s3) &#123;</span><br><span class="line">  return s1 + s2 + s3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -447,6 +453,12 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> StringBuffer <span class="title">append</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    toStringCache = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">super</span>.append(i);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h3><p>如果一系列的连续操作都对同一个对象反复加锁和解锁，频繁的加锁操作就会导致性能损耗。如果虚拟机探测到由这样的一串零碎的操作都对同一个对象加锁，将会把加锁的范围扩展（粗化）到整个操作序列的外部，这样只需要加锁一次就可以了。</p>
+<h2 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h2><p>当轻量级锁膨胀到重量级锁之后，意味着线程只能被挂起阻塞来等待唤醒了。每一个对象中都有一个Monitor监视器，而Monitor依赖操作系统的 MutexLock(互斥锁)来实现的, 线程被阻塞后便进入内核（Linux）调度状态，这个会导致系统在用户态与内核态之间来回切换，严重影响锁的性能。<br> monitorenter指令是在编译后插入到同步代码块的开始位置，而monitorexit是插入到方法结束处和异常处，JVM要保证每个monitorenter必须有对应的monitorexit与之配对。而且当一个monitor被持有后，它将处于锁定状态。线程执行到monitorenter指令时，将会尝试获取对象所对应的monitor的所有权，即尝试获得对象的锁。我们可以简单的理解为，在加重量级锁的时候会执行monitorenter指令，解锁时会执行monitorexit指令。</p>
+<h3 id="锁升级"><a href="#锁升级" class="headerlink" title="锁升级"></a>锁升级</h3><p>若当前只有一个等待线程，则该线程将通过自旋进行等待。但是当自旋超过一定的次数时，轻量级锁便会升级为重量级锁（锁膨胀）。</p>
+<p>另外，当一个线程已持有锁，另一个线程在自旋，而此时又有第三个线程来访时，轻量级锁也会升级为重量级锁（锁膨胀）。</p>
+<h3 id="自适应自旋"><a href="#自适应自旋" class="headerlink" title="自适应自旋"></a>自适应自旋</h3><p>在 JDK1.7 开始，引入了自适应自旋锁，修改自旋锁次数的JVM参数被取消，虚拟机不再支持由用户配置自旋锁次数，而是由虚拟机自动调整。自适应意味着自旋的次数不是固定不变的，而是根据前一次在同一个锁上自旋的时间以及锁的拥有者的状态来决定。如果在同一个锁对象上，自旋等待刚刚成功获得过锁，并且持有锁的线程正在运行中，那么虚拟机就会认为这次自旋也是很有可能再次成功，进而它将允许自旋等待持续相对更长的时间。如果对于某个锁，自旋很少成功获得过，那在以后尝试获取这个锁时将可能省略掉自旋过程，直接阻塞线程，避免浪费处理器资源。</p>
+<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>轻量级锁在加锁过程中，用到了自旋锁。</p>
+<p>互斥同步进入阻塞状态的开销都很大，应该尽量避免。自旋锁的思想是让一个线程在请求一个共享数据的锁时自旋一段时间，如果在这段时间内能获得锁，就可以避免进入阻塞状态。<br>自旋锁虽然能避免进入阻塞状态从而减少开销，但是它需要进行循环操作占用 CPU 时间，它只适用于共享数据的<br>锁定状态很短的场景。<br>在 JDK 1.6 中引入了自适应的自旋锁。自适应意味着自旋的次数不再固定了，而是由前一次在同一个锁上的自旋次数<br>及锁的拥有者的状态来决定。</p>
 <h3 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h3><p>自旋锁的目标是降低线程切换的成本。</p>
 <blockquote>
 <p><strong>加锁</strong></p>
@@ -671,7 +683,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#同步原理"><span class="nav-number">1.</span> <span class="nav-text">同步原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用法"><span class="nav-number">2.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和volatile的对比"><span class="nav-number">3.</span> <span class="nav-text">和volatile的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁优化"><span class="nav-number">4.</span> <span class="nav-text">锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自旋锁"><span class="nav-number">4.1.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁消除"><span class="nav-number">4.2.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁粗化"><span class="nav-number">4.3.</span> <span class="nav-text">锁粗化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#轻量级锁"><span class="nav-number">4.4.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏向锁"><span class="nav-number">4.5.</span> <span class="nav-text">偏向锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized和volatile的比较"><span class="nav-number">5.</span> <span class="nav-text">synchronized和volatile的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发生异常时自动释放锁"><span class="nav-number">6.</span> <span class="nav-text">发生异常时自动释放锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和Lock的区别"><span class="nav-number">7.</span> <span class="nav-text">和Lock的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#轻量级锁什么时候升级为重量级锁？"><span class="nav-number">8.</span> <span class="nav-text">轻量级锁什么时候升级为重量级锁？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏向锁升级为轻量级"><span class="nav-number">9.</span> <span class="nav-text">偏向锁升级为轻量级</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象布局"><span class="nav-number">1.</span> <span class="nav-text">对象布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步原理"><span class="nav-number">2.</span> <span class="nav-text">同步原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用法"><span class="nav-number">3.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和volatile的对比"><span class="nav-number">4.</span> <span class="nav-text">和volatile的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁优化"><span class="nav-number">5.</span> <span class="nav-text">锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁消除"><span class="nav-number">5.1.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁粗化"><span class="nav-number">5.2.</span> <span class="nav-text">锁粗化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重量级锁"><span class="nav-number">6.</span> <span class="nav-text">重量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁升级"><span class="nav-number">6.1.</span> <span class="nav-text">锁升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自适应自旋"><span class="nav-number">6.2.</span> <span class="nav-text">自适应自旋</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自旋锁"><span class="nav-number">6.3.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#轻量级锁"><span class="nav-number">6.4.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏向锁"><span class="nav-number">6.5.</span> <span class="nav-text">偏向锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized和volatile的比较"><span class="nav-number">7.</span> <span class="nav-text">synchronized和volatile的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发生异常时自动释放锁"><span class="nav-number">8.</span> <span class="nav-text">发生异常时自动释放锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和Lock的区别"><span class="nav-number">9.</span> <span class="nav-text">和Lock的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#轻量级锁什么时候升级为重量级锁？"><span class="nav-number">10.</span> <span class="nav-text">轻量级锁什么时候升级为重量级锁？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏向锁升级为轻量级"><span class="nav-number">11.</span> <span class="nav-text">偏向锁升级为轻量级</span></a></li></ol></div>
             
 
           </div>
@@ -721,7 +733,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共262k字</span>
+  <span class="post-count">博客全站共262.9k字</span>
 </div>
 
         
