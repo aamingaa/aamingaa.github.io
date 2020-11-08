@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/4/30/16315cd5fa7cf91c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%862.png">
 <meta property="article:published_time" content="2020-06-24T03:18:44.000Z">
-<meta property="article:modified_time" content="2020-11-08T11:59:42.850Z">
+<meta property="article:modified_time" content="2020-11-08T13:06:32.352Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201108194840943.png">
@@ -421,6 +421,7 @@
 <p><strong>Mark Word</strong>：默认存储对象的 HashCode，分代年龄和锁标志位信息。这些信息都是与对象自身定义无关的数据，所以 Mark Word 被设计成一个非固定的数据结构以便在极小的空间内存存储尽量多的数据。它会根据对象的状态复用自己的存储空间，也就是说在运行期间 Mark Word 里存储的数据会随着锁标志位的变化而变化。</p>
 <p><img src="/2020/06/24/synchronized%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B4%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201108195403335.png" alt="image-20201108195403335"></p>
 <p><strong>Klass Point</strong>：对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。</p>
+<h3 id="Array-Length"><a href="#Array-Length" class="headerlink" title="Array Length"></a>Array Length</h3><p>数组长度只在数组类型的对象中存在。用于记录数组的长度。避免获取数组长度时，动态计算。以空间换时间</p>
 <h2 id="同步原理"><a href="#同步原理" class="headerlink" title="同步原理"></a>同步原理</h2><p><strong>反编译后,synchronized 同步语句块的实现使用的是 monitorenter 和 monitorexit 指令，其中 monitorenter 指令指向同步代码块的开始位置，monitorexit 指令则指明同步代码块的结束位置。</strong> 当执行 monitorenter 指令时，线程试图获取锁也就是获取 monitor(monitor对象存在于每个Java对象的对象头).当计数器为0则可以成功获取，获取后将锁计数器设为1也就是加1。相应的在执行 monitorexit 指令后，将锁计数器设为0，表明锁被释放。</p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/4/30/16315cd5fa7cf91c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="对象，对象监视器，同步队列和线程状态的关系"></p>
 <p>`<img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%862.png" alt="synchronized关键字原理"></p>
@@ -624,7 +625,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">148</span>
+                  <span class="site-state-item-count">150</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -683,7 +684,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象布局"><span class="nav-number">1.</span> <span class="nav-text">对象布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步原理"><span class="nav-number">2.</span> <span class="nav-text">同步原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用法"><span class="nav-number">3.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和volatile的对比"><span class="nav-number">4.</span> <span class="nav-text">和volatile的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁优化"><span class="nav-number">5.</span> <span class="nav-text">锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁消除"><span class="nav-number">5.1.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁粗化"><span class="nav-number">5.2.</span> <span class="nav-text">锁粗化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重量级锁"><span class="nav-number">6.</span> <span class="nav-text">重量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁升级"><span class="nav-number">6.1.</span> <span class="nav-text">锁升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自适应自旋"><span class="nav-number">6.2.</span> <span class="nav-text">自适应自旋</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自旋锁"><span class="nav-number">6.3.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#轻量级锁"><span class="nav-number">6.4.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏向锁"><span class="nav-number">6.5.</span> <span class="nav-text">偏向锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized和volatile的比较"><span class="nav-number">7.</span> <span class="nav-text">synchronized和volatile的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发生异常时自动释放锁"><span class="nav-number">8.</span> <span class="nav-text">发生异常时自动释放锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和Lock的区别"><span class="nav-number">9.</span> <span class="nav-text">和Lock的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#轻量级锁什么时候升级为重量级锁？"><span class="nav-number">10.</span> <span class="nav-text">轻量级锁什么时候升级为重量级锁？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏向锁升级为轻量级"><span class="nav-number">11.</span> <span class="nav-text">偏向锁升级为轻量级</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象布局"><span class="nav-number">1.</span> <span class="nav-text">对象布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Array-Length"><span class="nav-number">1.1.</span> <span class="nav-text">Array Length</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步原理"><span class="nav-number">2.</span> <span class="nav-text">同步原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用法"><span class="nav-number">3.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和volatile的对比"><span class="nav-number">4.</span> <span class="nav-text">和volatile的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁优化"><span class="nav-number">5.</span> <span class="nav-text">锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁消除"><span class="nav-number">5.1.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁粗化"><span class="nav-number">5.2.</span> <span class="nav-text">锁粗化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重量级锁"><span class="nav-number">6.</span> <span class="nav-text">重量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁升级"><span class="nav-number">6.1.</span> <span class="nav-text">锁升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自适应自旋"><span class="nav-number">6.2.</span> <span class="nav-text">自适应自旋</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自旋锁"><span class="nav-number">6.3.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#轻量级锁"><span class="nav-number">6.4.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏向锁"><span class="nav-number">6.5.</span> <span class="nav-text">偏向锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized和volatile的比较"><span class="nav-number">7.</span> <span class="nav-text">synchronized和volatile的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发生异常时自动释放锁"><span class="nav-number">8.</span> <span class="nav-text">发生异常时自动释放锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和Lock的区别"><span class="nav-number">9.</span> <span class="nav-text">和Lock的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#轻量级锁什么时候升级为重量级锁？"><span class="nav-number">10.</span> <span class="nav-text">轻量级锁什么时候升级为重量级锁？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏向锁升级为轻量级"><span class="nav-number">11.</span> <span class="nav-text">偏向锁升级为轻量级</span></a></li></ol></div>
             
 
           </div>
@@ -733,7 +734,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共262.9k字</span>
+  <span class="post-count">博客全站共266.9k字</span>
 </div>
 
         

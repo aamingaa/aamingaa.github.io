@@ -88,7 +88,7 @@
 <meta property="og:image" content="http://aamingaa.github.io/2020/06/26/HashMap%E8%A7%A3%E6%9E%90/2.png">
 <meta property="og:image" content="http://aamingaa.github.io/2020/06/26/HashMap%E8%A7%A3%E6%9E%90/3.png">
 <meta property="article:published_time" content="2020-06-26T12:00:39.000Z">
-<meta property="article:modified_time" content="2020-10-28T01:34:09.334Z">
+<meta property="article:modified_time" content="2020-11-08T13:49:58.623Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/06/26/HashMap%E8%A7%A3%E6%9E%90/2.png">
@@ -376,7 +376,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4.7k
+                  5.1k
                 </span>
               
 
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  19
+                  20
                 </span>
               
             </div>
@@ -455,10 +455,13 @@
 </li>
 <li><p>JDK7中链表的插入使用的头插法（扩容转移元素的时候也是使用的头插法，头插法速度更快，无需遍历链表，但是在多线程扩容的情况下使用头插法会出现循环链表的问题，导致CPU飙升），JDK8中链表使用的尾插法（JDK8中反正要去计算链表当前结点的个数，反正要遍历的链表的，所以直接使用尾插法</p>
 </li>
-<li></li>
 </ul>
 <h2 id="那为啥用16不用别的呢？"><a href="#那为啥用16不用别的呢？" class="headerlink" title="那为啥用16不用别的呢？"></a>那为啥用16不用别的呢？</h2><p>因为在使用是2的幂的数字的时候，Length-1的值是所有二进制位全为1，这种情况下，index的结果等同于HashCode后几位的值。</p>
 <p>只要输入的HashCode本身分布均匀，Hash算法的结果就是均匀的。这是为了<strong>实现均匀分布</strong>。</p>
+<h2 id="为什么是0-75？"><a href="#为什么是0-75？" class="headerlink" title="为什么是0.75？"></a>为什么是0.75？</h2><p>HashMap负载因子为什么是0.75？<br>HashMap有一个初始容量大小，默认是16<br>static final int DEAFULT_INITIAL_CAPACITY = 1 &lt;&lt; 4; // aka 16<br>为了减少冲突概率，当HashMap的数组长度达到一个临界值就会触发扩容，把所有元素rehash再放回容器中，这是一个非常耗时的操作。<br>而这个临界值由负载因子和当前的容量大小来决定：<br>DEFAULT_INITIAL_CAPACITY<em>DEFAULT_LOAD_FACTOR<br>即默认情况下数组长度是16</em>0.75=12时，触发扩容操作。<br>所以使用hash容器时尽量预估自己的数据量来设置初始值。<br>那么，为什么负载因子要默认为0.75，在HashMap注释中有这么一段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Ideally, under random hashCodes, the frequency of</span><br><span class="line">\* nodes in bins follows a Poisson distribution</span><br><span class="line">\* (http:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Poisson_distribution) with a</span><br><span class="line">\* parameter of about 0.5 on average for the default resizing</span><br><span class="line">\* threshold of 0.75, although with a large variance because of</span><br><span class="line">\* resizing granularity. Ignoring variance, the expected</span><br><span class="line">\* occurrences of list size k are (exp(-0.5) * pow(0.5, k) &#x2F;</span><br><span class="line">\* factorial(k)). The first values are:</span><br><span class="line">*</span><br><span class="line">\* 0:  0.60653066</span><br><span class="line">\* 1:  0.30326533</span><br><span class="line">\* 2:  0.07581633</span><br><span class="line">\* 3:  0.01263606</span><br><span class="line">\* 4:  0.00157952</span><br><span class="line">\* 5:  0.00015795</span><br><span class="line">\* 6:  0.00001316</span><br><span class="line">\* 7:  0.00000094</span><br><span class="line">\* 8:  0.00000006</span><br><span class="line">\* more: less than 1 in ten million</span><br></pre></td></tr></table></figure>
+
+<p>在理想情况下，使用随机哈希吗，节点出现的频率在hash桶中遵循泊松分布，同时给出了桶中元素的个数和概率的对照表。<br>从上表可以看出当桶中元素到达8个的时候，概率已经变得非常小，也就是说用0.75作为负载因子，每个碰撞位置的链表长度超过8个是几乎不可能的。<br>hash容器指定初始容量尽量为2的幂次方。<br>HashMap负载因子为0.75是空间和时间成本的一种折中。</p>
 <h2 id="什么时候变成红黑树"><a href="#什么时候变成红黑树" class="headerlink" title="什么时候变成红黑树"></a>什么时候变成红黑树</h2><p>一个是链表长度到8,一个是数组长度到64.</p>
 <h2 id="HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？"><a href="#HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？" class="headerlink" title="HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？"></a>HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？</h2><p>1.Hashtable</p>
 <p>2.ConcurrentHashMap</p>
@@ -646,7 +649,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">148</span>
+                  <span class="site-state-item-count">150</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -705,7 +708,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#存储结构"><span class="nav-number">1.</span> <span class="nav-text">存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#put方法"><span class="nav-number">2.</span> <span class="nav-text">put方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hash方法"><span class="nav-number">3.</span> <span class="nav-text">Hash方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get方法"><span class="nav-number">4.</span> <span class="nav-text">get方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么HashMap链表会形成死循环"><span class="nav-number">4.1.</span> <span class="nav-text">为什么HashMap链表会形成死循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK7与JDK8中HashMap的不同点"><span class="nav-number">4.2.</span> <span class="nav-text">JDK7与JDK8中HashMap的不同点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#那为啥用16不用别的呢？"><span class="nav-number">5.</span> <span class="nav-text">那为啥用16不用别的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么时候变成红黑树"><span class="nav-number">6.</span> <span class="nav-text">什么时候变成红黑树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？"><span class="nav-number">7.</span> <span class="nav-text">HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hashtable效率低"><span class="nav-number">8.</span> <span class="nav-text">Hashtable效率低</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩容"><span class="nav-number">9.</span> <span class="nav-text">扩容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为啥Hashtable-是不允许键或值为-null-的，HashMap-的键值则都可以为-null？"><span class="nav-number">10.</span> <span class="nav-text">为啥Hashtable 是不允许键或值为 null 的，HashMap 的键值则都可以为 null？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和HashTable的对比"><span class="nav-number">11.</span> <span class="nav-text">和HashTable的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fail-fast"><span class="nav-number">12.</span> <span class="nav-text">fail-fast</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fail-safe"><span class="nav-number">13.</span> <span class="nav-text">fail-safe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死循环"><span class="nav-number">14.</span> <span class="nav-text">死循环</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#存储结构"><span class="nav-number">1.</span> <span class="nav-text">存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#put方法"><span class="nav-number">2.</span> <span class="nav-text">put方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hash方法"><span class="nav-number">3.</span> <span class="nav-text">Hash方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get方法"><span class="nav-number">4.</span> <span class="nav-text">get方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么HashMap链表会形成死循环"><span class="nav-number">4.1.</span> <span class="nav-text">为什么HashMap链表会形成死循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK7与JDK8中HashMap的不同点"><span class="nav-number">4.2.</span> <span class="nav-text">JDK7与JDK8中HashMap的不同点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#那为啥用16不用别的呢？"><span class="nav-number">5.</span> <span class="nav-text">那为啥用16不用别的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么是0-75？"><span class="nav-number">6.</span> <span class="nav-text">为什么是0.75？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么时候变成红黑树"><span class="nav-number">7.</span> <span class="nav-text">什么时候变成红黑树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？"><span class="nav-number">8.</span> <span class="nav-text">HashMap在多线程环境下存在线程安全问题，那你一般都是怎么处理这种情况的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hashtable效率低"><span class="nav-number">9.</span> <span class="nav-text">Hashtable效率低</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩容"><span class="nav-number">10.</span> <span class="nav-text">扩容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为啥Hashtable-是不允许键或值为-null-的，HashMap-的键值则都可以为-null？"><span class="nav-number">11.</span> <span class="nav-text">为啥Hashtable 是不允许键或值为 null 的，HashMap 的键值则都可以为 null？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和HashTable的对比"><span class="nav-number">12.</span> <span class="nav-text">和HashTable的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fail-fast"><span class="nav-number">13.</span> <span class="nav-text">fail-fast</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fail-safe"><span class="nav-number">14.</span> <span class="nav-text">fail-safe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死循环"><span class="nav-number">15.</span> <span class="nav-text">死循环</span></a></li></ol></div>
             
 
           </div>
@@ -755,7 +758,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共262.9k字</span>
+  <span class="post-count">博客全站共266.9k字</span>
 </div>
 
         
