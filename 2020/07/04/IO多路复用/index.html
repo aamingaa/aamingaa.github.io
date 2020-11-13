@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC] 对于socket流而言,数据的流向经历两个阶段：\  第一步通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。 第二步把数据从内核缓冲区复制到应用进程缓冲区。  recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中 阻塞IO应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。  blocking IO的特点就是在IO">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200715094639319.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70">
 <meta property="article:published_time" content="2020-07-04T12:38:38.000Z">
-<meta property="article:modified_time" content="2020-07-21T14:08:55.152Z">
+<meta property="article:modified_time" content="2020-11-12T12:19:23.425Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200715094639319.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70">
@@ -443,12 +443,12 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; The structure for two events</span><br><span class="line">struct pollfd fds[2];</span><br><span class="line">&#x2F;&#x2F; Monitor sock1 for input</span><br><span class="line">fds[0].fd &#x3D; sock1;</span><br><span class="line">fds[0].events &#x3D; POLLIN;</span><br><span class="line">&#x2F;&#x2F; Monitor sock2 for output</span><br><span class="line">fds[1].fd &#x3D; sock2;</span><br><span class="line">fds[1].events &#x3D; POLLOUT;</span><br><span class="line">&#x2F;&#x2F; Wait 10 seconds</span><br><span class="line">int ret &#x3D; poll( &amp;fds, 2, 10000 );</span><br><span class="line">&#x2F;&#x2F; Check if poll actually succeed</span><br><span class="line">if ( ret &#x3D;&#x3D; -1 )</span><br><span class="line">&#x2F;&#x2F; report error and abort</span><br><span class="line">else if ( ret &#x3D;&#x3D; 0 )</span><br><span class="line">&#x2F;&#x2F; timeout; no event detected</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">&#x2F;&#x2F; If we detect the event, zero it out so we can reuse the structure</span><br><span class="line">if ( fds[0].revents &amp; POLLIN )</span><br><span class="line">fds[0].revents &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F; input event on sock1</span><br><span class="line">if ( fds[1].revents &amp; POLLOUT )</span><br><span class="line">fds[1].revents &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F; output event on sock2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><ol>
-<li><p>功能<br>select 和 poll 的功能基本相同，不过在一些实现细节上有所不同。</p>
+<li><p>功能<br> select 和 poll 的功能基本相同，不过在一些实现细节上有所不同。</p>
 <p>select 会修改描述符，而 poll 不会；<br>select 的描述符类型使用数组实现，大小默认为 1024，因此默认只能监听 1024 个描述符。而 poll 的描述符类型使用链表实现，没有描述符数量的限制；<br>poll 提供了更多的事件类型，并且对描述符的重复利用上比 select 高。<br>如果一个线程对某个描述符调用了 select 或者 poll，另一个线程关闭了该描述符，会导致调用结果不确定。</p>
 </li>
-<li><p>速度<br>select 和 poll 速度都比较慢。<br>select 和 poll 每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。<br>select 和 poll 的返回结果中没有声明哪些描述符已经准备好，所以如果返回值大于 0 时，应用进程都需要使用<br>轮询的方式来找到 I/O 完成的描述符。</p>
+<li><p>速度<br> select 和 poll 速度都比较慢。<br> select 和 poll 每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。<br> select 和 poll 的返回结果中没有声明哪些描述符已经准备好，所以如果返回值大于 0 时，应用进程都需要使用<br> 轮询的方式来找到 I/O 完成的描述符。</p>
 </li>
-<li><p>可移植性<br>几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
+<li><p>可移植性<br> 几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
 </li>
 </ol>
 <h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int epoll_create(int size);</span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)；</span><br><span class="line">int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);</span><br></pre></td></tr></table></figure>
@@ -459,22 +459,14 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Create the epoll descriptor. Only one is needed per app, and is used to monitor all</span><br><span class="line">sockets.</span><br><span class="line">&#x2F;&#x2F; The function argument is ignored (it was not before, but now it is), so put your favorite</span><br><span class="line">number here</span><br><span class="line">int pollingfd &#x3D; epoll_create( 0xCAFE );</span><br><span class="line">if ( pollingfd &lt; 0 )</span><br><span class="line">&#x2F;&#x2F; report error</span><br><span class="line">&#x2F;&#x2F; Initialize the epoll structure in case more members are added in future</span><br><span class="line">struct epoll_event ev &#x3D; &#123; 0 &#125;;</span><br><span class="line">&#x2F;&#x2F; Associate the connection class instance with the event. You can associate anything</span><br><span class="line">&#x2F;&#x2F; you want, epoll does not use this information. We store a connection class pointer,</span><br><span class="line">pConnection1</span><br><span class="line">ev.data.ptr &#x3D; pConnection1;</span><br><span class="line">&#x2F;&#x2F; Monitor for input, and do not automatically rearm the descriptor after the event</span><br><span class="line">ev.events &#x3D; EPOLLIN | EPOLLONESHOT;</span><br><span class="line">&#x2F;&#x2F; Add the descriptor into the monitoring list. We can do it even if another thread is</span><br><span class="line">&#x2F;&#x2F; waiting in epoll_wait - the descriptor will be properly added</span><br><span class="line">if ( epoll_ctl( epollfd, EPOLL_CTL_ADD, pConnection1-&gt;getSocket(), &amp;ev ) !&#x3D; 0 )</span><br><span class="line">&#x2F;&#x2F; report error</span><br><span class="line">&#x2F;&#x2F; Wait for up to 20 events (assuming we have added maybe 200 sockets before that it may</span><br><span class="line">happen)</span><br><span class="line">struct epoll_event pevents[ 20 ];</span><br><span class="line">&#x2F;&#x2F; Wait for 10 seconds, and retrieve less than 20 epoll_event and store them into</span><br><span class="line">epoll_event array</span><br><span class="line">int ready &#x3D; epoll_wait( pollingfd, pevents, 20, 10000 );</span><br><span class="line">&#x2F;&#x2F; Check if epoll actually succeed</span><br><span class="line">if ( ret &#x3D;&#x3D; -1 )</span><br><span class="line">&#x2F;&#x2F; report error and abort</span><br><span class="line">else if ( ret &#x3D;&#x3D; 0 )</span><br><span class="line">&#x2F;&#x2F; timeout; no event detected</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">&#x2F;&#x2F; Check if any events detected</span><br><span class="line">for ( int i &#x3D; 0; i &lt; ret; i++ )</span><br><span class="line">&#123;</span><br><span class="line">if ( pevents[i].events &amp; EPOLLIN )</span><br><span class="line">&#123;</span><br><span class="line">&#x2F;&#x2F; Get back our connection pointer</span><br><span class="line">Connection * c &#x3D; (Connection*) pevents[i].data.ptr;</span><br><span class="line">c-&gt;handleReadEvent();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h2><p>epoll 的描述符事件有两种触发模式：LT（level trigger）和 ET（edge trigger）。</p>
-<ol>
-<li><p>LT 模式<br>当 epoll_wait() 检测到描述符事件到达时，将此事件通知进程，进程可以不立即处理该事件，下次调用 epoll_wait()<br>会再次通知进程。是默认的一种模式，并且同时支持 Blocking 和 No-Blocking。</p>
-</li>
-<li><p>ET 模式<br>和 LT 模式不同的是，通知之后进程必须立即处理事件，下次再调用 epoll_wait() 时不会再得到事件到达的通知。<br>很大程度上减少了 epoll 事件被重复触发的次数，因此效率要比 LT 模式高。只支持 No-Blocking，以避免由于一个<br>文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
-<blockquote>
-<p>triggered代表电路激活，也就是有事件通知给程序，level-triggered表示只要有IO操作可以进行比如某个文件描述符有数据可读，每次调用epoll_wait都会返回以通知程序可以进行IO操作，edge-triggered表示只有在文件描述符状态发生变化时，调用epoll_wait才会返回，如果第一次没有全部读完该文件描述符的数据而且没有新数据写入，再次调用epoll_wait都不会有通知给到程序，因为文件描述符的状态没有变化</p>
-<p>作者：技术成长之道<br>链接：<a href="https://juejin.im/post/5e770c5ee51d4526ef5fb554" target="_blank" rel="noopener">https://juejin.im/post/5e770c5ee51d4526ef5fb554</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-</blockquote>
-</li>
-</ol>
-<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>很容易产生一种错觉认为只要用 epoll 就可以了，select 和 poll 都已经过时了，其实它们都有各自的使用场景。</p>
-<ol>
-<li>select 应用场景<br>select 的 timeout 参数精度为 1ns，而 poll 和 epoll 为 1ms，因此 select 更加适用于实时性要求比较高的场景，比<br>如核反应堆的控制。<br>select 可移植性更好，几乎被所有主流平台所支持。</li>
-<li>poll 应用场景<br>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</li>
-<li>epoll 应用场景<br>只需要运行在 Linux 平台上，有大量的描述符需要同时轮询，并且这些连接最好是长连接。<br>需要同时监控小于 1000 个描述符，就没有必要使用 epoll，因为这个应用场景下并不能体现 epoll 的优势。<br>需要监控的描述符状态变化多，而且都是非常短暂的，也没有必要使用 epoll。因为 epoll 中的所有描述符都存储在<br>内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。并且<br>epoll 的描述符存储在内核，不容易调试。</li>
-</ol>
+<p>   <strong>水平触发:</strong>如果文件描述符已经就绪可以非阻塞的执行IO操作了,此时会触发通知.允许在任意时刻重复检测IO的状态.select,poll就属于水平触发.</p>
+<p>   <strong>边缘触发:</strong>如果文件描述符自上次状态改变后有新的IO活动到来,此时会触发通知.在收到一个IO事件通知后要尽可能多的执行IO操作,因为如果在一次通知中没有执行完IO那么就需要等到下一次新的IO活动到来才能获取到就绪的描述符.信号驱动式IO就属于边缘触发.</p>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>IO复用？<br>select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO。它的基本原理就是select/epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，就通知用户进程。<br>select、poll和epoll ·select、poll、epoll都可以监听多个文件描述符，等待指定的超时时间，直到一个或者多个文件描述符上有事件发生时返回。返回的值就是文件描述符的数量。返回0表示没有事件发生。<br>·差别： </p>
+<ul>
+<li>事件集和工作原理 ： select有三种类型的描述符类型：readfds、writefds、exceptfds，分别对应读、写、异常条件的描述符集合。因此，select不能处理这三种事件以外的事件类型。并且，每一次select会使得内核直接对fd_set进行修改，再下一次使用select的时候需要重置fd_set。每次select返回的都是注册了的事件集合，包括了就绪和没有就绪的，程序检索就绪事件的时间复杂度为O(n)<br>poll对select进行了改进，poll的参数是一个结构体pollfd。poll不会修改描述符，因此每次使用不需要重置pollfd。但是，poll仍然是返回注册了的事件集合，包括了就绪和没有就绪的，程序检索就绪事件的时间复杂度为O(n)。<br>·epoll_ctl() 用于向内核注册新的描述符或者是改变某个文件描述符的状态。已注册的描述符在内核中会被维护在一棵 红黑树上，通过回调函数内核会将 I/O 准备好的描述符加入到一个链表中管理，进程调用 epoll_wait() 便可以得到事 件完成的描述符。使得检索的时间复杂度达到O(1)</li>
+<li>支持最大的文件描述符 ： select：受到系统的限制，由&lt;sys/select.h&gt;头文件中的FD_SETSIZE宏决定，通常是1024 ·poll和epoll一般为65535 </li>
+<li>工作模式 ·select和poll只能工作在相对来说低效的水平触发模式(LT) ·epoll可以工作在高效的边缘触发模式(ET),也可以工作在水平触发模式</li>
+</ul>
 
       
     </div>
@@ -595,7 +587,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">150</span>
+                  <span class="site-state-item-count">156</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -607,7 +599,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -704,7 +696,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共266.9k字</span>
+  <span class="post-count">博客全站共276.8k字</span>
 </div>
 
         

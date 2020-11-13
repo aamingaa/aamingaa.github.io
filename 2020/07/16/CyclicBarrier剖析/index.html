@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="[TOC] 概念用来控制多个线程互相等待，只有当多个线程都到达时，这些线程才会继续执行。和 CountdownLatch 相似，都是通过维护计数器来实现的。线程执行 await() 方法之后计数器会减 1，并进行等待，直到计数器为 0，所有调用 await() 方法而在等待的线程才能继续执行。 12345678910111213141516171819public class CyclicBarr">
+<meta name="description" content="[TOC] 概念用来控制多个线程互相等待，只有当多个线程都到达时，这些线程才会继续执行。和 CountdownLatch 相似，都是通过维护计数器来实现的。线程执行 await() 方法之后计数器会减 1，并进行等待，直到计数器为 0，所有调用 await() 方法而在等待的线程才能继续执行。 dowait();-&gt;reentrantlock 123456789101112131415161">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CyclicBarrier剖析">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/16/CyclicBarrier%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 概念用来控制多个线程互相等待，只有当多个线程都到达时，这些线程才会继续执行。和 CountdownLatch 相似，都是通过维护计数器来实现的。线程执行 await() 方法之后计数器会减 1，并进行等待，直到计数器为 0，所有调用 await() 方法而在等待的线程才能继续执行。 12345678910111213141516171819public class CyclicBarr">
+<meta property="og:description" content="[TOC] 概念用来控制多个线程互相等待，只有当多个线程都到达时，这些线程才会继续执行。和 CountdownLatch 相似，都是通过维护计数器来实现的。线程执行 await() 方法之后计数器会减 1，并进行等待，直到计数器为 0，所有调用 await() 方法而在等待的线程才能继续执行。 dowait();-&gt;reentrantlock 123456789101112131415161">
 <meta property="article:published_time" content="2020-07-16T08:47:01.000Z">
-<meta property="article:modified_time" content="2020-07-16T09:09:48.260Z">
+<meta property="article:modified_time" content="2020-11-09T03:18:17.628Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  463
+                  466
                 </span>
               
 
@@ -412,6 +412,7 @@
       
         <p>[TOC]</p>
 <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>用来控制多个线程互相等待，只有当多个线程都到达时，这些线程才会继续执行。<br>和 CountdownLatch 相似，都是通过维护计数器来实现的。线程执行 await() 方法之后计数器会减 1，并进行等待，<br>直到计数器为 0，所有调用 await() 方法而在等待的线程才能继续执行。</p>
+<p>dowait();-&gt;reentrantlock</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class CyclicBarrierExample &#123;</span><br><span class="line">        public static void main(String[] args) &#123;</span><br><span class="line">        final int totalThread &#x3D; 10;</span><br><span class="line">        CyclicBarrier cyclicBarrier &#x3D; new CyclicBarrier(totalThread);</span><br><span class="line">        ExecutorService executorService &#x3D; Executors.newCachedThreadPool();</span><br><span class="line">        for (int i &#x3D; 0; i &lt; totalThread; i++) &#123;</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">        System.out.print(&quot;before..&quot;);</span><br><span class="line">        try &#123;</span><br><span class="line">        cyclicBarrier.await();</span><br><span class="line">        &#125; catch (InterruptedException | BrokenBarrierException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.print(&quot;after..&quot;);</span><br><span class="line">        &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        executorService.shutdown();</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">before..before..before..before..before..before..before..before..before..before..after..after</span><br><span class="line">..after..after..after..after..after..after..after..after..</span><br></pre></td></tr></table></figure>
@@ -539,7 +540,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">150</span>
+                  <span class="site-state-item-count">156</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -551,7 +552,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -648,7 +649,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共266.9k字</span>
+  <span class="post-count">博客全站共276.8k字</span>
 </div>
 
         
