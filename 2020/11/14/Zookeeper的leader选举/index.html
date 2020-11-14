@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] Zookeeper的Leader选举前面我们聊了一下ZAB协议以及Zookeeper的基础概念，心想着都到这个份上了，那还是把剩下的“Leader选举”、“分布式锁”、“惊群和脑裂”都跟大家简单聊聊,这些知识应该足够准备校招的你造火箭了。 今天首先说一下Zookeeper的Leader选举流程以及其中涉及的FastLeaderElection选举算法。 说在前面ZAB协议是保证Zook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zookeeper的leader选举">
+<meta property="og:url" content="http://aamingaa.github.io/2020/11/14/Zookeeper%E7%9A%84leader%E9%80%89%E4%B8%BE/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] Zookeeper的Leader选举前面我们聊了一下ZAB协议以及Zookeeper的基础概念，心想着都到这个份上了，那还是把剩下的“Leader选举”、“分布式锁”、“惊群和脑裂”都跟大家简单聊聊,这些知识应该足够准备校招的你造火箭了。 今天首先说一下Zookeeper的Leader选举流程以及其中涉及的FastLeaderElection选举算法。 说在前面ZAB协议是保证Zook">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/887a4826415141fda9e48fbf29503ccd~tplv-k3u1fbpfcp-zoom-1.image">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ba3f5da1aad24e7da6ef1309643d10e9~tplv-k3u1fbpfcp-zoom-1.image">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3e4e95bf12d42c5b54cd862dea068e6~tplv-k3u1fbpfcp-zoom-1.image">
+<meta property="article:published_time" content="2020-11-14T13:24:11.000Z">
+<meta property="article:modified_time" content="2020-11-14T13:24:52.218Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/887a4826415141fda9e48fbf29503ccd~tplv-k3u1fbpfcp-zoom-1.image">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2020/11/14/Zookeeper的leader选举/"/>
+
+
+
+
+
+  <title>Zookeeper的leader选举 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/14/Zookeeper%E7%9A%84leader%E9%80%89%E4%B8%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Zookeeper的leader选举</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-14T21:24:11+08:00">
+                2020-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  23
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="Zookeeper的Leader选举"><a href="#Zookeeper的Leader选举" class="headerlink" title="Zookeeper的Leader选举"></a>Zookeeper的Leader选举</h1><p>前面我们聊了一下ZAB协议以及Zookeeper的基础概念，心想着都到这个份上了，那还是把剩下的“Leader选举”、“分布式锁”、“惊群和脑裂”都跟大家简单聊聊,这些知识应该足够准备校招的你<code>造火箭</code>了。</p>
+<p>今天首先说一下Zookeeper的<code>Leader选举流程</code>以及其中涉及的<code>FastLeaderElection选举算法</code>。</p>
+<h2 id="说在前面"><a href="#说在前面" class="headerlink" title="说在前面"></a>说在前面</h2><p><strong>ZAB协议是保证Zookeeper集群数据一致性协议其中会涉及选举流程，FastLeaderElection是Zookeeper选举Leader的算法之一。这两点概念一定要搞清楚，不然很容易混为一谈。</strong></p>
+<h2 id="Leader选举"><a href="#Leader选举" class="headerlink" title="Leader选举"></a>Leader选举</h2><p>两个关键时期：</p>
+<ul>
+<li>启动Zookeeper集群时</li>
+<li>Leader崩溃进行崩溃恢复时</li>
+</ul>
+<p><strong>一些基础概念你需要提前预知：</strong></p>
+<p><img src="https:////p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/887a4826415141fda9e48fbf29503ccd~tplv-k3u1fbpfcp-zoom-1.image" alt="img"></p>
+<p>1.对选举Leader的要求:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">选出的leader节点上要持有最高zxid</span><br><span class="line">选出的leader要有过半数节点同意</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>2.内置实现的选举算法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LeaderElection</span><br><span class="line">FastLeaderElection（默认的）</span><br><span class="line">AuthFastLeaderElection</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>3.选举状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LOOKING：竞选状态</span><br><span class="line">FOLLOWING：跟随状态，同步leader状态，参与投票</span><br><span class="line">OBSERVING：管擦状态，同步leader状态，不参与投票</span><br><span class="line">LEADING：领导者状态</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>4.部分名词</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">服务器id---myid(或后文的sid，集群模式下必有该配置项) </span><br><span class="line">事务id---服务器中存放的最大zxid</span><br><span class="line">逻辑时钟---发起的投票轮数计数</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<h2 id="选举流程"><a href="#选举流程" class="headerlink" title="选举流程"></a>选举流程</h2><blockquote>
+<p>Zookeeper要求集群机器必须是<code>奇数个</code>(避免脑裂，下文会讲)，那么我们假设有三台服务器。接着介绍一下三台服务器的Leader选举流程。</p>
+</blockquote>
+<ul>
+<li>每个Server发出一个投票。由于是初始情况，Server1和Server2都会将自己作为Leader服务器来进行投票，每次投票会包含所推举的服务器的myid和ZXID，使用(myid, ZXID)来表示，此时Server1的投票为(1, 0)，Server2的投票为(2, 0)，然后各自将这个投票发给集群中其他机器。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS：不懂什么叫为自己投票(不知道票的数据结构？)，别急后面带你看源码！！！</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>接受来自各个服务器的投票。集群的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票、是否来自LOOKING状态的服务器。</li>
+<li>处理投票。针对每一个投票，服务器都需要将别人的投票和自己的投票进行比较，比较规则如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> 优先判断ZXID。ZXID（事务ID）比较大的服务器优先作为Leader。</span><br><span class="line"> </span><br><span class="line"> 如果ZXID相同，那么就比较myid。myid（服务器ID）较大的服务器作为Leader服务器。</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>对于Server1而言，它的投票是(1, 0)，接收Server2的投票为(2, 0)，首先会比较两者的ZXID，均为0，再比较myid，此时Server2的myid最大，于是更新自己的投票为(2, 0)，然后重新投票，对于Server2而言，其无须更新自己的投票，只是再次向集群中所有机器发出上一次投票信息即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS:于是更新自己的投票为(2, 0)?</span><br></pre></td></tr></table></figure>
+
+<p>其涵义指的是将自己下次发出的投票信息更新为(2, 0)，以该票作为新的投票依据。</p>
+<ul>
+<li>统计投票。每次投票后，服务器都会统计投票信息，判断是否已经有过半机器接受到相同的投票信息，对于Server1、Server2而言，都统计出集群中已经有两台机器接受了(2, 0)的投票信息，此时便认为已经选出了Leader。</li>
+<li>改变服务器状态。一旦确定了Leader，每个服务器就会更新自己的状态，如果是Follower，那么就变更为FOLLOWING，如果是Leader，就变更为LEADING。</li>
+</ul>
+<hr>
+<p><strong>简而言之</strong></p>
+<p>1.每个服务实例均发起选举自己为leader的投票。</p>
+<p>2.其他服务实例收到投票邀请时，比较发起者的数据事务id是否比自己最新的事务ID大，大则给它投一票，小则不投票，相等则比较发起者的服务器ID，大则投票给它 。</p>
+<p>3.发起者收到大家的投票反馈后，看投票数（包括自己的票数）是否大于集群的半数，大于则成为leader，未超过半数且leader未选出，则再次发起投票。</p>
+<h3 id="Leader选举算法"><a href="#Leader选举算法" class="headerlink" title="Leader选举算法"></a>Leader选举算法</h3><blockquote>
+<p>在了解了选举流程后我们介绍一下Zookeeper源码中对于算法中的实现细节。</p>
+</blockquote>
+<p>借助网上随处可以百度到的算法描述，我再一次针对其中涉及的<code>疑难点</code>做一个解说，其大致流程如下：</p>
+<p><strong>第一次投票</strong>。无论哪种导致进行Leader选举，集群的所有机器都处于试图选举出一个Leader的状态，即LOOKING状态，LOOKING机器会向所有其他机器发送消息，该消息称为投票。投票中包含了SID（服务器的唯一标识）和ZXID（事务ID），(SID, ZXID)形式来标识一次投票信息。</p>
+<p>假定Zookeeper由5台机器组成，SID分别为1、2、3、4、5，ZXID分别为9、9、9、8、8，并且此时SID为2的机器是Leader机器，某一时刻，1、2所在机器出现故障，因此集群开始进行Leader选举。在第一次投票时，每台机器都会将自己作为投票对象，于是SID为3、4、5的机器投票情况分别为(3, 9)，(4, 8)， (5, 8)。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">此时五台机器手里的投票分别为：</span><br><span class="line">服务器一：（1，9）假设故障 ×</span><br><span class="line">服务器二：（2，9）假设故障 ×</span><br><span class="line">服务器三：（3，9）</span><br><span class="line">服务器四：（4，8）</span><br><span class="line">服务器五：（5，8）</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p><strong>变更投票</strong>。每台机器发出投票后，也会收到其他机器的投票，每台机器会根据一定规则来处理收到的其他机器的投票，并以此来决定是否需要变更自己的投票，这个规则也是整个Leader选举算法的核心所在，其中术语描述如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vote_sid：接收到的投票中所推举Leader服务器的SID。</span><br><span class="line"></span><br><span class="line">vote_zxid：接收到的投票中所推举Leader服务器的ZXID。</span><br><span class="line"></span><br><span class="line">self_sid：当前服务器自己的SID。</span><br><span class="line"></span><br><span class="line">self_zxid：当前服务器自己的ZXID。</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>每次对收到的投票的处理，都是对(vote_sid, vote_zxid)和(self_sid, self_zxid)对比的过程。</p>
+<p>规则一：如果vote_zxid大于self_zxid，就认可当前收到的投票，并再次将该投票发送出去。(接收到的事务id大于自己当前事务id)</p>
+<p>规则二：如果vote_zxid小于self_zxid，那么坚持自己的投票，不做任何变更。(接收到的事务id小于自己当前事务id)</p>
+<p>规则三：如果vote_zxid等于self_zxid，那么就对比两者的SID，如果vote_sid大于self_sid，那么就认可当前收到的投票，并再次将该投票发送出去。（事务ID相等比较服务器ID及zxid）</p>
+<p>规则四：如果vote_zxid等于self_zxid，并且vote_sid小于self_sid，那么坚持自己的投票，不做任何变更。</p>
+<p><strong>具体流程如图：</strong></p>
+<p><img src="https:////p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ba3f5da1aad24e7da6ef1309643d10e9~tplv-k3u1fbpfcp-zoom-1.image" alt="在这里插入图片描述"></p>
+<p><strong>确定Leader</strong>。经过第二轮投票后，集群中的每台机器都会再次接收到其他机器的投票，然后开始统计投票，如果一台机器收到了超过半数的相同投票，那么这个投票对应的SID机器即为Leader。此时Server3将成为Leader。</p>
+<h2 id="选举流程源码"><a href="#选举流程源码" class="headerlink" title="选举流程源码"></a>选举流程源码</h2><blockquote>
+<p>光说不练假把式，搞懂了Leader选举的基本流程，再来探究一下源码，源码之下无秘密！</p>
+</blockquote>
+<p>用我的地址去拉取源码可能会快些。<a href="https://hub.fastgit.org/Xxianglei/zookeeper.git" target="_blank" rel="noopener">Zookeeper源码 git clone</a></p>
+<h3 id="投票数据结构"><a href="#投票数据结构" class="headerlink" title="投票数据结构"></a>投票数据结构</h3><p>我们先解决前面的疑惑投票（或者说票）到底是什么结构？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Vote</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> version;<span class="comment">// 版本号</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> id;<span class="comment">//被推举的Leader的SID</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> zxid;<span class="comment">//被推举的Leader事务ID</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> electionEpoch;<span class="comment">//逻辑时钟，用来判断多个投票是否在同一轮选举周期中，每轮自加1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> peerEpoch;<span class="comment">//被推举的Leader的epoch</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServerState state;<span class="comment">//当前服务器的状态</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 服务器状态</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> ServerState &#123;</span><br><span class="line">        LOOKING,</span><br><span class="line">        FOLLOWING,</span><br><span class="line">        LEADING,</span><br><span class="line">        OBSERVING</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>知道我们投的是什么票了，接下来我们理一下整个算法流程。</p>
+<h3 id="源码入口"><a href="#源码入口" class="headerlink" title="源码入口"></a>源码入口</h3><blockquote>
+<p>zookeeper\zookeeper-server\src\main\java\org\apache\zookeeper\server\quorum下</p>
+</blockquote>
+<p>非核心代码我给大家省去了，如果有兴趣想研究，可以按着我的分析流程查看源码细节。</p>
+<h4 id="QuorumPeerMain-java"><a href="#QuorumPeerMain-java" class="headerlink" title="QuorumPeerMain.java"></a>QuorumPeerMain.java</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * To start the replicated server specify the configuration file name on</span></span><br><span class="line"><span class="comment"> * the command line.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> args path to the configfile</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    QuorumPeerMain main = <span class="keyword">new</span> QuorumPeerMain();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        main.initializeAndRun(args);<span class="comment">//入口</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line">    LOG.info(<span class="string">"Exiting normally"</span>);</span><br><span class="line">    ServiceUtils.requestSystemExit(ExitCode.EXECUTION_FINISHED.getValue());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initializeAndRun</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ConfigException, IOException, AdminServerException </span>&#123;</span><br><span class="line">    QuorumPeerConfig config = <span class="keyword">new</span> QuorumPeerConfig();</span><br><span class="line">    <span class="keyword">if</span> (args.length == <span class="number">1</span>) &#123;</span><br><span class="line">        config.parse(args[<span class="number">0</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Start and schedule the the purge task</span></span><br><span class="line">    DatadirCleanupManager purgeMgr = <span class="keyword">new</span> DatadirCleanupManager(</span><br><span class="line">        config.getDataDir(),</span><br><span class="line">        config.getDataLogDir(),</span><br><span class="line">        config.getSnapRetainCount(),</span><br><span class="line">        config.getPurgeInterval());</span><br><span class="line">    purgeMgr.start();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断是standalone模式还是集群模式</span></span><br><span class="line">    <span class="keyword">if</span> (args.length == <span class="number">1</span> &amp;&amp; config.isDistributed()) &#123;</span><br><span class="line">        <span class="comment">//集群模式</span></span><br><span class="line">        runFromConfig(config);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        LOG.warn(<span class="string">"Either no config or no quorum defined in config, running in standalone mode"</span>);</span><br><span class="line">        <span class="comment">// there is only server in the quorum -- run as standalone</span></span><br><span class="line">        ZooKeeperServerMain.main(args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runFromConfig</span><span class="params">(QuorumPeerConfig config)</span> <span class="keyword">throws</span> IOException, AdminServerException </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ManagedUtil.registerLog4jMBeans();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (JMException e) &#123;</span><br><span class="line">        LOG.warn(<span class="string">"Unable to register log4j JMX control"</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    LOG.info(<span class="string">"Starting quorum peer"</span>);</span><br><span class="line">    MetricsProvider metricsProvider;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        metricsProvider = MetricsProviderBootstrap.startMetricsProvider(</span><br><span class="line">            config.getMetricsProviderClassName(),</span><br><span class="line">            config.getMetricsProviderConfiguration());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (MetricsProviderLifeCycleException error) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"Cannot boot MetricsProvider "</span> + config.getMetricsProviderClassName(), error);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ServerMetrics.metricsProviderInitialized(metricsProvider);</span><br><span class="line">        ServerCnxnFactory cnxnFactory = <span class="keyword">null</span>;</span><br><span class="line">        ServerCnxnFactory secureCnxnFactory = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//为客户端提供读写的server 及2181的端口</span></span><br><span class="line">        <span class="keyword">if</span> (config.getClientPortAddress() != <span class="keyword">null</span>) &#123;</span><br><span class="line">            cnxnFactory = ServerCnxnFactory.createFactory();</span><br><span class="line">            cnxnFactory.configure(config.getClientPortAddress(), config.getMaxClientCnxns(), config.getClientPortListenBacklog(), <span class="keyword">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (config.getSecureClientPortAddress() != <span class="keyword">null</span>) &#123;</span><br><span class="line">            secureCnxnFactory = ServerCnxnFactory.createFactory();</span><br><span class="line">            secureCnxnFactory.configure(config.getSecureClientPortAddress(), config.getMaxClientCnxns(), config.getClientPortListenBacklog(), <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">		...</span><br><span class="line">        <span class="comment">//启动主线程</span></span><br><span class="line">        quorumPeer.start();</span><br><span class="line">        ZKAuditProvider.addZKStartStopAuditLog();</span><br><span class="line">        quorumPeer.join();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        <span class="comment">// warn, but generally this is ok</span></span><br><span class="line">        LOG.warn(<span class="string">"Quorum Peer interrupted"</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<h4 id="调用-QuorumPeer-的-start方法"><a href="#调用-QuorumPeer-的-start方法" class="headerlink" title="调用 QuorumPeer 的 start方法"></a>调用 QuorumPeer 的 start方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!getView().containsKey(myid)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"My id "</span> + myid + <span class="string">" not in the peer list"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//loaddatabase主要是从本地文件中恢复数据，以及获取最新的 zxid</span></span><br><span class="line">    loadDataBase();</span><br><span class="line">    startServerCnxnFactory();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        adminServer.start();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (AdminServerException e) &#123;</span><br><span class="line">        LOG.warn(<span class="string">"Problem starting AdminServer"</span>, e);</span><br><span class="line">        System.out.println(e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//选举初始化</span></span><br><span class="line">    startLeaderElection();</span><br><span class="line">    startJvmPauseMonitor();</span><br><span class="line">    <span class="keyword">super</span>.start();</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">startLeaderElection</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//如果当前节点状态是LOOKING 投票给自己</span></span><br><span class="line">        <span class="keyword">if</span> (getPeerState() == ServerState.LOOKING) &#123;</span><br><span class="line">            currentVote = <span class="keyword">new</span> Vote(myid, getLastLoggedZxid(), getCurrentEpoch());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        RuntimeException re = <span class="keyword">new</span> RuntimeException(e.getMessage());</span><br><span class="line">        re.setStackTrace(e.getStackTrace());</span><br><span class="line">        <span class="keyword">throw</span> re;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据配置获取选举算法 可以通过在 zoo.cfg 里面进行配置，默认是 fast 选举</span></span><br><span class="line">    <span class="keyword">this</span>.electionAlg = createElectionAlgorithm(electionType);</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"deprecation"</span>)</span><br><span class="line"><span class="function"><span class="keyword">protected</span> Election <span class="title">createElectionAlgorithm</span><span class="params">(<span class="keyword">int</span> electionAlgorithm)</span> </span>&#123;</span><br><span class="line">    Election le = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//<span class="doctag">TODO:</span> use a factory rather than a switch</span></span><br><span class="line">    <span class="keyword">switch</span> (electionAlgorithm) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(<span class="string">"Election Algorithm 1 is not supported."</span>);</span><br><span class="line">    <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(<span class="string">"Election Algorithm 2 is not supported."</span>);</span><br><span class="line">    <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        <span class="comment">//leader选举网络io负责类（负责底层网络处理接收和发送队列中的消息）</span></span><br><span class="line">        QuorumCnxManager qcm = createCnxnManager();</span><br><span class="line">        QuorumCnxManager oldQcm = qcmRef.getAndSet(qcm);</span><br><span class="line">        <span class="keyword">if</span> (oldQcm != <span class="keyword">null</span>) &#123;</span><br><span class="line">            LOG.warn(<span class="string">"Clobbering already-set QuorumCnxManager (restarting leader election?)"</span>);</span><br><span class="line">            oldQcm.halt();</span><br><span class="line">        &#125;</span><br><span class="line">        QuorumCnxManager.Listener listener = qcm.listener;</span><br><span class="line">        <span class="keyword">if</span> (listener != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">//启动已绑定的选举线程 等待集群中其他机器连接</span></span><br><span class="line">            listener.start();</span><br><span class="line">            <span class="comment">//基于TCP的选举算法 FastLeaderElection</span></span><br><span class="line">            FastLeaderElection fle = <span class="keyword">new</span> FastLeaderElection(<span class="keyword">this</span>, qcm);</span><br><span class="line">            fle.start();</span><br><span class="line">            le = fle;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            LOG.error(<span class="string">"Null listener when initializing cnx manager"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">assert</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> le;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 其中FastLeaderElection fle = new FastLeaderElection(this, qcm);会调用一下构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FastLeaderElection</span><span class="params">(QuorumPeer self, QuorumCnxManager manager)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">this</span>.stop = <span class="keyword">false</span>;</span><br><span class="line">   <span class="keyword">this</span>.manager = manager;</span><br><span class="line">   starter(self, manager);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 一目了然不多解释</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">starter</span><span class="params">(QuorumPeer self, QuorumCnxManager manager)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">this</span>.self = self;</span><br><span class="line">   proposedLeader = -<span class="number">1</span>;</span><br><span class="line">   proposedZxid = -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">   sendqueue = <span class="keyword">new</span> LinkedBlockingQueue&lt;ToSend&gt;();</span><br><span class="line">   recvqueue = <span class="keyword">new</span> LinkedBlockingQueue&lt;Notification&gt;();</span><br><span class="line">   <span class="keyword">this</span>.messenger = <span class="keyword">new</span> Messenger(manager);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// FastLeaderElection的start方法被调用会构建Messenger</span></span><br><span class="line"><span class="comment">//Starts instances of WorkerSender and WorkerReceiver启动消息接收器和发送器线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.messenger.start();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Constructor of class Messenger.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> manager   Connection manager</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> Messenger(QuorumCnxManager manager) &#123;</span><br><span class="line">  <span class="keyword">this</span>.ws = <span class="keyword">new</span> WorkerSender(manager);</span><br><span class="line">  <span class="keyword">this</span>.wsThread = <span class="keyword">new</span> Thread(<span class="keyword">this</span>.ws, <span class="string">"WorkerSender[myid="</span> + self.getId() + <span class="string">"]"</span>);</span><br><span class="line">  <span class="keyword">this</span>.wsThread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.wr = <span class="keyword">new</span> WorkerReceiver(manager);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.wrThread = <span class="keyword">new</span> Thread(<span class="keyword">this</span>.wr, <span class="string">"WorkerReceiver[myid="</span> + self.getId() + <span class="string">"]"</span>);</span><br><span class="line">  <span class="keyword">this</span>.wrThread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line"> &#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Starts instances of WorkerSender and WorkerReceiver</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.wsThread.start();</span><br><span class="line">  <span class="keyword">this</span>.wrThread.start();</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 以上执行完成后QuorumPeer的run方法被调用</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * Main loop</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">while</span> (running) &#123;</span><br><span class="line">            <span class="comment">//判断当前节点状态</span></span><br><span class="line">            <span class="keyword">switch</span> (getPeerState()) &#123;</span><br><span class="line">            <span class="keyword">case</span> LOOKING:</span><br><span class="line">                <span class="comment">//如果是LOOKING 则进入选举流程</span></span><br><span class="line">                LOG.info(<span class="string">"LOOKING"</span>);</span><br><span class="line">                ServerMetrics.getMetrics().LOOKING_COUNT.add(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (Boolean.getBoolean(<span class="string">"readonlymode.enabled"</span>)) &#123;</span><br><span class="line">                    LOG.info(<span class="string">"Attempting to start ReadOnlyZooKeeperServer"</span>);</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// Create read-only server but don't start it immediately</span></span><br><span class="line">                    <span class="keyword">final</span> ReadOnlyZooKeeperServer roZk = <span class="keyword">new</span> ReadOnlyZooKeeperServer(logFactory, <span class="keyword">this</span>, <span class="keyword">this</span>.zkDb);</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// Instead of starting roZk immediately, wait some grace</span></span><br><span class="line">                    <span class="comment">// period before we decide we're partitioned.</span></span><br><span class="line">                    <span class="comment">//</span></span><br><span class="line">                    <span class="comment">// Thread is used here because otherwise it would require</span></span><br><span class="line">                    <span class="comment">// changes in each of election strategy classes which is</span></span><br><span class="line">                    <span class="comment">// unnecessary code coupling.</span></span><br><span class="line">                    Thread roZkMgr = <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                            <span class="keyword">try</span> &#123;</span><br><span class="line">                                <span class="comment">// lower-bound grace period to 2 secs</span></span><br><span class="line">                                sleep(Math.max(<span class="number">2000</span>, tickTime));</span><br><span class="line">                                <span class="keyword">if</span> (ServerState.LOOKING.equals(getPeerState())) &#123;</span><br><span class="line">                                    roZk.startup();</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                                LOG.info(<span class="string">"Interrupted while attempting to start ReadOnlyZooKeeperServer, not started"</span>);</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                                LOG.error(<span class="string">"FAILED to start ReadOnlyZooKeeperServer"</span>, e);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        roZkMgr.start();</span><br><span class="line">                        reconfigFlagClear();</span><br><span class="line">                        <span class="keyword">if</span> (shuttingDownLE) &#123;</span><br><span class="line">                            shuttingDownLE = <span class="keyword">false</span>;</span><br><span class="line">                            startLeaderElection();</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//此处通过策略模式来决定当前用哪个选举算法来进行领导选举</span></span><br><span class="line">                        setCurrentVote(makeLEStrategy().lookForLeader());</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                        LOG.warn(<span class="string">"Unexpected exception"</span>, e);</span><br><span class="line">                        setPeerState(ServerState.LOOKING);</span><br><span class="line">                    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                        <span class="comment">// If the thread is in the the grace period, interrupt</span></span><br><span class="line">                        <span class="comment">// to come out of waiting.</span></span><br><span class="line">                        roZkMgr.interrupt();</span><br><span class="line">                        roZk.shutdown();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        reconfigFlagClear();</span><br><span class="line">                        <span class="keyword">if</span> (shuttingDownLE) &#123;</span><br><span class="line">                            shuttingDownLE = <span class="keyword">false</span>;</span><br><span class="line">                            startLeaderElection();</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//此处通过策略模式决定当前用哪个选举算法来进行领导选举</span></span><br><span class="line">                        setCurrentVote(makeLEStrategy().lookForLeader());</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                        LOG.warn(<span class="string">"Unexpected exception"</span>, e);</span><br><span class="line">                        setPeerState(ServerState.LOOKING);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> OBSERVING:</span><br><span class="line">                ...</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> FOLLOWING:</span><br><span class="line">                ...</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> LEADING:</span><br><span class="line">                ...</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">       ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<h2 id="执行核心选举算法"><a href="#执行核心选举算法" class="headerlink" title="执行核心选举算法"></a>执行核心选举算法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 入口前文：setCurrentVote(makeLEStrategy().lookForLeader());</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Vote <span class="title">lookForLeader</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            self.jmxLeaderElectionBean = <span class="keyword">new</span> LeaderElectionBean();</span><br><span class="line">            MBeanRegistry.getInstance().register(self.jmxLeaderElectionBean, self.jmxLocalPeerBean);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            LOG.warn(<span class="string">"Failed to register with JMX"</span>, e);</span><br><span class="line">            self.jmxLeaderElectionBean = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        self.start_fle = Time.currentElapsedTime();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * The votes from the current leader election are stored in recvset. In other words, a vote v is in recvset</span></span><br><span class="line"><span class="comment">             * if v.electionEpoch == logicalclock. The current participant uses recvset to deduce on whether a majority</span></span><br><span class="line"><span class="comment">             * of participants has voted for it.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="comment">//保存收到的投票</span></span><br><span class="line">            Map&lt;Long, Vote&gt; recvset = <span class="keyword">new</span> HashMap&lt;Long, Vote&gt;();</span><br><span class="line"></span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * The votes from previous leader elections, as well as the votes from the current leader election are</span></span><br><span class="line"><span class="comment">             * stored in outofelection. Note that notifications in a LOOKING state are not stored in outofelection.</span></span><br><span class="line"><span class="comment">             * Only FOLLOWING or LEADING notifications are stored in outofelection. The current participant could use</span></span><br><span class="line"><span class="comment">             * outofelection to learn which participant is the leader if it arrives late (i.e., higher logicalclock than</span></span><br><span class="line"><span class="comment">             * the electionEpoch of the received notifications) in a leader election.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="comment">//存储选举结果</span></span><br><span class="line">            Map&lt;Long, Vote&gt; outofelection = <span class="keyword">new</span> HashMap&lt;Long, Vote&gt;();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">int</span> notTimeout = minNotificationInterval;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">                <span class="comment">//增加逻辑时钟  +1原子操作</span></span><br><span class="line">                logicalclock.incrementAndGet();</span><br><span class="line">                <span class="comment">//更新自己的zxid和epoch</span></span><br><span class="line">                updateProposal(getInitId(), getInitLastLoggedZxid(), getPeerEpoch());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            LOG.info(</span><br><span class="line">                <span class="string">"New election. My id = &#123;&#125;, proposed zxid=0x&#123;&#125;"</span>,</span><br><span class="line">                self.getId(),</span><br><span class="line">                Long.toHexString(proposedZxid));</span><br><span class="line">            <span class="comment">//发送投票 包括发送给自己（广播）</span></span><br><span class="line">            sendNotifications();</span><br><span class="line"></span><br><span class="line">            SyncedLearnerTracker voteSet;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * Loop in which we exchange notifications until we find a leader</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//进行while循环 直到选举出leader</span></span><br><span class="line">            <span class="keyword">while</span> ((self.getPeerState() == ServerState.LOOKING) &amp;&amp; (!stop)) &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Remove next notification from queue, times out after 2 times</span></span><br><span class="line"><span class="comment">                 * the termination time</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="comment">//从接收IO线程里拿到投票信息 自己的投票也在这里处理</span></span><br><span class="line">                Notification n = recvqueue.poll(notTimeout, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Sends more notifications if haven't received enough.</span></span><br><span class="line"><span class="comment">                 * Otherwise processes new notification.</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="comment">//如果为空 消息发完了 继续发送 一直到选出leader为止</span></span><br><span class="line">                <span class="keyword">if</span> (n == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (manager.haveDelivered()) &#123;</span><br><span class="line">                        sendNotifications();</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">//消息还没投递出去 可能是其他server还没启动 尝试再连接</span></span><br><span class="line">                        manager.connectAll();</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">/*</span></span><br><span class="line"><span class="comment">                     * Exponential backoff</span></span><br><span class="line"><span class="comment">                     */</span></span><br><span class="line">                    <span class="comment">//延长超时时间</span></span><br><span class="line">                    <span class="keyword">int</span> tmpTimeOut = notTimeout * <span class="number">2</span>;</span><br><span class="line">                    notTimeout = Math.min(tmpTimeOut, maxNotificationInterval);</span><br><span class="line">                    LOG.info(<span class="string">"Notification time out: &#123;&#125;"</span>, notTimeout);</span><br><span class="line">                    <span class="comment">//收到投票消息 判断收到的消息是不是属于这个集群内</span></span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (validVoter(n.sid) &amp;&amp; validVoter(n.leader)) &#123;</span><br><span class="line">                    <span class="comment">/*</span></span><br><span class="line"><span class="comment">                     * Only proceed if the vote comes from a replica in the current or next</span></span><br><span class="line"><span class="comment">                     * voting view for a replica in the current or next voting view.</span></span><br><span class="line"><span class="comment">                     */</span></span><br><span class="line">                    <span class="comment">//判断收到的消息的节点的状态</span></span><br><span class="line">                    <span class="keyword">switch</span> (n.state) &#123;</span><br><span class="line">                    <span class="keyword">case</span> LOOKING:</span><br><span class="line">                        <span class="keyword">if</span> (getInitLastLoggedZxid() == -<span class="number">1</span>) &#123;</span><br><span class="line">                            LOG.debug(<span class="string">"Ignoring notification as our zxid is -1"</span>);</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (n.zxid == -<span class="number">1</span>) &#123;</span><br><span class="line">                            LOG.debug(<span class="string">"Ignoring notification from member with -1 zxid &#123;&#125;"</span>, n.sid);</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// If notification &gt; current, replace and send messages out</span></span><br><span class="line">                        <span class="comment">//判断接收到的节点epoch大于logicalclock  则表示当前是新一轮的选举</span></span><br><span class="line">                        <span class="keyword">if</span> (n.electionEpoch &gt; logicalclock.get()) &#123;</span><br><span class="line">                            <span class="comment">//更新本地logicalclock</span></span><br><span class="line">                            logicalclock.set(n.electionEpoch);</span><br><span class="line">                            <span class="comment">//清空接收队列</span></span><br><span class="line">                            recvset.clear();</span><br><span class="line">                            <span class="comment">//检查收到的消息是否可以胜出 依次比较epoch zxid myid</span></span><br><span class="line">                            <span class="keyword">if</span> (totalOrderPredicate(n.leader, n.zxid, n.peerEpoch, getInitId(), getInitLastLoggedZxid(), getPeerEpoch())) &#123;</span><br><span class="line">                                <span class="comment">//胜出后 把投票改为对方的票据</span></span><br><span class="line">                                updateProposal(n.leader, n.zxid, n.peerEpoch);</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                <span class="comment">//否则 票据不变</span></span><br><span class="line">                                updateProposal(getInitId(), getInitLastLoggedZxid(), getPeerEpoch());</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="comment">//继续广播 让其他节点知道我现在的票据</span></span><br><span class="line">                            sendNotifications();</span><br><span class="line">                            <span class="comment">//如果收到的消息epoch小于当前节点的epoch 则忽略这条消息</span></span><br><span class="line">                        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (n.electionEpoch &lt; logicalclock.get()) &#123;</span><br><span class="line">                                LOG.debug(</span><br><span class="line">                                    <span class="string">"Notification election epoch is smaller than logicalclock. n.electionEpoch = 0x&#123;&#125;, logicalclock=0x&#123;&#125;"</span>,</span><br><span class="line">                                    Long.toHexString(n.electionEpoch),</span><br><span class="line">                                    Long.toHexString(logicalclock.get()));</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                            <span class="comment">//如果epoch相同 继续比较zxid myid 如果胜出 则更新自己的票据 并发出广播</span></span><br><span class="line">                        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (totalOrderPredicate(n.leader, n.zxid, n.peerEpoch, proposedLeader, proposedZxid, proposedEpoch)) &#123;</span><br><span class="line">                            updateProposal(n.leader, n.zxid, n.peerEpoch);</span><br><span class="line">                            sendNotifications();</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        LOG.debug(</span><br><span class="line">                            <span class="string">"Adding vote: from=&#123;&#125;, proposed leader=&#123;&#125;, proposed zxid=0x&#123;&#125;, proposed election epoch=0x&#123;&#125;"</span>,</span><br><span class="line">                            n.sid,</span><br><span class="line">                            n.leader,</span><br><span class="line">                            Long.toHexString(n.zxid),</span><br><span class="line">                            Long.toHexString(n.electionEpoch));</span><br><span class="line"></span><br><span class="line">                        <span class="comment">// don't care about the version if it's in LOOKING state</span></span><br><span class="line">                        <span class="comment">//添加到本机投票集合 用来做选举终结判断</span></span><br><span class="line">                        recvset.put(n.sid, <span class="keyword">new</span> Vote(n.leader, n.zxid, n.electionEpoch, n.peerEpoch));</span><br><span class="line"></span><br><span class="line">                        voteSet = getVoteTracker(recvset, <span class="keyword">new</span> Vote(proposedLeader, proposedZxid, logicalclock.get(), proposedEpoch));</span><br><span class="line"></span><br><span class="line">                        <span class="comment">//判断选举是否结束 默认算法是超过半数server同意</span></span><br><span class="line">                        <span class="keyword">if</span> (voteSet.hasAllQuorums()) &#123;</span><br><span class="line"></span><br><span class="line">                            <span class="comment">// Verify if there is any change in the proposed leader</span></span><br><span class="line">                            <span class="comment">//一直等到新的通知到达 直到超时</span></span><br><span class="line">                            <span class="keyword">while</span> ((n = recvqueue.poll(finalizeWait, TimeUnit.MILLISECONDS)) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                                <span class="keyword">if</span> (totalOrderPredicate(n.leader, n.zxid, n.peerEpoch, proposedLeader, proposedZxid, proposedEpoch)) &#123;</span><br><span class="line">                                    recvqueue.put(n);</span><br><span class="line">                                    <span class="keyword">break</span>;</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line"></span><br><span class="line">                            <span class="comment">/*</span></span><br><span class="line"><span class="comment">                             * This predicate is true once we don't read any new</span></span><br><span class="line"><span class="comment">                             * relevant message from the reception queue</span></span><br><span class="line"><span class="comment">                             */</span></span><br><span class="line">                            <span class="comment">//确定leader</span></span><br><span class="line">                            <span class="keyword">if</span> (n == <span class="keyword">null</span>) &#123;</span><br><span class="line">                                <span class="comment">//修改状态</span></span><br><span class="line">                                setPeerState(proposedLeader, voteSet);</span><br><span class="line">                                Vote endVote = <span class="keyword">new</span> Vote(proposedLeader, proposedZxid, logicalclock.get(), proposedEpoch);</span><br><span class="line">                                leaveInstance(endVote);</span><br><span class="line">                                <span class="keyword">return</span> endVote;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                        <span class="comment">//OBSERVING 不参与选举投票</span></span><br><span class="line">                    <span class="keyword">case</span> OBSERVING:</span><br><span class="line">                        LOG.debug(<span class="string">"Notification from observer: &#123;&#125;"</span>, n.sid);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                        <span class="comment">//这两种需要参与选举</span></span><br><span class="line">                    <span class="keyword">case</span> FOLLOWING:</span><br><span class="line">                    <span class="keyword">case</span> LEADING:</span><br><span class="line">                        <span class="comment">/*</span></span><br><span class="line"><span class="comment">                         * Consider all notifications from the same epoch</span></span><br><span class="line"><span class="comment">                         * together.</span></span><br><span class="line"><span class="comment">                         */</span></span><br><span class="line">                        <span class="comment">//判断epoch是否相同</span></span><br><span class="line">                        <span class="keyword">if</span> (n.electionEpoch == logicalclock.get()) &#123;</span><br><span class="line">                            <span class="comment">//如果相同 加入本机的投票集合</span></span><br><span class="line">                            recvset.put(n.sid, <span class="keyword">new</span> Vote(n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span><br><span class="line">                            voteSet = getVoteTracker(recvset, <span class="keyword">new</span> Vote(n.version, n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span><br><span class="line">                            <span class="comment">//判断是否结束 如果结束 确认leader是否有效</span></span><br><span class="line">                            <span class="keyword">if</span> (voteSet.hasAllQuorums() &amp;&amp; checkLeader(recvset, n.leader, n.electionEpoch)) &#123;</span><br><span class="line">                                <span class="comment">//修改自己的状态并返回投票结果</span></span><br><span class="line">                                setPeerState(n.leader, voteSet);</span><br><span class="line">                                Vote endVote = <span class="keyword">new</span> Vote(n.leader, n.zxid, n.electionEpoch, n.peerEpoch);</span><br><span class="line">                                leaveInstance(endVote);</span><br><span class="line">                                <span class="keyword">return</span> endVote;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        <span class="comment">/*</span></span><br><span class="line"><span class="comment">                         * Before joining an established ensemble, verify that</span></span><br><span class="line"><span class="comment">                         * a majority are following the same leader.</span></span><br><span class="line"><span class="comment">                         *</span></span><br><span class="line"><span class="comment">                         * Note that the outofelection map also stores votes from the current leader election.</span></span><br><span class="line"><span class="comment">                         * See ZOOKEEPER-1732 for more information.</span></span><br><span class="line"><span class="comment">                         */</span></span><br><span class="line">                        outofelection.put(n.sid, <span class="keyword">new</span> Vote(n.version, n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span><br><span class="line">                        voteSet = getVoteTracker(outofelection, <span class="keyword">new</span> Vote(n.version, n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">if</span> (voteSet.hasAllQuorums() &amp;&amp; checkLeader(outofelection, n.leader, n.electionEpoch)) &#123;</span><br><span class="line">                            <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">                                logicalclock.set(n.electionEpoch);</span><br><span class="line">                                setPeerState(n.leader, voteSet);</span><br><span class="line">                            &#125;</span><br><span class="line">                            Vote endVote = <span class="keyword">new</span> Vote(n.leader, n.zxid, n.electionEpoch, n.peerEpoch);</span><br><span class="line">                            leaveInstance(endVote);</span><br><span class="line">                            <span class="keyword">return</span> endVote;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">default</span>:</span><br><span class="line">                        LOG.warn(<span class="string">"Notification state unrecoginized: &#123;&#125; (n.state), &#123;&#125;(n.sid)"</span>, n.state, n.sid);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!validVoter(n.leader)) &#123;</span><br><span class="line">                        LOG.warn(<span class="string">"Ignoring notification for non-cluster member sid &#123;&#125; from sid &#123;&#125;"</span>, n.leader, n.sid);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (!validVoter(n.sid)) &#123;</span><br><span class="line">                        LOG.warn(<span class="string">"Ignoring notification for sid &#123;&#125; from non-quorum member sid &#123;&#125;"</span>, n.leader, n.sid);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (self.jmxLeaderElectionBean != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    MBeanRegistry.getInstance().unregister(self.jmxLeaderElectionBean);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                LOG.warn(<span class="string">"Failed to unregister with JMX"</span>, e);</span><br><span class="line">            &#125;</span><br><span class="line">            self.jmxLeaderElectionBean = <span class="keyword">null</span>;</span><br><span class="line">            LOG.debug(<span class="string">"Number of connection processing threads: &#123;&#125;"</span>, manager.getConnectionThreadCount());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Send notifications to all peers upon a change in our vote</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *   广播消息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sendNotifications</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//循环发送</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">long</span> sid : self.getCurrentAndNextConfigVoters()) &#123;</span><br><span class="line">            QuorumVerifier qv = self.getQuorumVerifier();</span><br><span class="line">            <span class="comment">//消息实体</span></span><br><span class="line">            ToSend notmsg = <span class="keyword">new</span> ToSend(</span><br><span class="line">                ToSend.mType.notification,</span><br><span class="line">                proposedLeader,</span><br><span class="line">                logicalclock.get(),</span><br><span class="line">                QuorumPeer.ServerState.LOOKING,</span><br><span class="line">                sid,</span><br><span class="line">                proposedEpoch,</span><br><span class="line">                qv.toString().getBytes());</span><br><span class="line"></span><br><span class="line">            LOG.debug(</span><br><span class="line">                <span class="string">"Sending Notification: &#123;&#125; (n.leader), 0x&#123;&#125; (n.zxid), 0x&#123;&#125; (n.round), &#123;&#125; (recipient),"</span></span><br><span class="line">                    + <span class="string">" &#123;&#125; (myid), 0x&#123;&#125; (n.peerEpoch) "</span>,</span><br><span class="line">                proposedLeader,</span><br><span class="line">                Long.toHexString(proposedZxid),</span><br><span class="line">                Long.toHexString(logicalclock.get()),</span><br><span class="line">                sid,</span><br><span class="line">                self.getId(),</span><br><span class="line">                Long.toHexString(proposedEpoch));</span><br><span class="line"></span><br><span class="line">            <span class="comment">//添加到发送队列 这个队列会被workersender消费</span></span><br><span class="line">            sendqueue.offer(notmsg);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>借助一张网络图片，该图对于选举流程中涉及到数据的流向的描述还是很清楚的。</p>
+<p><img src="https:////p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3e4e95bf12d42c5b54cd862dea068e6~tplv-k3u1fbpfcp-zoom-1.image" alt="img"></p>
+<p>其中涉及一个<code>网络IO管理器</code>：负责维护处理发送和接收两个线程。及选举算法从<code>队列消费</code>和<code>生产</code>投票消息。最终执行核心的<code>选票PK</code>，按照一定策略进行更新和丢弃，直到选<code>举出一个</code>Leader。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>要想理解清楚Leader选举流程，其中几个重要的概念及名词要清楚。</p>
+<ul>
+<li>事务ID和Zxid的概念要明确</li>
+<li>Zxid和Sid比较的先后顺序及比较策略</li>
+<li>如何理解更新选票并广播自己的选票</li>
+</ul>
+<p>OK！关于Zookeeper的Leader选举流程暂时就聊这么多，后期还会对ZK实现的分布式锁以及涉及到的”惊群和脑裂的概念做一个介绍”，如果还有时间的话，再聊聊Zk是进行数据同步的几种模式！欢迎关注公众号：“<code>Java编程之道</code>”！🌹</p>
+<p>作者：爱唠嗑的阿磊<br>链接：<a href="https://juejin.im/post/6883483460686594061" target="_blank" rel="noopener">https://juejin.im/post/6883483460686594061</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/11/14/ZAB%E5%8D%8F%E8%AE%AE/" rel="next" title="ZAB协议">
+                <i class="fa fa-chevron-left"></i> ZAB协议
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">164</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Zookeeper的Leader选举"><span class="nav-number">1.</span> <span class="nav-text">Zookeeper的Leader选举</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#说在前面"><span class="nav-number">1.1.</span> <span class="nav-text">说在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Leader选举"><span class="nav-number">1.2.</span> <span class="nav-text">Leader选举</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选举流程"><span class="nav-number">1.3.</span> <span class="nav-text">选举流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Leader选举算法"><span class="nav-number">1.3.1.</span> <span class="nav-text">Leader选举算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选举流程源码"><span class="nav-number">1.4.</span> <span class="nav-text">选举流程源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#投票数据结构"><span class="nav-number">1.4.1.</span> <span class="nav-text">投票数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码入口"><span class="nav-number">1.4.2.</span> <span class="nav-text">源码入口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#QuorumPeerMain-java"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">QuorumPeerMain.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调用-QuorumPeer-的-start方法"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">调用 QuorumPeer 的 start方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行核心选举算法"><span class="nav-number">1.5.</span> <span class="nav-text">执行核心选举算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共292.4k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
