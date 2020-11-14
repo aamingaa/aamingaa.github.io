@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC] 说说你对volatile关键字的理解就我理解的而言，被volatile修饰的共享变量，就具有了以下两点特性： 1 . 保证了不同线程对该变量操作的可见性; 2 . 禁止指令重排序 volatile关键字如何保证可见性的？要知道volatile是如何保证可见性的需要先了解下有关CPU缓存的概念。我们知道CPU的运算速度要比内存的读写速度快很多，这就造成了内存无法跟上CPU的情况。为了解决">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
 <meta property="article:published_time" content="2020-06-24T03:12:06.000Z">
-<meta property="article:modified_time" content="2020-11-13T01:17:03.679Z">
+<meta property="article:modified_time" content="2020-11-14T01:01:23.562Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1583231-26cc583714507e7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/778/format/webp">
@@ -456,6 +456,7 @@
 
 <h2 id="volatile底层的实现机制？"><a href="#volatile底层的实现机制？" class="headerlink" title="volatile底层的实现机制？"></a>volatile底层的实现机制？</h2><p>如果把加入volatile关键字的代码和未加入volatile关键字的代码都生成汇编代码，会发现加入volatile关键字的代码会多出一个lock前缀指令。</p>
 <p>lock前缀指令实际相当于一个内存屏障，内存屏障提供了以下功能：</p>
+<p>lock addl把rsp寄存器的值加0，因为数据就是</p>
 <p>1 . 重排序时不能把后面的指令重排序到内存屏障之前的位置 </p>
 <p>2.将当前处理器缓存行的数据写回到系统内存。</p>
 <p>3.这个写回内存的操作会使其他在CPU里缓存了该内存地址的数据无效。</p>
@@ -583,7 +584,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">156</span>
+                  <span class="site-state-item-count">161</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -692,7 +693,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共276.8k字</span>
+  <span class="post-count">博客全站共293k字</span>
 </div>
 
         

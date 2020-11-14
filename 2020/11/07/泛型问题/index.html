@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 1. 概述泛型指的是可以将类型作为参数进行传递，其本质上就是类型参数化。比如:我们平时定义一个方法的时候，常会指定要传入一个具体类对象作为参数。而如果使用泛型，那么这个具体传入类的对象，就可以指定为某个类型，而不必指定具体的类。也就是我们将某个类型作为参数进行传递了。 1234&#x2F;&#x2F;普通方法public void testValue(String s) &amp;#123;&amp;">
 <meta property="article:published_time" content="2020-11-07T13:52:09.000Z">
-<meta property="article:modified_time" content="2020-11-07T13:56:57.795Z">
+<meta property="article:modified_time" content="2020-11-14T01:57:30.375Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  529
+                  869
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  3
                 </span>
               
             </div>
@@ -423,6 +423,14 @@
 
 <p>上面方法打印的结果:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Test1属性:t的类型为：java.lang.Object</span><br><span class="line">Test2属性：t的类型为：java.lang.String</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-泛型的两个关键字？"><a href="#4-泛型的两个关键字？" class="headerlink" title="4.泛型的两个关键字？"></a>4.泛型的两个关键字？</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class test &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        List&lt;? extends A&gt; list1 &#x3D; new ArrayList&lt;A&gt;();</span><br><span class="line">&#x2F;&#x2F;          list1.add(new A()); &#x2F;&#x2F;错误，编译器无法确定List所持有的类型，所以无法安全的向其中添加对象</span><br><span class="line">        A a &#x3D; list1.get(0);</span><br><span class="line">        List&lt;? extends A&gt; list2 &#x3D; new ArrayList&lt;B&gt;();</span><br><span class="line">        List&lt;? super B&gt; list3 &#x3D; new ArrayList&lt;B&gt;();</span><br><span class="line">        list3.add(new B());</span><br><span class="line">        &#x2F;&#x2F;想要正确，必须向下转型，但是向下转型是不安全的，非常容易出错</span><br><span class="line">       &#x2F;&#x2F;   B b &#x3D; list3.get(0); &#x2F;&#x2F;编译器无法确定get返回的对象类型是B,还是B的父类或 Object.</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    static class A&#123;&#125;</span><br><span class="line">    static class B extends A &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ArrayList heroList&lt;? extends Hero&gt; 表示这是一个Hero泛型或者其子类泛型<br>heroList 的泛型可能是Hero<br>heroList 的泛型可能是APHero<br>heroList 的泛型可能是ADHero<br>所以 可以确凿的是，<strong>从heroList取出来的对象，一定是可以转型成Hero的</strong></p>
+<p>但是，不能往里面放东西，因为<br>放APHero就不满足<ADHero><br>放ADHero又不满足<APHero></APHero></ADHero></p>
+<p>ArrayList heroList&lt;? super Hero&gt; 表示这是一个Hero泛型或者其父类泛型<br>heroList的泛型可能是Hero<br>heroList的泛型可能是Object</p>
+<p><strong>可以往里面插入Hero以及Hero的子类</strong><br>但是取出来有风险，因为不确定取出来是Hero还是Object</p>
+
       
     </div>
     
@@ -542,7 +550,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">156</span>
+                  <span class="site-state-item-count">161</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -601,7 +609,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-概述"><span class="nav-number">1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-使用泛型有哪些好处？"><span class="nav-number">2.</span> <span class="nav-text">2. 使用泛型有哪些好处？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-类型擦除"><span class="nav-number">3.</span> <span class="nav-text">3. 类型擦除</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-概述"><span class="nav-number">1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-使用泛型有哪些好处？"><span class="nav-number">2.</span> <span class="nav-text">2. 使用泛型有哪些好处？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-类型擦除"><span class="nav-number">3.</span> <span class="nav-text">3. 类型擦除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-泛型的两个关键字？"><span class="nav-number">4.</span> <span class="nav-text">4.泛型的两个关键字？</span></a></li></ol></div>
             
 
           </div>
@@ -651,7 +659,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共276.8k字</span>
+  <span class="post-count">博客全站共293k字</span>
 </div>
 
         
