@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 计算机网络三次握手最后一次ACK丢失？ 服务器如何处理之前的数据包？客户端发送的最后一个ACK因为某些原因丢失时：由于server端发送syn_ack报文后进入SYN_RCVD状态，就会启动tcp重传计时器，超时时就会重新发送syn_ack报文，总共发送 net.ipv4.tcp_synack_retries次；客户端在没有收到重传的syn_ack之前，发送数据给server端，由于s">
 <meta property="article:published_time" content="2020-11-05T03:19:28.000Z">
-<meta property="article:modified_time" content="2020-11-08T13:38:20.690Z">
+<meta property="article:modified_time" content="2020-11-14T13:46:24.088Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  310
+                  696
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  2
                 </span>
               
             </div>
@@ -419,11 +419,42 @@
 <p>邻接表和邻接矩阵</p>
 <h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>事务的回滚怎么实现的？</p>
 <p>数据库的乐观锁怎么实现？</p>
+<p>Mysql 的快速<a href="https://www.nowcoder.com/jump/super-jump/word?word=排序" target="_blank" rel="noopener">排序</a>怎么实现的 ？</p>
+<p>各种join的区别，性能之间有什么差异？</p>
+<p>数据库有哪些安全问题，如何避免SQL注入？</p>
+<p>select * 性能问题</p>
+<p>知道慢SQL吗</p>
+<p>索引为abc且查询条件为a=xxx order by b时能用上哪个索引？</p>
+<p>为什么是最左匹配</p>
+<p>B+树叶子满了，要添加新值怎么办？</p>
+<p>查询在什么时候不走（预期中的）索引order by原理？binlog,redolog,undolog都是什么，起什么作用？</p>
 <h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>槽位迁移的过程？</p>
 <p>缓存预热怎么做？</p>
 <p>跳表对比红黑树？</p>
-<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>什么是线程安全，JDK有什么手段可以保证线程安全</p>
+<p><a href="https://www.nowcoder.com/jump/super-jump/word?word=redis" target="_blank" rel="noopener">redis</a>和java中原子类自增怎么是实现？</p>
+<p>Redis锁是可重入的吗？</p>
+<p>Redis如何做内存优化？Redis常见的性能问题有哪些？该如何解决？</p>
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>什么是线程安全，JDK有什么手段可以保证线程安全？</p>
+<p>可重入锁？</p>
 <h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>查看端口命令？ linux常用命令？tcpdump是干啥的？什么场景用？</p>
+<p>如何查看端口占用情况</p>
+<p>如何查看远程服务器某一个端口被占用</p>
+<p>可以ping通，当时客户端连接不上服务端，什么原因？</p>
+<p>top loadaverage怎么计算的？</p>
+<h3 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h3><p>content-type在传递表单数据的时候是什么值（这两个感觉偏<a href="https://www.nowcoder.com/jump/super-jump/word?word=前端" target="_blank" rel="noopener">前端</a>了），urlencode是什么</p>
+<p>讲一下IOC是什么</p>
+<p>我看你提到了bean的销毁 那么这一步怎么执行的</p>
+<p>Spring@resource与 @autowired</p>
+<p>Spring AOP</p>
+<p>注解的原理</p>
+<p>Spring的IOC/AOP的实现（必考） </p>
+<p> 动态代理的实现方式（必考） </p>
+<p> Spring如何解决循环依赖（三级缓存）（必考） </p>
+<p> Spring的后置处理器 </p>
+<p> Spring的@Transactional如何实现的（必考） </p>
+<p> Spring的事务传播级别 </p>
+<p> BeanFactory和ApplicationContext的联系和区别</p>
+<p>cpu缓存？哪些是共享的，编程中如何使用cpu缓存？</p>
 
       
     </div>
@@ -544,7 +575,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">164</span>
+                  <span class="site-state-item-count">166</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -603,7 +634,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机网络"><span class="nav-number">1.</span> <span class="nav-text">计算机网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手最后一次ACK丢失？-服务器如何处理之前的数据包？"><span class="nav-number">1.1.</span> <span class="nav-text">三次握手最后一次ACK丢失？ 服务器如何处理之前的数据包？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">3.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">4.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">5.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">6.</span> <span class="nav-text">Linux</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机网络"><span class="nav-number">1.</span> <span class="nav-text">计算机网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手最后一次ACK丢失？-服务器如何处理之前的数据包？"><span class="nav-number">1.1.</span> <span class="nav-text">三次握手最后一次ACK丢失？ 服务器如何处理之前的数据包？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">3.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">4.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">5.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">6.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架"><span class="nav-number">7.</span> <span class="nav-text">框架</span></a></li></ol></div>
             
 
           </div>
@@ -653,7 +684,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共292.4k字</span>
+  <span class="post-count">博客全站共295.4k字</span>
 </div>
 
         
