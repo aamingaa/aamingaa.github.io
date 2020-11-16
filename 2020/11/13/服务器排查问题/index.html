@@ -100,7 +100,7 @@
 <meta property="og:image" content="https://img-blog.csdn.net/20180516100825613?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NvZGVyUE9QTw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="og:image" content="https://img-blog.csdn.net/20160617153120931">
 <meta property="article:published_time" content="2020-11-13T01:30:19.000Z">
-<meta property="article:modified_time" content="2020-11-13T02:41:27.274Z">
+<meta property="article:modified_time" content="2020-11-16T00:35:45.782Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdn.net/2018080815173689?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3lqY2xzeA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
@@ -713,6 +713,10 @@
 <p><img src="https://img-blog.csdn.net/20180516100717935?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NvZGVyUE9QTw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
 <p>6.打开下载好的 xxx.log 通过 查找方式 找到 对应线程 进行排查</p>
 <p><img src="https://img-blog.csdn.net/20180516100825613?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NvZGVyUE9QTw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">printf &#39;%x&#39; 32826 获取16进制的线程id，用于dump信息查询，结果为 803a。最后我们执行jstack 32805 |grep -A 20 803a</span><br><span class="line"></span><br><span class="line"> grep -A -B -C -A -B -C 后面都跟阿拉伯数字 -A是显示匹配后和它后面的n行</span><br></pre></td></tr></table></figure>
+
+
+
 <h3 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h3><p>查看当前所有tcp端口使用情况：</p>
 <p><img src="https://img-blog.csdn.net/20160617153120931" alt="è¿éåå¾çæè¿°"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# netstat -an | grep 3306   &#x2F;&#x2F;查看所有3306端口使用情况·</span><br></pre></td></tr></table></figure>
@@ -837,7 +841,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">166</span>
+                  <span class="site-state-item-count">169</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -946,7 +950,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共295.4k字</span>
+  <span class="post-count">博客全站共305.4k字</span>
 </div>
 
         

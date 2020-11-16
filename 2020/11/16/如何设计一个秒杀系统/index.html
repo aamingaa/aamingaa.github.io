@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="​    1**：这个项目主要是针对处理高并发问题。主要考虑的问题有以下几个方面：** 一、正确性。核心问题就是防止超卖，和重复下单。 二、高并发。主要是采用**Redis**进行缓存常用查询、消息队列异步下单、页面资源静态化等方面减去数据库压力。 三、安全性。主要有动态地址生成和接口放刷，双重**MD5**加密密码。 四、高可用性。一方面使用**Redis集群的主从复制和主从切换保证redis的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何设计一个秒杀系统?">
+<meta property="og:url" content="http://aamingaa.github.io/2020/11/16/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="​    1**：这个项目主要是针对处理高并发问题。主要考虑的问题有以下几个方面：** 一、正确性。核心问题就是防止超卖，和重复下单。 二、高并发。主要是采用**Redis**进行缓存常用查询、消息队列异步下单、页面资源静态化等方面减去数据库压力。 三、安全性。主要有动态地址生成和接口放刷，双重**MD5**加密密码。 四、高可用性。一方面使用**Redis集群的主从复制和主从切换保证redis的">
+<meta property="article:published_time" content="2020-11-16T02:50:13.000Z">
+<meta property="article:modified_time" content="2020-11-16T02:55:08.316Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2020/11/16/如何设计一个秒杀系统/"/>
+
+
+
+
+
+  <title>如何设计一个秒杀系统? | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/16/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何设计一个秒杀系统?</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-16T10:50:13+08:00">
+                2020-11-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E9%A2%98/" itemprop="url" rel="index">
+                    <span itemprop="name">设计题</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>​    <strong>1**</strong>：这个项目主要是针对处理高并发问题。主要考虑的问题有以下几个方面：**</p>
+<p><strong>一、正确性。核心问题就是防止超卖，和重复下单。</strong></p>
+<p><strong>二、高并发。主要是采用**</strong>Redis<strong>**进行缓存常用查询、消息队列异步下单、页面资源静态化等方面减去数据库压力。</strong></p>
+<p><strong>三、安全性。主要有动态地址生成和接口放刷，双重**</strong>MD5<strong>**加密密码。</strong></p>
+<p><strong>四、高可用性。一方面使用**</strong>Redis<strong><strong>集群的主从复制和主从切换保证</strong></strong>redis<strong><strong>的高可用性，另一方面，为防止</strong></strong>redsi<strong>**服务器宕</strong>   <strong>机，使用限流来防止**</strong>mysql<strong>**承受过多的请求。</strong></p>
+<p>第二个项目介绍：</p>
+<p>​    <strong>这个项目是我们实验室的项目，是和军方合作的项目。项目的流程，投标，竞标，开发和需求对接我都有参与。</strong></p>
+<p><strong>项目主要是关于知识图谱的。主要是将客户的数据导入系统进行处理，定义**</strong>shcema,<strong>**建立本体以及本体之间的关系，然后按照一定的将数据导入图数据中，并提供搜索展示。</strong></p>
+<p>​    <strong>数据的切割，就是将大的数据表切割成几张小表，表于表之间用外键关联，每个表生成一个实体，外键关联生成表与表之间的关系。</strong></p>
+<p><strong>一如何防止超卖：</strong></p>
+<p>​    1、利用数据库自带排他锁，当减库存的时候，进位where判断，只有库存余量大于0的时候才进行进库存; update goods set num = num - 1 WHERE id = 1001 and num &gt; 0; 2、也可以可用乐观锁CAS版本号机制。select version from goods WHERE id= 1001；update goods set num = num - 1, version = version + 1 WHERE id= 1001 AND num &gt; 0 AND version = @version(上面查到的version);</p>
+<p><strong>二、服务器抗压思路：</strong></p>
+<p>​    一、使用消息队列、异步生成订单；</p>
+<p>​    二、redis库存量预缓存。只将少量的请求流入到服务器。如果全部卖完，拦截请求。</p>
+<p>​    三、生成订单前，进行一系列的检验：是否还有库存，是否重复下单，这些数据都可以缓存。</p>
+<p><strong>三、前端设计</strong></p>
+<p>​    <strong>静态资源缓存：</strong>将活动页面上的所有可以静态的元素全部静态化，尽量减少动态元素；通过CDN缓存静态资源，来抗峰值。在url后面加上？即可。</p>
+<p>​    <strong>禁止重复提交</strong>：前端:用户提交之后按钮置灰，禁止重复提交；后端：在进入页面时，服务器生成token并存到缓存或者session中，form表单使用隐藏域来存储这个token，提交之后带有token.后端收到这个token,看是否与服务器生成的token一致，如果不一致就是重复提交。如果一致，处理完之后清除token.</p>
+<p>服务器返回表单页面时，会先生成一个subToken保存于session，并把该subToen传给表单页面。当表单提交时会带上subToken，服务器拦截器Interceptor会拦截该请求，拦截器判断session保存的subToken和表单提交subToken是否一致。若不一致或session的subToken为空或表单未携带subToken则不通过。</p>
+<p>首次提交表单时session的subToken与表单携带的subToken一致走正常流程，然后拦截器内会删除session保存的subToken。当再次提交表单时由于session的subToken为空则不通过。从而实现了防止表单重复提交。</p>
+<p>​    <strong>用户限流：某一时间段内只允许用户提交少数次请求，**</strong>IP<strong><strong>限流</strong></strong>(Nginx<strong><strong>设置</strong></strong>IP<strong><strong>地址限流</strong></strong>)<strong>**。</strong></p>
+<p>​    </p>
+<p><strong>中间代理层：</strong></p>
+<p>​    <strong>利用负载均衡（例如反响代理**</strong>Nginx<strong>**等）使用多个服务器并发处理请求，减小服务器压力。</strong>   </p>
+<p>​    <strong>(**</strong>正向代理代理客户端<strong><strong>VPN</strong></strong>，反向代理代理服务器。<strong>**NGINX)</strong> </p>
+<p>​    横向增加服务器数量，然后将请求分发到各个服务器上，将原先请求集中到单个服务器上的情况改为将请求分发到多个服务器上，将负载分发到不同的服务器，也就是我们所说的负载均衡。普通轮询算法、比例加权轮询、ip路由负载、基于服务器响应时间负载分配、根据域名负载。</p>
+<p>轮询（默认）：每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除。</p>
+<p>指定权重：指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况。</p>
+<p>IP绑定ip_hash：每个请求按ip的hash结果分配，<strong>这样每个访客固定访问一个后端服务器</strong>，<strong>可以解决**</strong>session<strong>**的问题。</strong></p>
+<p>url_hash：按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。</p>
+<p>fair：按后端服务器的响应时间来分配请求，响应时间短的优先分配。</p>
+<p><strong>服务层：</strong></p>
+<p>​    <strong>业务分离**</strong>:**将秒杀业务系统和其他业务分离，单独放在高配服务器上。</p>
+<p>​    采<strong>用消息队列缓存请求</strong>：将大流量请求写到消息队列缓存，利用服务器根据自己的处理能力主动到消息缓存队列中抓取任务处理请求。</p>
+<p>​    <strong>利用缓存应对读请求</strong>：对于读多写少业务，大部分请求是查询请求，所以可以读写分离，利用缓存分担数据库压力。</p>
+<p><strong>数据库层：</strong></p>
+<p>​    上游就需要把请求拦截掉，数据库层只承担“能力范围内”的访问请求。所以，上面通过在服务层引入队列和缓存，让最底层的数据库高枕无忧。可以对数据库进行优化，减少数据库压力。</p>
+<p>​    如果redis挂掉的话，如果提高数据库的并发能力：</p>
+<p>​    <strong>业务拆分</strong>：将不同功能的模块拆分，使用不同的数据库。</p>
+<p>​    MySQL<strong>主从复制，读写分离</strong>：</p>
+<p>​    <strong>分表分库：</strong></p>
+<p><strong>其他策略：为请求分配成功状态或者分配秒杀资格，将没有资格的请求全部过滤，</strong>只有有资格的才能参与秒杀。说到底的秒杀这个高并发，并不是真正的处理高并发请求，而是如何应对高并发。将大量请求拦截然后放小量请求到数据库执行抢单是完全可以的，不用担心请求丢失的问题。</p>
+<p><strong>四、怎么保证**</strong>redis<strong>**缓存和数据库的一致性</strong></p>
+<p>​    <strong>延时双删；</strong></p>
+<p>​    存在不一致问题的，基本都是库存量。秒杀系统的设计，最重要的是不能超卖，这个问题我们已经谈过，用mysql排他锁或者乐观CAS版本号机制可以防止。而即使redis库存量比实际mysql库存量大，依然不会超卖。而redis库存量比mysql库存量小，可能发生没少卖的情况。少卖，问题不大。如果不能少卖，可以将redis预库存调大，他主要起到拦截请求降流的作用，一致不一致问题不大。</p>
+<p><strong>五、安全性问题</strong></p>
+<p>​    <strong>1**</strong>、动态地址生成**  </p>
+<p>​    <strong>2**</strong>、接口防刷**</p>
+<p>​    </p>
+<p><strong>六、消息队列</strong></p>
+<p>​    <strong>防止重复消费</strong>：重复消费在消息队列所存在的问题中，从来都不是一个严重的问题。如果是消息是读，那多消费一次没啥影响。如果是写，例如我们这个订单生成，消费之前，查询一下是否之前已经存在用户ID商品ID构成的订单，我们可以将生成的订单存入缓存，所以查询一次也不费劲。</p>
+<p>​    <strong>消息的消费结果如何返回给消息发送方</strong>：客户端轮询订单生成结果。</p>
+<p>​    <strong>消息丢失：</strong>秒杀系统中，本来就是万中选一的，丢失无所谓。如果是重要的信息，我们可以从三个角度来避免。如果是发送者丢失，开启confirm机制，如果队列丢失，开始queue持久化和消息持久化。如果是消费者丢失，关闭自动ACK,当我们消费完之后，调用API给queue发送确认信息。</p>
+<p><strong>七、秒杀流程、画架构图</strong></p>
+<p>​    1、登录进入商品列表页面，静态资源缓存</p>
+<p>​    2、点击进入商品详情页面，静态资源缓存，ajax获取验证码(服务器生成三个数的预算，并将结果缓存到redis);</p>
+<p>​    3、点击秒杀, 将验证码结果和商品ID传给后端，如果结果正确。动态生成随机串UUID,结合用户ID和商品ID存入redis，并将path传给前端。前端获取path后，再根据path地址调用秒杀服务；</p>
+<p>​    4、服务端获取请求的path参数，去查缓存是否在；</p>
+<p>​    5、如果存在，预减redis库存，如果还有库存，看是否已经生成订单，没有的话就将请求入消息队列。</p>
+<p>​    6、从消息队列中取消息：获取商品Id和用户ID,判断库存，重复下单；然后下单。</p>
+<p>​    7、下单：减库存，生成订单； </p>
+<p>​    8、前端轮询订单生成结果。50ms继续轮询或者秒杀是否成功和失败;</p>
+<p><strong>八、优化策略</strong></p>
+<p>​    多服务器负载均衡、</p>
+<p><strong>简单介绍一下**</strong>Nginx** </p>
+<p>​    Nginx是一款<strong>轻量级的**</strong>Web** <strong>服务器**</strong>/<strong><strong>反向代理服务器及电子邮件（</strong></strong>IMAP/POP3<strong>**）代理服务器</strong>。 <strong>Nginx</strong> <strong>主要提供反向代理、负载均衡、动静分离**</strong>(<strong><strong>静态资源服务</strong></strong>)<strong>**等服务</strong>。下面我简单地介绍一下这些名词。</p>
+<p>​    正向代理：某些情况下，<strong>代理我们用户去访问服务器</strong>，<strong>需要用户手动的设置代理服务器的**</strong>ip<strong>**和端口号。</strong>正向代理比较常见的一个例子就是 VPN了。</p>
+<p>​    反向代理：<strong>是用来代理服务器的，代理我们要访问的目标服务器。代理服务器接受请求，然后将请求转发给内</strong></p>
+<p><strong>部网络的服务器，</strong>并将从服务器上得到的结果返回给客户端，此时代理服务器对外就表现为一个服务器。</p>
+<p>​    <strong>负载均衡</strong> </p>
+<p>​    在高并发情况下需要使用，其原理就是将并发请求分摊到多个服务器执行，减轻每台服务器的压力，多台服务器(集</p>
+<p>群)共同完成工作任务，从而提高了数据的吞吐量。Nginx支持的<strong>weight**</strong>轮询（默认）、<strong><strong>ip_hash</strong></strong>、<strong><strong>fair</strong></strong>、<strong><strong>url_hash</strong></strong>这四种负载均衡调度算法**，感兴趣的可以自行查阅。负载均衡相比于反向代理更侧重的时将请求分担到多台服务器上去，所以谈论负载均衡只有在提供某服务的服务器大于两台时才有意义。</p>
+<p>​    <strong>动静分离</strong> </p>
+<p>​    动静分离是让动态网站里的动态网页根据一定规则把不变的资源和经常变的资源区分开来，动静资源做好了拆分以</p>
+<p>后，我们就可以根据静态资源的特点将其做缓存操作，这就是网站静态化处理的核心思路。</p>
+<p>22.设计秒杀方案（从高并发、快速响应、高可用三方面回答，高并发（增加网络带宽、DNS域名解析分发多台服务器、使用前置代理服务器ngnix、CDN内容分发、数据库查询优化（读写分离、分库分表）），快速响应（缓存服务器（memcached、redis）、能使用静态页面就用静态页面，减少容器解析、把常访问的图片等内容缓存）、高可用（热备，如数据库服务器的热备、集群监控（如使用zabbix，重点关注IO、内存、带宽和机器load）））</p>
+<p>服务器返回表单页面时，会先生成一个subToken保存于session，并把该subToen传给表单页面。当表单提交时会带上subToken，服务器拦截器Interceptor会拦截该请求，拦截器判断session保存的subToken和表单提交subToken是否一致。若不一致或session的subToken为空或表单未携带subToken则不通过。</p>
+<p>首次提交表单时session的subToken与表单携带的subToken一致走正常流程，然后拦截器内会删除session保存的subToken。当再次提交表单时由于session的subToken为空则不通过。从而实现了防止表单重复提交。</p>
+<p><strong>缓存、降级和限流：</strong></p>
+<p><strong>在开发高并发系统时，有三把利器用来保护系统：缓存、降级和限流：</strong></p>
+<p>​    <strong>缓存：缓存的目的是提升系统访问速度和增大系统处理容量</strong></p>
+<p>​    <strong>降级：降级是当服务出现问题或者影响到核心流程时，需要暂时屏蔽掉，待高峰或者问题解决后再打开</strong></p>
+<p>​    <strong>限流：限流的目的是通过对并发访问**</strong>/<strong>**请求进行限速，或者对一个时间窗口内的请求进行限速来保护系统，一旦达到限制速率则可以拒绝服务、排队或等待、降级等处理。</strong></p>
+<p>​    计数器法：设置一个计数器counter，每当一个请求过来的时候，counter就加1，如果counter的值大于100并且该请求与第一个请求的间隔时间还在1分钟之内，那么说明请求数过多；如果该请求与第一个请求的间隔时间大于1分钟，且counter的值还在限流范围内，那么就重置 counter。缺点：统计的精度太低，无法处理临界问题。如果我在单位时间<strong>1s**</strong>内的前<strong><strong>10ms</strong></strong>，已经通过了<strong><strong>100</strong></strong>个请求，那后面的<strong><strong>990ms</strong></strong>，只能眼巴巴的把请求拒绝，我们把这种现象称为<strong><strong>“</strong></strong>突刺现象<strong>**”</strong></p>
+<p> public boolean grant() {</p>
+<p>​    long now = getNowTime();</p>
+<p>​    if (now &lt; timeStamp + interval) {</p>
+<p>​      // 在时间窗口内</p>
+<p>​      reqCount++;</p>
+<p>​      // 判断当前时间窗口内是否超过最大请求控制数</p>
+<p>​      return reqCount &lt;= limit;</p>
+<p>​     } else {</p>
+<p>​      timeStamp = now;</p>
+<p>​      // 超时后重置</p>
+<p>​      reqCount = 1;</p>
+<p>​      return true;</p>
+<p>​    }</p>
+<p>  }</p>
+<p>滑动窗口算法：将窗口更加细分，每个窗口都有自己的计数器，当总计算达到限定时，限流。这个滑动窗口只是将计算法变得更平滑而已。本质一样。</p>
+<p>漏斗法：将容器比作一个漏斗，当请求进来时，相当于水倒入漏斗，然后从下端小口慢慢匀速的流出。不管上面流量多大，下面流出的速度始终保持不变。这种算法，在使用过后也存在弊端：无法应对短时间的突发流量。</p>
+<p>在<strong>令牌桶算法</strong>中，存在一个桶，用来存放固定数量的令牌。算法中存在一种机制，以一定的速率往桶中放令牌。每次请求调用需要先获取令牌，只有拿到令牌，才有机会继续执行，否则选择选择等待可用的令牌、或者直接拒绝。通过Google开源的guava包，我们可以很轻松的创建一个令牌桶算法的限流器。</p>
+<p>Google开源工具包Guava提供了限流工具类<strong>RateLimiter</strong>，该类基于令牌桶算法(Token Bucket)来完成限流，非常易于使用。RateLimiter经常用于限制对一些物理资源或者逻辑资源的访问速率，它支持两种获取permits接口，一<strong>种是如果拿不到立刻返回**</strong>false<strong><strong>（</strong></strong>tryAcquire()<strong><strong>），一种会阻塞等待一段时间看能不能拿到（</strong></strong>tryAcquire(long timeout, TimeUnit unit)<strong>**）。</strong></p>
+<p>缺点：传<strong>统的方式整合**</strong>RateLimiter** <strong>有很大的缺点</strong>：<strong>代码重复量特别大**</strong>，而且本身不支持注解方式。**</p>
+<p><strong>ES:</strong></p>
+<p>Elasticsearch是一个近乎实时的搜索平台。这意味着从索引文档到可以搜索的时间只有轻微的延迟（通常是1秒）.</p>
+<p>集群是一个或多个节点(服务器)的集合. 节点是一个单独的服务器，它是集群的一部分，存储数据，并参与集群的索引和搜索功能。</p>
+<p>索引是具有某种相似特征的文档的集合。例如，你可以有一个顾客数据索引，产品目录索引和订单数据索引。文档是可以被索引的基本信息单元。文档用JSON表示,有多个field,如年龄，性别，地址。</p>
+<p>Elasticsearch提供了将你的索引细分为多个碎片（或者叫分片）的能力。在创建索引时，可以简单地定义所需的分片数量。每个分片本身就是一个功能完全独立的“索引”，可以驻留在集群中的任何节点上。Shards &amp; Replicas.每个分片又有副本。</p>
+<p><strong>正向索引是通过**</strong>key<strong><strong>找</strong></strong>value<strong><strong>，反向索引则是通过</strong></strong>value<strong><strong>找</strong></strong>key<strong>**。</strong></p>
+<p>首先将文本分割成一系列被称为语汇单元(token)的独立原子元素，此过程即为文档分析，然后建立倒排索引，也就是每个term关键词出现在哪些文档之中。ID TERM DOCUMENT List.，Elasticsearch分别为每个field都建立了一个倒排索引。</p>
+<p>Elasticsearch为了能快速找到某个term，将所有的term排个序，二分法查找term，logN的查找效率，就像通过字典查找一样，这就是Term Dictionary。又有一个Term Index，就像字典里的索引页一样，A开头的有哪些term，分别在哪页，可以理<strong>解**</strong>term index<strong>**是一颗树</strong>：这棵树不会包含所有的term，它包含的是term的一些前缀。通过term index可以快速地定位到term dictionary的某个offset，然后从这个位置再往后顺序查找。再结合FST(Finite State Transducers)<strong>的压缩技术，可以使**</strong>term index<strong><strong>缓存到内存中。从</strong></strong>term index<strong><strong>查到对应的</strong></strong>term dictionary<strong><strong>的</strong></strong>block<strong><strong>位置之后，再去磁盘上找</strong></strong>term<strong>**，大大减少了磁盘随机读的次数。</strong></p>
+<p><strong>用**</strong>FST<strong><strong>压缩</strong></strong>term index<strong><strong>外，对</strong></strong>posting list<strong><strong>也有压缩技巧，如</strong></strong>bitmap<strong>**；</strong></p>
+<p><strong>联合索引直接利用跳表**</strong>(Skip list)<strong><strong>的数据结构快速做“与”运算，或者利用上面提到的</strong></strong>bitset<strong>**按位“与”。</strong></p>
+<p><strong>shard = hash(document_id) % (num_of_primary_shards)</strong></p>
+<p>字典树：</p>
+<p>根节点不包含字符，除根节点外每一个节点都只包含一个字符。</p>
+<p>从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串。</p>
+<p>每个节点的所有子节点包含的字符都不相同。</p>
+<p><strong>系统设计问题：</strong></p>
+<p>​    <strong>1**</strong>、**让你系统的设计一个高并发的架构，你会从哪几个方面考虑？</p>
+<p>​    <strong>2**</strong>、一个千万级的<strong><strong>APP</strong></strong>，你要搞定关注和粉丝列表，你用什么来做。要求最后一个关注的在最前面。新增和取关都要比较快的反馈你怎么做？如果一个人关注了之后，服务器宕机了怎么办？**</p>
+<p>​    <strong>3**</strong>、**设计一个榨汁机类，面向对象怎么设计 </p>
+<p>​    <strong>4**</strong>、**OOD design：计费停车场</p>
+<p>​    5、多个服务器间共享session的解决方案</p>
+<p>​    问了new一个对象的加载顺序, 答了从父类到子类的加载过程 静态变量和静态块, 哪个先加载, 答了静态变量。</p>
+<p>​    假设有这么一个场景，有一条新闻，新闻的评论量可能很大，如何设计评论的读和写</p>
+<p>​    你如果写用InnoDB，读用Myisam的话，主从同步怎么做</p>
+<p>​    假设如果有同一时间海量数据入库，你怎么做（期间扯到了鹿晗关晓彤，这种微博大 V给他安排上，还提了消息队列做削峰）</p>
+<p>​    你对Elasticsearch有什么了解</p>
+<p>然后就问开放题了，问12306怎么处理大量请求。 </p>
+<p>  问12306怎么处理大量的读请求。 </p>
+<p>  问12306为什么有的时候会有看的时候有票，但是买的时候没票的情况，问我有可能会是什么原因。 </p>
+<p>  问12306可能存在第三方软件帮忙抢票，怎么防止。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/11/16/Springg%E4%BA%8B%E5%8A%A1/" rel="next" title="Springg事务">
+                <i class="fa fa-chevron-left"></i> Springg事务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">169</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.4k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
