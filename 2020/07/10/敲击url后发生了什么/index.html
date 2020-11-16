@@ -79,18 +79,19 @@
 
 
 
-<meta name="description" content="[TOC] 第一步：浏览器输入域名 例如输入：  第二步：浏览器查找域名的IP地址 浏览器会把输入的域名解析成对应的IP，其过程如下： 1.查找浏览器缓存：因为浏览器一般会缓存DNS记录一段时间，不同浏览器的时间可能不一样，一般2-30分钟不等，浏览器去查找这些缓存，如果有缓存，直接返回IP，否则下一步。 2.查找系统缓存：浏览器缓存中找不到IP之后，浏览器会进行系统调用（windows中是get">
+<meta name="description" content="[TOC]  DHCP 配置主机信息假设主机最开始没有 IP 地址以及其它信息，那么就需要先使用 DHCP 来获取。主机生成一个 DHCP 请求报文，并将这个报文放入具有目的端口 67 和源端口 68 的 UDP 报文段中。该报文段则被放入在一个具有广播 IP 目的地址(255.255.255.255) 和源 IP 地址（0.0.0.0）的 IP 数据报中。该数据报则被放置在 MAC 帧中，该帧具">
 <meta property="og:type" content="article">
 <meta property="og:title" content="敲击url后发生了什么">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/10/%E6%95%B2%E5%87%BBurl%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 第一步：浏览器输入域名 例如输入：  第二步：浏览器查找域名的IP地址 浏览器会把输入的域名解析成对应的IP，其过程如下： 1.查找浏览器缓存：因为浏览器一般会缓存DNS记录一段时间，不同浏览器的时间可能不一样，一般2-30分钟不等，浏览器去查找这些缓存，如果有缓存，直接返回IP，否则下一步。 2.查找系统缓存：浏览器缓存中找不到IP之后，浏览器会进行系统调用（windows中是get">
-<meta property="og:image" content="https://img-blog.csdn.net/20180907093605464?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW9fMDUwOQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:description" content="[TOC]  DHCP 配置主机信息假设主机最开始没有 IP 地址以及其它信息，那么就需要先使用 DHCP 来获取。主机生成一个 DHCP 请求报文，并将这个报文放入具有目的端口 67 和源端口 68 的 UDP 报文段中。该报文段则被放入在一个具有广播 IP 目的地址(255.255.255.255) 和源 IP 地址（0.0.0.0）的 IP 数据报中。该数据报则被放置在 MAC 帧中，该帧具">
+<meta property="og:image" content="https://camo.githubusercontent.com/c6bda910351aff0fc39247088fde335ab5bbf3c8/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f2545352539302538342545372541372538442545372542442539312545372542422539432545382541462542372545362542312538322545372539342541382545352538382542302545372539412538342545352538442538462545382541452541452e6a7067">
+<meta property="og:image" content="http://aamingaa.github.io/2020/07/10/%E6%95%B2%E5%87%BBurl%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201116150659656.png">
 <meta property="article:published_time" content="2020-07-10T13:47:39.000Z">
-<meta property="article:modified_time" content="2020-07-10T14:05:28.236Z">
+<meta property="article:modified_time" content="2020-11-16T07:09:03.333Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdn.net/20180907093605464?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW9fMDUwOQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/c6bda910351aff0fc39247088fde335ab5bbf3c8/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f2545352539302538342545372541372538442545372542442539312545372542422539432545382541462542372545362542312538322545372539342541382545352538382542302545372539412538342545352538442538462545382541452541452e6a7067">
 
 
 
@@ -375,7 +376,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k
+                  1.3k
                 </span>
               
 
@@ -391,7 +392,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  4
                 </span>
               
             </div>
@@ -413,34 +414,30 @@
 
       
         <p>[TOC]</p>
-<p>第一步：浏览器输入域名</p>
-<p>例如输入：</p>
-<p><img src="https://img-blog.csdn.net/20180907093605464?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW9fMDUwOQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
-<p>第二步：浏览器查找域名的IP地址</p>
-<p>浏览器会把输入的域名解析成对应的IP，其过程如下：</p>
+<p><img src="https://camo.githubusercontent.com/c6bda910351aff0fc39247088fde335ab5bbf3c8/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f2545352539302538342545372541372538442545372542442539312545372542422539432545382541462542372545362542312538322545372539342541382545352538382542302545372539412538342545352538442538462545382541452541452e6a7067" alt="各种网络请求用到的协议"></p>
+<h3 id="DHCP-配置主机信息"><a href="#DHCP-配置主机信息" class="headerlink" title="DHCP 配置主机信息"></a>DHCP 配置主机信息</h3><p>假设主机最开始没有 IP 地址以及其它信息，那么就需要先使用 DHCP 来获取。<br>主机生成一个 DHCP 请求报文，并将这个报文放入具有目的端口 67 和源端口 68 的 UDP 报文段中。<br>该报文段则被放入在一个具有广播 IP 目的地址(255.255.255.255) 和源 IP 地址（0.0.0.0）的 IP 数据报中。<br>该数据报则被放置在 MAC 帧中，该帧具有目的地址 FF:FF:FF:FF:FF:FF，将广播到与交换机连接的所有设备。<br>连接在交换机的 DHCP 服务器收到广播帧之后，不断地向上分解得到 IP 数据报、UDP 报文段、DHCP 请求报<br>文，之后生成 DHCP ACK 报文，该报文包含以下信息：IP 地址、DNS 服务器的 IP 地址、默认网关路由器的 IP<br>地址和子网掩码。该报文被放入 UDP 报文段中，UDP 报文段有被放入 IP 数据报中，最后放入 MAC 帧中。<br>该帧的目的地址是请求主机的 MAC 地址，因为交换机具有自学习能力，之前主机发送了广播帧之后就记录了<br>MAC 地址到其转发接口的交换表项，因此现在交换机就可以直接知道应该向哪个接口发送该帧。<br>主机收到该帧后，不断分解得到 DHCP 报文。之后就配置它的 IP 地址、子网掩码和 DNS 服务器的 IP 地址，并<br>在其 IP 转发表中安装默认网关。</p>
+<h3 id="DNS-解析"><a href="#DNS-解析" class="headerlink" title="DNS 解析"></a>DNS 解析</h3><p>浏览器会把输入的域名解析成对应的IP，其过程如下：</p>
 <p>1.查找浏览器缓存：因为浏览器一般会缓存DNS记录一段时间，不同浏览器的时间可能不一样，一般2-30分钟不等，浏览器去查找这些缓存，如果有缓存，直接返回IP，否则下一步。</p>
 <p>2.查找系统缓存：浏览器缓存中找不到IP之后，浏览器会进行系统调用（windows中是gethostbyname），查找本机的hosts文件，如果找到，直接返回IP，否则下一步。</p>
 <p>3.查找路由器缓存：如果1,2步都查询无果，则需要借助网络，路由器一般都有自己的DNS缓存，将前面的请求发给路由器，查找ISP 服务商缓存 DNS的服务器，如果查找到IP则直接返回，没有的话继续查找。</p>
 <p>4.递归查询：如果以上步骤还找不到，则ISP的DNS服务器就会进行递归查询，所谓递归查询就是如果主机所询问的本地域名服务器不知道被查询域名的IP地址，那么本地域名服务器就以DNS客户的身份，向其他根域名服务器继续发出查询请求报文，而不是让该主机自己进行下一步查询。（本地域名服务器地址是通过DHPC协议获取地址，DHPC是负责分配IP地址的）</p>
 <p>5.迭代查询：本地域名服务器采用迭代查询，它先向一个根域名服务器查询。本地域名服务器向根域名服务器的查询一般都是采用迭代查询。所谓迭代查询就是当根域名服务器收到本地域名服务器发出的查询请求报文后，要么告诉本地域名服务器下一步应该查询哪一个域名服务器，然后本地域名服务器自己进行后续的查询。（而不是替代本地域名服务器进行后续查询）。</p>
 <p>本例子中：根域名服务器告诉本地域名服务器，下一次应查询的顶级域名服务器dns.net的IP地址。本地域名服务器向顶级域名服务器dns.net进行查询。顶级域名服务器dns.net告诉本地域名服务器，下一次应查询的权限域名服务器dns.csdn.net的IP地址。本地域名服务器向权限域名服务器dns.csdn.net进行查询。权限域名服务器dns.csdn.net告诉本地域名服务器，所查询的主机<a href="http://www.csdn.net的IP地址。本地域名服务器最后把结果告诉主机。" target="_blank" rel="noopener">www.csdn.net的IP地址。本地域名服务器最后把结果告诉主机。</a></p>
-<p>第三步 ：浏览器与目标服务器建立TCP连接</p>
 <ol>
+<li>TCP 连接</li>
+<li>发送 HTTP 请求</li>
+<li>服务器处理请求并返回 HTTP 报文</li>
+<li>浏览器解析渲染页面</li>
+<li>连接结束</li>
+</ol>
+<h3 id="浏览器与目标服务器建立TCP连接"><a href="#浏览器与目标服务器建立TCP连接" class="headerlink" title="浏览器与目标服务器建立TCP连接"></a>浏览器与目标服务器建立TCP连接</h3><ol>
 <li><p>主机浏览器通过DNS解析得到了目标服务器的IP地址后，与服务器建立TCP连接。</p>
 </li>
 <li><p>TCP3次握手连接：浏览器所在的客户机向服务器发出连接请求报文（SYN标志为1）；服务器接收报文后，同意建立连接，向客户机发出确认报文（SYN，ACK标志位均为1）；客户机接收到确认报文后，再次向服务器发出报文，确认已接收到确认报文；此处客户机与服务器之间的TCP连接建立完成，开始通信。</p>
+<p><img src="/2020/07/10/%E6%95%B2%E5%87%BBurl%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201116150659656.png" alt="image-20201116150659656"></p>
 </li>
 </ol>
-<p>第四步：浏览器通过http协议发送请求</p>
-<p>浏览器向主机发起一个HTTP-GET方法报文请求。请求中包含访问的URL，也就是<a href="http://www.csdn.com/" target="_blank" rel="noopener">http://www.csdn.com/</a> ，KeepAlive，长连接，还有User-Agent用户浏览器操作系统信息，编码等。值得一提的是Accep-Encoding和Cookies项。Accept-Encoding一般采用gzip，压缩之后传输html文件。Cookies如果是首次访问，会提示服务器建立用户缓存信息，如果不是，可以利用Cookies对应键值，找到相应缓存，缓存里面存放着用户名，密码和一些用户设置项。</p>
-<p>第五步：某些服务会做永久重定向响应</p>
-<p>对于大型网站存在多个主机站点，了负载均衡或者导入流量，提高SEO排名，往往不会直接返回请求页面，而是重定向。返回的状态码就不是200OK，而是301,302以3开头的重定向码，浏览器在获取了重定向响应后，在响应报文中Location项找到重定向地址，浏览器重新第一步访问即可。</p>
-<p>重定向的作用：重定向是为了负载均衡或者导入流量，提高SEO排名。利用一个前端服务器接受请求，然后负载到不同的主机上，可以大大提高站点的业务并发处理能力；重定向也可将多个域名的访问，集中到一个站点；由于baidu.com，<a href="http://www.baidu.com会被搜索引擎认为是两个网站，照成每个的链接数都会减少从而降低排名，永久重定向会将两个地址关联起来，搜索引擎会认为是同一个网站，从而提高排名。" target="_blank" rel="noopener">www.baidu.com会被搜索引擎认为是两个网站，照成每个的链接数都会减少从而降低排名，永久重定向会将两个地址关联起来，搜索引擎会认为是同一个网站，从而提高排名。</a></p>
-<p>第六步：浏览器跟踪重定向地址</p>
-<p>当浏览器知道了重定向后最终的访问地址之后，重新发送一个http请求，发送内容同上。</p>
-<p>第七步：服务器处理请求</p>
-<p>服务器接收到获取请求，然后处理并返回一个响应。Web 页面内容放入报文主体中，发回给主机。浏览器收到 HTTP 响应报文后，抽取出 Web 页面内容，之后进行渲染，显示 Web 页面。</p>
-
+<h3 id="服务器处理请求，发回响应"><a href="#服务器处理请求，发回响应" class="headerlink" title="服务器处理请求，发回响应"></a>服务器处理请求，发回响应</h3><h3 id="浏览器渲染解析"><a href="#浏览器渲染解析" class="headerlink" title="浏览器渲染解析"></a>浏览器渲染解析</h3>
       
     </div>
     
@@ -530,8 +527,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -551,7 +557,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">169</span>
+                  <span class="site-state-item-count">171</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -601,6 +607,22 @@
       </section>
 
       
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#DHCP-配置主机信息"><span class="nav-number">1.</span> <span class="nav-text">DHCP 配置主机信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS-解析"><span class="nav-number">2.</span> <span class="nav-text">DNS 解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浏览器与目标服务器建立TCP连接"><span class="nav-number">3.</span> <span class="nav-text">浏览器与目标服务器建立TCP连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器处理请求，发回响应"><span class="nav-number">4.</span> <span class="nav-text">服务器处理请求，发回响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浏览器渲染解析"><span class="nav-number">5.</span> <span class="nav-text">浏览器渲染解析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
 
       
 
@@ -644,7 +666,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共305.4k字</span>
+  <span class="post-count">博客全站共310.4k字</span>
 </div>
 
         

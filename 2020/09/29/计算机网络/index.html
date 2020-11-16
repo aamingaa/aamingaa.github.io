@@ -94,7 +94,7 @@
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200806/6638786_1596672375547_34FD922BEF6AB289D1B71C7D84037E42">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200806/6638786_1596672413212_A3DEEBF7F3F9D50D1D3613B9F2A48D7B">
 <meta property="article:published_time" content="2020-09-29T07:42:56.000Z">
-<meta property="article:modified_time" content="2020-11-02T08:11:28.454Z">
+<meta property="article:modified_time" content="2020-11-16T06:55:55.671Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021487780_27194088468_4cb0141fc8_b.jpg">
@@ -382,7 +382,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  33.4k
+                  33.7k
                 </span>
               
 
@@ -398,7 +398,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  116
+                  117
                 </span>
               
             </div>
@@ -920,14 +920,17 @@
 <p> 404：Not Found — 服务器无法根据<a href>客户端</a>的请求找到资源（网页）。</p>
 <p> 500：Internal Server Error — 服务器内部错误，无法完成请求。</p>
 <p> 502：Bad Gateway — 作为网关或者代理服务器尝试执行请求时，从远程服务器接收到了无效的响应。</p>
-<h3 id="重定向和转发区别"><a href="#重定向和转发区别" class="headerlink" title="重定向和转发区别"></a><strong>重定向和转发区别</strong></h3><p> <strong>重定向：redirect：</strong></p>
-<p> 地址栏发生变化 </p>
-<p> 重定向可以访问其他站点（服务器）的资源</p>
-<p> 重定向是两次请求。不能使用request对象来共享数据</p>
-<p> <strong>转发：forward：</strong></p>
-<p> 转发地址栏路径不变</p>
-<p> 转发只能访问当前服务器下的资源</p>
-<p> 转发是一次请求，可以使用request对象共享数据</p>
+<h3 id="重定向和转发区别"><a href="#重定向和转发区别" class="headerlink" title="重定向和转发区别"></a><strong>重定向和转发区别</strong></h3><p><strong>转发是服务器行为，重定向是客户端行为。</strong></p>
+<p><strong>转发（Forword）</strong> 通过 RequestDispatcher 对象的<code>forward（HttpServletRequest request,HttpServletResponse response）</code>方法实现的。<code>RequestDispatcher</code> 可以通过<code>HttpServletRequest</code> 的 <code>getRequestDispatcher()</code>方法获得。例如下面的代码就是跳转到 login_success.jsp 页面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.getRequestDispatcher(&quot;login_success.jsp&quot;).forward(request, response);</span><br></pre></td></tr></table></figure>
+
+<p><strong>重定向（Redirect）</strong> 是利用服务器返回的状态码来实现的。客户端浏览器请求服务器的时候，服务器会返回一个状态码。服务器通过 HttpServletRequestResponse 的 setStatus(int status)方法设置状态码。如果服务器返回 301 或者 302，则浏览器会到新的网址重新请求该资源。</p>
+<ol>
+<li><strong>从地址栏显示来说</strong>：forward 是服务器请求资源，服务器直接访问目标地址的 URL，把那个 URL 的响应内容读取过来，然后把这些内容再发给浏览器。浏览器根本不知道服务器发送的内容从哪里来的，所以它的地址栏还是原来的地址。redirect 是服务端根据逻辑，发送一个状态码，告诉浏览器重新去请求那个地址。所以地址栏显示的是新的 URL。</li>
+<li><strong>从数据共享来说</strong>：forward：转发页面和转发到的页面可以共享 request 里面的数据。redirect：不能共享数据。</li>
+<li><strong>从运用地方来说</strong>：forward：一般用于用户登陆的时候，根据角色转发到相应的模块。redirect：一般用于用户注销登陆时返回主页面和跳转到其它的网站等。</li>
+<li><strong>从效率来说</strong>：forward：高。redirect：低。</li>
+</ol>
 <h2 id="网络安全"><a href="#网络安全" class="headerlink" title="网络安全"></a>网络安全</h2><p>网络安全主要探讨的问题是攻击者如何攻击计算机网络，以及如何防御这些攻击，或者如何事先预防这样的攻击。</p>
 <h3 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h3><p>计算机网络面临的威胁主要有被动攻击和主动攻击。</p>
 <p><strong>被动攻击</strong>指攻击者从网络上窃听他人的通信内容，也叫截获。在被动攻击中，攻击者只是观察和分析某一协议数据单元 PDU 而不干扰信息流。攻击者可以通过观察 PDU 的协议控制信息部分，了解正在通信的协议的地址和身份，通过研究 PDU 的长度和发送频度，了解所交换的数据的某种性质。这种攻击又叫做流量分析。</p>
@@ -1316,7 +1319,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">169</span>
+                  <span class="site-state-item-count">171</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1425,7 +1428,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共305.4k字</span>
+  <span class="post-count">博客全站共310.4k字</span>
 </div>
 
         
