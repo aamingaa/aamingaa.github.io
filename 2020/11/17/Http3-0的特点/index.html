@@ -79,16 +79,16 @@
 
 
 
-<meta name="description" content="[TOC] QUIC协议HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧没有收到，后面stream1的帧也会因此堵塞 于是google的 QU">
+<meta name="description" content="[TOC] QUIC协议https:&#x2F;&#x2F;www.mobibrw.com&#x2F;2020&#x2F;23190 HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Http3.0的特点?">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/17/Http3-0%E7%9A%84%E7%89%B9%E7%82%B9/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] QUIC协议HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧没有收到，后面stream1的帧也会因此堵塞 于是google的 QU">
+<meta property="og:description" content="[TOC] QUIC协议https:&#x2F;&#x2F;www.mobibrw.com&#x2F;2020&#x2F;23190 HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧">
 <meta property="og:image" content="http://www.chenjinxinlove.com/cdn/offsetbbb.png">
 <meta property="og:image" content="http://www.chenjinxinlove.com/cdn/offsetoss.jpg">
 <meta property="article:published_time" content="2020-11-17T01:12:18.000Z">
-<meta property="article:modified_time" content="2020-11-17T11:17:06.684Z">
+<meta property="article:modified_time" content="2020-11-18T14:57:58.733Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://www.chenjinxinlove.com/cdn/offsetbbb.png">
@@ -414,7 +414,8 @@
 
       
         <p>[TOC]</p>
-<h2 id="QUIC协议"><a href="#QUIC协议" class="headerlink" title="QUIC协议"></a>QUIC协议</h2><p>HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的</p>
+<h2 id="QUIC协议"><a href="#QUIC协议" class="headerlink" title="QUIC协议"></a>QUIC协议</h2><p><a href="https://www.mobibrw.com/2020/23190" target="_blank" rel="noopener">https://www.mobibrw.com/2020/23190</a></p>
+<p>HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的</p>
 <p>当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧没有收到，后面stream1的帧也会因此堵塞</p>
 <p>于是google的 QUIC协议从TCP切换到UDP</p>
 <ul>
@@ -560,7 +561,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">185</span>
+                  <span class="site-state-item-count">191</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -669,7 +670,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共322.9k字</span>
+  <span class="post-count">博客全站共327.7k字</span>
 </div>
 
         
