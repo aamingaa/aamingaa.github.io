@@ -99,8 +99,11 @@
 <meta property="og:image" content="https://img-blog.csdn.net/20180516100717935?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NvZGVyUE9QTw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="og:image" content="https://img-blog.csdn.net/20180516100825613?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NvZGVyUE9QTw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="og:image" content="https://img-blog.csdn.net/20160617153120931">
+<meta property="og:image" content="https://img-blog.csdn.net/20180519232705552">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltYWdlcy5jbmJsb2dzLmNvbS9jbmJsb2dzX2NvbS9idWdpbmdjb2RlLzExNDY5NTgvb19saW51eC1uZXRzdGF0MS5wbmc?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltYWdlcy5jbmJsb2dzLmNvbS9jbmJsb2dzX2NvbS9idWdpbmdjb2RlLzExNDY5NTgvb19saW51eC1uZXRzdGF0Mi5wbmc?x-oss-process=image/format,png">
 <meta property="article:published_time" content="2020-11-13T01:30:19.000Z">
-<meta property="article:modified_time" content="2020-11-16T00:35:45.782Z">
+<meta property="article:modified_time" content="2020-11-18T07:57:12.510Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdn.net/2018080815173689?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3lqY2xzeA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
@@ -388,7 +391,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.7k
+                  2.5k
                 </span>
               
 
@@ -404,7 +407,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  9
                 </span>
               
             </div>
@@ -721,7 +724,24 @@
 <p><img src="https://img-blog.csdn.net/20160617153120931" alt="è¿éåå¾çæè¿°"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# netstat -an | grep 3306   &#x2F;&#x2F;查看所有3306端口使用情况·</span><br></pre></td></tr></table></figure>
 
+<h3 id="CPU暴增"><a href="#CPU暴增" class="headerlink" title="CPU暴增"></a>CPU暴增</h3><p><strong>如果服务器在运行中cpu突然暴增怎么排查</strong><br>首先通过ps命令查看一下占用cpu最多的进程，再根据请求选择是否要杀死它还是用其他的解决方案。</p>
+<p>然后通过stack工具打印Java的方法栈，查看是否有死锁的存在。</p>
+<p>然后通过其他排查工具定位问题所在。如果是数据库连接的的问题，就用回滚策略解决。如果只是单纯的请求量暴增导致的，那么就先重启服务，并在以后的开发中多进行压测。</p>
+<h3 id="查看端口是否占用"><a href="#查看端口是否占用" class="headerlink" title="查看端口是否占用"></a>查看端口是否占用</h3><h2 id="netstat-1"><a href="#netstat-1" class="headerlink" title="netstat"></a>netstat</h2><p><strong>①.\</strong>查看所有的端口占用情况****</p>
+<p>C:&gt;<strong>netstat -ano</strong></p>
+<p><img src="https://img-blog.csdn.net/20180519232705552" alt="img"></p>
+<h4 id="查看端口号-netstat"><a href="#查看端口号-netstat" class="headerlink" title="查看端口号 netstat"></a>查看端口号 netstat</h4><p>如果发现某个端口被占用后，可以用命令查看，该端口到底是被哪个进程所占用。命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">netstat -pan | grep 5623</span><br><span class="line">#其中5623位端口号</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
 
+<p>如图：</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltYWdlcy5jbmJsb2dzLmNvbS9jbmJsb2dzX2NvbS9idWdpbmdjb2RlLzExNDY5NTgvb19saW51eC1uZXRzdGF0MS5wbmc?x-oss-process=image/format,png" alt="img"></p>
+<p>发现5623的端口，被28425的进程id所占用，继续进一步跟踪，到底是哪个程序所占用了。</p>
+<h4 id="通过进程id查找程序–ps"><a href="#通过进程id查找程序–ps" class="headerlink" title="通过进程id查找程序–ps"></a>通过进程id查找程序–ps</h4><p>直接通过：ps -aux | grep pid 查看，进程程序名称，</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltYWdlcy5jbmJsb2dzLmNvbS9jbmJsb2dzX2NvbS9idWdpbmdjb2RlLzExNDY5NTgvb19saW51eC1uZXRzdGF0Mi5wbmc?x-oss-process=image/format,png" alt="img"></p>
+<p>通过netstat查找端口占用的pid，再通过pid进一步的查找程序名称，能够确认目前冲突的端口是哪个程序已经占用了，我们是重新启用换一个端口号，还是结束已经占用的端口号所用的程序，清空被占用的端口号。</p>
+<h4 id="netstat-中参数选项"><a href="#netstat-中参数选项" class="headerlink" title="netstat 中参数选项"></a>netstat 中参数选项</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-a或--all：显示所有连线中的Socket； </span><br><span class="line">-A&lt;网络类型&gt;或--&lt;网络类型&gt;：列出该网络类型连线中的相关地址； </span><br><span class="line">-c或--continuous：持续列出网络状态； </span><br><span class="line">-C或--cache：显示路由器配置的快取信息； </span><br><span class="line">-e或--extend：显示网络其他相关信息； </span><br><span class="line">-F或--fib：显示FIB； </span><br><span class="line">-g或--groups：显示多重广播功能群组组员名单； </span><br><span class="line">-h或--help：在线帮助； </span><br><span class="line">-i或--interfaces：显示网络界面信息表单； </span><br><span class="line">-l或--listening：显示监控中的服务器的Socket； </span><br><span class="line">-M或--masquerade：显示伪装的网络连线； </span><br><span class="line">-n或--numeric：直接使用ip地址，而不通过域名服务器； </span><br><span class="line">-N或--netlink或--symbolic：显示网络硬件外围设备的符号连接名称； </span><br><span class="line">-o或--timers：显示计时器； </span><br><span class="line">-p或--programs：显示正在使用Socket的程序识别码和程序名称； </span><br><span class="line">-r或--route：显示Routing Table； </span><br><span class="line">-s或--statistice：显示网络工作信息统计表； </span><br><span class="line">-t或--tcp：显示TCP传输协议的连线状况； </span><br><span class="line">-u或--udp：显示UDP传输协议的连线状况； </span><br><span class="line">-v或--verbose：显示指令执行过程； </span><br><span class="line">-V或--version：显示版本信息； </span><br><span class="line">-w或--raw：显示RAW传输协议的连线状况； </span><br><span class="line">-x或--unix：此参数的效果和指定&quot;-A unix&quot;参数相同； </span><br><span class="line">--ip或--inet：此参数的效果和指定&quot;-A inet&quot;参数相同。</span><br></pre></td></tr></table></figure>
+
+<h3 id="tcpdump是干啥的？什么场景用？"><a href="#tcpdump是干啥的？什么场景用？" class="headerlink" title="tcpdump是干啥的？什么场景用？"></a>tcpdump是干啥的？什么场景用？</h3>
       
     </div>
     
@@ -841,7 +861,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">176</span>
+                  <span class="site-state-item-count">183</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -900,7 +920,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#TOP指令"><span class="nav-number">1.</span> <span class="nav-text">TOP指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程信息"><span class="nav-number">1.1.</span> <span class="nav-text">进程信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器IO延时高"><span class="nav-number">2.</span> <span class="nav-text">服务器IO延时高</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU延时高"><span class="nav-number">3.</span> <span class="nav-text">CPU延时高</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#netstat"><span class="nav-number">4.</span> <span class="nav-text">netstat</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#TOP指令"><span class="nav-number">1.</span> <span class="nav-text">TOP指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程信息"><span class="nav-number">1.1.</span> <span class="nav-text">进程信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器IO延时高"><span class="nav-number">2.</span> <span class="nav-text">服务器IO延时高</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU延时高"><span class="nav-number">3.</span> <span class="nav-text">CPU延时高</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#netstat"><span class="nav-number">4.</span> <span class="nav-text">netstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU暴增"><span class="nav-number">5.</span> <span class="nav-text">CPU暴增</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看端口是否占用"><span class="nav-number">6.</span> <span class="nav-text">查看端口是否占用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#netstat-1"><span class="nav-number"></span> <span class="nav-text">netstat</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看端口号-netstat"><span class="nav-number">0.1.</span> <span class="nav-text">查看端口号 netstat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#通过进程id查找程序–ps"><span class="nav-number">0.2.</span> <span class="nav-text">通过进程id查找程序–ps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#netstat-中参数选项"><span class="nav-number">0.3.</span> <span class="nav-text">netstat 中参数选项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcpdump是干啥的？什么场景用？"><span class="nav-number">1.</span> <span class="nav-text">tcpdump是干啥的？什么场景用？</span></a></li></ol></div>
             
 
           </div>
@@ -950,7 +970,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共316.8k字</span>
+  <span class="post-count">博客全站共320.4k字</span>
 </div>
 
         
