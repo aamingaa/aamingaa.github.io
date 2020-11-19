@@ -79,22 +79,18 @@
 
 
 
-<meta name="description" content="Java和C++语言的一个重要区别就是Java中我们无法直接操作一块内存区域，不能像C++中那样可以自己申请内存和释放内存。Java中的Unsafe类为我们提供了类似C++手动管理内存的能力。 Unsafe类是在sun.misc包下，不属于Java标准。但是很多Java的基础类库，包括一些被广泛使用的高性能开发库都是基于Unsafe类开发的，比如Netty、Cassandra、Hadoop、Kaf">
+<meta name="description" content="Java和C++语言的一个重要区别就是Java中我们无法直接操作一块内存区域，不能像C++中那样可以自己申请内存和释放内存。Java中的Unsafe类为我们提供了类似C++手动管理内存的能力。 1234567891011121314151617181920212223242526272829303132333435363738public class RevisedObjectInHeap&amp;#12">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unsafe包">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/18/Unsafe%E5%8C%85/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Java和C++语言的一个重要区别就是Java中我们无法直接操作一块内存区域，不能像C++中那样可以自己申请内存和释放内存。Java中的Unsafe类为我们提供了类似C++手动管理内存的能力。 Unsafe类是在sun.misc包下，不属于Java标准。但是很多Java的基础类库，包括一些被广泛使用的高性能开发库都是基于Unsafe类开发的，比如Netty、Cassandra、Hadoop、Kaf">
-<meta property="og:image" content="http://p3.pstatp.com/large/ca4000030d1f375caf1">
-<meta property="og:image" content="http://p3.pstatp.com/large/ca4000030319e3adb8f">
-<meta property="og:image" content="http://p3.pstatp.com/large/c5e00061cf0b59ac2ac">
-<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
-<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:description" content="Java和C++语言的一个重要区别就是Java中我们无法直接操作一块内存区域，不能像C++中那样可以自己申请内存和释放内存。Java中的Unsafe类为我们提供了类似C++手动管理内存的能力。 1234567891011121314151617181920212223242526272829303132333435363738public class RevisedObjectInHeap&amp;#12">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/2/24/1691f484296ba537?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-11-18T15:21:39.000Z">
-<meta property="article:modified_time" content="2020-11-18T15:23:07.585Z">
+<meta property="article:modified_time" content="2020-11-19T00:42:07.270Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://p3.pstatp.com/large/ca4000030d1f375caf1">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/2/24/1691f484296ba537?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 
 
 
@@ -379,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k
+                  1.7k
                 </span>
               
 
@@ -395,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  7
                 </span>
               
             </div>
@@ -417,44 +413,50 @@
 
       
         <p>Java和C++语言的一个重要区别就是Java中我们无法直接操作一块内存区域，不能像C++中那样可以自己申请内存和释放内存。Java中的Unsafe类为我们提供了类似C++手动管理内存的能力。</p>
-<p>Unsafe类是在sun.misc包下，不属于Java标准。但是很多Java的基础类库，包括一些被广泛使用的高性能开发库都是基于Unsafe类开发的，比如Netty、Cassandra、Hadoop、Kafka等。Unsafe类在提升Java运行效率，增强Java语言底层操作能力方面起了很大的作用。</p>
-<p><img src="http://p3.pstatp.com/large/ca4000030d1f375caf1" alt="img"></p>
-<p><img src="http://p3.pstatp.com/large/ca4000030319e3adb8f" alt="img"></p>
-<p>Unsafe类使Java拥有了像C语言的指针一样操作内存空间的能力，同时也带来了指针的问题。过度的使用Unsafe类会使得出错的几率变大，因此Java官方并不建议使用的，官方文档也几乎没有。Oracle正在计划从Java 9中去掉Unsafe类，如果真是如此影响就太大了。</p>
-<p><img src="http://p3.pstatp.com/large/c5e00061cf0b59ac2ac" alt="img"></p>
-<p><strong>通常我们最好也不要使用Unsafe类，除非有明确的目的，并且也要对它有深入的了解才行。</strong>要想使用Unsafe类需要用一些比较tricky的办法。Unsafe类使用了单例模式，需要通过一个静态方法getUnsafe()来获取。但Unsafe类做了限制，如果是普通的调用的话，它会抛出一个SecurityException异常；只有由主类加载器加载的类才能调用这个方法。其源码如下：</p>
-<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 public static Unsafe getUnsafe() &#123;</span><br><span class="line">2     Class var0 &#x3D; Reflection.getCallerClass();</span><br><span class="line">3     if(!VM.isSystemDomainLoader(var0.getClassLoader())) &#123;</span><br><span class="line">4         throw new SecurityException(&quot;Unsafe&quot;);</span><br><span class="line">5     &#125; else &#123;</span><br><span class="line">6         return theUnsafe;</span><br><span class="line">7     &#125;</span><br><span class="line">8 &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">public class RevisedObjectInHeap</span><br><span class="line">&#123;</span><br><span class="line">    public Unsafe getUnsafe() throws IllegalAccessException &#123;</span><br><span class="line">        Field unsafeField &#x3D; Unsafe.class.getDeclaredFields()[0];</span><br><span class="line">        unsafeField.setAccessible(true);</span><br><span class="line">        Unsafe unsafe &#x3D; (Unsafe) unsafeField.get(null);</span><br><span class="line">        return unsafe;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private long address &#x3D; 0;</span><br><span class="line"></span><br><span class="line">    private Unsafe unsafe &#x3D; getUnsafe();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 让对象占用堆内存,触发[Full GC</span><br><span class="line">    private byte[] bytes &#x3D; null;</span><br><span class="line"></span><br><span class="line">    public RevisedObjectInHeap() throws IllegalAccessException &#123;</span><br><span class="line">        address &#x3D; unsafe.allocateMemory(2 * 1024 * 1024);</span><br><span class="line">        bytes &#x3D; new byte[1024 * 1024];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void finalize() throws Throwable</span><br><span class="line">    &#123;</span><br><span class="line">        super.finalize();</span><br><span class="line">        System.out.println(&quot;finalize.&quot; + bytes.length);</span><br><span class="line">        unsafe.freeMemory(address);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IllegalAccessException &#123;</span><br><span class="line">        while (true)</span><br><span class="line">        &#123;</span><br><span class="line">            RevisedObjectInHeap heap &#x3D; new RevisedObjectInHeap();</span><br><span class="line">            System.out.println(&quot;memory address&#x3D;&quot; + heap.address);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
-<p>网上也有一些办法来用主类加载器加载用户代码，比如设置bootclasspath参数。但更简单方法是利用Java反射，方法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 Field f &#x3D; Unsafe.class.getDeclaredField(&quot;theUnsafe&quot;);</span><br><span class="line">2 f.setAccessible(true);</span><br><span class="line">3 Unsafe unsafe &#x3D; (Unsafe) f.get(null);</span><br></pre></td></tr></table></figure>
+<h2 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h2><p>Unsafe的功能如下图：</p>
+<p>​    <img src="https://user-gold-cdn.xitu.io/2019/2/24/1691f484296ba537?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Unsafe-xmind"></p>
+<h2 id="普通读写"><a href="#普通读写" class="headerlink" title="普通读写"></a>普通读写</h2><p>通过Unsafe可以读写一个类的属性，即使这个属性是私有的，也可以对这个属性进行读写。</p>
+<p><strong>读写一个Object属性的相关方法</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public native int getInt(Object var1, long var2);</span><br><span class="line"></span><br><span class="line">public native void putInt(Object var1, long var2, int var4);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
+<p>getInt用于从对象的指定偏移地址处读取一个int。putInt用于在对象指定偏移地址处写入一个int。其他的primitive type也有对应的方法。</p>
+<p><strong>Unsafe还可以直接在一个地址上读写</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public native byte getByte(long var1);</span><br><span class="line"></span><br><span class="line">public native void putByte(long var1, byte var3);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
+<p>getByte用于从指定内存地址处开始读取一个byte。putByte用于从指定内存地址写入一个byte。其他的primitive type也有对应的方法。</p>
+<h2 id="volatile读写"><a href="#volatile读写" class="headerlink" title="volatile读写"></a>volatile读写</h2><p>普通的读写无法保证可见性和有序性，而volatile读写就可以保证可见性和有序性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public native int getIntVolatile(Object var1, long var2);</span><br><span class="line"></span><br><span class="line">public native void putIntVolatile(Object var1, long var2, int var4);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
-<p>获取到Unsafe实例之后，我们就可以为所欲为了。Unsafe类提供了以下这些功能：</p>
-<p><strong>一、内存管理**</strong>。**包括分配内存、释放内存等。</p>
-<p>该部分包括了allocateMemory（分配内存）、reallocateMemory（重新分配内存）、copyMemory（拷贝内存）、freeMemory（释放内存 ）、getAddress（获取内存地址）、addressSize、pageSize、getInt（获取内存地址指向的整数）、getIntVolatile（获取内存地址指向的整数，并支持volatile语义）、putInt（将整数写入指定内存地址）、putIntVolatile（将整数写入指定内存地址，并支持volatile语义）、putOrderedInt（将整数写入指定内存地址、有序或者有延迟的方法）等方法。getXXX和putXXX包含了各种基本类型的操作。</p>
-<p>利用copyMemory方法，我们可以实现一个通用的对象拷贝方法，无需再对每一个对象都实现clone方法，当然这通用的方法只能做到对象浅拷贝。</p>
-<p><strong>二、非常规的对象实例化。</strong></p>
-<p>allocateInstance()方法提供了另一种创建实例的途径。通常我们可以用new或者反射来实例化对象，使用allocateInstance()方法可以直接生成对象实例，且无需调用构造方法和其它初始化方法。</p>
-<p>这在对象反序列化的时候会很有用，能够重建和设置final字段，而不需要调用构造方法。</p>
-<p><strong>三、操作类、对象、变量。</strong></p>
-<p>这部分包括了staticFieldOffset（静态域偏移）、defineClass（定义类）、defineAnonymousClass（定义匿名类）、ensureClassInitialized（确保类初始化）、objectFieldOffset（对象域偏移）等方法。</p>
-<p>通过这些方法我们可以获取对象的指针，通过对指针进行偏移，我们不仅可以直接修改指针指向的数据（即使它们是私有的），甚至可以找到JVM已经认定为垃圾、可以进行回收的对象。</p>
-<p><strong>四、数组操作。</strong></p>
-<p>这部分包括了arrayBaseOffset（获取数组第一个元素的偏移地址）、arrayIndexScale（获取数组中元素的增量地址）等方法。arrayBaseOffset与arrayIndexScale配合起来使用，就可以定位数组中每个元素在内存中的位置。</p>
-<p>由于Java的数组最大值为Integer.MAX_VALUE，使用Unsafe类的内存分配方法可以实现超大数组。实际上这样的数据就可以认为是C数组，因此需要注意在合适的时间释放内存。</p>
-<p><strong>五、多线程同步。</strong>包括锁机制、CAS操作等。</p>
-<p>这部分包括了monitorEnter、tryMonitorEnter、monitorExit、compareAndSwapInt、compareAndSwap等方法。</p>
-<p>其中monitorEnter、tryMonitorEnter、monitorExit已经被标记为deprecated，不建议使用。</p>
-<p>Unsafe类的CAS操作可能是用的最多的，它为Java的锁机制提供了一种新的解决办法，比如AtomicInteger等类都是通过该方法来实现的。compareAndSwap方法是原子的，可以避免繁重的锁机制，提高代码效率。这是一种乐观锁，通常认为在大部分情况下不出现竞态条件，如果操作失败，会不断重试直到成功。</p>
-<p><strong>六、挂起与恢复。</strong></p>
-<p>这部分包括了park、unpark等方法。</p>
-<p>将一个线程进行挂起是通过park方法实现的，调用 park后，线程将一直阻塞直到超时或者中断等条件出现。unpark可以终止一个挂起的线程，使其恢复正常。整个并发框架中对线程的挂起操作被封装在 LockSupport类中，LockSupport类中有各种版本pack方法，但最终都调用了Unsafe.park()方法。</p>
-<p><strong>七、内存屏障。</strong></p>
-<p>这部分包括了loadFence、storeFence、fullFence等方法。这是在Java 8新引入的，用于定义内存屏障，避免代码重排序。</p>
-<p>loadFence() 表示该方法之前的所有load操作在内存屏障之前完成。同理storeFence()表示该方法之前的所有store操作在内存屏障之前完成。fullFence()表示该方法之前的所有load、store操作在内存屏障之前完成。</p>
+<p>getIntVolatile方法用于在对象指定偏移地址处volatile读取一个int。putIntVolatile方法用于在对象指定偏移地址处volatile写入一个int。</p>
+<p>volatile读写相对普通读写是更加昂贵的，因为需要保证可见性和有序性，而与volatile写入相比putOrderedXX写入代价相对较低，putOrderedXX写入不保证可见性，但是保证有序性，所谓有序性，就是保证指令不会重排序。</p>
+<h2 id="有序写入"><a href="#有序写入" class="headerlink" title="有序写入"></a>有序写入</h2><p>有序写入只保证写入的有序性，不保证可见性，就是说一个线程的写入不保证其他线程立马可见。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public native void putOrderedObject(Object var1, long var2, Object var4);</span><br><span class="line"></span><br><span class="line">public native void putOrderedInt(Object var1, long var2, int var4);</span><br><span class="line"></span><br><span class="line">public native void putOrderedLong(Object var1, long var2, long var4);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<h2 id="直接内存操作"><a href="#直接内存操作" class="headerlink" title="直接内存操作"></a>直接内存操作</h2><p>我们都知道Java不可以直接对内存进行操作，对象内存的分配和回收都是由JVM帮助我们实现的。但是Unsafe为我们在Java中提供了直接操作内存的能力。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 分配内存</span><br><span class="line">public native long allocateMemory(long var1);</span><br><span class="line">&#x2F;&#x2F; 重新分配内存</span><br><span class="line">public native long reallocateMemory(long var1, long var3);</span><br><span class="line">&#x2F;&#x2F; 内存初始化</span><br><span class="line">public native void setMemory(long var1, long var3, byte var5);</span><br><span class="line">&#x2F;&#x2F; 内存复制</span><br><span class="line">public native void copyMemory(Object var1, long var2, Object var4, long var5, long var7);</span><br><span class="line">&#x2F;&#x2F; 清除内存</span><br><span class="line">public native void freeMemory(long var1);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<h2 id="CAS相关"><a href="#CAS相关" class="headerlink" title="CAS相关"></a>CAS相关</h2><p>JUC中大量运用了CAS操作，可以说CAS操作是JUC的基础，因此CAS操作是非常重要的。Unsafe中提供了int,long和Object的CAS操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public final native boolean compareAndSwapObject(Object var1, long var2, Object var4, Object var5);</span><br><span class="line"></span><br><span class="line">public final native boolean compareAndSwapInt(Object var1, long var2, int var4, int var5);</span><br><span class="line"></span><br><span class="line">public final native boolean compareAndSwapLong(Object var1, long var2, long var4, long var6);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>CAS一般用于乐观锁，它在Java中有广泛的应用，ConcurrentHashMap，ConcurrentLinkedQueue中都有用到CAS来实现乐观锁。</p>
+<h2 id="偏移量相关"><a href="#偏移量相关" class="headerlink" title="偏移量相关"></a>偏移量相关</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public native long staticFieldOffset(Field var1);</span><br><span class="line"></span><br><span class="line">public native long objectFieldOffset(Field var1);</span><br><span class="line"></span><br><span class="line">public native Object staticFieldBase(Field var1);</span><br><span class="line"></span><br><span class="line">public native int arrayBaseOffset(Class&lt;?&gt; var1);</span><br><span class="line"></span><br><span class="line">public native int arrayIndexScale(Class&lt;?&gt; var1);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>staticFieldOffset方法用于获取静态属性Field在对象中的偏移量，读写静态属性时必须获取其偏移量。objectFieldOffset方法用于获取非静态属性Field在对象实例中的偏移量，读写对象的非静态属性时会用到这个偏移量。staticFieldBase方法用于返回Field所在的对象。arrayBaseOffset方法用于返回数组中第一个元素实际地址相对整个数组对象的地址的偏移量。arrayIndexScale方法用于计算数组中第一个元素所占用的内存空间。</p>
+<h2 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public native void unpark(Object var1);</span><br><span class="line"></span><br><span class="line">public native void park(boolean var1, long var2);</span><br><span class="line"></span><br><span class="line">public native void monitorEnter(Object var1);</span><br><span class="line"></span><br><span class="line">public native void monitorExit(Object var1);</span><br><span class="line"></span><br><span class="line">public native boolean tryMonitorEnter(Object var1);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>park方法和unpark方法相信看过LockSupport类的都不会陌生，这两个方法主要用来挂起和唤醒线程。LockSupport中的park和unpark方法正是通过Unsafe来实现的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 挂起线程</span><br><span class="line">public static void park(Object blocker) &#123;</span><br><span class="line">    Thread t &#x3D; Thread.currentThread();</span><br><span class="line">    setBlocker(t, blocker); &#x2F;&#x2F; 通过Unsafe的putObject方法设置阻塞阻塞当前线程的blocker</span><br><span class="line">    UNSAFE.park(false, 0L); &#x2F;&#x2F; 通过Unsafe的park方法来阻塞当前线程，注意此方法将当前线程阻塞后，当前线程就不会继续往下走了，直到其他线程unpark此线程</span><br><span class="line">    setBlocker(t, null); &#x2F;&#x2F; 清除blocker</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 唤醒线程</span><br><span class="line">public static void unpark(Thread thread) &#123;</span><br><span class="line">    if (thread !&#x3D; null)</span><br><span class="line">        UNSAFE.unpark(thread);</span><br><span class="line">&#125;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>monitorEnter方法和monitorExit方法用于加锁，Java中的synchronized锁就是通过这两个指令来实现的。</p>
+<h2 id="类加载"><a href="#类加载" class="headerlink" title="类加载"></a>类加载</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public native Class&lt;?&gt; defineClass(String var1, byte[] var2, int var3, int var4, ClassLoader var5, ProtectionDomain var6);</span><br><span class="line"></span><br><span class="line">public native Class&lt;?&gt; defineAnonymousClass(Class&lt;?&gt; var1, byte[] var2, Object[] var3);</span><br><span class="line"></span><br><span class="line">public native Object allocateInstance(Class&lt;?&gt; var1) throws InstantiationException;</span><br><span class="line"></span><br><span class="line">public native boolean shouldBeInitialized(Class&lt;?&gt; var1);</span><br><span class="line"></span><br><span class="line">public native void ensureClassInitialized(Class&lt;?&gt; var1);</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>defineClass方法定义一个类，用于动态地创建类。 defineAnonymousClass用于动态的创建一个匿名内部类。 allocateInstance方法用于创建一个类的实例，但是不会调用这个实例的构造方法，如果这个类还未被初始化，则初始化这个类。 shouldBeInitialized方法用于判断是否需要初始化一个类。 ensureClassInitialized方法用于保证已经初始化过一个类。</p>
+<h2 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public native void loadFence();</span><br><span class="line"></span><br><span class="line">public native void storeFence();</span><br><span class="line"></span><br><span class="line">public native void fullFence();</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>loadFence：保证在这个屏障之前的所有读操作都已经完成。 storeFence：保证在这个屏障之前的所有写操作都已经完成。 fullFence：保证在这个屏障之前的所有读写操作都已经完成。</p>
+<p>作者：zhong0316<br>链接：<a href="https://juejin.im/post/6844903782157910030" target="_blank" rel="noopener">https://juejin.im/post/6844903782157910030</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 
       
     </div>
@@ -541,8 +543,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -612,6 +623,22 @@
       </section>
 
       
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#主要功能"><span class="nav-number">1.</span> <span class="nav-text">主要功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#普通读写"><span class="nav-number">2.</span> <span class="nav-text">普通读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile读写"><span class="nav-number">3.</span> <span class="nav-text">volatile读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有序写入"><span class="nav-number">4.</span> <span class="nav-text">有序写入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#直接内存操作"><span class="nav-number">5.</span> <span class="nav-text">直接内存操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAS相关"><span class="nav-number">6.</span> <span class="nav-text">CAS相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏移量相关"><span class="nav-number">7.</span> <span class="nav-text">偏移量相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程调度"><span class="nav-number">8.</span> <span class="nav-text">线程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载"><span class="nav-number">9.</span> <span class="nav-text">类加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存屏障"><span class="nav-number">10.</span> <span class="nav-text">内存屏障</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
 
       
 
@@ -655,7 +682,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共327.7k字</span>
+  <span class="post-count">博客全站共329.4k字</span>
 </div>
 
         

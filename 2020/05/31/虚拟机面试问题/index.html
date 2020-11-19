@@ -79,16 +79,20 @@
 
 
 
-<meta name="description" content="[TOC] 对象的方法参数存储的位置？JDBC和双亲委派模型关系JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数cms怎么解决内存碎片的问题（full gc）  增大Xmx或者减少Xmn  在应用访问量最低的时候，在程序中主动调用System.gc()，比如每天凌晨。  在应用启动并完成所有初始化工作后，主动调用System.gc()，它可以">
+<meta name="description" content="[TOC] STW在垃圾回收过程中经常涉及到对对象的挪动（比如上文提到的对象在Survivor 0和Survivor 1之间的复制），进而导致需要对对象引用进行更新。为了保证引用更新的正确性，Java将暂停所有其他的线程，这种情况被称为“Stop-The-World”，导致系统全局停顿 JDBC和双亲委派模型关系JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主">
 <meta property="og:type" content="article">
 <meta property="og:title" content="虚拟机面试问题">
 <meta property="og:url" content="http://aamingaa.github.io/2020/05/31/%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9D%A2%E8%AF%95%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 对象的方法参数存储的位置？JDBC和双亲委派模型关系JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数cms怎么解决内存碎片的问题（full gc）  增大Xmx或者减少Xmn  在应用访问量最低的时候，在程序中主动调用System.gc()，比如每天凌晨。  在应用启动并完成所有初始化工作后，主动调用System.gc()，它可以">
+<meta property="og:description" content="[TOC] STW在垃圾回收过程中经常涉及到对对象的挪动（比如上文提到的对象在Survivor 0和Survivor 1之间的复制），进而导致需要对对象引用进行更新。为了保证引用更新的正确性，Java将暂停所有其他的线程，这种情况被称为“Stop-The-World”，导致系统全局停顿 JDBC和双亲委派模型关系JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190628122703735.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/285763/201611/285763-20161118115316810-1826109116.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/285763/201912/285763-20191205135008326-1042628756.png">
 <meta property="article:published_time" content="2020-05-31T02:10:13.000Z">
-<meta property="article:modified_time" content="2020-11-18T00:57:30.420Z">
+<meta property="article:modified_time" content="2020-11-19T02:23:26.341Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190628122703735.png">
 
 
 
@@ -373,7 +377,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.2k
+                  2.3k
                 </span>
               
 
@@ -389,7 +393,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  8
                 </span>
               
             </div>
@@ -411,7 +415,15 @@
 
       
         <p>[TOC]</p>
-<h3 id="对象的方法参数存储的位置？"><a href="#对象的方法参数存储的位置？" class="headerlink" title="对象的方法参数存储的位置？"></a>对象的方法参数存储的位置？</h3><h3 id="JDBC和双亲委派模型关系"><a href="#JDBC和双亲委派模型关系" class="headerlink" title="JDBC和双亲委派模型关系"></a>JDBC和双亲委派模型关系</h3><h3 id="JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数"><a href="#JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数" class="headerlink" title="JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数"></a>JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数</h3><h3 id="cms怎么解决内存碎片的问题（full-gc）"><a href="#cms怎么解决内存碎片的问题（full-gc）" class="headerlink" title="cms怎么解决内存碎片的问题（full gc）"></a>cms怎么解决内存碎片的问题（full gc）</h3><blockquote>
+<h3 id="STW"><a href="#STW" class="headerlink" title="STW"></a>STW</h3><p>在垃圾回收过程中经常涉及到对对象的挪动（比如上文提到的对象在Survivor 0和Survivor 1之间的复制），进而导致需要对对象引用进行更新。为了保证引用更新的正确性，Java将暂停所有其他的线程，这种情况被称为“Stop-The-World”，导致系统全局停顿</p>
+<h3 id="JDBC和双亲委派模型关系"><a href="#JDBC和双亲委派模型关系" class="headerlink" title="JDBC和双亲委派模型关系"></a>JDBC和双亲委派模型关系</h3><h3 id="JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数"><a href="#JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数" class="headerlink" title="JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数"></a>JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数</h3><h5 id="一次完整的gc过程"><a href="#一次完整的gc过程" class="headerlink" title="一次完整的gc过程"></a>一次完整的gc过程</h5><p>gc是通过垃圾收集器来实现的，现代垃圾收集器大部分都是基于分代收集理论设计的，也就是将对象划分为新生代，老年代。其中新生代分为Eden区和两块Survivor区，比例为8：1：1。<br>每次分配内存都只会使用Eden区和一块Survivor区，对象默认是放在Eden区，但是如果对象太大了，Eden区放不下，那么就会放入到老年代中，当发生gc时，就会把存活对象放到另一块Survivor上，如果这块survivor区不够，那么依赖老年代进行担保，假设这块为s0区，另一块是s1区。下一次Eden区满的时候，进行一次MinorGc，会将Eden区和S0区存活的对象放到s1中，如果s1，放不下就会放到老年代中。然后循环往复，始终保证s0和s1中又一个区域是空的，一个对象默认最多经历15次gc，一旦超过15次gc就会放入到老年代中。但是如果在Survivor空间中，相同年龄的对象超过Survivor空间的一半，并不会等到对象的年龄到达15才进入老年代，这些相同年龄的对象会直接进入到老年代中</p>
+<h5 id="对象晋升到老年代一共有四种情况"><a href="#对象晋升到老年代一共有四种情况" class="headerlink" title="对象晋升到老年代一共有四种情况"></a>对象晋升到老年代一共有四种情况</h5><ol>
+<li>对象太大，Eden放不下</li>
+<li>存放存活对象的Survivor区太小，不足以存下存活对象</li>
+<li>经历超过默认15次gc或者设定的</li>
+<li>Survivor空间中相同年龄的所有对象综合大于等于Survivor空间的一半，那么这些对象就会直接进入到老年代中</li>
+</ol>
+<h3 id="cms怎么解决内存碎片的问题（full-gc）"><a href="#cms怎么解决内存碎片的问题（full-gc）" class="headerlink" title="cms怎么解决内存碎片的问题（full gc）"></a>cms怎么解决内存碎片的问题（full gc）</h3><blockquote>
 <ul>
 <li>增大Xmx或者减少Xmn </li>
 <li>在应用访问量最低的时候，在程序中主动调用System.gc()，比如每天凌晨。 </li>
@@ -424,13 +436,31 @@
 <p> 代码实现每五分钟一次Minor GC，如果要FullGC呢?</p>
 <p>类加载，class.forname 和 classloader的区别，双亲委派原则。被问到不使用双亲委派原则，如何自定义java.lang.Integer会怎么样（我自定义过 java.lang.Integer，使用直接抛出异常，说包违法）。可能还是不够深入。</p>
 <p>方法区会不会 OOM</p>
-<p> <strong>有关 JVM 的 STW</strong></p>
 <p><strong>Class.forName 是否会初始化类</strong> （这里我智障了，振振有词地说 说不会初始化……感觉要凉。。） </p>
-<p>  <strong>static 块会执行几次？怎么让它执行第二次？</strong>（我说用另一个 ClassLoader 来加载……好像不是他要的答案，难道有其他方法吗。。？） </p>
-<p>  <strong>Full GC 发生的条件、怎么设置永久代和堆的大小、怎么减少 Full GC 、JVM 调优</strong></p>
-<p>为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？</p>
-<p><strong>gc引用计数法的缺点，除了循环引用，说一到两个</strong> </p>
-<p>  想了很多，跨代引用都想了，最后说不出来，提示我可以从【设计gc<a href>算法</a>需要考虑什么因素】上来回答，想不出来 </p>
+<p>使用类加载器和Class.forName来获取class的时候，是否进行了初始化？</p>
+<p>实际上使用类加载器来加载class的时候，只是加载该类，没有初始化，但是Class.forName就初始化了的</p>
+<p>如果初始化一个类，首先是运行里面的静态代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package classLoader;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class A&#123;</span><br><span class="line">	public A()&#123;</span><br><span class="line">		System.out.println(&quot;创建类的时候运行这段代码&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	static&#123;</span><br><span class="line">		System.out.println(&quot;这里是类静态代码块，初始化类的时候就会运行一次&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class ClassLoaderT &#123;</span><br><span class="line">public static void main(String[] args) throws ClassNotFoundException &#123;</span><br><span class="line">	&#x2F;&#x2F;首先是获得类加载器</span><br><span class="line">	ClassLoader cl&#x3D;ClassLoader.getSystemClassLoader();</span><br><span class="line">	cl.loadClass(&quot;classLoader.A&quot;);&#x2F;&#x2F;这里根据全类名来查找这个类，所以如果只是输入&quot;A&quot;就会报错。</span><br><span class="line">	System.out.println(&quot;-----------------------------&quot;);</span><br><span class="line">	Class.forName(&quot;classLoader.A&quot;);这里根据全类名来查找这个类，所以如果只是输入&quot;A&quot;就会报错。</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>控制台：</p>
+<p><img src="https://img-blog.csdnimg.cn/20190628122703735.png" alt="img"></p>
+<h3 id="Full-GC-发生的条件、怎么设置永久代和堆的大小、怎么减少-Full-GC-、JVM-调优"><a href="#Full-GC-发生的条件、怎么设置永久代和堆的大小、怎么减少-Full-GC-、JVM-调优" class="headerlink" title="Full GC 发生的条件、怎么设置永久代和堆的大小、怎么减少 Full GC 、JVM 调优"></a><strong>Full GC 发生的条件、怎么设置永久代和堆的大小、怎么减少 Full GC 、JVM 调优</strong></h3><p>-XX:PermSize 和 -XX:MaxPermSize：指定JVM中的永久代(方法区)的大小。</p>
+<p>-Xms 和 -Xmx (-XX:InitialHeapSize 和 -XX:MaxHeapSize)：指定JVM初始占用的堆内存和最大堆内存。</p>
+<p><img src="https://images2015.cnblogs.com/blog/285763/201611/285763-20161118115316810-1826109116.png" alt="img"></p>
+<h3 id="为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？"><a href="#为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？" class="headerlink" title="为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？"></a>为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？</h3><p><img src="https://img2018.cnblogs.com/blog/285763/201912/285763-20191205135008326-1042628756.png" alt="img"></p>
+<p><strong>原因一</strong>：因为直接内存，JVM将会在IO操作上具有更高的性能，因为它直接作用于本地系统的IO操作。而非直接内存，也就是堆内存中的数据，如果要作IO操作，会先复制到直接内存，再利用本地IO处理。</p>
+<ul>
+<li>从数据流的角度，非直接内存是下面这样的作用链：本地IO –&gt; 直接内存 –&gt; 非直接内存 –&gt; 直接内存 –&gt; 本地IO</li>
+<li>而直接内存是：本地IO –&gt; 直接内存 –&gt; 本地IO</li>
+</ul>
+<p><strong>原因二</strong>：整个永久代有一个 JVM 本身设置固定大小上线，无法进行调整，而元空间使用的是直接内存，受本机可用内存的限制，并且永远不会得到java.lang.OutOfMemoryError。</p>
+<ul>
+<li>可以使用 <code>-XX：MaxMetaspaceSize</code> 标志设置最大元空间大小，默认值为 unlimited，这意味着它只受系统内存的限制。</li>
+<li><code>-XX：MetaspaceSize</code> 调整标志定义元空间的初始大小如果未指定此标志，则 Metaspace 将根据运行时的应用程序需求动态地重新调整大小。</li>
+</ul>
+<p><strong>原因三：</strong></p>
+<p>可以在GC不进行暂停的情况下并发地释放类数据。</p>
+<h3 id="gc引用计数法的缺点，除了循环引用，说一到两个"><a href="#gc引用计数法的缺点，除了循环引用，说一到两个" class="headerlink" title="gc引用计数法的缺点，除了循环引用，说一到两个"></a><strong>gc引用计数法的缺点，除了循环引用，说一到两个</strong></h3><p>  想了很多，跨代引用都想了，最后说不出来，提示我可以从【设计gc<a href>算法</a>需要考虑什么因素】上来回答，想不出来 </p>
 <p>  他说了可以考虑stw、访问局部性、堆大小（这个没听清楚），然后问我局部访问性知道吗，我以为是jvm里的新知识就说了不知道，然后他解释了一下，我才知道噢原来就是os的局部性原理。。。 </p>
 <p>  然后他问你觉得引用计数***影响到哪几点，面试官看我没反应就说ok，然后跟我解释了，主要是一个链式更新、堆的使用效率的问题，引用计数法优点在于他是实时删除的。 </p>
 <p>  其实到这里我心态已经崩了，只想退出面试间 😔</p>
@@ -438,6 +468,7 @@
 
 <p><strong>追问不同的类加载器加载同一个类是隔离还是共享</strong></p>
 <p>答了隔离，他大概觉得我说的没有底气，就跟我解释了为什么是隔离的（除bug）。</p>
+<p>类的全称是相同的，类加载器相同.这里的初始化可以理解为,类加载的最后一步(调用<code>&lt;clinit&gt;</code>),如果是两个不同的ClassLoad加载的话那么<code>&lt;clinit&gt;</code>会被执行两次,加载的<code>Class</code>对象在方法区(永久代),并且会对应两个<code>Class</code>对象.</p>
 
       
     </div>
@@ -617,7 +648,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的方法参数存储的位置？"><span class="nav-number">1.</span> <span class="nav-text">对象的方法参数存储的位置？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC和双亲委派模型关系"><span class="nav-number">2.</span> <span class="nav-text">JDBC和双亲委派模型关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数"><span class="nav-number">3.</span> <span class="nav-text">JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cms怎么解决内存碎片的问题（full-gc）"><span class="nav-number">4.</span> <span class="nav-text">cms怎么解决内存碎片的问题（full gc）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"><span class="nav-number">5.</span> <span class="nav-text">new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#STW"><span class="nav-number">1.</span> <span class="nav-text">STW</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC和双亲委派模型关系"><span class="nav-number">2.</span> <span class="nav-text">JDBC和双亲委派模型关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数"><span class="nav-number">3.</span> <span class="nav-text">JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一次完整的gc过程"><span class="nav-number">3.0.1.</span> <span class="nav-text">一次完整的gc过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#对象晋升到老年代一共有四种情况"><span class="nav-number">3.0.2.</span> <span class="nav-text">对象晋升到老年代一共有四种情况</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cms怎么解决内存碎片的问题（full-gc）"><span class="nav-number">4.</span> <span class="nav-text">cms怎么解决内存碎片的问题（full gc）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"><span class="nav-number">5.</span> <span class="nav-text">new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Full-GC-发生的条件、怎么设置永久代和堆的大小、怎么减少-Full-GC-、JVM-调优"><span class="nav-number">6.</span> <span class="nav-text">Full GC 发生的条件、怎么设置永久代和堆的大小、怎么减少 Full GC 、JVM 调优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？"><span class="nav-number">7.</span> <span class="nav-text">为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gc引用计数法的缺点，除了循环引用，说一到两个"><span class="nav-number">8.</span> <span class="nav-text">gc引用计数法的缺点，除了循环引用，说一到两个</span></a></li></ol></div>
             
 
           </div>
@@ -667,7 +698,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共327.7k字</span>
+  <span class="post-count">博客全站共329.4k字</span>
 </div>
 
         

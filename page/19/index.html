@@ -1459,7 +1459,7 @@ Docker基本用法启动docker
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.2k
+                  2.3k
                 </span>
               
 
@@ -1475,7 +1475,7 @@ Docker基本用法启动docker
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  8
                 </span>
               
             </div>
@@ -1499,10 +1499,8 @@ Docker基本用法启动docker
         
           
           [TOC]
-对象的方法参数存储的位置？JDBC和双亲委派模型关系JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数cms怎么解决内存碎片的问题（full gc）
-
-增大Xmx或者减少Xmn 
-在应用访问量最低的时候，在程序中主动调用System.
+STW在垃圾回收过程中经常涉及到对对象的挪动（比如上文提到的对象在Survivor 0和Survivor 1之间的复制），进而导致需要对对象引用进行更新。为了保证引用更新的正确性，Java将暂停所有其他的线程，这种情况被称为“Stop-The-World”，导致系统全局停顿
+JDBC和双
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -2213,7 +2211,7 @@ Docker基本用法启动docker
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共327.7k字</span>
+  <span class="post-count">博客全站共329.4k字</span>
 </div>
 
         
