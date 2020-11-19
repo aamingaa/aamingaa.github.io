@@ -87,7 +87,7 @@
 <meta property="og:description" content="Java和C++语言的一个重要区别就是Java中我们无法直接操作一块内存区域，不能像C++中那样可以自己申请内存和释放内存。Java中的Unsafe类为我们提供了类似C++手动管理内存的能力。 1234567891011121314151617181920212223242526272829303132333435363738public class RevisedObjectInHeap&amp;#12">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/2/24/1691f484296ba537?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-11-18T15:21:39.000Z">
-<meta property="article:modified_time" content="2020-11-19T00:42:07.270Z">
+<meta property="article:modified_time" content="2020-11-19T07:31:25.680Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/2/24/1691f484296ba537?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.7k
+                  1.6k
                 </span>
               
 
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  6
                 </span>
               
             </div>
@@ -456,7 +456,6 @@
 <h2 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public native void loadFence();</span><br><span class="line"></span><br><span class="line">public native void storeFence();</span><br><span class="line"></span><br><span class="line">public native void fullFence();</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
 <p>loadFence：保证在这个屏障之前的所有读操作都已经完成。 storeFence：保证在这个屏障之前的所有写操作都已经完成。 fullFence：保证在这个屏障之前的所有读写操作都已经完成。</p>
-<p>作者：zhong0316<br>链接：<a href="https://juejin.im/post/6844903782157910030" target="_blank" rel="noopener">https://juejin.im/post/6844903782157910030</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 
       
     </div>
@@ -490,6 +489,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/11/19/1-%E7%AE%80%E5%8D%95%E7%9A%84%E5%AE%9E%E7%8E%B0/" rel="prev" title="1.简单的实现">
+                1.简单的实现 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -573,7 +576,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">191</span>
+                  <span class="site-state-item-count">193</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -585,7 +588,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -682,7 +685,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共329.4k字</span>
+  <span class="post-count">博客全站共332.2k字</span>
 </div>
 
         
