@@ -92,7 +92,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190420161304138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA4NDEyOTY=,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190420170422593.png">
 <meta property="article:published_time" content="2020-11-17T01:19:04.000Z">
-<meta property="article:modified_time" content="2020-11-17T01:19:52.211Z">
+<meta property="article:modified_time" content="2020-11-24T08:48:25.855Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190420151619845.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA4NDEyOTY=,size_16,color_FFFFFF,t_70">
@@ -380,7 +380,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  849
+                  848
                 </span>
               
 
@@ -432,7 +432,7 @@
 <li>当线程池中线程数量大于corePoolSize（核心线程数量）或设置了allowCoreThreadTimeOut（是否允许空闲核心线程超时）时，线程会根据keepAliveTime的值进行活性检查，一旦超时便销毁线程。</li>
 <li>否则，线程会永远等待新的工作。</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Timeout in nanoseconds for idle threads waiting for work.</span></span><br><span class="line"><span class="comment">     * Threads use this timeout when there are more than corePoolSize</span></span><br><span class="line"><span class="comment">     * present or if allowCoreThreadTimeOut. Otherwise they wait</span></span><br><span class="line"><span class="comment">     * forever for new work.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">long</span> keepAliveTime;</span><br><span class="line"><span class="number">1234567</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Timeout in nanoseconds for idle threads waiting for work.</span></span><br><span class="line"><span class="comment"> * Threads use this timeout when there are more than corePoolSize</span></span><br><span class="line"><span class="comment"> * present or if allowCoreThreadTimeOut. Otherwise they wait</span></span><br><span class="line"><span class="comment"> * forever for new work.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">long</span> keepAliveTime;</span><br></pre></td></tr></table></figure>
 
 <h2 id="二-keepAliveTime的设置方法"><a href="#二-keepAliveTime的设置方法" class="headerlink" title="二. keepAliveTime的设置方法"></a>二. keepAliveTime的设置方法</h2><h3 id="1-通过构造函数设置"><a href="#1-通过构造函数设置" class="headerlink" title="1.通过构造函数设置"></a>1.通过构造函数设置</h3><p>通过 keepAliveTime 、unit共同决定实际的 keepAliveTime值，最终会转化成纳秒单位。<br><img src="https://img-blog.csdnimg.cn/20190420151619845.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA4NDEyOTY=,size_16,color_FFFFFF,t_70" alt="img"></p>
 <h3 id="2-通过setKeepAliveTime方法动态设置"><a href="#2-通过setKeepAliveTime方法动态设置" class="headerlink" title="2.通过setKeepAliveTime方法动态设置"></a>2.通过setKeepAliveTime方法动态设置</h3><p>重新设置线程池的keepAliveTime属性，如果发现将要设置的值比原来的keepAliveTime值要小（即减小keepAliveTime），则触发interruptIdleWorkers()，中断空闲线程。<br><img src="https://img-blog.csdnimg.cn/20190420152745847.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA4NDEyOTY=,size_16,color_FFFFFF,t_70" alt="img"></p>
@@ -563,7 +563,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">201</span>
+                  <span class="site-state-item-count">202</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -672,7 +672,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共345.2k字</span>
+  <span class="post-count">博客全站共345.7k字</span>
 </div>
 
         

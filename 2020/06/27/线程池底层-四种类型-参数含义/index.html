@@ -94,7 +94,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200127234739185.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200128001009488.png">
 <meta property="article:published_time" content="2020-06-27T09:33:01.000Z">
-<meta property="article:modified_time" content="2020-11-18T08:27:52.284Z">
+<meta property="article:modified_time" content="2020-11-24T08:49:26.187Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/11183270-a01aea078d7f4178.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
@@ -596,7 +596,7 @@
 <h3 id="DelayQueue"><a href="#DelayQueue" class="headerlink" title="DelayQueue"></a>DelayQueue</h3><p>一种延时阻塞队列，DelayQueue中的元素只有当其指定的延迟时间到了，才能够从队列中获取到该元素。</p>
 <h2 id="如何优雅关闭线程池"><a href="#如何优雅关闭线程池" class="headerlink" title="如何优雅关闭线程池"></a>如何优雅关闭线程池</h2><h4 id="run和start"><a href="#run和start" class="headerlink" title="run和start"></a>run和start</h4><p><strong>线程的run()方法是由java虚拟机直接调用的，如果我们没有启动线程（没有调用线程的start()方法）而是在应用代码中直接调用run()方法，那么这个线程的run()方法其实运行在当前线程（即run()方法的调用方所在的线程）之中，而不是运行在其自身的线程中，从而违背了创建线程的初衷；</strong></p>
 <p>下面是一个用来说明start()方法和run()方法的区别的实例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public class WelcomThread extends Thread &#123;</span><br><span class="line">    &#x2F;&#x2F;在该方法中实现线程的任务逻辑</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        &#x2F;&#x2F;获取当前正在执行的线程名称</span><br><span class="line">        System.out.println(Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">1234567</span><br><span class="line">public class TestDemo1 &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Thread welcome &#x3D; new WelcomThread();  &#x2F;&#x2F;创建线程（动态规划）</span><br><span class="line">        welcome.run();  &#x2F;&#x2F;直接调用run()方法</span><br><span class="line">        System.out.println(Thread.currentThread().getName());</span><br><span class="line">         Thread welcome1 &#x3D; new WelcomThread();  &#x2F;&#x2F;创建线程</span><br><span class="line">         welcome1.start();  &#x2F;&#x2F;启动线程</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">123456789</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class WelcomThread extends Thread &#123;</span><br><span class="line">    &#x2F;&#x2F;在该方法中实现线程的任务逻辑</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        &#x2F;&#x2F;获取当前正在执行的线程名称</span><br><span class="line">        System.out.println(Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class TestDemo1 &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Thread welcome &#x3D; new WelcomThread();  &#x2F;&#x2F;创建线程（动态规划）</span><br><span class="line">        welcome.run();  &#x2F;&#x2F;直接调用run()方法</span><br><span class="line">        System.out.println(Thread.currentThread().getName());</span><br><span class="line">         Thread welcome1 &#x3D; new WelcomThread();  &#x2F;&#x2F;创建线程</span><br><span class="line">         welcome1.start();  &#x2F;&#x2F;启动线程</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>运行结果：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">main</span><br><span class="line">main</span><br><span class="line">Thread-1</span><br></pre></td></tr></table></figure>
@@ -748,7 +748,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">201</span>
+                  <span class="site-state-item-count">202</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -857,7 +857,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共345.2k字</span>
+  <span class="post-count">博客全站共345.7k字</span>
 </div>
 
         
