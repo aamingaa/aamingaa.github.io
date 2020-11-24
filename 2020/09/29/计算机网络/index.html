@@ -94,7 +94,7 @@
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200806/6638786_1596672375547_34FD922BEF6AB289D1B71C7D84037E42">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200806/6638786_1596672413212_A3DEEBF7F3F9D50D1D3613B9F2A48D7B">
 <meta property="article:published_time" content="2020-09-29T07:42:56.000Z">
-<meta property="article:modified_time" content="2020-11-18T14:47:25.499Z">
+<meta property="article:modified_time" content="2020-11-22T00:52:38.852Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021487780_27194088468_4cb0141fc8_b.jpg">
@@ -382,7 +382,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  33.8k
+                  27.3k
                 </span>
               
 
@@ -398,7 +398,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  117
+                  95
                 </span>
               
             </div>
@@ -609,7 +609,27 @@
 <p>UDP 的首部开销很小，只有 8 字节，相比 TCP 的 20 字节要短。</p>
 <h3 id="TCP和UDP的传送信息单位的区别？"><a href="#TCP和UDP的传送信息单位的区别？" class="headerlink" title="TCP和UDP的传送信息单位的区别？"></a>TCP和UDP的传送信息单位的区别？</h3><p>16位源端口号+16位目的端口号+32位序号+32位确认号+4位头部长度（单位4字节）+6位保留+6个关键字（SYN,ACK，FIN）+16位窗口大小（指接收窗口）+16位校验和+16位紧急指针+最多40字节的选项；</p>
 <p>首部字段只有 8 个字节，包括源端口、目的端口、长度、检验和。</p>
-<h3 id="Close-wait作用"><a href="#Close-wait作用" class="headerlink" title="Close wait作用"></a>Close wait作用</h3><h3 id="TCP粘包？"><a href="#TCP粘包？" class="headerlink" title="TCP粘包？"></a>TCP粘包？</h3><p>TCP粘包就是指发送方发送的若干包数据到达接收方时粘成了一包，从接收缓冲区来看，后一包数据的头紧接着前一包数据的尾。</p>
+<h3 id="TCP三次握手后，客户端网线断掉了，服务端会不会检测得到？还有，如果客户端此时再插上网线，还需要进行三次握手吗？"><a href="#TCP三次握手后，客户端网线断掉了，服务端会不会检测得到？还有，如果客户端此时再插上网线，还需要进行三次握手吗？" class="headerlink" title="TCP三次握手后，客户端网线断掉了，服务端会不会检测得到？还有，如果客户端此时再插上网线，还需要进行三次握手吗？"></a>TCP三次握手后，客户端网线断掉了，服务端会不会检测得到？还有，如果客户端此时再插上网线，还需要进行三次握手吗？</h3><p>短时间不会的，具体可以参考tcp的保活机制，隔一段时间发一个保活探测报文，超过保活探测次数连接就会关闭，</p>
+<h3 id="如果四次挥手中的第二次挥手后，服务端又收到了客户端发来的数据，那么服务端会做什么？"><a href="#如果四次挥手中的第二次挥手后，服务端又收到了客户端发来的数据，那么服务端会做什么？" class="headerlink" title="如果四次挥手中的第二次挥手后，服务端又收到了客户端发来的数据，那么服务端会做什么？"></a>如果四次挥手中的第二次挥手后，服务端又收到了客户端发来的数据，那么服务端会做什么？</h3><h3 id="TIME-WAIT作用"><a href="#TIME-WAIT作用" class="headerlink" title="TIME_WAIT作用"></a>TIME_WAIT作用</h3><ol>
+<li>作为服务器，短时间内关闭了大量的Client连接，就会造成服务器上出现大量的TIME_WAIT连接，<strong>占据大量的tuple /tApl/ ，严重消耗着服务器的资源</strong>，此时部分客户端就会显示连接不上 </li>
+<li>作为客户端，短时间内大量的短连接，会大量消耗的Client机器的端口，毕竟端口只有65535个，端口被耗尽了，后续就无法在发起新的连接了 </li>
+</ol>
+<p>解决方法：  </p>
+<ul>
+<li><p>用负载均衡来抗这些高并发的短请求； </p>
+</li>
+<li><p>服务器可以设置 SO_REUSEADDR 套接字选项来避免 TIME_WAIT状态，TIME_WAIT 状态可以通过优化服务器参数得到解决，因为发生TIME_WAIT的情况是服务器自己可控的，要么就是对方连接的异常，要么就是自己没有迅速回收资源，总之不是由于自己程序错误导致的 </p>
+</li>
+<li><p>强制关闭，发送 RST 包越过TIMEWAIT状态，直接进入CLOSED状态</p>
+</li>
+<li><p>调整参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.tcp_tw_reuse &#x3D; 1</span><br><span class="line">表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；</span><br><span class="line"></span><br><span class="line">net.ipv4.tcp_tw_recycle &#x3D; 1</span><br><span class="line">表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。</span><br><span class="line"></span><br><span class="line">系统tcp_timestamps缺省就是开启的，所以当tcp_tw_recycle被开启后，实际上这种行为就被激活了.如果服务器身处NAT环境，安全起见，通常要禁止tcp_tw_recycle，至于TIME_WAIT连接过多的问题，可以通过激活tcp_tw_reuse来缓解。</span><br><span class="line"></span><br><span class="line">net.ipv4.tcp_max_syn_backlog &#x3D; 8192</span><br><span class="line">表示SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<h3 id="TCP粘包？"><a href="#TCP粘包？" class="headerlink" title="TCP粘包？"></a>TCP粘包？</h3><p>TCP粘包就是指发送方发送的若干包数据到达接收方时粘成了一包，从接收缓冲区来看，后一包数据的头紧接着前一包数据的尾。</p>
 <h4 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h4><p>原因可能是发送方也可能是接收方造成的。</p>
 <p>发送方原因：TCP默认使用Nagle算法，将多次间隔较小、数据量较小的数据，合并成一个数据量大的数据块，然后进行封包。</p>
 <p>接收方原因：TCP将接收到的数据包保存在接收缓存里，然后应用程序主动从缓存读取收到的分组。这样一来，如果TCP接收数据包到缓存的速度大于应用程序从缓存中读取数据包的速度，多个包就会被缓存，应用程序就有可能读取到多个首尾相接粘到一起的包。</p>
@@ -621,7 +641,16 @@
 <li>包头加上包体长度。包头是定长的4个字节，说明了包体的长度。接收对等方先接收包体长度，依据包体长度来接收包体。</li>
 </ul>
 <hr>
-<h3 id="客户端发送的最后一个ACK因为某些原因丢失时："><a href="#客户端发送的最后一个ACK因为某些原因丢失时：" class="headerlink" title="客户端发送的最后一个ACK因为某些原因丢失时："></a>客户端发送的最后一个ACK因为某些原因丢失时：</h3><p>由于server端发送syn_ack报文后进入SYN_RCVD状态，就会启动tcp重传计时器，超时时就会重新发送syn_ack报文，总共发送 net.ipv4.tcp_synack_retries次；客户端在没有收到重传的syn_ack之前，发送数据给server端，由于server端的状态为SYN_RCVD状态，而不是ESTABLISHED状态，就会发送RST报文给client端，客户端就能接收到服务器侧未收到ack报文。</p>
+<h3 id="三次握手最后一次丢失"><a href="#三次握手最后一次丢失" class="headerlink" title="三次握手最后一次丢失"></a>三次握手最后一次丢失</h3><p>如果最后一次ACK在网络中丢失，那么<strong>Server端（服务端）该TCP连接的状态仍为SYN_RECV</strong>，并且<strong>根据 TCP的超时重传机制依次等待3秒、6秒、12秒后重新发送 SYN+ACK 包</strong>，以便 <strong>Client（<a href>客户端</a>）重新发送ACK包</strong> </p>
+<p><strong>如果重发指定次数后，仍然未收到ACK应答</strong>，那么一段时间后，<strong>Server（服务端）自动关闭这个连接</strong> </p>
+<p><strong>但是Client（<a href>客户端</a>）认为这个连接已经建立</strong>，如果Client（<a href>客户端</a>）端向Server（服务端）发送数据，<strong>Server端（服务端）将以RST包（Reset，标示复位，用于异常的关闭连接）响应</strong>，此时，<strong><a href>客户端</a>知道第三次握手失败</strong></p>
+<h3 id="为什么连接的时候是三次握手，关闭的时候却是四次握手？"><a href="#为什么连接的时候是三次握手，关闭的时候却是四次握手？" class="headerlink" title="为什么连接的时候是三次握手，关闭的时候却是四次握手？"></a>为什么连接的时候是三次握手，关闭的时候却是四次握手？</h3><ul>
+<li>建立连接的时候， 服务器在LISTEN状态下，收到建立连接请求的SYN报文后，把<strong>ACK和SYN放在一个报文里</strong>发送给<a href>客户端</a>。 </li>
+<li>关闭连接时，服务器收到对方的FIN报文时，仅仅表示对方不再发送数据了但是还能接收数据，而自己也未必全部数据都发送给对方了,所以服务器可以立即关闭，也可以发送一些数据给对方后，再发送FIN报文给对方来表示同意现在关闭连接。因此，服务器<strong>ACK和FIN一般都会分开发送</strong>，从而导致多了一次</li>
+</ul>
+<h3 id="为什么TCP挥手每两次中间有一个-FIN-WAIT2等待时间？"><a href="#为什么TCP挥手每两次中间有一个-FIN-WAIT2等待时间？" class="headerlink" title="为什么TCP挥手每两次中间有一个 FIN-WAIT2等待时间？"></a>为什么TCP挥手每两次中间有一个 FIN-WAIT2等待时间？</h3><ul>
+<li>主动关闭的一端调用完close以后（即发FIN给被动关闭的一端， 并且收到其对FIN的确认ACK）则进入FIN_WAIT_2状态。<strong>如果这个时候因为网络突然断掉、被动关闭的一段宕机等原因，导致主动关闭的一端不能收到被动关闭的一端发来的FIN（防止对端不发送关闭连接的FIN包给本端）</strong>，这个时候就需要FIN_WAIT_2定时器， 如果在该定时器超时的时候，还是没收到被动关闭一端发来的FIN，那么直接释放这个链接，进入CLOSE状态</li>
+</ul>
 <h2 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h2><p><img src="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021488550_u16143127921954581760fm26gp0.jpg" alt="img"></p>
 <p><strong>4位版本</strong>：</p>
 <p> 目前协议版本号是4，因此IP有时也称作IPV4.</p>
@@ -640,16 +669,6 @@
 <h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><h3 id="HTTP-概况"><a href="#HTTP-概况" class="headerlink" title="HTTP 概况"></a>HTTP 概况</h3><p>HTTP 即超文本传输协议，是 Web 的应用层协议。HTTP 由两个程序实现，一个客户程序和一个服务器程序，客户程序和服务器程序运行在不同的端系统中，通过交换 HTTP 报文进行会话。HTTP 定义了这些报文的结构以及客户和服务器进行报文交换的方式，当用户请求一个 Web 页面时，浏览器向服务器发出对该页面中所包含对象的 HTTP 请求报文，服务器接收到请求并用包含这些对象的 HTTP 响应报文进行响应。</p>
 <p><strong>HTTP 使用 TCP 作为它的支撑运输协议</strong>，HTTP 客户首先发起一个与服务器的 TCP 连接，一旦连接建立，该浏览器和服务器进程就可以通过套接字访问 TCP。客户端的套接字接口是客户进程与 TCP 连接之间的门，服务器端的套接字接口则是服务器进程与 TCP 连接之间的门。客户向它的套接字接口发送 HTTP 请求报文并从它的套接字接口接收 HTTP 响应报文，类似的，服务器从它的套接字接口接收 HTTP 请求报文并向它的套接字接口发送 HTTP 响应报文。一旦客户向它的套接字接口发送一个 HTTP 请求报文，该报文就脱离了客户控制并进入 TCP 的控制，TCP 为 HTTP 提供可靠的数据传输服务，因此一个客户进程发出的每个 HTTP 请求报文最终都能完整地到达服务器，服务器进程发出地每个 HTTP 响应报文最终也可以完整地到达客户。这里体现了分层体系结构的优点，HTTP 协议不需要担心数据丢失，也不需要关注 TCP 从网络的数据丢失和乱序中如何恢复。</p>
 <p><strong>HTTP 是一种无状态的协议</strong>，服务器向客户发送被请求的文件，而不存储任何关于该客户的状态信息。假如某个客户在短时间内连续两次请求同一个对象，服务器并不会因为刚刚为该客户做出了响应就不再响应，而是重新进行响应。</p>
-<hr>
-<h3 id="非持续连接和持续连接"><a href="#非持续连接和持续连接" class="headerlink" title="非持续连接和持续连接"></a>非持续连接和持续连接</h3><p>依据每个请求/响应对经过一个单独的 TCP 连接还是相同的 TCP 连接发送，可以将连接划分为非持续连接和持续连接。HTTP 默认使用持续连接，但是也可以配置成使用非持续连接。</p>
-<p><strong>非持续连接</strong></p>
-<p>使用非持续连接时，从服务器向客户传送一个包含了一个 HTML 文件和 10  个 JPG 对象的 Web 页面步骤：</p>
-<p>① HTTP 客户进程在端口号 80 发起一个到服务器的 TCP 连接，并经它的套接字向服务器发送一个 HTTP 请求报文。② HTTP 服务器进程经它的套接字接收请求报文，从其存储器中检索出请求对象，在一个 HTTP 响应报文中封装对象，并通过套接字向客户发送响应报文。③ HTTP 服务器进程通知 TCP 断开该 TCP 连接，直到 TCP 确认客户已经完整接收到响应报文才会实际断开连接。④ HTTP 客户接收到响应报文，客户从报文中提取出 HTML 文件，得到多个 JPG 图像的引用，并对每个引用的 JPG 图像对象重复前三个步骤。</p>
-<p>每个 TCP 连接会在服务器发送一个对象后关闭，即该连接并不为其他的对象而持续下来。每个 TCP 连接只传输一个请求报文和一个响应报文，假如请求一个 HTML 文件和其中包括的 10 个 JPG 图像就要产生 11 个 TCP 连接。</p>
-<p>在非持续连接中，每次请求文件到接收响应大约需要花费两个 RTT 加上服务器传输文件的时间，RTT 就是往返时间，指一个短分组从客户到服务器然后再返回客户所发送的时间。其中三次握手的前两个部分占用一个 RTT，三次握手的第三个确认部分向服务器发送了请求报文，服务器接收到之后做出响应，这用去了另一个 RTT。</p>
-<p><strong>持续连接</strong></p>
-<p>非持续连接有很多缺点。第一，必须为每个请求的对象建立和维护一个新的连接，对于每个连接，在客户和服务器中都要分配 TCP 的缓冲区和保持 TCP 变量，这给 Web 服务器带来了很大负担。第二，每一个对象需要消耗两倍的 RTT，一个用于创建 TCP，一个用于请求和接收对象。</p>
-<p>在 HTTP1.1 中使用了持续连接，服务器在发送响应后保持该 TCP 连接打开。在相同的客户与服务器之间，后续的请求和响应报文能够通过相同的连接进行传送。在使用持续连接的情况下，请求一个完整的 Web 页面可以使用单个持续的 TCP 连接，例如之前所说的包含一个 HTML 文件和 10  个 JPG 对象的 Web 页面就只需要一个 TCP 连接而不是 11 个。</p>
 <hr>
 <h3 id="HTTP-报文格式"><a href="#HTTP-报文格式" class="headerlink" title="HTTP 报文格式"></a>HTTP 报文格式</h3><p>HTTP 报文有两种，分为请求报文和响应报文。</p>
 <p><strong>请求报文</strong></p>
@@ -746,25 +765,6 @@
 </tr>
 </tbody></table>
 <hr>
-<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>HTTP 的无状态性简化了服务器的设计，并且提高了 Web 服务器的性能，使其可以同时处理大量的 TCP 连接。但是一个 Web 站点通常希望能够识别用户，可能是为了限制用户的访问，也可能为了把内容与用户身份关联起来，为此 HTTP 使用了 cookie，cookie 是一种客户端的会话技术，允许站点对用户进行追踪。</p>
-<p><strong>cookie 技术有四个组件</strong></p>
-<p>① 在 HTTP 响应报文中的一个 cookie 首部行。② 在 HTTP 请求报文中的一个 cookie 首部行。③ 在用户端系统中保留有一个 cookie 文件，并由用户的浏览器关联。④ 位于 Web 站点的一个后端数据库。cookie 的工作流程：当客户通过浏览器第一次访问某个站点时，该 Web 站点将产生一个唯一识别码，并以此作为索引在它的后端数据库中产生的一个表项。接下来服务器会用一个包含 <code>Set-cookie</code> 首部的 HTTP 响应报文对浏览器进行相应，当浏览器收到后将其添加到自己管理的 cookie 文件中，在下次访问该站点时，请求报文的首部行中就会包括这个识别码，尽管浏览器不知道客户是谁，但是可以确定是同一个客户进行了访问。</p>
-<p><strong>cookie 和 session 的区别</strong></p>
-<p>① cookie 只能存储 ASCII 码字符串，而 session 则可以存储任何类型的数据，因此在考虑数据复杂性时首选session。② session 存储在服务器，而 cookie 存储在客户浏览器中，容易被恶意查看。如果非要将一些隐私数据存在 cookie 中，可以将 cookie 值进行加密，然后在服务器进行解密。</p>
-<p><strong>Cookie和Session的选择？</strong></p>
-<ol>
-<li><p>Cookie 只能存储 ASCII 码字符串，而 Session 则可以存储任何类型的数据，因此在考虑数据复杂性时首选Session；</p>
-</li>
-<li><p>Cookie 存储在浏览器中，容易被恶意查看。如果非要将一些隐私数据存在 Cookie 中，可以将 Cookie 值进行加密，然后在服务器进行解密；</p>
-</li>
-<li><p>对于大型网站，如果用户所有的信息都存储在 Session 中，那么开销是非常大的，因此不建议将所有的用户信息都存储到 Session 中。</p>
-</li>
-</ol>
-<hr>
-<h3 id="Web-缓存"><a href="#Web-缓存" class="headerlink" title="Web 缓存"></a>Web 缓存</h3><p>Web 缓存器也叫代理服务器，它是能够代表初始 Web 服务器来满足 HTTP 请求的网络实体。Web 缓存器有自己的磁盘存储空间，并在存储空间中保存最近请求过的对象副本。可以配置用户的浏览器，使得用户所有的 HTTP 请求首先指向 Web 缓存器。客户通过 Web 缓存器请求对象的步骤如下：</p>
-<p>① 浏览器创建一个到 Web 缓存器的 TCP 连接，并向 Web 缓存器中的对象发送一个 HTTP 请求。② Web 缓存器进行检查，查看本地是否存储了该对象副本。如果有，Web 缓存器就向客户浏览器用 HTTP 响应报文返回该对象。③ 如果 Web 缓存器中没有该对象，它就打开一个与该对象的初始服务器的 TCP 连接，Web 缓存器在这个连接上发送一个请求并接受响应。④ Web 缓存器接收到响应后，在本地存储空间存储一份副本，并向客户的浏览器用 HTTP 响应报文发送该副本。</p>
-<p>Web 缓存器既是服务器又是客户，当它接受浏览器的请求并响应时，它是一个服务器，当他向初始服务器发出请求并接收响应时，它是一个客户。在因特网上部署 Web 缓存器有两个原因，首先，Web 缓存器可以大大减少对客户请求的响应时间，特别是客户与初始服务器之间的带宽远低于客户与 Web 缓存器之间的带宽时更是如此。其次，Web 缓存器可以大大减少一个机构的接入链路到因特网的通信量，通过减少通信量，机构就不必基于增加带宽，可以降低费用。</p>
-<hr>
 <h3 id="输入一个-url-发生的事"><a href="#输入一个-url-发生的事" class="headerlink" title="输入一个 url 发生的事"></a>输入一个 url 发生的事</h3><p><strong>① 分析 url</strong></p>
 <p>判断输入的 url 是否合法，如果不合法浏览器会使用默认的搜索引擎进行搜索。如果输入的是一个域名，默认会加上一个 http 前缀。</p>
 <p><strong>② DNS 查询</strong></p>
@@ -795,13 +795,6 @@
 <p>⑤ 客户和服务器分别发送所有握手报文的一个报文鉴别码。这一步是为了使握手免受篡改危害，在第一步中客户提供的算法列表是以明文形式发送的，因此可能被攻击者截获并删除较强的算法。当客户发送一个级联它以及发送和接收的所有握手报文的报文鉴别码，服务器能够比较这个报文鉴别码和它已经接受和发送的握手报文的报文鉴别码，如果不一致就终止连接。类似的，客户也可以通过服务器发送的报文鉴别码来检查一致性。</p>
 <p>第一步和第二步中的不重复数用于防止重放攻击，每个 TCP 会话使用不同的不重复数就可以使加密密钥不同，当收到重放的 SSL 记录时，该记录无法通过完整性检查，假冒的电子事务不会成功。</p>
 <p>当结束 SSL 会话时，需要在类型字段中指出该记录是否是用于终止 SSL 会话的。通过包含这样一个字段，如果客户或服务器在收到一个关闭 SSL 记录之前突然收到了一个 TCP FIN，就知道遭受了截断攻击。</p>
-<hr>
-<p>作者：Sun浅雨<br>链接：<a href="https://www.nowcoder.com/discuss/472041?type=all&amp;order=time&amp;pos=&amp;page=3&amp;channel=1009&amp;source_id=search_all" target="_blank" rel="noopener">https://www.nowcoder.com/discuss/472041?type=all&amp;order=time&amp;pos=&amp;page=3&amp;channel=1009&amp;source_id=search_all</a><br>来源：牛客网</p>
-<h3 id="HTTP1-0、1-1、2-0之间的区别"><a href="#HTTP1-0、1-1、2-0之间的区别" class="headerlink" title="HTTP1.0、1.1、2.0之间的区别"></a><strong>HTTP1.0、1.1、2.0之间的区别</strong></h3><p> <strong>HTTP1.0：</strong>默认使用Connection:cloose，浏览器每次请求都需要与服务器建立一个TCP连接，服务器处理完成后立即断开TCP连接（无连接），服务器不跟踪每个<a href>客户端</a>也不记录过去的请求（无状态）。</p>
-<p> <strong>HTTP1.1：</strong>默认使用Connection:<a href>keep</a>-alive（长连接），避免了连接建立和释放的开销；通过Content-Length字段来判断当前请求的数据是否已经全部接受。不允许同时存在两个并行的响应。</p>
-<p> <strong>HTTP2.0：</strong>引入二进制数据帧和流的概念，其中帧对数据进行顺序标识；因为有了序列，服务器可以并行的传输数据。</p>
-<h3 id="http1-0和http1-1的主要区别如下："><a href="#http1-0和http1-1的主要区别如下：" class="headerlink" title="http1.0和http1.1的主要区别如下："></a><strong>http1.0和http1.1的主要区别如下：</strong></h3><p> 1、缓存处理：1.1添加更多的缓存控制策略（如：Entity tag，If-Match）<br>​ 2、网络连接的优化：1.1支持断点续传<br>​ 3、错误状态码的增多：1.1新增了24个错误状态响应码，丰富的错误码更加明确各个状态<br>​ 4、Host头处理：支持Host头域，不在以IP为请求方标志<br>​ 5、长连接：减少了建立和关闭连接的消耗和延迟。</p>
-<h3 id="http1-1和http2-0的主要区别："><a href="#http1-1和http2-0的主要区别：" class="headerlink" title="http1.1和http2.0的主要区别："></a><strong>http1.1和http2.0的主要区别：</strong></h3><p> 1、新的传输格式：2.0使用二进制格式，1.0依然使用基于文本格式<br>​ 2、多路复用：连接共享，不同的request可以使用同一个连接传输（最后根据每个request上的id号组合成 正常的请求）<br>​ 3、header压缩：由于1.X中header带有大量的信息，并且得重复传输，2.0使用encoder来减少需要传输的 hearder大小<br>​ 4、服务端推送：同<a href>google</a>的SPDUY（1.0的一种升级）一样</p>
 <h3 id="HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？"><a href="#HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？" class="headerlink" title="HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？"></a><strong>HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密<a href>算法</a>和非对称加密<a href>算法</a>不？</strong></h3><p> <strong>HTTP与HTTPS之间的区别：</strong></p>
 <table>
 <thead>
@@ -828,7 +821,6 @@
 <p> 3.<a href>客户端</a>对发来的公钥进行真伪校验，校验为真则使用公钥对对称加密<a href>算法</a>以及对称密钥进行加密</p>
 <p> 4.服务器端使用私钥进行解密并使用对称密钥加密确认信息发送给<a href>客户端</a></p>
 <p> 5.随后<a href>客户端</a>和服务端就使用对称密钥进行信息传输</p>
-<p><a href="https://blog.csdn.net/qq_1290259791/article/details/85939246?ops_request_misc=%7B%22request%5Fid%22%3A%22160430345319725225016168%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&request_id=160430345319725225016168&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_v2~rank_v28-1-85939246.pc_first_rank_v2_rank_v28&utm_term=https加密&spm=1018.2118.3001.4449" target="_blank" rel="noopener">https://blog.csdn.net/qq_1290259791/article/details/85939246?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522160430345319725225016168%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=160430345319725225016168&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2<del>all</del>first_rank_v2~rank_v28-1-85939246.pc_first_rank_v2_rank_v28&amp;utm_term=https%E5%8A%A0%E5%AF%86&amp;spm=1018.2118.3001.4449</a></p>
 <h3 id="对称加密算法："><a href="#对称加密算法：" class="headerlink" title="对称加密算法："></a><strong>对称加密<a href>算法</a>：</strong></h3><p> 双方持有相同的密钥，且加密速度快，典型对称加密<a href>算法</a>：DES、AES</p>
 <h3 id="非对称加密算法："><a href="#非对称加密算法：" class="headerlink" title="非对称加密算法："></a><strong>非对称加密<a href>算法</a>：</strong></h3><p> 密钥成对出现（私钥、公钥），私钥只有自己知道，不在网络中传输；而公钥可以公开。相比对称加密速度较慢，典型的非对称加密<a href>算法</a>有：RSA、DSA</p>
 <h3 id="HTTP请求有哪些。get和Post区别。"><a href="#HTTP请求有哪些。get和Post区别。" class="headerlink" title="HTTP请求有哪些。get和Post区别。"></a><strong>HTTP请求有哪些。get和Post区别。</strong></h3><p><strong>HTTP请求：</strong></p>
@@ -933,89 +925,6 @@
 <li><strong>从效率来说</strong>：forward：高。redirect：低。</li>
 </ol>
 <h2 id="网络安全"><a href="#网络安全" class="headerlink" title="网络安全"></a>网络安全</h2><p>网络安全主要探讨的问题是攻击者如何攻击计算机网络，以及如何防御这些攻击，或者如何事先预防这样的攻击。</p>
-<h3 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h3><p>计算机网络面临的威胁主要有被动攻击和主动攻击。</p>
-<p><strong>被动攻击</strong>指攻击者从网络上窃听他人的通信内容，也叫截获。在被动攻击中，攻击者只是观察和分析某一协议数据单元 PDU 而不干扰信息流。攻击者可以通过观察 PDU 的协议控制信息部分，了解正在通信的协议的地址和身份，通过研究 PDU 的长度和发送频度，了解所交换的数据的某种性质。这种攻击又叫做流量分析。</p>
-<p><strong>主动攻击</strong>包括：</p>
-<ul>
-<li><p><strong>篡改</strong></p>
-<p>攻击者篡改网络上传输的报文，包括彻底中断传送的报文，甚至把完全伪造的报文发给接收端，这种攻击方式也叫做更改报文流。</p>
-</li>
-<li><p><strong>恶意程序</strong></p>
-<p>① 计算机病毒，能够传染其他程序的程序，主要通过修改其他程序来把自身或自身的变种复制进去完成。② 计算机蠕虫，通过网络通信能把自己从一个结点发往另一个节点并且自动启动运行的程序。③ 特洛伊木马，它执行的功能并非声称的功能而是恶意程序，例如一个编译程序除了完成编译任务外还偷偷地复制源程序。④ 逻辑炸弹，当运行环境满足某种特殊条件时就会执行特殊功能的程序，例如当日期为 22 号且为周三的时候就会删除所有文件。⑤ 后门入侵，指利用系统实现中的漏洞通过网络入侵系统。⑥ 流氓软件，一种未经用户同意就在用户计算机上安装并损害用户利益的软件。</p>
-</li>
-<li><p><strong>拒绝服务DoS</strong></p>
-<p>DoS 攻击使得网络、主机或其他基础设施部分不能由合法用户使用。Web 服务器、电子邮件服务器、DNS 服务器和机构网络都能够成为 DoS 攻击的目标。大多数 DoS 攻击属于以下三种情况：① 弱点攻击，指向一台目标主机上运行的易受攻击的应用程序或操作系统发送制作精细的报文，如果适当顺序的多个分组发送给一个易受攻击的应用程序或操作系统，该服务器可能会停止运行甚至崩溃。② 带宽洪泛，指攻击者向目标主机发送大量的分组，分组数量之多使得目标的接入链路变得阻塞，使合法的分组无法到达服务器。③ 连接洪泛，指攻击者在目标主机中创建大量的半开或全开 TCP 连接，主机因这些伪造的连接而陷入困境，并停止接受合法的连接。</p>
-</li>
-<li><p><strong>ARP欺骗</strong></p>
-<p>在使用以太网交换机的网络中，攻击者向某个以太网交换机发送大量的伪造源 MAC 地址，以太网交换机收到这样的帧就把虚假的 MAC 源地址填入到交换表中，由于伪造的数量很大很快就填满了表，导致以太网交换机无法正常工作。</p>
-</li>
-</ul>
-<p>对于被动攻击可以采用各种数据加密技术，对付主动攻击则需要将加密技术与适当的鉴别技术相结合。</p>
-<p>安全的计算机网络具有以下特性：</p>
-<ul>
-<li><p><strong>机密性</strong></p>
-<p>仅有发送方和希望的接收方能够理解报文传输的内容，因为窃听者可以截获报文，这要求报文必须进行加密，使截取而都报文无法被截获者理解。为了使网络具有保密性，需要使用各种密码技术。</p>
-</li>
-<li><p><strong>报文完整性</strong></p>
-<p>通信内容在传输过程中需要被确保未被恶意篡改或意外改动。</p>
-</li>
-<li><p><strong>端点鉴别</strong></p>
-<p>发送方和接收方都应该能证实通信过程中的另一方，以确信通信的另一方确实具有其声称的身份。在实际应用中，报文完整性和端点鉴别往往是不可分割的，因为假设通过了端点鉴别保证了通信双方的身份却没有通过报文鉴别保证报文的完整性是没有意义的。</p>
-</li>
-<li><p><strong>运行安全性</strong></p>
-<p>几乎所有机构都有与互联网相连的网络，这些网络都因此具有潜在的安全问题。需要通过访问控制来确保网络的安全性，防火墙位于机构和公共网络之间，控制接入和来自网络的分组；入侵检测系统指需深度分组检查任务，向网络管理员发出有关可疑活动的警告。</p>
-</li>
-</ul>
-<hr>
-<h3 id="密码技术"><a href="#密码技术" class="headerlink" title="密码技术"></a>密码技术</h3><p>密码技术使发送方可以伪装数据，接收方需要从伪装的数据中恢复出初始数据，而入侵者不能从截获到的数据中获得任何信息。报文的最初形式被称为明文，在使用加密算法加密后得到的加密报文被称为密文。密码体制分为两种，对称密钥密码体制和公开密钥密码体制。</p>
-<p>对称密钥密码体制使用相同的加密密钥和解密密钥，对称加密的运算速度快，但是安全性差，因为在密钥传输的过程中可能会被截获。数据加密标准 DES 属于对称密码密钥，这种密码的保密性仅仅取决于对密钥的保密，而算法是公开的，之后被更加安全的高级加密标准 AES 所取代。</p>
-<p>公开密钥密码体制使用公钥进行加密，私钥进行解密，其中公钥是任何人都可以得知的，而私钥是通信双方所独有的。非对称加密的运算速度慢，但是安全性好。最常见的公钥加密算法是 RSA，它使用两个大素数 p 和 q 来生成密钥，p 和 q 的值越大，破解的难度就越大，但是执行加密和解密的时间也就越长，RSA 实验室推荐 p 和 q 的乘积为 1024 的数量级。</p>
-<p>在使用对称密钥时，由于双方使用同样的密钥，因此在通信信道上可以进行<strong>一对一的双向保密通信</strong>，每一方既可以用该密钥加密明文并发送给对方，也可以接收密文用同一密钥解密。这种保密通信仅限于持有此密钥的双方。但在使用公开密钥时，在通信信道上可以是<strong>多对一的单向保密通信</strong>，可以同时有很多客户利用公钥对自己的报文加密后发送给某个服务器，服务器利用其私钥可以对收到的密文一一解密，但如果是反方向则是行不通的，例如在网购时很多客户都向同一个网站发送各自的信用卡信息。</p>
-<hr>
-<h3 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h3><p><strong>数字签名的作用</strong></p>
-<p>① <strong>报文鉴别：</strong>接收者能够核实发送者对报文的签名，也就是说接收者可以确认报文发送方的身份。</p>
-<p>② <strong>报文完整性：</strong>接收者可以确信收到的数据和发送者发送的完全一样并且没有被篡改过。</p>
-<p>③ <strong>不可否认：</strong>发送者事后不能抵赖对报文的签名。</p>
-<p><strong>实现原理</strong></p>
-<p>有多种实现数字签名的方法，但采用公钥算法要比采用对称密钥算法更容易实现。为了进行签名，会首先用私钥对报文进行 D 运算得到某种不可读的密文，为了核实签名，接收方会利用发送方的公钥进行 E 运算还原出明文。任何人都可以用发送方的公钥还原出明文，因此这种通信方式并不是为了保密，而是为了进行签名和核实签名，即确认发送方的身份。</p>
-<p>数字签名实现报文鉴别：除了发送方之外没有人持有其私钥，因此无法产生发送方才能产生的密文。</p>
-<p>数字签名保证报文完整性：如果其他人篡改过密文，那么解密出的明文就会不可读，就知道收到的报文被篡改过。</p>
-<p>数字签名保证不可否认：如果发送方抵赖发送过报文，接收方可以把初始报文和密文发送给公证的第三者，第三者通过公钥很容易证实发送方确实发送过报文。</p>
-<p><strong>公钥认证</strong></p>
-<p>攻击者可能会发送使用自己私钥加密的密文和自己的公钥来伪造发送方的身份，该问题通过 CA 解决，发送方在发送数据时也会发送 CA 签署的证书，接收方会利用 CA 的公钥来核对发送方证书的合法性并提取发送方的公钥。</p>
-<p>CA 即认证中心，将公钥与特定的实体绑定， 它的职责就是使识别和发行证书合法化。CA 主要有两个作用：① CA 认证一个实体（一个人、一台路由器等）的真实身份。② 一旦 CA 认证了某个实体的身份，CA 会生成一个将其身份和实体的公钥绑定起来的证书，这个证书包含了这个公钥和公钥所有者全局唯一的身份标识信息（例如一个人的名字或一个 IP 地址），由 CA 对这个证书进行数字签名。</p>
-<hr>
-<h3 id="报文鉴别"><a href="#报文鉴别" class="headerlink" title="报文鉴别"></a>报文鉴别</h3><p>报文鉴别就是鉴别收到的报文确实是发送方发送的，而不是别人伪造或篡改的。数字签名就可以实现报文鉴别，但是数字签名有一个很大的缺点，就是对较长的报文进行数字签名时会使计算机增加非常大的负担，因为需要较长时间的运算。有一种相对简单的报文鉴别方式，就是密码散列函数。在密码学中的散列函数称为密码散列函数，最重要的特点就是：要找到两个不同的报文，它们具有相同的密码散列函数输出，在计算上是不可行的，也就是说密码散列函数实际上是一种单向函数。</p>
-<p><strong>使用散列函数进行报文鉴别的原理</strong></p>
-<p>通信双方需要共享一个密钥 k ，发送方生成报文 m，用 k 级联 m 生成 m+k，并使用 SHA-1 或 MD5 这样的散列函数计算 m+k 的散列值 h，这个散列值就被称为报文鉴别码 MAC。发送方会将 MAC 附加到报文 m 上，生成一个扩展报文，并将该扩展报文发送给接收方。接收方接到扩展报文后，由于知道共享密钥 k，因此可以计算出报文鉴别码，如果计算出的报文鉴别码和 h 相等就可以得出一切正常的结论。</p>
-<p>除了共享密钥，还可以使用公钥加密。发送方可以利用自己的私钥进行散列运算，接收方利用发送方的公钥进行还原。这种方法得到的扩展报文是不为伪造且不可否认的，因为攻击者没有发送方的私钥，无法伪造出发送方发出的报文。</p>
-<hr>
-<h3 id="端点鉴别"><a href="#端点鉴别" class="headerlink" title="端点鉴别"></a>端点鉴别</h3><p>端点鉴别就是一个实体经过计算机网络向另一个实体证明其身份的过程，实体可以是一个人也可以是一个进程。端点鉴别主要通过鉴别协议 ap 来实现，鉴别协议通常在两个通信实体运行其他协议之前运行。鉴别协议首先建立相互满意的各方标识，仅当鉴别完成之后各方才继续下面的工作。</p>
-<p><strong>鉴别协议 ap1.0</strong></p>
-<p>发送方直接发送一个报文说明自己的身份，缺陷很大，攻击者可以任意伪造。</p>
-<p><strong>鉴别协议 ap2.0</strong></p>
-<p>发送方有一个总是用于通信的 IP 地址，接收方可以验证携带鉴别报文的 IP 数据报的源地址和发送方经常使用的 IP 地址是否匹配来进行鉴别。但存在 IP 欺骗的可能性，攻击者也可以伪造源 IP 地址。</p>
-<p><strong>鉴别协议 ap3.0</strong></p>
-<p>进行鉴别的经典方法是使用秘密口令，口令是鉴别者和被鉴别者之间的一个共享秘密。接收方会要求发送方提供口令来进行验证，但这种方式依旧不是安全的，因为攻击者可能会通过嗅探获得发送方的口令。一种改进想法是对口令进行加密，防止攻击者获得口令，但是这不能解决重放攻击，攻击者可以获取加密口令并不断重放。</p>
-<p><strong>鉴别协议 ap4.0</strong></p>
-<p>重放攻击主要是由于接收方并不知道此时发送方是否还是活跃的，ap 4.0 主要通过一个<strong>不重数</strong>来防止重放攻击。不重数就是在一个协议的生存期中只会使用一次的数，是一个不重复使用的大随机数，一旦某协议使用了一个不重数，就永远不会再使用那个数了。接收方会向发送方发送一个不重数，发送方将其加密后发回给接收方，接收方通过验证这个数字来判断发送方是否是活跃的。</p>
-<hr>
-<h3 id="安全协议"><a href="#安全协议" class="headerlink" title="安全协议"></a>安全协议</h3><p><strong>网络层</strong></p>
-<p>网络层的安全协议是 IPsec，它并不是一个单一的协议，而是能够为两个网络实体之间的 IP 数据报提供通信安全的协议族。IPsec 并没有限定用户必须使用的加密和鉴定算法，允许通信双方选择合适的算法和参数，为保证互操作性而包含了一套加密算法，要求所有 IPsec 的实现都必须使用。许多机构都使用 IPsec 来保证虚拟专用网 VPN 的安全性。</p>
-<p>IPsec 协议族中有两个主要协议：<strong>鉴别首部 AH 协议</strong>和<strong>封装安全有效载荷 ESP 协议</strong>。当某源 IPsec 实体向一个目的实体发发送安全数据报时，它可以使用 AH 或 ESP 协议来实现。AH 提供源鉴别和数据完整性服务，而 ESP 除了这两种服务外还可以提供机密性服务，因此使用要比 AH 广泛许多。使用 AH 或 ESP 的 IP 数据报称为 IP 安全数据报，它可以在两台主机、两台路由器或一台主机和一个路由器之间发送。IP 安全数据报有两种工作方式：① 运输方式，在整个运输层报文段的前后分别加上控制信息再加上 IP 首部，构成 IP 安全数据报。② 隧道方式，在原始的 IP 数据报的前后分别加上控制信息，构成 IP 安全数据报，这种方式使用较多。</p>
-<p><strong>运输层</strong></p>
-<p>运输层的安全协议主要是 SSL 安全套节字层和 TLS 运输层安全，TLS 是 SSL3.0 的修改版本。SSL 主要作用在端系统的 HTTP 和运输层之间，在 TCP 上建立起一个安全通道，为 TCP 传输的应用层数据提供安全保障。应用层使用 SSL 最多的就是 HTTP，但 SSL 并不是只用于 HTTP，而是可以用于任何应用层的协议，例如 SSL 也可以用于邮件存取的鉴别和数据加密。</p>
-<p>SSL 提供的安全性服务包括三种：① <strong>服务器鉴别</strong>，允许用户证实服务器的身份，支持 SSL 的客户端通过验证来自服务器的证书来鉴别服务器的身份并取得服务器的公钥。② <strong>客户鉴别</strong>，SSL 可选的安全服务，允许服务器验证用户的身份。③ <strong>加密的 SSL 会话</strong>，对客户和服务器发送的所有报文进行加密，并检测报文是否被篡改。</p>
-<hr>
-<h3 id="防火墙和入侵检测"><a href="#防火墙和入侵检测" class="headerlink" title="防火墙和入侵检测"></a>防火墙和入侵检测</h3><p>在计算机网络中，当通信流量进入/离开网络时要执行安全检查、做记录、丢弃或转发，这些工作都有防火墙和入侵检测系统来完成。</p>
-<p><strong>防火墙</strong></p>
-<p>防火墙是一个硬件和软件的结合体，它将一个机构的内部网络与整个因特网隔离开，内部的属于可信网络，外部的属于不可信网络，允许一些数据分组通过而阻止另一些。它属于一种访问控制技术，通过严格控制进出网络的分组来禁止任何不必要的通信，从而减少潜在侵入的发送，从外部到内部和从内部到外部的所有流量都必须经过防火墙，只有被授权的流量才允许通过，授权与否由本地的安全策略定义，防火墙可以限制对授权流量的访问。 </p>
-<p>防火墙分为三种：① 基于<strong>分组过滤</strong>，分组过滤器独立地检查每个数据报，然后基于管理员特定的规则决定该数据报应当允许通过还是丢弃，过滤因素通常包括 IP 源或目的地址、TCP 或 UDP 地源和目的端口、IP 数据报中的协议字段类型等。②  基于<strong>状态过滤</strong>，利用一张连接表来实际地跟踪 TCP 连接，并使用跟踪信息做出过滤决定。③ <strong>应用程序网关</strong>，这是一个应用程序特定的服务器，所有应用程序数据都必须通过它，每种程序都需要一个不同的应用网关。</p>
-<p><strong>入侵检测系统 IDS</strong></p>
-<p>防火墙不可能阻止所有入侵行为，入侵检测系统作为第二道防线，通过对进入网络的分组进行深度分析与检测发现异常网络行为，并进行报警以便进一步处理。IDS 可以用于检测多种攻击，包括网络映射、端口扫描、DoS 带宽洪泛攻击、病毒和蠕虫等。一个机构可以在它的机构网络中部署一个或多个 IDS 传感器，由于 IDS 不仅需要做深度分组检查，还必须要把每个过往的分组与数以万计的特征进行比较，因此会导致很大的处理量，所以一般都需要多个 IDS 传感器。IDS 系统可以大致分为基于特征的系统和基于异常的系统。</p>
-<p><strong>基于特征的 IDS</strong> 维护了一个范围广泛的攻击特征数据库，每个特征是一个与入侵活动相关联的规则集，基于特征的 IDS 嗅探通过它的每个分组，将分组中的数据与数据库中的特征进行比较，如果匹配将产生一个警告，该警告能够发送一个电子邮件报文给网络管理员或者网络管理系统。但是基于特征的 IDS 无法应对新型攻击，并且即使与特征匹配时也可能不是一个攻击而因此产生了一个虚假警告。</p>
-<p><strong>基于异常的 IDS</strong> 会观察正常运行的流量，并生成一个流量概况文件。它会寻找统计上不寻常的分组流，例如 ICMP 分组不寻常的百分比或端口扫描指数性突然增长。基于异常的 IDS 最大的特点就是不依赖现有攻击的以前只是，另一方面区分正常流量和统计异常流量也是一个挑战。至今大多数部署的 IDS 主要是基于特征的。</p>
-<hr>
 <h2 id="进程和线程"><a href="#进程和线程" class="headerlink" title="进程和线程"></a>进程和线程</h2><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>多道程序环境下允许多个程序并发执行，进程就是为了更好地描述和控制程序的并发执行，实现操作系统的并发性和共享性。</p>
 <p>进程就是进程实体的运行过程，是系统进行资源分配和调度的一个独立单位。系统资源指的是处理机、存储器和其他设备服务于某个进程的时间，例如把处理机资源理解为处理机的时间片才是准确的。因为进程是这些资源分配和调度的独立单位，这就决定了进程一定是一个动态的、过程性的概念。</p>
 <p><strong>结构</strong></p>
@@ -1322,7 +1231,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">195</span>
+                  <span class="site-state-item-count">201</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1381,7 +1290,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络协议分层"><span class="nav-number">1.</span> <span class="nav-text">网络协议分层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用层"><span class="nav-number">1.1.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层"><span class="nav-number">1.2.</span> <span class="nav-text">运输层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络层"><span class="nav-number">1.3.</span> <span class="nav-text">网络层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链路层"><span class="nav-number">1.4.</span> <span class="nav-text">链路层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#物理层"><span class="nav-number">1.5.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表示层"><span class="nav-number">1.6.</span> <span class="nav-text">表示层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#会话层"><span class="nav-number">1.7.</span> <span class="nav-text">会话层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP"><span class="nav-number">2.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-特点"><span class="nav-number">2.1.</span> <span class="nav-text">TCP 特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-报文结构"><span class="nav-number">2.2.</span> <span class="nav-text">TCP 报文结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可靠传输协议-ARQ"><span class="nav-number">2.3.</span> <span class="nav-text">可靠传输协议 ARQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#停止等待协议"><span class="nav-number">2.3.1.</span> <span class="nav-text">停止等待协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回退-N-步协议"><span class="nav-number">2.3.2.</span> <span class="nav-text">回退 N 步协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择重传协议"><span class="nav-number">2.3.3.</span> <span class="nav-text">选择重传协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-可靠原理"><span class="nav-number">2.4.</span> <span class="nav-text">TCP 可靠原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#滑动窗口"><span class="nav-number">2.4.1.</span> <span class="nav-text">滑动窗口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流量控制"><span class="nav-number">2.4.2.</span> <span class="nav-text">流量控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞控制"><span class="nav-number">2.4.3.</span> <span class="nav-text">拥塞控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接和释放机制"><span class="nav-number">2.5.</span> <span class="nav-text">TCP 连接和释放机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手"><span class="nav-number">2.5.1.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四次挥手"><span class="nav-number">2.5.2.</span> <span class="nav-text">四次挥手</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-和-UDP-的区别"><span class="nav-number">2.6.</span> <span class="nav-text">TCP 和 UDP 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP和UDP的传送信息单位的区别？"><span class="nav-number">2.7.</span> <span class="nav-text">TCP和UDP的传送信息单位的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Close-wait作用"><span class="nav-number">2.8.</span> <span class="nav-text">Close wait作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP粘包？"><span class="nav-number">2.9.</span> <span class="nav-text">TCP粘包？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原因"><span class="nav-number">2.9.1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理方法："><span class="nav-number">2.9.2.</span> <span class="nav-text">处理方法：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端发送的最后一个ACK因为某些原因丢失时："><span class="nav-number">2.10.</span> <span class="nav-text">客户端发送的最后一个ACK因为某些原因丢失时：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP"><span class="nav-number">3.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP"><span class="nav-number">4.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-概况"><span class="nav-number">4.1.</span> <span class="nav-text">HTTP 概况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非持续连接和持续连接"><span class="nav-number">4.2.</span> <span class="nav-text">非持续连接和持续连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-报文格式"><span class="nav-number">4.3.</span> <span class="nav-text">HTTP 报文格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie"><span class="nav-number">4.4.</span> <span class="nav-text">cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-缓存"><span class="nav-number">4.5.</span> <span class="nav-text">Web 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入一个-url-发生的事"><span class="nav-number">4.6.</span> <span class="nav-text">输入一个 url 发生的事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS"><span class="nav-number">4.7.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP1-0、1-1、2-0之间的区别"><span class="nav-number">4.8.</span> <span class="nav-text">HTTP1.0、1.1、2.0之间的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http1-0和http1-1的主要区别如下："><span class="nav-number">4.9.</span> <span class="nav-text">http1.0和http1.1的主要区别如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http1-1和http2-0的主要区别："><span class="nav-number">4.10.</span> <span class="nav-text">http1.1和http2.0的主要区别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？"><span class="nav-number">4.11.</span> <span class="nav-text">HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS链接建立的过程："><span class="nav-number">4.12.</span> <span class="nav-text">HTTPS链接建立的过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对称加密算法："><span class="nav-number">4.13.</span> <span class="nav-text">对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非对称加密算法："><span class="nav-number">4.14.</span> <span class="nav-text">非对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP请求有哪些。get和Post区别。"><span class="nav-number">4.15.</span> <span class="nav-text">HTTP请求有哪些。get和Post区别。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP常见响应状态码，从1xx到5xx"><span class="nav-number">4.16.</span> <span class="nav-text">HTTP常见响应状态码，从1xx到5xx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向和转发区别"><span class="nav-number">4.17.</span> <span class="nav-text">重定向和转发区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络安全"><span class="nav-number">5.</span> <span class="nav-text">网络安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络攻击"><span class="nav-number">5.1.</span> <span class="nav-text">网络攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#密码技术"><span class="nav-number">5.2.</span> <span class="nav-text">密码技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字签名"><span class="nav-number">5.3.</span> <span class="nav-text">数字签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#报文鉴别"><span class="nav-number">5.4.</span> <span class="nav-text">报文鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端点鉴别"><span class="nav-number">5.5.</span> <span class="nav-text">端点鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全协议"><span class="nav-number">5.6.</span> <span class="nav-text">安全协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙和入侵检测"><span class="nav-number">5.7.</span> <span class="nav-text">防火墙和入侵检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程和线程"><span class="nav-number">6.</span> <span class="nav-text">进程和线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">6.1.</span> <span class="nav-text">进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">6.2.</span> <span class="nav-text">线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP异常处理？"><span class="nav-number">6.3.</span> <span class="nav-text">TCP异常处理？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">7.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分页分段"><span class="nav-number">8.</span> <span class="nav-text">分页分段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟内存实现方式："><span class="nav-number">8.1.</span> <span class="nav-text">虚拟内存实现方式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求分段存储管理："><span class="nav-number">8.2.</span> <span class="nav-text">请求分段存储管理：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段页式"><span class="nav-number">8.3.</span> <span class="nav-text">段页式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大内核和微内核有什么区别？"><span class="nav-number">8.4.</span> <span class="nav-text">大内核和微内核有什么区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Socket"><span class="nav-number">8.5.</span> <span class="nav-text">Socket</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Socket通信流程是怎样的？"><span class="nav-number">8.5.1.</span> <span class="nav-text">Socket通信流程是怎样的？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#延伸问题：从TCP连接的角度说说Socket通信流程。"><span class="nav-number">8.5.2.</span> <span class="nav-text">延伸问题：从TCP连接的角度说说Socket通信流程。</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close-wait产生原因"><span class="nav-number">8.6.</span> <span class="nav-text">close_wait产生原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二次挥手和第三次挥手能不能合并"><span class="nav-number">8.7.</span> <span class="nav-text">第二次挥手和第三次挥手能不能合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#那为什么会有close-wait状态呢"><span class="nav-number">8.8.</span> <span class="nav-text">那为什么会有close_wait状态呢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO复用？"><span class="nav-number">8.9.</span> <span class="nav-text">IO复用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步与异步，阻塞和非阻塞"><span class="nav-number">8.10.</span> <span class="nav-text">同步与异步，阻塞和非阻塞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作模式"><span class="nav-number">8.11.</span> <span class="nav-text">工作模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作场景"><span class="nav-number">8.12.</span> <span class="nav-text">工作场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#arp欺骗"><span class="nav-number">8.13.</span> <span class="nav-text">arp欺骗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SYN-flood"><span class="nav-number">8.14.</span> <span class="nav-text">SYN flood</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS欺骗？"><span class="nav-number">8.15.</span> <span class="nav-text">DNS欺骗？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络协议分层"><span class="nav-number">1.</span> <span class="nav-text">网络协议分层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用层"><span class="nav-number">1.1.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层"><span class="nav-number">1.2.</span> <span class="nav-text">运输层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络层"><span class="nav-number">1.3.</span> <span class="nav-text">网络层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链路层"><span class="nav-number">1.4.</span> <span class="nav-text">链路层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#物理层"><span class="nav-number">1.5.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表示层"><span class="nav-number">1.6.</span> <span class="nav-text">表示层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#会话层"><span class="nav-number">1.7.</span> <span class="nav-text">会话层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP"><span class="nav-number">2.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-特点"><span class="nav-number">2.1.</span> <span class="nav-text">TCP 特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-报文结构"><span class="nav-number">2.2.</span> <span class="nav-text">TCP 报文结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可靠传输协议-ARQ"><span class="nav-number">2.3.</span> <span class="nav-text">可靠传输协议 ARQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#停止等待协议"><span class="nav-number">2.3.1.</span> <span class="nav-text">停止等待协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回退-N-步协议"><span class="nav-number">2.3.2.</span> <span class="nav-text">回退 N 步协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择重传协议"><span class="nav-number">2.3.3.</span> <span class="nav-text">选择重传协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-可靠原理"><span class="nav-number">2.4.</span> <span class="nav-text">TCP 可靠原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#滑动窗口"><span class="nav-number">2.4.1.</span> <span class="nav-text">滑动窗口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流量控制"><span class="nav-number">2.4.2.</span> <span class="nav-text">流量控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞控制"><span class="nav-number">2.4.3.</span> <span class="nav-text">拥塞控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接和释放机制"><span class="nav-number">2.5.</span> <span class="nav-text">TCP 连接和释放机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手"><span class="nav-number">2.5.1.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四次挥手"><span class="nav-number">2.5.2.</span> <span class="nav-text">四次挥手</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-和-UDP-的区别"><span class="nav-number">2.6.</span> <span class="nav-text">TCP 和 UDP 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP和UDP的传送信息单位的区别？"><span class="nav-number">2.7.</span> <span class="nav-text">TCP和UDP的传送信息单位的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP三次握手后，客户端网线断掉了，服务端会不会检测得到？还有，如果客户端此时再插上网线，还需要进行三次握手吗？"><span class="nav-number">2.8.</span> <span class="nav-text">TCP三次握手后，客户端网线断掉了，服务端会不会检测得到？还有，如果客户端此时再插上网线，还需要进行三次握手吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果四次挥手中的第二次挥手后，服务端又收到了客户端发来的数据，那么服务端会做什么？"><span class="nav-number">2.9.</span> <span class="nav-text">如果四次挥手中的第二次挥手后，服务端又收到了客户端发来的数据，那么服务端会做什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TIME-WAIT作用"><span class="nav-number">2.10.</span> <span class="nav-text">TIME_WAIT作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP粘包？"><span class="nav-number">2.11.</span> <span class="nav-text">TCP粘包？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原因"><span class="nav-number">2.11.1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理方法："><span class="nav-number">2.11.2.</span> <span class="nav-text">处理方法：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三次握手最后一次丢失"><span class="nav-number">2.12.</span> <span class="nav-text">三次握手最后一次丢失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么连接的时候是三次握手，关闭的时候却是四次握手？"><span class="nav-number">2.13.</span> <span class="nav-text">为什么连接的时候是三次握手，关闭的时候却是四次握手？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么TCP挥手每两次中间有一个-FIN-WAIT2等待时间？"><span class="nav-number">2.14.</span> <span class="nav-text">为什么TCP挥手每两次中间有一个 FIN-WAIT2等待时间？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP"><span class="nav-number">3.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP"><span class="nav-number">4.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-概况"><span class="nav-number">4.1.</span> <span class="nav-text">HTTP 概况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-报文格式"><span class="nav-number">4.2.</span> <span class="nav-text">HTTP 报文格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入一个-url-发生的事"><span class="nav-number">4.3.</span> <span class="nav-text">输入一个 url 发生的事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS"><span class="nav-number">4.4.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？"><span class="nav-number">4.5.</span> <span class="nav-text">HTTP与HTTPS之间的区别，HTTPS链接建立的过程，了解对称加密算法和非对称加密算法不？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS链接建立的过程："><span class="nav-number">4.6.</span> <span class="nav-text">HTTPS链接建立的过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对称加密算法："><span class="nav-number">4.7.</span> <span class="nav-text">对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非对称加密算法："><span class="nav-number">4.8.</span> <span class="nav-text">非对称加密算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP请求有哪些。get和Post区别。"><span class="nav-number">4.9.</span> <span class="nav-text">HTTP请求有哪些。get和Post区别。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP常见响应状态码，从1xx到5xx"><span class="nav-number">4.10.</span> <span class="nav-text">HTTP常见响应状态码，从1xx到5xx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向和转发区别"><span class="nav-number">4.11.</span> <span class="nav-text">重定向和转发区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络安全"><span class="nav-number">5.</span> <span class="nav-text">网络安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程和线程"><span class="nav-number">6.</span> <span class="nav-text">进程和线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">6.1.</span> <span class="nav-text">进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">6.2.</span> <span class="nav-text">线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP异常处理？"><span class="nav-number">6.3.</span> <span class="nav-text">TCP异常处理？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">7.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分页分段"><span class="nav-number">8.</span> <span class="nav-text">分页分段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟内存实现方式："><span class="nav-number">8.1.</span> <span class="nav-text">虚拟内存实现方式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求分段存储管理："><span class="nav-number">8.2.</span> <span class="nav-text">请求分段存储管理：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段页式"><span class="nav-number">8.3.</span> <span class="nav-text">段页式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大内核和微内核有什么区别？"><span class="nav-number">8.4.</span> <span class="nav-text">大内核和微内核有什么区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Socket"><span class="nav-number">8.5.</span> <span class="nav-text">Socket</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Socket通信流程是怎样的？"><span class="nav-number">8.5.1.</span> <span class="nav-text">Socket通信流程是怎样的？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#延伸问题：从TCP连接的角度说说Socket通信流程。"><span class="nav-number">8.5.2.</span> <span class="nav-text">延伸问题：从TCP连接的角度说说Socket通信流程。</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close-wait产生原因"><span class="nav-number">8.6.</span> <span class="nav-text">close_wait产生原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二次挥手和第三次挥手能不能合并"><span class="nav-number">8.7.</span> <span class="nav-text">第二次挥手和第三次挥手能不能合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#那为什么会有close-wait状态呢"><span class="nav-number">8.8.</span> <span class="nav-text">那为什么会有close_wait状态呢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO复用？"><span class="nav-number">8.9.</span> <span class="nav-text">IO复用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步与异步，阻塞和非阻塞"><span class="nav-number">8.10.</span> <span class="nav-text">同步与异步，阻塞和非阻塞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作模式"><span class="nav-number">8.11.</span> <span class="nav-text">工作模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作场景"><span class="nav-number">8.12.</span> <span class="nav-text">工作场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#arp欺骗"><span class="nav-number">8.13.</span> <span class="nav-text">arp欺骗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SYN-flood"><span class="nav-number">8.14.</span> <span class="nav-text">SYN flood</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS欺骗？"><span class="nav-number">8.15.</span> <span class="nav-text">DNS欺骗？</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1431,7 +1340,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共339.3k字</span>
+  <span class="post-count">博客全站共345.2k字</span>
 </div>
 
         

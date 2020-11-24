@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="社区论坛 项目描述：该项目是设计一个社区论坛，方便用户发言与讨论 使用技术：本项目使用SpringBoot进行开发，使用的技术主要有 MySQL，Redis , Kafka , Quartz 主要功能：登录注册，发帖评论，点赞关注，消息提醒，帖子搜索，热帖排行 项目亮点：  通过自定义注解和拦截器，防止用户在未登录的情况下通过url访问没有权限的页面。 利用数据结构Trie实现前缀树，对发表帖子评">
+<meta name="description" content="社区论坛 项目描述：该项目是设计一个社区论坛，方便用户发言与讨论 使用技术：本项目使用SpringBoot进行开发，使用的技术主要有 MySQL，Redis , Kafka , Quartz 主要功能：登录注册，发帖评论，点赞关注，消息提醒，热帖排行 项目亮点：  通过Kaptcha来生成验证码图片，作登录和注册的验证。  通过自定义注解和拦截器，防止用户在未登录的情况下通过url访问没有权限的页">
 <meta property="og:type" content="article">
 <meta property="og:title" content="项目描述">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/20/%E9%A1%B9%E7%9B%AE%E6%8F%8F%E8%BF%B0/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="社区论坛 项目描述：该项目是设计一个社区论坛，方便用户发言与讨论 使用技术：本项目使用SpringBoot进行开发，使用的技术主要有 MySQL，Redis , Kafka , Quartz 主要功能：登录注册，发帖评论，点赞关注，消息提醒，帖子搜索，热帖排行 项目亮点：  通过自定义注解和拦截器，防止用户在未登录的情况下通过url访问没有权限的页面。 利用数据结构Trie实现前缀树，对发表帖子评">
+<meta property="og:description" content="社区论坛 项目描述：该项目是设计一个社区论坛，方便用户发言与讨论 使用技术：本项目使用SpringBoot进行开发，使用的技术主要有 MySQL，Redis , Kafka , Quartz 主要功能：登录注册，发帖评论，点赞关注，消息提醒，热帖排行 项目亮点：  通过Kaptcha来生成验证码图片，作登录和注册的验证。  通过自定义注解和拦截器，防止用户在未登录的情况下通过url访问没有权限的页">
 <meta property="article:published_time" content="2020-11-20T12:14:35.000Z">
-<meta property="article:modified_time" content="2020-11-21T00:51:44.947Z">
+<meta property="article:modified_time" content="2020-11-22T08:01:02.427Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  463
+                  460
                 </span>
               
 
@@ -413,15 +413,21 @@
         <p><strong>社区论坛</strong></p>
 <p><strong>项目描述</strong>：该项目是设计一个社区论坛，方便用户发言与讨论</p>
 <p><strong>使用技术</strong>：本项目使用SpringBoot进行开发，使用的技术主要有 MySQL，Redis , Kafka , Quartz</p>
-<p><strong>主要功能</strong>：登录注册，发帖评论，点赞关注，消息提醒，帖子搜索，热帖排行</p>
+<p><strong>主要功能</strong>：登录注册，发帖评论，点赞关注，消息提醒，热帖排行</p>
 <p><strong>项目亮点</strong>：</p>
 <ul>
-<li>通过自定义注解和拦截器，防止用户在未登录的情况下通过url访问没有权限的页面。</li>
-<li>利用数据结构Trie实现前缀树，对发表帖子评论进行简单的敏感词过滤。</li>
-<li>对点赞关注等高频功能利用Redis的Set来提升性能，并通过Redis的Hyperloglog统计UV, Bitmap统计DAU。</li>
-<li>利用Kafka来实现消息提醒功能，起到异步和解耦的功能。</li>
-<li>利用定时任务更新帖子的评分，实现热帖排行。</li>
-<li>利用多级缓存优化社区主页的加载，测试其QPS从9提高到196。</li>
+<li><p>通过Kaptcha来生成验证码图片，作登录和注册的验证。</p>
+</li>
+<li><p>通过自定义注解和拦截器，防止用户在未登录的情况下通过url访问没有权限的页面。</p>
+</li>
+<li><p>利用数据结构Trie实现前缀树，对发表帖子评论进行简单的敏感词过滤。</p>
+</li>
+<li><p>对点赞关注等高频功能利用Redis的Set来提升性能，并通过Redis的Hyperloglog统计UV, Bitmap统计DAU。</p>
+</li>
+<li><p>利用Kafka来实现消息提醒功能，起到异步和解耦的功能。</p>
+</li>
+<li><p>利用本地缓存优化社区主页的加载，测试其QPS从9提高到196。</p>
+</li>
 </ul>
 <p><strong>分布式RPC框架</strong></p>
 <p><strong>项目描述</strong>：该项目是编写一个RPC调度框架，实现跨服务调度</p>
@@ -553,7 +559,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">195</span>
+                  <span class="site-state-item-count">201</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -646,7 +652,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共339.3k字</span>
+  <span class="post-count">博客全站共345.2k字</span>
 </div>
 
         

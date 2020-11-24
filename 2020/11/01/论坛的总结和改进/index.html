@@ -86,9 +86,8 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC]  数据库用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 id（索引）、评论实体 id（索引）、评论类型（帖子&#x2F;回复）、被评论目标 id、评论内容、评论状态（有效&#x2F;无效">
 <meta property="og:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
-<meta property="og:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115211418953.png">
 <meta property="article:published_time" content="2020-11-01T02:28:23.000Z">
-<meta property="article:modified_time" content="2020-11-21T05:41:49.880Z">
+<meta property="article:modified_time" content="2020-11-22T07:17:01.412Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
@@ -376,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.5k
+                  5.3k
                 </span>
               
 
@@ -392,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  15
+                  23
                 </span>
               
             </div>
@@ -421,12 +420,26 @@
 <p><strong>帖子表</strong>，包括 id、发帖用户 id（索引）、标题、帖子内容、类型（普通/置顶）、评论数量、状态（普通/精华/拉黑）、发帖时间。</p>
 <p><strong>消息表</strong>，包括 id、发消息 id（索引）、收消息 id（索引）、会话 id（由发消息双方 id 拼接，索引）、内容、状态（未读/已读/删除）、发消息时间。</p>
 <hr>
+<p><strong>社区论坛</strong></p>
+<p><strong>项目描述</strong>：该项目是设计一个社区论坛，方便用户发言与讨论</p>
+<p><strong>使用技术</strong>：本项目使用SpringBoot进行开发，使用的技术主要有 MySQL，Redis , Kafka , Quartz</p>
+<p><strong>主要功能</strong>：登录注册，发帖评论，点赞关注，消息提醒，帖子搜索，热帖排行</p>
+<p><strong>项目亮点</strong>：</p>
+<ul>
+<li>通过Kaptcha来生成验证码图片，作登录和注册的验证。</li>
+<li>通过自定义注解和拦截器，防止用户在未登录的情况下通过url访问没有权限的页面。</li>
+<li>利用数据结构Trie实现前缀树，对发表帖子评论进行简单的敏感词过滤。</li>
+<li>对点赞关注等高频功能利用Redis的Set来提升性能，并通过Redis的Hyperloglog统计UV, Bitmap统计DAU。</li>
+<li>利用Kafka来实现消息提醒功能，起到异步和解耦的功能。</li>
+<li>利用本地缓存优化社区主页的加载，测试其QPS从9提高到196。</li>
+</ul>
+<hr>
 <h3 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h3><p><strong>判断注册合法性</strong></p>
 <ul>
 <li>利用 StringUtils 判断用户名、密码、邮箱是否非空。</li>
 <li>分别通过用户名和邮箱查询是否已经注册（为数据库的用户名和邮箱字段添加索引）。</li>
 </ul>
-<p><strong>通过 <code>set</code> 方法为用户设置各项信息</strong>，包括 MD5 加密后的密码、激活码等，然后插入数据库。</p>
+<p><strong>通过 <code>set</code> 方法为用户设置各项信息</strong>，包括 MD5 加密后的密码、激活码等，然后插入数据库。（keyProperty=”id” 标明主键)</p>
 <p><strong>给用户发送激活邮件</strong></p>
 <ul>
 <li><p>在新浪邮箱打开 SMTP 服务，引入 <code>spring-boot-starter-mail</code> 依赖。</p>
@@ -525,7 +538,13 @@ public int addDiscussPost(DiscussPost post) {
   insert into discuss_post(&lt;include refid=&quot;insertFields&quot;&gt;&lt;/include&gt;)
   values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
 &lt;/insert&gt;
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">帖子详情</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">帖子详情</span><br><span class="line"></span><br><span class="line">- 通过帖子id，查出帖子的相关信息</span><br><span class="line">- 根据帖子实体传来的用户id查出作者，根据帖子类型和帖子id找出点赞数量</span><br><span class="line">- 获取评论列表</span><br></pre></td></tr></table></figure>
+List&lt;Comment&gt; commentList = commentService.findCommentsByEntity(
+          ENTITY_TYPE_POST, post.getId(), page.getOffset(), page.getLimit());
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 对每一个评论，也会根据评论进行查询</span><br></pre></td></tr></table></figure>
+        List&lt;Comment&gt; replyList = commentService.findCommentsByEntity(
+                        ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 public String getDiscussPost(@PathVariable(&quot;discussPostId&quot;) int discussPostId, Model model, Page page) {
   // 帖子
   DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
@@ -702,7 +721,7 @@ for (Integer targetId : targetIds) {
 }
 
 return list;</code></pre><p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### Kafka</span><br><span class="line"></span><br><span class="line">**发送系统通知**</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题（评论、点赞、关注）、用户 id、实体类型、实体 id，以及一个 map 集合存放其它信息.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### Kafka</span><br><span class="line"></span><br><span class="line">### 发送系统通知</span><br><span class="line"></span><br><span class="line">在 CommunityConstant 接口中新增三个常量，代表三个主题：评论、点赞、关注。</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题、用户 id、实体类型、实体 id、实体用户 id 以及一个 map 集合存放其它信息。</span><br><span class="line"></span><br><span class="line">#### 触发事件</span><br><span class="line"></span><br><span class="line">创建 EventProducer 事件生产者，新增 &#96;fireEvent(Event event)&#96; 方法，通过 Event 获取事件类型，并将其封装成 JSON 数据，然后调用注入的 KafkaTemplate 实例的 send 方法发送。</span><br><span class="line"></span><br><span class="line">在 CommentController、LikeControler、FollowController 中注入 EventProducer 实例，分别重构 &#96;addComment&#96; 方法、&#96;like&#96; 方法、&#96;follow&#96; 方法，封装 Event 对象，然后调用 EventProducer 的&#96;fireEvent&#96; 方法发布通知。</span><br><span class="line"></span><br><span class="line">#### 消费事件</span><br><span class="line"></span><br><span class="line">创建 EventConsumer 事件消费者，消费者是被动触发的。</span><br><span class="line"></span><br><span class="line">- 注入 MessageService 实例。</span><br><span class="line">- 增加 &#96;handleCommentMessage(ConsumerRecord record)&#96; 方法，通过 &#96;@KafkaListener&#96; 注解，topic 包括了评论、点赞和关注。从 recored 中获取信息，封装成 Message 对象然后调用 &#96;addMessage&#96; 方法插入数据库。</span><br><span class="line"></span><br><span class="line">【问题】没有向数据库插入系统通知记录，原因是 ServiceLogAspect 类进行日志处理时要获取 ServletRequestAttributes 请求对象，Kafka 的消费事件是自动触发的，没有进行新的请求，产生了请求对象的空指针异常。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 显示系统通知</span><br><span class="line"></span><br><span class="line">#### 通知列表</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口中</span><br><span class="line"></span><br><span class="line">- 新增 &#96;selectLatestNotice(int userId, String topic)&#96; 方法，查询某主题最新的通知。</span><br><span class="line">- 新增 &#96;selectNoticeCount(int userId, String topic)&#96; 方法，查询某主题通知的数量。</span><br><span class="line">- 新增 &#96;selectNoticeUnreadCount(int userId, String topic)&#96; 方法，查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">- 在 &#96;message-mapper.xml&#96; 配置三个方法的 sql 语句，其中查询未读通知时使用 if 动态语句，如果没有传入 topic 就查询未读总量。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中</span><br><span class="line"></span><br><span class="line">- 新增 &#96;findLatestNotice&#96; 方法，调用 &#96;selectLatestNotice&#96; 方法查询最新通知。</span><br><span class="line">- 新增 &#96;findNoticeCount&#96; 方法，调用 &#96;selectNoticeCount&#96; 方法查询某主题通知的数量。</span><br><span class="line">- 新增 &#96;findNoticeUnreadCount&#96; 方法，调用 &#96;selectNoticeUnreadCount&#96; 方法查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeList&#96; 方法，获取通知列表</span><br><span class="line"></span><br><span class="line">- 调用业务层 MessageService 的方法查询评论、点赞、关注的通知，将其封装在一个 HashMap 集合中然后添加到 Model 对象里。</span><br><span class="line">- 调用业务层 MessageService 的方法查询私信和通知的总未读数量，添加到 Model 对象里。</span><br><span class="line">- 返回 &#96;notice.html&#96; 页面。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### 显示通知详情</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口新增 &#96;selectNotices&#96; 方法，查询某个主题的通知列表，在 &#96;message-mapper.xml&#96; 配置 SQL。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中新增 &#96;findNotices&#96; 方法，调用 &#96;selectNotices&#96; 方法。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeDetail&#96; 方法</span><br><span class="line"></span><br><span class="line">- 调用 &#96;findNotices&#96; 方法获取通知列表详情，封装到 List 集合并存入 Model 对象。</span><br><span class="line">- 从通知集合中获取 id 集合，调用 &#96;readMessage&#96; 方法将消息设为已读。</span><br><span class="line">- 返回 &#96;notice-detail.html&#96; 页面。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### 显示未读通知总数</span><br><span class="line"></span><br><span class="line">创建 MessageInterceptor 拦截器</span><br><span class="line"></span><br><span class="line">- 注入 MessageService 实例和 HostHolder 实例。</span><br><span class="line">- 重写 &#96;postHandle&#96; 方法，查询私信和通知的未读数量和，然后添加到 ModelAndView 对象。</span><br><span class="line"></span><br><span class="line">在 WebConfig 中注入 MessageInterceptor 实例，并在 &#96;addInterceptors&#96; 方法中添加该拦截器。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">**发送系统通知**</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题（评论、点赞、关注）、用户 id、实体类型、实体 id，以及一个 map 集合存放其它信息.</span><br></pre></td></tr></table></figure>
 <p>public class Event {</p>
 <pre><code>private String topic;
 private int userId;
@@ -739,14 +758,125 @@ public void handlePublishMessage(ConsumerRecord record) {
 
     DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
     elasticsearchService.saveDiscussPost(post);
-}</code></pre><p>```</p>
-<hr>
-<h3 id="UV"><a href="#UV" class="headerlink" title="UV"></a>UV</h3><p>Unique Visitor 独立游客</p>
-<p>通过用户IP排重统计数据。</p>
-<h3 id="DAU"><a href="#DAU" class="headerlink" title="DAU"></a>DAU</h3><p>Daily Active User  日活跃用户</p>
-<p>通过用户ID排重统计数据</p>
-<p><img src="/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115211418953.png" alt="image-20201115211418953"></p>
-<h3 id="Spring-Security"><a href="#Spring-Security" class="headerlink" title="Spring Security"></a>Spring Security</h3>
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### UV</span><br><span class="line"></span><br><span class="line">Unique Visitor 独立游客</span><br><span class="line"></span><br><span class="line">通过用户IP排重统计数据。</span><br><span class="line"></span><br><span class="line">### DAU</span><br><span class="line"></span><br><span class="line">Daily Active User  日活跃用户</span><br><span class="line"></span><br><span class="line">通过用户ID排重统计数据</span><br><span class="line"></span><br><span class="line">![image-20201115211418953](C:\Users\77406\AppData\Roaming\Typora\typora-user-images\image-20201115211418953.png)</span><br></pre></td></tr></table></figure>
+<p>// 将指定的IP计入UV<br>public void recordUV(String ip) {<br>    String redisKey = RedisKeyUtil.getUVKey(df.format(new Date()));<br>    redisTemplate.opsForHyperLogLog().add(redisKey, ip);<br>}</p>
+<p>// 统计指定日期范围内的UV<br>public long calculateUV(Date start, Date end) {<br>    if (start == null || end == null) {<br>        throw new IllegalArgumentException(“参数不能为空!”);<br>    }</p>
+<pre><code>// 整理该日期范围内的key
+List&lt;String&gt; keyList = new ArrayList&lt;&gt;();
+Calendar calendar = Calendar.getInstance();
+calendar.setTime(start);
+while (!calendar.getTime().after(end)) {
+    String key = RedisKeyUtil.getUVKey(df.format(calendar.getTime()));
+    keyList.add(key);
+    calendar.add(Calendar.DATE, 1);
+}
+
+// 合并这些数据
+String redisKey = RedisKeyUtil.getUVKey(df.format(start), df.format(end));
+redisTemplate.opsForHyperLogLog().union(redisKey, keyList.toArray());
+
+// 返回统计的结果
+return redisTemplate.opsForHyperLogLog().size(redisKey);</code></pre><p>}</p>
+<p>// 将指定用户计入DAU<br>public void recordDAU(int userId) {<br>    String redisKey = RedisKeyUtil.getDAUKey(df.format(new Date()));<br>    redisTemplate.opsForValue().setBit(redisKey, userId, true);<br>}</p>
+<p>// 统计指定日期范围内的DAU<br>public long calculateDAU(Date start, Date end) {<br>    if (start == null || end == null) {<br>        throw new IllegalArgumentException(“参数不能为空!”);<br>    }</p>
+<pre><code>// 整理该日期范围内的key
+List&lt;byte[]&gt; keyList = new ArrayList&lt;&gt;();
+Calendar calendar = Calendar.getInstance();
+calendar.setTime(start);
+while (!calendar.getTime().after(end)) {
+    String key = RedisKeyUtil.getDAUKey(df.format(calendar.getTime()));
+    keyList.add(key.getBytes());
+    calendar.add(Calendar.DATE, 1);
+}
+
+// 进行OR运算
+return (long) redisTemplate.execute(new RedisCallback() {
+    @Override
+    public Object doInRedis(RedisConnection connection) throws DataAccessException {
+        String redisKey = RedisKeyUtil.getDAUKey(df.format(start), df.format(end));
+        connection.bitOp(RedisStringCommands.BitOperation.OR,
+                redisKey.getBytes(), keyList.toArray(new byte[0][0]));
+        return connection.bitCount(redisKey.getBytes());
+    }
+});</code></pre><p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>@Component<br>public class DataInterceptor implements HandlerInterceptor {</p>
+<pre><code>@Autowired
+private DataService dataService;
+
+@Autowired
+private HostHolder hostHolder;
+
+@Override
+public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    // 统计UV
+    String ip = request.getRemoteHost();
+    dataService.recordUV(ip);
+
+    // 统计DAU
+    User user = hostHolder.getUser();
+    if (user != null) {
+        dataService.recordDAU(user.getId());
+    }
+
+    return true;
+}</code></pre><p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### Guava</span><br></pre></td></tr></table></figure>
+<p>@PostConstruct<br>public void init() {<br>    // 初始化帖子列表缓存<br>    postListCache = Caffeine.newBuilder()<br>            .maximumSize(maxSize)<br>            .expireAfterWrite(expireSeconds, TimeUnit.SECONDS)<br>            .build(new CacheLoader&lt;String, List<DiscussPost>&gt;() {<br>                @Nullable<br>                @Override<br>                public List<DiscussPost> load(@NonNull String key) throws Exception {<br>                    if (key == null || key.length() == 0) {<br>                        throw new IllegalArgumentException(“参数错误!”);<br>                    }</DiscussPost></DiscussPost></p>
+<pre><code>                String[] params = key.split(&quot;:&quot;);
+                if (params == null || params.length != 2) {
+                    throw new IllegalArgumentException(&quot;参数错误!&quot;);
+                }
+
+                int offset = Integer.valueOf(params[0]);
+                int limit = Integer.valueOf(params[1]);
+
+                // 二级缓存: Redis -&gt; mysql
+
+                logger.debug(&quot;load post list from DB.&quot;);
+                return discussPostMapper.selectDiscussPosts(0, offset, limit, 1);
+            }
+        });
+// 初始化帖子总数缓存
+postRowsCache = Caffeine.newBuilder()
+        .maximumSize(maxSize)
+        .expireAfterWrite(expireSeconds, TimeUnit.SECONDS)
+        .build(new CacheLoader&lt;Integer, Integer&gt;() {
+            @Nullable
+            @Override
+            public Integer load(@NonNull Integer key) throws Exception {
+                logger.debug(&quot;load post rows from DB.&quot;);
+                return discussPostMapper.selectDiscussPostRows(key);
+            }
+        });</code></pre><p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### Quartz</span><br><span class="line"></span><br><span class="line">Quartz</span><br><span class="line"></span><br><span class="line">- 调度器：Scheduler</span><br><span class="line">- 任务：JobDetail</span><br><span class="line">- 触发器：Trigger，包括SimpleTrigger和CronTrigger</span><br><span class="line"></span><br><span class="line">![这里写图片描述](https:&#x2F;&#x2F;img-blog.csdn.net&#x2F;20180710135431806?watermark&#x2F;2&#x2F;text&#x2F;aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25vYW1hbl93Z3M&#x3D;&#x2F;font&#x2F;5a6L5L2T&#x2F;fontsize&#x2F;400&#x2F;fill&#x2F;I0JBQkFCMA&#x3D;&#x3D;&#x2F;dissolve&#x2F;70)</span><br></pre></td></tr></table></figure>
+<p>// FactoryBean可简化Bean的实例化过程:<br>// 1.通过FactoryBean封装Bean的实例化过程.<br>// 2.将FactoryBean装配到Spring容器里.<br>// 3.将FactoryBean注入给其他的Bean.<br>// 4.该Bean得到的是FactoryBean所管理的对象实例.</p>
+<pre><code>// 刷新帖子分数任务
+@Bean
+public JobDetailFactoryBean postScoreRefreshJobDetail() {
+    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+    factoryBean.setJobClass(PostScoreRefreshJob.class);
+    factoryBean.setName(&quot;postScoreRefreshJob&quot;);
+    factoryBean.setGroup(&quot;communityJobGroup&quot;);
+    factoryBean.setDurability(true);
+    factoryBean.setRequestsRecovery(true);
+    return factoryBean;
+}
+
+@Bean
+public SimpleTriggerFactoryBean postScoreRefreshTrigger(JobDetail postScoreRefreshJobDetail) {
+    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+    factoryBean.setJobDetail(postScoreRefreshJobDetail);
+    factoryBean.setName(&quot;postScoreRefreshTrigger&quot;);
+    factoryBean.setGroup(&quot;communityTriggerGroup&quot;);
+    factoryBean.setRepeatInterval(1000 * 60 * 5);
+    factoryBean.setJobDataMap(new JobDataMap());
+    return factoryBean;
+}</code></pre><pre><code>
+log(评论数*10+点赞数*2)
+
+新加帖子，先把id作为value加入
+</code></pre>
       
     </div>
     
@@ -866,7 +996,7 @@ public void handlePublishMessage(ConsumerRecord record) {
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">195</span>
+                  <span class="site-state-item-count">201</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -925,7 +1055,7 @@ public void handlePublishMessage(ConsumerRecord record) {
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">1.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册"><span class="nav-number">2.</span> <span class="nav-text">注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">3.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UV"><span class="nav-number">4.</span> <span class="nav-text">UV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DAU"><span class="nav-number">5.</span> <span class="nav-text">DAU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Security"><span class="nav-number">6.</span> <span class="nav-text">Spring Security</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">1.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册"><span class="nav-number">2.</span> <span class="nav-text">注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">3.</span> <span class="nav-text">登录</span></a></li></ol></div>
             
 
           </div>
@@ -975,7 +1105,7 @@ public void handlePublishMessage(ConsumerRecord record) {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共339.3k字</span>
+  <span class="post-count">博客全站共345.2k字</span>
 </div>
 
         

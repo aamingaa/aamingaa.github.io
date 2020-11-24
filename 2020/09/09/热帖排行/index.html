@@ -79,16 +79,18 @@
 
 
 
-<meta name="description" content="Quartz 配置-&gt;数据库-&gt;调用 12345678910111213141516171819202122&#x2F;&#x2F; 刷新帖子分数任务@Beanpublic JobDetailFactoryBean postScoreRefreshJobDetail() &amp;#123;    JobDetailFactoryBean factoryBean &#x3D; new JobD">
+<meta name="description" content="Quartz  调度器：Scheduler 任务：JobDetail 触发器：Trigger，包括SimpleTrigger和CronTrigger   配置-&gt;数据库-&gt;调用 12345678910111213141516171819202122&#x2F;&#x2F; 刷新帖子分数任务@Beanpublic JobDetailFactoryBean postScoreRefresh">
 <meta property="og:type" content="article">
 <meta property="og:title" content="热帖排行">
 <meta property="og:url" content="http://aamingaa.github.io/2020/09/09/%E7%83%AD%E5%B8%96%E6%8E%92%E8%A1%8C/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Quartz 配置-&gt;数据库-&gt;调用 12345678910111213141516171819202122&#x2F;&#x2F; 刷新帖子分数任务@Beanpublic JobDetailFactoryBean postScoreRefreshJobDetail() &amp;#123;    JobDetailFactoryBean factoryBean &#x3D; new JobD">
+<meta property="og:description" content="Quartz  调度器：Scheduler 任务：JobDetail 触发器：Trigger，包括SimpleTrigger和CronTrigger   配置-&gt;数据库-&gt;调用 12345678910111213141516171819202122&#x2F;&#x2F; 刷新帖子分数任务@Beanpublic JobDetailFactoryBean postScoreRefresh">
+<meta property="og:image" content="https://img-blog.csdn.net/20180710135431806?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25vYW1hbl93Z3M=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="article:published_time" content="2020-09-09T03:29:18.000Z">
-<meta property="article:modified_time" content="2020-09-09T08:35:04.823Z">
+<meta property="article:modified_time" content="2020-11-21T11:29:56.630Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20180710135431806?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25vYW1hbl93Z3M=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 
 
 
@@ -373,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  514
+                  529
                 </span>
               
 
@@ -411,6 +413,12 @@
 
       
         <p>Quartz</p>
+<ul>
+<li>调度器：Scheduler</li>
+<li>任务：JobDetail</li>
+<li>触发器：Trigger，包括SimpleTrigger和CronTrigger</li>
+</ul>
+<p><img src="https://img-blog.csdn.net/20180710135431806?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25vYW1hbl93Z3M=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
 <p>配置-&gt;数据库-&gt;调用</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 刷新帖子分数任务</span><br><span class="line">@Bean</span><br><span class="line">public JobDetailFactoryBean postScoreRefreshJobDetail() &#123;</span><br><span class="line">    JobDetailFactoryBean factoryBean &#x3D; new JobDetailFactoryBean();</span><br><span class="line">    factoryBean.setJobClass(PostScoreRefreshJob.class);</span><br><span class="line">    factoryBean.setName(&quot;postScoreRefreshJob&quot;);</span><br><span class="line">    factoryBean.setGroup(&quot;communityJobGroup&quot;);</span><br><span class="line">    factoryBean.setDurability(true);</span><br><span class="line">    factoryBean.setRequestsRecovery(true);</span><br><span class="line">    return factoryBean;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Bean</span><br><span class="line">public SimpleTriggerFactoryBean postScoreRefreshTrigger(JobDetail postScoreRefreshJobDetail) &#123;</span><br><span class="line">    SimpleTriggerFactoryBean factoryBean &#x3D; new SimpleTriggerFactoryBean();</span><br><span class="line">    factoryBean.setJobDetail(postScoreRefreshJobDetail);</span><br><span class="line">    factoryBean.setName(&quot;postScoreRefreshTrigger&quot;);</span><br><span class="line">    factoryBean.setGroup(&quot;communityTriggerGroup&quot;);</span><br><span class="line">    factoryBean.setRepeatInterval(1000 * 60 * 5);</span><br><span class="line">    factoryBean.setJobDataMap(new JobDataMap());</span><br><span class="line">    return factoryBean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -536,7 +544,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">195</span>
+                  <span class="site-state-item-count">201</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -629,7 +637,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共339.3k字</span>
+  <span class="post-count">博客全站共345.2k字</span>
 </div>
 
         

@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="finalfinal 类不能被继承，所有成员方法都会被隐式地指定为 final 方法，final 方法不能被重写。 final 变量表示常量，只能被赋值一次，赋值后值不再改变。  修饰基本数据类型时，该值在初始化后不能改变。 修饰引用类型时，引用指向的对象在初始化后不能改变，但该对象的内容可以发生变化。  内存语义  编译器会在 final 域的写后，构造方法的 return 前插入一个 Stor">
+<meta name="description" content="finalfinal 类不能被继承，所有成员方法都会被隐式地指定为 final 方法，final 方法不能被重写。 final 变量表示常量，只能被赋值一次，赋值后值不再改变。  修饰基本数据类型时，该值在初始化后不能改变。 修饰引用类型时，引用指向的对象在初始化后不能改变，但该对象的内容可以发生变化。  内存语义  Store Store 在构造函数内对一个final域的写入，与随后把这个被构造">
 <meta property="og:type" content="article">
 <meta property="og:title" content="final关键字">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/07/final%E5%85%B3%E9%94%AE%E5%AD%97/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="finalfinal 类不能被继承，所有成员方法都会被隐式地指定为 final 方法，final 方法不能被重写。 final 变量表示常量，只能被赋值一次，赋值后值不再改变。  修饰基本数据类型时，该值在初始化后不能改变。 修饰引用类型时，引用指向的对象在初始化后不能改变，但该对象的内容可以发生变化。  内存语义  编译器会在 final 域的写后，构造方法的 return 前插入一个 Stor">
+<meta property="og:description" content="finalfinal 类不能被继承，所有成员方法都会被隐式地指定为 final 方法，final 方法不能被重写。 final 变量表示常量，只能被赋值一次，赋值后值不再改变。  修饰基本数据类型时，该值在初始化后不能改变。 修饰引用类型时，引用指向的对象在初始化后不能改变，但该对象的内容可以发生变化。  内存语义  Store Store 在构造函数内对一个final域的写入，与随后把这个被构造">
 <meta property="article:published_time" content="2020-11-07T01:50:58.000Z">
-<meta property="article:modified_time" content="2020-11-07T01:51:24.345Z">
+<meta property="article:modified_time" content="2020-11-22T13:28:46.507Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  209
+                  205
                 </span>
               
 
@@ -418,10 +418,8 @@
 </ul>
 <p><strong>内存语义</strong></p>
 <ul>
-<li><p>编译器会在 final 域的写后，构造方法的 return 前插入一个 Store Store 屏障，确保对象引用为任意线程可见前其 final 域已初始化。 </p>
-</li>
-<li><p>编译器在读 final 域操作的前面插入一个 Load Load 屏障，确保在读一个对象的 final 域前一定会先读包含这个 final 域的对象引用。</p>
-</li>
+<li>Store Store 在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。</li>
+<li>Load Load 初次读一个包含final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序。</li>
 </ul>
 
       
@@ -543,7 +541,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">195</span>
+                  <span class="site-state-item-count">201</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -652,7 +650,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共339.3k字</span>
+  <span class="post-count">博客全站共345.2k字</span>
 </div>
 
         
