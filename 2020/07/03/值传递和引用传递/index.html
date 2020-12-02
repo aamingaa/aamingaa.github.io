@@ -79,22 +79,16 @@
 
 
 
-<meta name="description" content="[TOC] 值传递：在方法被调用时，实参通过形参把它的内容副本传入方法内部，此时形参接收到的内容是实参值的一个拷贝，因此在方法内对形参的任何操作，都仅仅是对这个副本的操作，不影响原始值的内容 来看个例子： 1234567891011121314151617  public static void valueCrossTest(int age,float weight)&amp;#123;     Syst">
+<meta name="description" content="[TOC] 值传递： 方法调用时，实际参数把它的值传递给对应的形式参数，函数接收的是原始值的一个copy，此时内存中存在两个相等的基本类型，即实际参数和形式参数，后面方法中的操作都是对形参这个值的修改，不影响实际参数的值。 引用传递： 也称为传地址。方法调用时，实际参数的引用地址，被传递给方法中相对应的形式参数，函数接收的是原始值的内存地址；在方法执行中，形参和实参内容相同，指向同一块内存地址，方">
 <meta property="og:type" content="article">
 <meta property="og:title" content="值传递和引用传递">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/03/%E5%80%BC%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 值传递：在方法被调用时，实参通过形参把它的内容副本传入方法内部，此时形参接收到的内容是实参值的一个拷贝，因此在方法内对形参的任何操作，都仅仅是对这个副本的操作，不影响原始值的内容 来看个例子： 1234567891011121314151617  public static void valueCrossTest(int age,float weight)&amp;#123;     Syst">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/10/23/1669e46bb87ca5be?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/10/23/1669e46bb8aa7c65?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/10/23/1669e46be8b5eaf0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/10/23/1669e46be94a3fd8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/10/23/1669e46be89ea9fe?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:description" content="[TOC] 值传递： 方法调用时，实际参数把它的值传递给对应的形式参数，函数接收的是原始值的一个copy，此时内存中存在两个相等的基本类型，即实际参数和形式参数，后面方法中的操作都是对形参这个值的修改，不影响实际参数的值。 引用传递： 也称为传地址。方法调用时，实际参数的引用地址，被传递给方法中相对应的形式参数，函数接收的是原始值的内存地址；在方法执行中，形参和实参内容相同，指向同一块内存地址，方">
 <meta property="article:published_time" content="2020-07-03T07:27:10.000Z">
-<meta property="article:modified_time" content="2020-11-18T02:26:01.733Z">
+<meta property="article:modified_time" content="2020-11-28T07:49:41.864Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/10/23/1669e46bb87ca5be?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 
 
 
@@ -379,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.9k
+                  601
                 </span>
               
 
@@ -395,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  2
                 </span>
               
             </div>
@@ -417,63 +411,24 @@
 
       
         <p>[TOC]</p>
-<h2 id="值传递："><a href="#值传递：" class="headerlink" title="值传递："></a>值传递：</h2><p><strong>在方法被调用时，实参通过形参把它的内容副本传入方法内部，此时形参接收到的内容是实参值的一个拷贝，因此在方法内对形参的任何操作，都仅仅是对这个副本的操作，不影响原始值的内容</strong></p>
-<p>来看个例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">valueCrossTest</span><span class="params">(<span class="keyword">int</span> age,<span class="keyword">float</span> weight)</span></span>&#123;</span><br><span class="line">     System.out.println(<span class="string">"传入的age："</span>+age);</span><br><span class="line">     System.out.println(<span class="string">"传入的weight："</span>+weight);</span><br><span class="line">     age=<span class="number">33</span>;</span><br><span class="line">     weight=<span class="number">89.5f</span>;</span><br><span class="line">     System.out.println(<span class="string">"方法内重新赋值后的age："</span>+age);</span><br><span class="line">     System.out.println(<span class="string">"方法内重新赋值后的weight："</span>+weight);</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//测试</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> a=<span class="number">25</span>;</span><br><span class="line">        <span class="keyword">float</span> w=<span class="number">77.5f</span>;</span><br><span class="line">        valueCrossTest(a,w);</span><br><span class="line">        System.out.println(<span class="string">"方法执行后的age："</span>+a);</span><br><span class="line">        System.out.println(<span class="string">"方法执行后的weight："</span>+w);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">传入的age：<span class="number">25</span></span><br><span class="line">传入的weight：<span class="number">77.5</span></span><br><span class="line"></span><br><span class="line">方法内重新赋值后的age：<span class="number">33</span></span><br><span class="line">方法内重新赋值后的weight：<span class="number">89.5</span></span><br><span class="line"></span><br><span class="line">方法执行后的age：<span class="number">25</span></span><br><span class="line">方法执行后的weight：<span class="number">77.5</span></span><br></pre></td></tr></table></figure>
-
-<p>从上面的打印结果可以看到：<br>a和w作为实参传入valueCrossTest之后，无论在方法内做了什么操作，最终a和w都没变化。</p>
-<p>这是什么造型呢？！！</p>
-<p>下面我们根据上面学到的知识点，进行详细的分析：</p>
-<p>首先程序运行时，调用main()方法，此时JVM为main()方法往虚拟机栈中压入一个栈帧，即为当前栈帧，用来存放main()中的局部变量表(包括参数)、操作栈、方法出口等信息，如a和w都是main()方法中的局部变量，因此可以断定，a和w是躺着mian方法所在的栈帧中<br>如图：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/10/23/1669e46bb87ca5be?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>而当执行到valueCrossTest()方法时，JVM也为其往虚拟机栈中压入一个栈，即为当前栈帧，用来存放valueCrossTest()中的局部变量等信息，因此age和weight是躺着valueCrossTest方法所在的栈帧中，而他们的值是从a和w的值copy了一份副本而得，如图：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/10/23/1669e46bb8aa7c65?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>。<br>因而可以a和age、w和weight对应的内容是不一致的，所以当在方法内重新赋值时，实际流程如图：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/10/23/1669e46be8b5eaf0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>也就是说，age和weight的改动，只是改变了当前栈帧（valueCrossTest方法所在栈帧）里的内容，当方法执行结束之后，这些局部变量都会被销毁，mian方法所在栈帧重新回到栈顶，成为当前栈帧，再次输出a和w时，依然是初始化时的内容。<br>因此：<br><strong>值传递传递的是真实内容的一个副本，对副本的操作不影响原内容，也就是形参怎么变化，不会影响实参对应的内容。</strong></p>
-<h2 id="引用传递"><a href="#引用传递" class="headerlink" title="引用传递"></a>引用传递</h2><p><strong>引用传递指的是在方法调用时，实参的地址通过方法调用被传递给相应的形参，对形参的操作会影响的真实内容。</strong></p>
-<p>先定义一个对象：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">         <span class="keyword">private</span> String name;</span><br><span class="line">         <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"> </span><br><span class="line">         <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">             <span class="keyword">return</span> name;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">             <span class="keyword">this</span>.name = name;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> age;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们写个函数测试一下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">PersonCrossTest</span><span class="params">(Person person)</span></span>&#123;</span><br><span class="line">         System.out.println(<span class="string">"传入的person的name："</span>+person.getName());</span><br><span class="line">         person.setName(<span class="string">"我是张小龙"</span>);</span><br><span class="line">         System.out.println(<span class="string">"方法内重新赋值后的name："</span>+person.getName());</span><br><span class="line">     &#125;</span><br><span class="line"> <span class="comment">//测试</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Person p=<span class="keyword">new</span> Person();</span><br><span class="line">        p.setName(<span class="string">"我是马化腾"</span>);</span><br><span class="line">        p.setAge(<span class="number">45</span>);</span><br><span class="line">        PersonCrossTest(p);</span><br><span class="line">        System.out.println(<span class="string">"方法执行后的name："</span>+p.getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">传入的person的name：我是马化腾</span><br><span class="line">方法内重新赋值后的name：我是张小龙</span><br><span class="line">方法执行后的name：我是张小龙</span><br></pre></td></tr></table></figure>
-
-<p>可以看出，person经过personCrossTest()方法的执行之后，内容发生了改变，这印证了上面所说的<strong>“引用传递”</strong>，对形参的操作，改变了实际对象的内容。</p>
-<p>那么，到这里就结题了吗？<br>不是的，没那么简单，<br>能看得到想要的效果<br>是因为刚好选对了例子而已！！！</p>
-<p>下面我们对上面的例子稍作修改，加上一行代码，</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">PersonCrossTest</span><span class="params">(Person person)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"传入的person的name："</span>+person.getName());</span><br><span class="line">        person=<span class="keyword">new</span> Person();<span class="comment">//加多此行代码</span></span><br><span class="line">        person.setName(<span class="string">"我是张小龙"</span>);</span><br><span class="line">        System.out.println(<span class="string">"方法内重新赋值后的name："</span>+person.getName());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">传入的person的name：我是马化腾</span><br><span class="line">方法内重新赋值后的name：我是张小龙</span><br><span class="line">方法执行后的name：我是马化腾</span><br></pre></td></tr></table></figure>
-
-<p>为什么这次的输出和上次的不一样了呢？<br>看出什么问题了吗？</p>
-<p>按照上面讲到JVM内存模型可以知道，对象和数组是存储在Java堆区的，而且堆区是共享的，因此程序执行到main（）方法中的下列代码时</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Person p=<span class="keyword">new</span> Person();</span><br><span class="line">p.setName(<span class="string">"我是马化腾"</span>);</span><br><span class="line">p.setAge(<span class="number">45</span>);</span><br><span class="line">PersonCrossTest(p);</span><br></pre></td></tr></table></figure>
-
-<p>JVM会在堆内开辟一块内存，用来存储p对象的所有内容，同时在main（）方法所在线程的栈区中创建一个引用p存储堆区中p对象的真实地址，如图：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/10/23/1669e46be94a3fd8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>当执行到PersonCrossTest()方法时，因为方法内有这么一行代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">person=<span class="keyword">new</span> Person();</span><br></pre></td></tr></table></figure>
-
-<p>JVM需要在堆内另外开辟一块内存来存储new Person()，假如地址为“xo3333”，那此时形参person指向了这个地址，假如真的是引用传递，那么由上面讲到：<strong>引用传递中形参实参指向同一个对象，形参的操作会改变实参对象的改变</strong>。</p>
-<p>可以推出：实参也应该指向了新创建的person对象的地址，所以在执行PersonCrossTest()结束之后，最终输出的应该是后面创建的对象内容。</p>
-<p>然而实际上，最终的输出结果却跟我们推测的不一样，最终输出的仍然是一开始创建的对象的内容。</p>
-<p>由此可见：<strong>引用传递，在Java中并不存在。</strong></p>
-<p>但是有人会疑问：为什么第一个例子中，在方法内修改了形参的内容，会导致原始对象的内容发生改变呢？</p>
-<p>这是因为：<strong>无论是基本类型和是引用类型，在实参传入形参时，都是值传递，也就是说传递的都是一个副本，而不是内容本身。</strong></p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/10/23/1669e46be89ea9fe?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
-<p>有图可以看出，方法内的形参person和实参p并无实质关联，它只是由p处copy了一份指向对象的地址，此时：</p>
-<p><strong>p和person都是指向同一个对象</strong>。</p>
-<p>因此在第一个例子中，对形参p的操作，会影响到实参对应的对象内容。而在第二个例子中，当执行到new Person()之后，JVM在堆内开辟一块空间存储新对象，并且把person改成指向新对象的地址，此时：</p>
-<p><strong>p依旧是指向旧的对象，person指向新对象的地址。</strong></p>
-<p>所以此时<strong>对person的操作，实际上是对新对象的操作，于实参p中对应的对象毫无关系</strong>。</p>
-<h1 id="Java中基本数据类型和包装类型的区别"><a href="#Java中基本数据类型和包装类型的区别" class="headerlink" title="Java中基本数据类型和包装类型的区别"></a>Java中基本数据类型和包装类型的区别</h1><p>1、包装类是对象，拥有方法和字段，对象的调用都是通过引用对象的地址；基本类型不是<br>2、包装类型是引用的传递；基本类型是值的传递<br>3、声明方式不同：<br>        基本数据类型不需要new关键字；<br>        包装类型需要new在堆内存中进行new来分配内存空间<br>4、存储位置不同：<br>        基本数据类型直接将值保存在值栈中；<br>        包装类型是把对象放在堆中，然后通过对象的引用来调用他们 </p>
+<p><strong>值传递：</strong></p>
+<p>方法调用时，实际参数把它的值传递给对应的形式参数，函数接收的是原始值的一个copy，此时内存中存在两个相等的基本类型，即实际参数和形式参数<strong>，</strong>后面方法中的操作都是对形参这个值的修改，不影响实际参数的值。</p>
+<p><strong>引用传递：</strong></p>
+<p>也称为传地址。方法调用时，实际参数的引用地址，被传递给方法中相对应的形式参数，函数接收的是原始值的内存地址；<br>在方法执行中，形参和实参内容相同，指向同一块内存地址，方法执行中对引用的操作将会影响到实际对象。</p>
+<h3 id="Java内部"><a href="#Java内部" class="headerlink" title="Java内部"></a>Java内部</h3><p><code>java只有值传递</code>，</p>
+<p>Java参数，不管是原始类型还是引用类型，传递的都是副本</p>
+<ul>
+<li><p><code>如果参数类型是原始类型</code>，那么传过来的就是这个参数的一个副本，<code>也就是这个原始参数的值</code>，这个跟之前所谈的传值是一样的。<code>如果在函数中改变了副本的 值不会改变原始的值</code>。</p>
+</li>
+<li><pre><code>如果参数类型是引用类型
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">，那么传过来的就是这个引用参数的副本，</span><br></pre></td></tr></table></figure>
+这个副本存放的是参数的地址</code></pre><ul>
+<li>如果在函数中没有改变这个副本的地址，而<code>是改变了地址中的 值，那么在函数内的改变会影响到传入的参数</code>。</li>
+<li>如果在函数中<code>改变了副本的地址</code>，如new一个，那么副本就指向了一个新的地址，此时传入的参数还是指向原来的 地址，所以<code>不会改变参数的值</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Java中基本数据类型和包装类型的区别"><a href="#Java中基本数据类型和包装类型的区别" class="headerlink" title="Java中基本数据类型和包装类型的区别"></a>Java中基本数据类型和包装类型的区别</h3><p>1、包装类是对象，拥有方法和字段，对象的调用都是通过引用对象的地址；基本类型不是<br>2、包装类型是引用的传递；基本类型是值的传递<br>3、声明方式不同：<br>        基本数据类型不需要new关键字；<br>        包装类型需要new在堆内存中进行new来分配内存空间<br>4、存储位置不同：<br>        基本数据类型直接将值保存在值栈中；<br>        包装类型是把对象放在堆中，然后通过对象的引用来调用他们 </p>
 
       
     </div>
@@ -594,7 +549,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">202</span>
+                  <span class="site-state-item-count">203</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -606,7 +561,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -653,7 +608,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#值传递："><span class="nav-number">1.</span> <span class="nav-text">值传递：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用传递"><span class="nav-number">2.</span> <span class="nav-text">引用传递</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java中基本数据类型和包装类型的区别"><span class="nav-number"></span> <span class="nav-text">Java中基本数据类型和包装类型的区别</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java内部"><span class="nav-number">1.</span> <span class="nav-text">Java内部</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java中基本数据类型和包装类型的区别"><span class="nav-number">2.</span> <span class="nav-text">Java中基本数据类型和包装类型的区别</span></a></li></ol></div>
             
 
           </div>
@@ -703,7 +658,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共345.7k字</span>
+  <span class="post-count">博客全站共341.7k字</span>
 </div>
 
         

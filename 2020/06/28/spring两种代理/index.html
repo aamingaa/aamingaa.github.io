@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC] 代理模式代理模式是一种比较好的理解的设计模式。简单来说就是 我们使用代理对象来代替对真实对象(real object)的访问，这样就可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。 代理模式的主要作用是扩展目标对象的功能，比如说在目标对象的某个方法执行前后你可以增加一些自定义的操作。 举个例子：你的找了一小红来帮你问话，小红就看作是代理我的代理对象，代理的行为（">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2020/png/738439/1597043258820-f54f1a9e-982d-4383-8273-1086fd2ac3f4.png">
 <meta property="article:published_time" content="2020-06-28T08:02:09.000Z">
-<meta property="article:modified_time" content="2020-11-20T00:21:28.342Z">
+<meta property="article:modified_time" content="2020-11-27T13:45:39.769Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2020/png/738439/1597043258820-f54f1a9e-982d-4383-8273-1086fd2ac3f4.png">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.3k
+                  3.2k
                 </span>
               
 
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  13
+                  12
                 </span>
               
             </div>
@@ -492,33 +492,19 @@
 </ol>
 <h4 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h4><p>这样说可能会有点空洞和难以理解，我上个例子，大家感受一下吧！</p>
 <p><strong>1.定义发送短信的接口</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface SmsService &#123;</span><br><span class="line">    String send(String message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package proxy;</span><br><span class="line"> </span><br><span class="line">public interface Star</span><br><span class="line">&#123;</span><br><span class="line">    String sing(String name);</span><br><span class="line">    </span><br><span class="line">    String dance(String name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
 <p><strong>2.实现发送短信的接口</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class SmsServiceImpl implements SmsService &#123;</span><br><span class="line">    public String send(String message) &#123;</span><br><span class="line">        System.out.println(&quot;send message:&quot; + message);</span><br><span class="line">        return message;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package proxy;</span><br><span class="line"> </span><br><span class="line">public class LiuDeHua implements Star</span><br><span class="line">&#123;   </span><br><span class="line">    @Override</span><br><span class="line">    public String sing(String name)</span><br><span class="line">    &#123;</span><br><span class="line">         System.out.println(&quot;给我一杯忘情水&quot;);</span><br><span class="line"> </span><br><span class="line">        return &quot;唱完&quot; ;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public String dance(String name)</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(&quot;开心的马骝&quot;);</span><br><span class="line"> </span><br><span class="line">        return &quot;跳完&quot; ;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p><strong>3</strong>.具体代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">package proxy;</span><br><span class="line"> </span><br><span class="line">import java.lang.reflect.InvocationHandler;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line">import java.lang.reflect.Proxy;</span><br><span class="line"> </span><br><span class="line">public class StarProxy implements InvocationHandler</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 目标类，也就是被代理对象</span><br><span class="line">    private Object target;</span><br><span class="line">    </span><br><span class="line">    public void setTarget(Object target)</span><br><span class="line">    &#123;</span><br><span class="line">        this.target &#x3D; target;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F; 这里可以做增强</span><br><span class="line">        System.out.println(&quot;收钱&quot;);</span><br><span class="line">        </span><br><span class="line">        Object result &#x3D; method.invoke(target, args);</span><br><span class="line">        </span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 生成代理类</span><br><span class="line">    public Object CreatProxyedObj()</span><br><span class="line">    &#123;</span><br><span class="line">        return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), this);</span><br><span class="line">    &#125;  </span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-<p><strong>3.定义一个 JDK 动态代理类</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">import java.lang.reflect.InvocationHandler;</span><br><span class="line">import java.lang.reflect.InvocationTargetException;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * @author shuang.kou</span><br><span class="line"> * @createTime 2020年05月11日 11:23:00</span><br><span class="line"> *&#x2F;</span><br><span class="line">public class DebugInvocationHandler implements InvocationHandler &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 代理类中的真实对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private final Object target;</span><br><span class="line"></span><br><span class="line">    public DebugInvocationHandler(Object target) &#123;</span><br><span class="line">        this.target &#x3D; target;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException &#123;</span><br><span class="line">        &#x2F;&#x2F;调用方法之前，我们可以添加自己的操作</span><br><span class="line">        System.out.println(&quot;before method &quot; + method.getName());</span><br><span class="line">        Object result &#x3D; method.invoke(target, args);</span><br><span class="line">        &#x2F;&#x2F;调用方法之后，我们同样可以添加自己的操作</span><br><span class="line">        System.out.println(&quot;after method &quot; + method.getName());</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>invoke()</code> 方法: 当我们的动态代理对象调用原生方法的时候，最终实际上调用到的是 <code>invoke()</code> 方法，然后 <code>invoke()</code> 方法代替我们去调用了被代理对象的原生方法。</p>
-<p><strong>4.获取代理对象的工厂类</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class JdkProxyFactory &#123;</span><br><span class="line">    public static Object getProxy(Object target) &#123;</span><br><span class="line">        return Proxy.newProxyInstance(</span><br><span class="line">                target.getClass().getClassLoader(), &#x2F;&#x2F; 目标类的类加载</span><br><span class="line">                target.getClass().getInterfaces(),  &#x2F;&#x2F; 代理需要实现的接口，可指定多个</span><br><span class="line">                new DebugInvocationHandler(target)   &#x2F;&#x2F; 代理对象对应的自定义 InvocationHandler</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>getProxy()</code> ：主要通过<code>Proxy.newProxyInstance（）</code>方法获取某个类的代理对象</p>
 <p><strong>5.实际使用</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DebugProxy debugProxy &#x3D; new DebugProxy(new SmsServiceImpl());</span><br><span class="line">SmsService smsService &#x3D; debugProxy.getProxy(SmsService.class);</span><br><span class="line">smsService.send(&quot;java&quot;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Star ldh &#x3D; new LiuDeHua();</span><br><span class="line"> </span><br><span class="line">StarProxy proxy &#x3D; new StarProxy();</span><br><span class="line"> </span><br><span class="line">proxy.setTarget(ldh); </span><br><span class="line">  </span><br><span class="line">Object obj &#x3D; proxy.CreatProxyedObj();</span><br><span class="line"></span><br><span class="line">Star star &#x3D; (Star)obj;</span><br></pre></td></tr></table></figure>
 
-
-
-<p>运行上述代码之后，控制台打印出：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">before method send</span><br><span class="line">send message:java</span><br><span class="line">after method send</span><br></pre></td></tr></table></figure>
 
 
@@ -708,7 +694,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">202</span>
+                  <span class="site-state-item-count">203</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -720,7 +706,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -817,7 +803,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共345.7k字</span>
+  <span class="post-count">博客全站共341.7k字</span>
 </div>
 
         
