@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://img-blog.csdn.net/20160412202104618">
 <meta property="og:image" content="https://img-blog.csdn.net/20160412202419032">
 <meta property="article:published_time" content="2020-10-24T02:34:07.000Z">
-<meta property="article:modified_time" content="2020-11-24T08:48:07.922Z">
+<meta property="article:modified_time" content="2020-12-04T02:19:00.792Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758550e143b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -406,7 +406,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  9.7k
+                  9.6k
                 </span>
               
 
@@ -597,10 +597,10 @@
 <h3 id="2-2-List"><a href="#2-2-List" class="headerlink" title="2.2 List"></a>2.2 List</h3><p>Redis中List对象的底层是由quicklist(快速列表)实现的，快速列表支持从链表头和尾添加元素，并且可以获取指定位置的元素内容。</p>
 <p>那么，快速列表的底层是如何实现的呢？为什么能够达到如此快的性能？</p>
 <p>罗马不是一日建成的，quicklist也不是一日实现的，起初redis的list的底层是ziplist（压缩列表）或者是  linkedlist（双端列表）。先分别介绍这两种数据结构。</p>
-<h4 id="ziplist-压缩列表"><a href="#ziplist-压缩列表" class="headerlink" title="ziplist 压缩列表"></a>ziplist 压缩列表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当一个列表中只包含少量列表项，且是小整数值或长度比较短的字符串时，redis就使用ziplist（压缩列表）来做列表键的底层实现。压缩列表顾名思义是进行了压缩，每一个节点之间没有指针的指向，而是多个元素相邻，没有缝隙。</span><br></pre></td></tr></table></figure>
+<h4 id="ziplist-压缩列表"><a href="#ziplist-压缩列表" class="headerlink" title="ziplist 压缩列表"></a>ziplist 压缩列表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ziplist是由一系列特殊编码的连续内存块组成的顺序存储结构，类似于数组，ziplist在内存中是连续存储的，但是不同于数组，为了节省内存 ziplist的每个元素所占的内存大小可以不同。ziplist的每个节点的长度是可以不一样的。ziplist将一些必要的偏移量信息记录在了每一个节点里，使之能跳到上一个节点或下一个节点。</span><br></pre></td></tr></table></figure>
 
 <p>测试：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; rpush dotahero sf qop doom</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; object encoding dotahero</span><br><span class="line">&quot;ziplist&quot;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; rpush dotahero sf qop doom</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; object encoding dotahero</span><br><span class="line">&quot;ziplist&quot;</span><br></pre></td></tr></table></figure>
 
 <p>此处使用老版本redis进行测试，向dota英雄列表中加入了qop痛苦女王、sf影魔、doom末日使者三个英雄，数据结构编码使用的是ziplist。</p>
 <p><strong>所以 ziplist是Redis为了节约内存而开发的</strong>，是由一系列特殊编码的连续内存块组成的顺序型数据结构。具体结构相对比较复杂，大家有兴趣地话可以深入了解。</p>
@@ -661,7 +661,7 @@
 <p>结构图解：多个哈希值相同的键值对存储结构，解决键冲突</p>
 <p><img src="https://user-gold-cdn.xitu.io/2020/7/30/1739da6adb3ebce3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Redis五种数据类型"></p>
 <h4 id="3-字典结构实现"><a href="#3-字典结构实现" class="headerlink" title="3.字典结构实现"></a>3.字典结构实现</h4><p><strong>字典结构定义</strong> （dict.h/dict）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dict &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 类型特定函数</span><br><span class="line">    dictType *type;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 私有数据</span><br><span class="line">    void *privdata;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 哈希表</span><br><span class="line">    dictht ht[2];</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; rehash 索引</span><br><span class="line">    &#x2F;&#x2F; 当 rehash 不在进行时，值为 -1</span><br><span class="line">    int rehashidx; &#x2F;* rehashing not in progress if rehashidx &#x3D;&#x3D; -1 *&#x2F;</span><br><span class="line"></span><br><span class="line">&#125; dict;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dict &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 类型特定函数</span><br><span class="line">    dictType *type;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 私有数据</span><br><span class="line">    void *privdata;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 哈希表</span><br><span class="line">    dictht ht[2];</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; rehash 索引</span><br><span class="line">    &#x2F;&#x2F; 当 rehash 不在进行时，值为 -1</span><br><span class="line">    int rehashidx; &#x2F;* rehashing not in progress if rehashidx &#x3D;&#x3D; -1 *&#x2F;</span><br><span class="line"></span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
 
 <p><strong>描述</strong>：type 属性和 privdata 属性是针对不同类型的键值对， 为创建多态字典而设置的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">type 属性是一个指向 dictType 结构的指针， 每个 dictType 结构保存了一簇用于操作特定类型键值对的函数，</span><br><span class="line">Redis 会为用途不同的字典设置不同的类型特定函数。</span><br><span class="line"></span><br><span class="line">privdata 属性则保存了需要传给那些类型特定函数的可选参数。</span><br><span class="line">复制代码</span><br><span class="line">typedef struct dictType &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 计算哈希值的函数</span><br><span class="line">    unsigned int (*hashFunction)(const void *key);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 复制键的函数</span><br><span class="line">    void *(*keyDup)(void *privdata, const void *key);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 复制值的函数</span><br><span class="line">    void *(*valDup)(void *privdata, const void *obj);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 对比键的函数</span><br><span class="line">    int (*keyCompare)(void *privdata, const void *key1, const void *key2);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 销毁键的函数</span><br><span class="line">    void (*keyDestructor)(void *privdata, void *key);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 销毁值的函数</span><br><span class="line">    void (*valDestructor)(void *privdata, void *obj);</span><br><span class="line"></span><br><span class="line">&#125; dictType;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
@@ -695,7 +695,6 @@
 <h2 id="四、要点总结"><a href="#四、要点总结" class="headerlink" title="四、要点总结"></a>四、要点总结</h2><blockquote>
 <p>1.字典 ht 属性是包含两个哈希表项的数组，一般情况下， 字典只使用 ht[0]， ht[1] 哈希表只会在对 ht[0] 哈希表进行 rehash (下节分析) 时使用</p>
 </blockquote>
-<p>作者：程序员油七<br>链接：<a href="https://juejin.im/post/6855129008087793678" target="_blank" rel="noopener">https://juejin.im/post/6855129008087793678</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 <p>redis中的dict 结构内部包含两个 hashtable，通常情况下只有一个 hashtable 是有值的。但是在 dict 扩容缩容时，需要分配新的 hashtable，然后进行渐进式搬迁，这时两个 hashtable 存储的分别是旧的 hashtable 和新的 hashtable。待搬迁结束后，旧的 hashtable 被删除，新的 hashtable 取而代之。</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/6/11/16b44758921c661d?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="在这里插入图片描述"></p>
 <h3 id="2-4-Set"><a href="#2-4-Set" class="headerlink" title="2.4 Set"></a>2.4 Set</h3><p>Set数据类型的底层可以是<strong>intset</strong>(整数集)或者是<strong>hashtable</strong>(散列表也叫哈希表)。</p>
@@ -932,7 +931,7 @@ typedef struct zskiplist {
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">203</span>
+                  <span class="site-state-item-count">204</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -944,7 +943,7 @@ typedef struct zskiplist {
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1041,7 +1040,7 @@ typedef struct zskiplist {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共341.7k字</span>
+  <span class="post-count">博客全站共344k字</span>
 </div>
 
         

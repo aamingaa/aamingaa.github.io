@@ -79,20 +79,32 @@
 
 
 
-<meta name="description" content="[TOC] 慢查询日志slow_query_log  ：是否开启慢查询日志，1表示开启，0表示关闭。 long_query_time ：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 12345678910111213141516171819202122mysql&gt; show variables  like &#39;%slow_query_log%&#39;;+------------">
+<meta name="description" content="[TOC]  慢查询日志slow_query_log  ：是否开启慢查询日志，1表示开启，0表示关闭。 long_query_time ：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 12345show variables  like &#39;%slow_query_log%&#39;;&#x2F;&#x2F;慢查询日志是否开启set global slow_query_log&#x3D;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一条SQL语句执行很慢的原因有哪些">
 <meta property="og:url" content="http://aamingaa.github.io/2020/06/30/%E4%B8%80%E6%9D%A1SQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E5%BE%88%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%9C%89%E5%93%AA%E4%BA%9B/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 慢查询日志slow_query_log  ：是否开启慢查询日志，1表示开启，0表示关闭。 long_query_time ：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 12345678910111213141516171819202122mysql&gt; show variables  like &#39;%slow_query_log%&#39;;+------------">
+<meta property="og:description" content="[TOC]  慢查询日志slow_query_log  ：是否开启慢查询日志，1表示开启，0表示关闭。 long_query_time ：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 12345show variables  like &#39;%slow_query_log%&#39;;&#x2F;&#x2F;慢查询日志是否开启set global slow_query_log&#x3D;">
+<meta property="og:image" content="http://aamingaa.github.io/2020/06/30/%E4%B8%80%E6%9D%A1SQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E5%BE%88%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%9C%89%E5%93%AA%E4%BA%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201204102016432.png">
 <meta property="og:image" content="https://images2015.cnblogs.com/blog/73542/201606/73542-20160617103137557-2127639925.png">
-<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9pbWdrci5jbi1iai51ZmlsZW9zLmNvbS80YmNmZjk4Mi1hMzU1LTQwZTYtYjMxZi00ZjJhZDExY2NjMDcucG5n?x-oss-process=image/format,png">
-<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9pbWdrci5jbi1iai51ZmlsZW9zLmNvbS9mODlkZDliMy1hZmY2LTRjYjgtYjUyMy03ZjU2NDM2ZGYzZTcucG5n?x-oss-process=image/format,png">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/7/17328ce200665389?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/7/17328ce200736a09?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/7/17328ce2006becf5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020022914442552.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200229150731506.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200229151222974.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200229151355222.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20170512152255874?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd3VzZXl1a3Vp/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20170512152537516?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd3VzZXl1a3Vp/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200229233505469.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200229235018532.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200301093251626.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200301093635285.png">
 <meta property="article:published_time" content="2020-06-30T02:33:40.000Z">
-<meta property="article:modified_time" content="2020-11-18T07:32:16.930Z">
+<meta property="article:modified_time" content="2020-12-04T02:20:17.111Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://images2015.cnblogs.com/blog/73542/201606/73542-20160617103137557-2127639925.png">
+<meta name="twitter:image" content="http://aamingaa.github.io/2020/06/30/%E4%B8%80%E6%9D%A1SQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E5%BE%88%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%9C%89%E5%93%AA%E4%BA%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201204102016432.png">
 
 
 
@@ -377,7 +389,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4.6k
+                  3.3k
                 </span>
               
 
@@ -393,7 +405,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  17
+                  12
                 </span>
               
             </div>
@@ -415,193 +427,181 @@
 
       
         <p>[TOC]</p>
+<p><img src="/2020/06/30/%E4%B8%80%E6%9D%A1SQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E5%BE%88%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%9C%89%E5%93%AA%E4%BA%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201204102016432.png" alt="image-20201204102016432"></p>
 <h3 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h3><p>slow_query_log  ：是否开启慢查询日志，1表示开启，0表示关闭。</p>
 <p>long_query_time ：慢查询阈值，当查询时间多于设定的阈值时，记录日志。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables  like &#39;%slow_query_log%&#39;;</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">| Variable_name       | Value                                         |</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">| slow_query_log      | OFF                                           |</span><br><span class="line">| slow_query_log_file | &#x2F;home&#x2F;WDPM&#x2F;MysqlData&#x2F;mysql&#x2F;DB-Server-slow.log |</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; set global slow_query_log&#x3D;1;</span><br><span class="line">Query OK, 0 rows affected (0.09 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; show variables like &#39;%slow_query_log%&#39;;</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">| Variable_name       | Value                                         |</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">| slow_query_log      | ON                                            |</span><br><span class="line">| slow_query_log_file | &#x2F;home&#x2F;WDPM&#x2F;MysqlData&#x2F;mysql&#x2F;DB-Server-slow.log |</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
-
-<p>关于慢查询的参数slow_query_log_file ，它指定慢查询日志文件的存放路径，系统默认会给一个缺省的文件host_name-slow.log（如果没有指定参数slow_query_log_file的话）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#39;slow_query_log_file&#39;;</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">| Variable_name       | Value                                         |</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">| slow_query_log_file | &#x2F;home&#x2F;WDPM&#x2F;MysqlData&#x2F;mysql&#x2F;DB-Server-slow.log |</span><br><span class="line">+---------------------+-----------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-
-<p>那么开启了慢查询日志后，什么样的SQL才会记录到慢查询日志里面呢？ 这个是由参数long_query_time控制，默认情况下long_query_time的值为10秒，可以使用命令修改，也可以在my.cnf参数里面修改。关于运行时间正好等于long_query_time的情况，并不会被记录下来。也就是说，在mysql源码里是判断大于long_query_time，而非大于等于。从MySQL 5.1开始，long_query_time开始以微秒记录SQL语句运行时间，之前仅用秒为单位记录。如果记录到表里面，只会记录整数部分，不会记录微秒部分。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#39;long_query_time%&#39;;</span><br><span class="line">+-----------------+-----------+</span><br><span class="line">| Variable_name   | Value     |</span><br><span class="line">+-----------------+-----------+</span><br><span class="line">| long_query_time | 10.000000 |</span><br><span class="line">+-----------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; set global long_query_time&#x3D;4;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; show variables like &#39;long_query_time&#39;;</span><br><span class="line">+-----------------+-----------+</span><br><span class="line">| Variable_name   | Value     |</span><br><span class="line">+-----------------+-----------+</span><br><span class="line">| long_query_time | 10.000000 |</span><br><span class="line">+-----------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">show variables  like &#39;%slow_query_log%&#39;;&#x2F;&#x2F;慢查询日志是否开启</span><br><span class="line">set global slow_query_log&#x3D;1;</span><br><span class="line">show variables like &#39;slow_query_log_file&#39;;&#x2F;&#x2F;路径</span><br><span class="line">show variables like &#39;long_query_time%&#39;;&#x2F;&#x2F;查询慢查询日志的时间</span><br><span class="line">set global long_query_time&#x3D;4;</span><br></pre></td></tr></table></figure>
 
 <p>在MySQL里面执行下面SQL语句，然后我们去检查对应的慢查询日志，就会发现类似下面这样的信息。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select sleep(3);</span><br><span class="line">+----------+</span><br><span class="line">| sleep(3) |</span><br><span class="line">+----------+</span><br><span class="line">|        0 |</span><br><span class="line">+----------+</span><br><span class="line">1 row in set (3.00 sec)</span><br><span class="line"> </span><br><span class="line">[root@DB-Server ~]# more &#x2F;tmp&#x2F;mysql_slow.log</span><br><span class="line">&#x2F;usr&#x2F;sbin&#x2F;mysqld, Version: 5.6.20-enterprise-commercial-advanced-log (MySQL Enterprise Server - Advanced Edition (Commercial)). started with:</span><br><span class="line">Tcp port: 0  Unix socket: (null)</span><br><span class="line">Time                 Id Command    Argument</span><br><span class="line">&#x2F;usr&#x2F;sbin&#x2F;mysqld, Version: 5.6.20-enterprise-commercial-advanced-log (MySQL Enterprise Server - Advanced Edition (Commercial)). started with:</span><br><span class="line">Tcp port: 0  Unix socket: (null)</span><br><span class="line">Time                 Id Command    Argument</span><br><span class="line"># Time: 160616 17:24:35</span><br><span class="line"># User@Host: root[root] @ localhost []  Id:     5</span><br><span class="line"># Query_time: 3.002615  Lock_time: 0.000000 Rows_sent: 1  Rows_examined: 0</span><br><span class="line">SET timestamp&#x3D;1466069075;</span><br><span class="line">select sleep(3);</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://images2015.cnblogs.com/blog/73542/201606/73542-20160617103137557-2127639925.png" alt="image"></p>
-<h3 id="Show-status"><a href="#Show-status" class="headerlink" title="Show status"></a>Show status</h3><ul>
-<li><p>查看select语句的执行数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show [global] status like &#39;com_select&#39;;</span><br></pre></td></tr></table></figure>
-
-
-
-</li>
+<h3 id="explain"><a href="#explain" class="headerlink" title="explain"></a>explain</h3><h2 id="id"><a href="#id" class="headerlink" title="id"></a>id</h2><hr>
+<p>是一组数字，代表多个表之间的查询顺序，或者包含子句查询语句中的顺序，id 总共分为三种情况，依次详解</p>
+<ul>
+<li>id 相同，执行顺序由上至下<img src="https://user-gold-cdn.xitu.io/2020/7/7/17328ce200665389?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></li>
+<li>id 不同，如果是子查询，id 号会递增，id 值越大优先级越高，越先被执行<img src="https://user-gold-cdn.xitu.io/2020/7/7/17328ce200736a09?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></li>
+<li>id 相同和不同的情况同时存在<img src="https://user-gold-cdn.xitu.io/2020/7/7/17328ce2006becf5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show status like &#39;table_locks_waited&#39;;</span><br></pre></td></tr></table></figure>
+<h3 id="select-type"><a href="#select-type" class="headerlink" title="select_type"></a>select_type</h3><p>查询类型，有简单查询、联合查询、子查询等</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SIMPLE</td>
+<td>简单的select查询中不好喊子查询或者UNION</td>
+</tr>
+<tr>
+<td>PRIMARY</td>
+<td>查询中若包含任何复杂的子部分,最外层查询则被标记为</td>
+</tr>
+<tr>
+<td>SUBQUERY</td>
+<td>在SELECT或WHERE列表中包含了子查询</td>
+</tr>
+<tr>
+<td>DERIVED(衍生)</td>
+<td>在FROM列表中包含的子查询被标记为DERIVED(衍生). MySQL会递归执行这些子查询, 把结果放在临时表里。</td>
+</tr>
+<tr>
+<td>UNION</td>
+<td>若第二个SELECT出现在UNION之后，则被标记为UNION</td>
+</tr>
+<tr>
+<td>UNION RESULT</td>
+<td>从UNION表获取结果的SELECT</td>
+</tr>
+</tbody></table>
+<p>(考虑)</p>
+<h3 id="type"><a href="#type" class="headerlink" title="type:"></a>type:</h3><p>NULL&gt;system&gt;const&gt;eq_ref&gt;ref&gt;range&gt;index&gt;ALL</p>
+<p>一般来说，得保证查询至少达到range级别，最好能达到ref。</p>
+<h4 id="System与-const"><a href="#System与-const" class="headerlink" title="System与 const"></a>System与 const</h4><p> <strong>说明:</strong><br>  <code>System</code>:表只有一行记录（等于系统表），这是const类型的特列，平时不会出现，这个也可以忽略不计<br>  <code>const</code>:表示通过索引一次就找到了. <code>const</code>用于比较<code>primary key</code>或者<code>unique</code>索引。因为只匹配一行数据，所以很快. 如将主键置于where列表中，MySQL就能将该查询转换为一个常量<br> <strong>脚本:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain</span><br><span class="line">select * from (select * from actor t1 where t1.id &#x3D; 1) s1 ;</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
 
-<p>重构查询方式</p>
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/2020022914442552.png" alt="在这里插入图片描述"></p>
+<h4 id="eq-ref"><a href="#eq-ref" class="headerlink" title="eq_ref"></a>eq_ref</h4><p> <strong>说明:</strong><br>   唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。常见于主键或唯一索引扫描<br> <strong>脚本:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain</span><br><span class="line">select * from actor t1 left join film_actor t2 on t2.id &#x3D;  t1.id ;</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/20200229150731506.png" alt="在这里插入图片描述"></p>
+<h4 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h4><p> <strong>说明:</strong><br>   非唯一性索引扫描，返回匹配某个单独值的所有行. 本质上也是一种索引访问，它返回所有匹配某个单独值的行，然而，它可能会找到多个符合条件的行，所以他应该属于查找和扫描的混合体</p>
+<blockquote>
+<p>表示的是联合索引.</p>
+</blockquote>
+<p> <strong>脚本:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain</span><br><span class="line">select count(distinct actor_id) from film_actor t1 where t1.actor_id &#x3D; 1</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/20200229151222974.png" alt="在这里插入图片描述"></p>
+<h4 id="Range"><a href="#Range" class="headerlink" title="Range"></a>Range</h4><p> <strong>说明:</strong></p>
 <ol>
-<li><p>切分大查询<br> 一个大查询如果一次性执行的话，可能一次锁住很多数据、占满整个事务日志、耗尽系统资源、阻塞很多小的但重要<br> 的查询。</p>
-</li>
-<li><p>分解大连接查询<br> 将一个大连接查询分解成对每一个表进行一次单表查询，然后在应用程序中进行关联，这样做的好处有：</p>
-<p>让缓存更高效。对于连接查询，如果其中一个表发生变化，那么整个查询缓存就无法使用。而分解后的多个查<br>询，即使其中一个表发生变化，对其它表的查询缓存依然可以使用。<br>分解成多个单表查询，这些单表查询的缓存结果更可能被其它查询使用到，从而减少冗余记录的查询。<br>减少锁竞争；<br>在应用层进行连接，可以更容易对数据库进行拆分，从而更容易做到高性能和可伸缩。<br>查询本身效率也可能会有所提升。例如下面的例子中，使用 IN() 代替连接查询，可以让 MySQL 按照 ID 顺序进<br>行查询，这可能比随机的连接要更高效。</p>
-</li>
+<li>只检索给定范围的行,使用一个索引来选择行。key 列显示使用了哪个索引</li>
+<li>一般就是在你的where语句中出现了between、&lt;、&gt;、in等的查询</li>
+<li>这种范围扫描索引扫描比全表扫描要好，因为它只需要开始于索引的某一点，而结束语另一点，不用扫描全部索引。</li>
 </ol>
-<h3 id="show-profile-SQL耗时出现在哪个环节"><a href="#show-profile-SQL耗时出现在哪个环节" class="headerlink" title="show profile(SQL耗时出现在哪个环节)"></a>show profile(SQL耗时出现在哪个环节)</h3><h4 id="开启-profiles"><a href="#开启-profiles" class="headerlink" title="开启 profiles"></a>开启 profiles</h4><ul>
-<li>查看是否开启</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">"%profiling%"</span>;</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+<p> <strong>脚本:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain</span><br><span class="line">select t1.* from actor t1 where t1.id between 1 and 3</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>开启</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> profiling = <span class="number">1</span>;</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/20200229151355222.png" alt="在这里插入图片描述">6、index：Full Index Scan，index与ALL区别为index类型只遍历索引树。这通常为ALL块，应为索引文件通常比数据文件小。（Index与ALL虽然都是读全表，但index是从索引中读取，而ALL是从硬盘读取）</p>
+<p><img src="https://img-blog.csdn.net/20170512152255874?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd3VzZXl1a3Vp/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<h4 id="ALL"><a href="#ALL" class="headerlink" title="ALL"></a>ALL</h4><p>Full Table Scan，遍历全表以找到匹配的行</p>
+<p><img src="https://img-blog.csdn.net/20170512152537516?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd3VzZXl1a3Vp/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<h2 id="key-len列"><a href="#key-len列" class="headerlink" title="key_len列"></a><code>key_len</code>列</h2><p> <strong>说明:</strong><br> <code>Key_len</code>表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度。在不损失精确性的情况下，长度越短越好<br><code>key_len</code>显示的值为索引字段的最大可能长度，并非实际使用长度</p>
+<h2 id="Rows-列"><a href="#Rows-列" class="headerlink" title="Rows 列"></a><code>Rows</code> 列</h2><p>根据表统计信息及索引选用情况，大致估算出找到所需的记录所需要读取的行数.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain </span><br><span class="line">select * from actor t1 , film_actor t2 where t1.id &#x3D; t2.actor_id and t2.film_id&#x3D;2</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
 
-<h4 id="开始分析"><a href="#开始分析" class="headerlink" title="开始分析"></a>开始分析</h4><ul>
-<li>先执行要分析的<code>SQL</code>语句</li>
-<li>执行<code>show profiles;</code>会出现如下结果<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9pbWdrci5jbi1iai51ZmlsZW9zLmNvbS80YmNmZjk4Mi1hMzU1LTQwZTYtYjMxZi00ZjJhZDExY2NjMDcucG5n?x-oss-process=image/format,png" alt="img"></li>
-<li>分析以上截图某一条<code>SQL</code>语法</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> profile type1,type2.. <span class="keyword">for</span> <span class="keyword">query</span> Query_ID</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>比如我们分析截图中的第<code>5</code>条<code>SQL</code>语句</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> profile cpu,<span class="keyword">block</span> io <span class="keyword">for</span> <span class="keyword">query</span> <span class="number">5</span></span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9pbWdrci5jbi1iai51ZmlsZW9zLmNvbS9mODlkZDliMy1hZmY2LTRjYjgtYjUyMy03ZjU2NDM2ZGYzZTcucG5n?x-oss-process=image/format,png" alt="img"></p>
-<h4 id="show-profile返回结果字段含义"><a href="#show-profile返回结果字段含义" class="headerlink" title="show profile返回结果字段含义"></a>show profile返回结果字段含义</h4><ul>
-<li>Status ： sql 语句执行的状态</li>
-<li>Duration: sql 执行过程中每一个步骤的耗时</li>
-<li>CPU_user: 当前用户占有的 cpu</li>
-<li>CPU_system: 系统占有的 cpu</li>
-<li>Block_ops_in : I/O 输入</li>
-<li>Block_ops_out : I/O 输出</li>
-</ul>
-<h4 id="show-profile-type-选项"><a href="#show-profile-type-选项" class="headerlink" title="show profile type 选项"></a>show profile type 选项</h4><ul>
-<li>all：显示所有的性能开销信息</li>
-<li>block io：显示块 IO 相关的开销信息</li>
-<li>context switches: 上下文切换相关开销</li>
-<li>cpu：显示 CPU 相关的信息</li>
-<li>ipc：显示发送和接收相关的开销信息</li>
-<li>memory：显示内存相关的开销信息</li>
-<li>page faults：显示页面错误相关开销信息</li>
-<li>source：显示和 Source_function、Source_file、Source_line 相关的开销信息</li>
-<li>swaps：显示交换次数的相关信息</li>
-</ul>
-<h4 id="status出现以下情况的建议"><a href="#status出现以下情况的建议" class="headerlink" title="status出现以下情况的建议"></a>status出现以下情况的建议</h4><ul>
-<li>Sending data</li>
-</ul>
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/20200229233505469.png" alt="在这里插入图片描述"></p>
+<h2 id="Extra-列"><a href="#Extra-列" class="headerlink" title="Extra 列"></a><code>Extra</code> 列</h2><p>filesort只能应用在单个表上，如果有多个表的数据需要排序，那么MySQL会先使用using temporary保存临时数据，然后再在临时表上使用filesort进行排序，最后输出结果。</p>
+<p> 包含不适合在其它列中显示但十分重要的额外信息</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Using filesort</td>
+<td>说明mysql会对数据使用一个外部的索引排序，而不是按照表内的索引顺序进行读取。MySQL中无法利用索引完成的排序操作称为”文件排序”</td>
+</tr>
+<tr>
+<td>Using temporary</td>
+<td>使了用临时表保存中间结果,MySQL在对查询结果排序时使用临时表。常见于排序 order by 和分组查询 group by。</td>
+</tr>
+<tr>
+<td>Using index</td>
+<td>表示相应的select操作中使用了覆盖索引(Covering Index)，避免访问了表的数据行，效率不错！   如果同时出现using where，表明索引被用来执行索引键值的查找;   如果没有同时出现using where，表明索引用来读取数据而非执行查找动作</td>
+</tr>
+<tr>
+<td>Using where</td>
+<td>使用了where条件</td>
+</tr>
+<tr>
+<td>Using join buffer</td>
+<td>使用了连接缓存</td>
+</tr>
+<tr>
+<td>impossible where</td>
+<td>where子句的值总是false,不能用来获取任何元素</td>
+</tr>
+<tr>
+<td>distinct</td>
+<td>一单mysql找到了与形相联合匹配的行,就不在搜索了</td>
+</tr>
+</tbody></table>
+<h3 id="Using-filesort"><a href="#Using-filesort" class="headerlink" title="Using filesort"></a><code>Using filesort</code></h3><p> <strong>说明:</strong><br>  说明mysql会对数据使用一个外部的索引排序，而不是按照表内的索引顺序进行读取。<br>  MySQL中无法利用索引完成的排序操作称为“文件排序”</p>
 <blockquote>
-<p><code>解释</code>：从server端发送数据到客户端，也有可能是接收存储引擎层返回的数据，再发送给客户端，数据量很大时尤其经常能看见。<br><code>备注</code>：Sending Data不是网络发送，是从硬盘读取，发送到网络是Writing to net。<code>建议</code>：通过索引或加上LIMIT，减少需要扫描并且发送给客户端的数据量</p>
+<p><strong>当发现有Using filesort 后，实际上就是发现了可以优化的地方</strong></p>
 </blockquote>
-<ol>
-<li>减少请求的数据量<br>只返回必要的列：最好不要使用 SELECT * 语句。<br>  只返回必要的行：使用 LIMIT 语句来限制返回的数据。<br>  缓存重复查询的数据：使用缓存可以避免在数据库中进行查询，特别在要查询的数据经常被重复查询时，缓存<br>  带来的查询性能提升将会是非常明显的。</li>
+<p> <strong>脚本:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain </span><br><span class="line">select * from film_actor t1 where t1.film_id&#x3D;1 order by t1.actor_id</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/20200229235018532.png" alt="在这里插入图片描述"><br> <strong>解说:</strong><br>  上图其实是一种索引失效的情况，后面会讲，可以看出查询中用到了个联合索引，索引分别为actor_id,film_id</p>
+<h3 id="Using-temporary"><a href="#Using-temporary" class="headerlink" title="Using temporary"></a><code>Using temporary</code></h3><p> <strong>说明:</strong><br>   使用了临时表保存中间结果，MySQL在对结果排序时使用临时表，常见于排序order by 和分组查询group by<br> <strong>脚本:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain </span><br><span class="line">select * from film_actor t1 where t1.film_id&#x3D;1 group by t1.remark</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/20200301093251626.png" alt="在这里插入图片描述"><br> <strong>解说:</strong><br>  <strong>尤其发现在执行计划里面有using filesort而且还有Using temporary的时候，特别需要注意</strong></p>
+<h3 id="Using-index"><a href="#Using-index" class="headerlink" title="Using index"></a><code>Using index</code></h3><p> <strong>说明:</strong><br>表示相应的select操作中使用了覆盖索引（Covering Index）,避免访问了表的数据行，效率不错！<br><strong>如果同时出现using where，表明索引被用来执行索引键值的查找</strong><br> <strong>脚本:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> </span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> film t1 <span class="keyword">where</span> t1.name=<span class="string">"我的快乐购"</span></span><br><span class="line"><span class="number">12</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>执行结果:</strong><br><img src="https://img-blog.csdnimg.cn/20200301093635285.png" alt="在这里插入图片描述"><br><strong>如果没有同时出现using where，表明索引用来读取数据而非执行查找动作</strong></p>
+<h3 id="优化数据访问"><a href="#优化数据访问" class="headerlink" title="优化数据访问"></a>优化数据访问</h3><ol>
+<li>切分大查询<br>一个大查询如果一次性执行的话，可能一次锁住很多数据、占满整个事务日志、耗尽系统资源、阻塞很多小的但重要<br>的查询。</li>
+<li>分解大连接查询<br> 将一个大连接查询分解成对每一个表进行一次单表查询，然后在应用程序中进行关联，这样做的好处有：<br> 让缓存更高效。对于连接查询，如果其中一个表发生变化，那么整个查询缓存就无法使用。而分解后的多个查<br> 询，即使其中一个表发生变化，对其它表的查询缓存依然可以使用。<br> 分解成多个单表查询，这些单表查询的缓存结果更可能被其它查询使用到，从而减少冗余记录的查询。<br> 减少锁竞争；<br> 在应用层进行连接，可以更容易对数据库进行拆分，从而更容易做到高性能和可伸缩。<br> 查询本身效率也可能会有所提升。例如下面的例子中，使用 IN() 代替连接查询，可以让 MySQL 按照 ID 顺序进<br> 行查询，这可能比随机的连接要更高效。</li>
 </ol>
-<ul>
-<li>Sorting result</li>
-</ul>
-<blockquote>
-<p>正在对结果进行排序，类似Creating sort index，不过是正常表，而不是在内存表中进行排序。<br><code>建议</code>：创建适当的索引</p>
-</blockquote>
-<ul>
-<li>Table lock</li>
-</ul>
-<blockquote>
-<p>表级锁，没什么好说的，要么是因为MyISAM引擎表级锁，要么是其他情况显式锁表</p>
-</blockquote>
-<ul>
-<li>create sort index</li>
-</ul>
-<blockquote>
-<p>当前的SELECT中需要用到临时表在进行ORDER BY排序<br><code>建议</code>：创建适当的索引</p>
-</blockquote>
-<ul>
-<li>Creating tmp table</li>
-</ul>
-<blockquote>
-<p>创建临时表。先拷贝数据到临时表，用完后再删除临时表。消耗内存，数据来回拷贝删除，消耗时间，<code>建议</code>：优化索引</p>
-</blockquote>
-<h3 id="explain"><a href="#explain" class="headerlink" title="explain"></a>explain</h3><h2 id="一、开始装逼：分类讨论"><a href="#一、开始装逼：分类讨论" class="headerlink" title="一、开始装逼：分类讨论"></a>一、开始装逼：分类讨论</h2><p>一条 SQL 语句执行的很慢，那是每次执行都很慢呢？还是大多数情况下是正常的，偶尔出现很慢呢？所以我觉得，我们还得分以下两种情况来讨论。</p>
-<p>1、大多数情况是正常的，只是偶尔会出现很慢的情况。</p>
-<p>2、在数据量不变的情况下，这条SQL语句一直以来都执行的很慢。</p>
-<p>针对这两种情况，我们来分析下可能是哪些原因导致的。</p>
-<h2 id="二、针对偶尔很慢的情况"><a href="#二、针对偶尔很慢的情况" class="headerlink" title="二、针对偶尔很慢的情况"></a>二、针对偶尔很慢的情况</h2><p>一条 SQL 大多数情况正常，偶尔才能出现很慢的情况，针对这种情况，我觉得这条SQL语句的书写本身是没什么问题的，而是其他原因导致的，那会是什么原因呢？</p>
-<h3 id="1、数据库在刷新脏页我也无奈啊"><a href="#1、数据库在刷新脏页我也无奈啊" class="headerlink" title="1、数据库在刷新脏页我也无奈啊"></a>1、数据库在刷新脏页我也无奈啊</h3><p>当我们要往数据库插入一条数据、或者要更新一条数据的时候，我们知道数据库会在<strong>内存</strong>中把对应字段的数据更新了，但是更新之后，这些更新的字段并不会马上同步持久化到<strong>磁盘</strong>中去，而是把这些更新的记录写入到 redo log 日记中去，等到空闲的时候，在通过 redo log 里的日记把最新的数据同步到<strong>磁盘</strong>中去。</p>
-<p>不过，redo log 里的容量是有限的，如果数据库一直很忙，更新又很频繁，这个时候 redo log 很快就会被写满了，这个时候就没办法等到空闲的时候再把数据同步到磁盘的，只能暂停其他操作，全身心来把数据同步到磁盘中去的，而这个时候，<strong>就会导致我们平时正常的SQL语句突然执行的很慢</strong>，所以说，数据库在在同步数据到磁盘的时候，就有可能导致我们的SQL语句执行的很慢了。</p>
-<h3 id="2、拿不到锁我能怎么办"><a href="#2、拿不到锁我能怎么办" class="headerlink" title="2、拿不到锁我能怎么办"></a>2、拿不到锁我能怎么办</h3><p>这个就比较容易想到了，我们要执行的这条语句，刚好这条语句涉及到的<strong>表</strong>，别人在用，并且加锁了，我们拿不到锁，只能慢慢等待别人释放锁了。或者，表没有加锁，但要使用到的某个一行被加锁了，这个时候，我也没办法啊。</p>
-<p>如果要判断是否真的在等待锁，我们可以用 <strong>show processlist</strong>这个命令来查看当前的状态哦，这里我要提醒一下，有些命令最好记录一下，反正，我被问了好几个命令，都不知道怎么写，呵呵。</p>
-<p>下来我们来访分析下第二种情况，我觉得第二种情况的分析才是最重要的</p>
-<h2 id="三、针对一直都这么慢的情况"><a href="#三、针对一直都这么慢的情况" class="headerlink" title="三、针对一直都这么慢的情况"></a>三、针对一直都这么慢的情况</h2><p>如果在数据量一样大的情况下，这条 SQL 语句每次都执行的这么慢，那就就要好好考虑下你的 SQL 书写了，下面我们来分析下哪些原因会导致我们的 SQL 语句执行的很不理想。</p>
-<p>我们先来假设我们有一个表，表里有下面两个字段,分别是主键 id，和两个普通字段 c 和 d。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE &#96;t&#96; (</span><br><span class="line">  &#96;id&#96; int(11) NOT NULL,</span><br><span class="line">  &#96;c&#96; int(11) DEFAULT NULL,</span><br><span class="line">  &#96;d&#96; int(11) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (&#96;id&#96;)</span><br><span class="line">) ENGINE&#x3D;InnoDB;</span><br></pre></td></tr></table></figure>
+<h2 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h2><ol>
+<li>减少请求的数据量<br>只返回必要的列：最好不要使用 SELECT * 语句。<br>只返回必要的行：使用 LIMIT 语句来限制返回的数据。<br>缓存重复查询的数据：使用缓存可以避免在数据库中进行查询，特别在要查询的数据经常被重复查询时，缓存<br>带来的查询性能提升将会是非常明显的。</li>
+<li>减少服务器端扫描的行数<br>最有效的方式是使用索引来覆盖查询。</li>
+</ol>
+<h4 id="应该做的原则："><a href="#应该做的原则：" class="headerlink" title="应该做的原则："></a>应该做的原则：</h4><h5 id="联合索引最左前缀原则"><a href="#联合索引最左前缀原则" class="headerlink" title="联合索引最左前缀原则"></a>联合索引最左前缀原则</h5><p>复合索引遵守「最左前缀」原则，查询条件中，使用了复合索引前面的字段，索引才会被使用，如果不是按照索引的最左列开始查找，则无法使用索引。</p>
+<p>比如在(a,b,c)三个字段上建立联合索引，那么它能够加快a|(a,b)|(a,b,c)三组查询的速度，而不能加快b|(b,a)这种查询顺序。</p>
+<p>另外，建联合索引的时候，区分度最高的字段在最左边。</p>
+<h5 id="使用覆盖索引"><a href="#使用覆盖索引" class="headerlink" title="使用覆盖索引"></a>使用覆盖索引</h5><p>所谓覆盖索引，是指被查询的列，数据能从索引中取得，而不用通过行定位符再到数据表上获取，能够极大的提高性能。</p>
+<p>可以定义一个让索引包含的额外的列，即使这个列对于索引而言是无用的。</p>
+<h5 id="范围列可以用到索引"><a href="#范围列可以用到索引" class="headerlink" title="范围列可以用到索引"></a>范围列可以用到索引</h5><p>范围条件有：&lt;、&lt;=、&gt;、&gt;=、between等。</p>
+<p>范围列可以用到索引，但是范围列后面的列无法用到索引，索引最多用于一个范围列，如果查询条件中有两个范围列则无法全用到索引。</p>
+<h5 id="如果出现了filesort"><a href="#如果出现了filesort" class="headerlink" title="如果出现了filesort"></a>如果出现了filesort</h5><p>order by也是遵循索引原则的，使用索引进行排序</p>
+<h4 id="不应该做的原则："><a href="#不应该做的原则：" class="headerlink" title="不应该做的原则："></a>不应该做的原则：</h4><h5 id="不要在列上使用函数和进行运算"><a href="#不要在列上使用函数和进行运算" class="headerlink" title="不要在列上使用函数和进行运算"></a>不要在列上使用函数和进行运算</h5><p>不要在列上使用函数，这将导致索引失效而进行全表扫描。</p>
+<p>例如下面的 SQL 语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from artile where YEAR(create_time) &lt;&#x3D; &#39;2018&#39;; </span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
-<h3 id="1、扎心了，没用到索引"><a href="#1、扎心了，没用到索引" class="headerlink" title="1、扎心了，没用到索引"></a>1、扎心了，没用到索引</h3><p>没有用上索引，我觉得这个原因是很多人都能想到的，例如你要查询这条语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where 100 &lt;c and c &lt; 100000;</span><br></pre></td></tr></table></figure>
+<p>即使 date 上建立了索引，也会全表扫描，可以把计算放到业务层，这样做不仅可以节省数据库的 CPU，还可以起到查询缓存优化效果。</p>
+<h5 id="负向条件查询不能使用索引"><a href="#负向条件查询不能使用索引" class="headerlink" title="负向条件查询不能使用索引"></a>负向条件查询不能使用索引</h5><p>负向条件有：!=、&lt;&gt;、not in、not exists、not like 等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from artile where status !&#x3D; 1 and status !&#x3D; 2;</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
-<p><strong>（1）、字段没有索引</strong></p>
-<p>刚好你的 c 字段上没有索引，那么抱歉，只能走全表扫描了，你就体验不会索引带来的乐趣了，所以，这回导致这条查询语句很慢。</p>
-<p><strong>（2）、字段有索引，但却没有用索引</strong></p>
-<p>好吧，这个时候你给 c 这个字段加上了索引，然后又查询了一条语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where c - 1 &#x3D; 1000;</span><br></pre></td></tr></table></figure>
+<p>可以使用in进行优化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from artile where status in (0,3)</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
 
-<p>我想问大家一个问题，这样子在查询的时候会用索引查询吗？</p>
-<p>答是不会，如果我们在字段的左边做了运算，那么很抱歉，在查询的时候，就不会用上索引了，所以呢，大家要注意这种<strong>字段上有索引，但由于自己的疏忽，导致系统没有使用索引</strong>的情况了。</p>
-<p>正确的查询应该如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where c &#x3D; 1000 + 1;</span><br></pre></td></tr></table></figure>
-
-<p>有人可能会说，右边有运算就能用上索引？难道数据库就不会自动帮我们优化一下，自动把 c - 1=1000 自动转换为 c = 1000+1。</p>
-<p>不好意思，确实不会帮你，所以，你要注意了。</p>
-<p><strong>（3）、函数操作导致没有用上索引</strong></p>
-<p>如果我们在查询的时候，对字段进行了函数操作，也是会导致没有用上索引的，例如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where pow(c,2) &#x3D; 1000;</span><br></pre></td></tr></table></figure>
-
-<p>这里我只是做一个例子，假设函数 pow 是求 c 的 n 次方，实际上可能并没有 pow(c,2)这个函数。其实这个和上面在左边做运算也是很类似的。</p>
-<p>所以呢，一条语句执行都很慢的时候，可能是该语句没有用上索引了，不过具体是啥原因导致没有用上索引的呢，你就要会分析了，我上面列举的三个原因，应该是出现的比较多的吧。</p>
-<h3 id="2、呵呵，数据库自己选错索引了"><a href="#2、呵呵，数据库自己选错索引了" class="headerlink" title="2、呵呵，数据库自己选错索引了"></a>2、呵呵，数据库自己选错索引了</h3><p>我们在进行查询操作的时候，例如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where 100 &lt; c and c &lt; 100000;</span><br></pre></td></tr></table></figure>
-
-<p>我们知道，主键索引和非主键索引是有区别的，主键索引存放的值是<strong>整行字段的数据</strong>，而非主键索引上存放的值不是整行字段的数据，而且存放<strong>主键字段的值</strong>。不大懂的可以看我这篇文章：<a href="https://mp.weixin.qq.com/s?__biz=Mzg2NzA4MTkxNQ==&mid=2247485127&idx=2&sn=b9bbaa8cd34f3eb71c28169395f5d06a&scene=21#wechat_redirect" target="_blank" rel="noopener">面试小知识：MySQL索引相关</a>   里面有说到主键索引和非主键索引的区别</p>
-<p>也就是说，我们如果走 c 这个字段的索引的话，最后会查询到对应主键的值，然后，再根据主键的值走主键索引，查询到整行数据返回。</p>
-<p>好吧扯了这么多，其实我就是想告诉你，就算你在 c 字段上有索引，系统也并不一定会走 c 这个字段上的索引，而是有可能会直接扫描扫描全表，找出所有符合 100 &lt; c and c &lt; 100000 的数据。</p>
-<p><strong>为什么会这样呢？</strong></p>
-<p>其实是这样的，系统在执行这条语句的时候，会进行预测：究竟是走 c 索引扫描的行数少，还是直接扫描全表扫描的行数少呢？显然，扫描行数越少当然越好了，因为扫描行数越少，意味着I/O操作的次数越少。</p>
-<p>如果是扫描全表的话，那么扫描的次数就是这个表的总行数了，假设为 n；而如果走索引 c 的话，我们通过索引 c 找到主键之后，还得再通过主键索引来找我们整行的数据，也就是说，需要走两次索引。而且，我们也不知道符合 100 c &lt; and c &lt; 10000 这个条件的数据有多少行，万一这个表是全部数据都符合呢？这个时候意味着，走 c 索引不仅扫描的行数是 n，同时还得每行数据走两次索引。</p>
-<p><strong>所以呢，系统是有可能走全表扫描而不走索引的。那系统是怎么判断呢？</strong></p>
-<p>判断来源于系统的预测，也就是说，如果要走 c 字段索引的话，系统会预测走 c 字段索引大概需要扫描多少行。如果预测到要扫描的行数很多，它可能就不走索引而直接扫描全表了。</p>
-<p>那么问题来了，<strong>系统是怎么预测判断的呢？</strong>这里我给你讲下系统是怎么判断的吧，虽然这个时候我已经写到脖子有点酸了。</p>
-<p>系统是通过<strong>索引的区分度</strong>来判断的，一个索引上不同的值越多，意味着出现相同数值的索引越少，意味着索引的区分度越高。我们也把区分度称之为<strong>基数</strong>，即区分度越高，基数越大。所以呢，基数越大，意味着符合 100 &lt; c and c &lt; 10000 这个条件的行数越少。</p>
-<p>所以呢，一个索引的基数越大，意味着走索引查询越有优势。</p>
-<p><strong>那么问题来了，怎么知道这个索引的基数呢？</strong></p>
-<p>系统当然是不会遍历全部来获得一个索引的基数的，代价太大了，索引系统是通过遍历部分数据，也就是通过<strong>采样</strong>的方式，来预测索引的基数的。</p>
-<p><strong>扯了这么多，重点的来了</strong>，居然是采样，那就有可能出现<strong>失误</strong>的情况，也就是说，c 这个索引的基数实际上是很大的，但是采样的时候，却很不幸，把这个索引的基数预测成很小。例如你采样的那一部分数据刚好基数很小，然后就误以为索引的基数很小。<strong>然后就呵呵，系统就不走 c 索引了，直接走全部扫描了</strong>。</p>
-<p>所以呢，说了这么多，得出结论：<strong>由于统计的失误，导致系统没有走索引，而是走了全表扫描</strong>，而这，也是导致我们 SQL 语句执行的很慢的原因。</p>
-<blockquote>
-<p>这里我声明一下，系统判断是否走索引，扫描行数的预测其实只是原因之一，这条查询语句是否需要使用使用临时表、是否需要排序等也是会影响系统的选择的。</p>
-</blockquote>
-<p>不过呢，我们有时候也可以通过强制走索引的方式来查询，例如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t force index(a) where c &lt; 100 and c &lt; 100000;</span><br></pre></td></tr></table></figure>
-
-<p>我们也可以通过</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show index from t;</span><br></pre></td></tr></table></figure>
-
-<p>来查询索引的基数和实际是否符合，如果和实际很不符合的话，我们可以重新来统计索引的基数，可以用这条命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">analyze table t;</span><br></pre></td></tr></table></figure>
-
-<p>来重新统计分析。</p>
-<p><strong>既然会预测错索引的基数，这也意味着，当我们的查询语句有多个索引的时候，系统有可能也会选错索引哦</strong>，这也可能是 SQL 执行的很慢的一个原因。</p>
-<p>好吧，就先扯这么多了，你到时候能扯出这么多，我觉得已经很棒了，下面做一个总结。</p>
-<p><strong>四、总结</strong></p>
-<p>以上是我的总结与理解，最后一个部分，我怕很多人不大懂<strong>数据库居然会选错索引</strong>，所以我详细解释了一下，下面我对以上做一个总结。</p>
-<p>一个 SQL 执行的很慢，我们要分两种情况讨论：</p>
-<p>1、大多数情况下很正常，偶尔很慢，则有如下原因</p>
-<p>(1)、数据库在刷新脏页，例如 redo log 写满了需要同步到磁盘。</p>
-<p>(2)、执行的时候，遇到锁，如表锁、行锁。</p>
-<p>2、这条 SQL 语句一直执行的很慢，则有如下原因。</p>
-<p>(1)、没有用上索引：例如该字段没有索引；由于对字段进行运算、函数操作导致无法用索引。</p>
-<p>(2)、数据库选错了索引。</p>
-<p>大家如果有补充的，也是可以留言区补充一波哦。</p>
-<p> explain 每个列代表什么含义（关于优化级别 ref 和 all，什么时候应该用到index却没用到，关于extra列出现了usetempory 和 filesort分别的原因和如何着手优化等） </p>
+<h5 id="更新频繁、数据区分度不高的字段上不宜建立索引"><a href="#更新频繁、数据区分度不高的字段上不宜建立索引" class="headerlink" title="更新频繁、数据区分度不高的字段上不宜建立索引"></a>更新频繁、数据区分度不高的字段上不宜建立索引</h5><p>更新会变更B+树，更新频繁的字段建立索引会大大降低数据库性能。</p>
+<p>「性别」这种区分度不大的属性，建立索引没有意义，不能有效过滤数据，性能与全表扫描类似。</p>
+<p>区分度可以使用 count(distinct(列名))/count(*) 来计算，在80%以上的时候就可以建立索引。</p>
+<h5 id="索引列不允许为null"><a href="#索引列不允许为null" class="headerlink" title="索引列不允许为null"></a>索引列不允许为null</h5><p>单列索引不存null值，复合索引不存全为null的值，如果列允许为 null，可能会得到不符合预期的结果集。</p>
+<h5 id="避免使用or来连接条件"><a href="#避免使用or来连接条件" class="headerlink" title="避免使用or来连接条件"></a>避免使用or来连接条件</h5><p>应该尽量避免在 where 子句中使用 or 来连接条件，因为这会导致索引失效而进行全表扫描，虽然新版的MySQL能够命中索引，但查询优化耗费的 CPU比in多。</p>
+<h5 id="模糊查询"><a href="#模糊查询" class="headerlink" title="模糊查询"></a>模糊查询</h5><p>前导模糊查询不能使用索引，非前导查询可以。</p>
+<h3 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h3><p>数据库中的数据量不一定是可控的，在未进行分库分表的情况下，随着时间和业务的发展，库中的表会越来越多，表中的数据量也会越来越大，相应地，数据操作，增删改查的开销也会越来越大；另外，由于无法进行分布式式部署，而一台服务器的资源（CPU、磁盘、内存、IO等）是有限的，最终数据库所能承载的数据量、数据处理能力都将遭遇瓶颈。</p>
+<h4 id="分布式ID"><a href="#分布式ID" class="headerlink" title="分布式ID"></a>分布式ID</h4><h4 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h4><p> explain 每个列代表什么含义（关于优化级别 ref 和 all，什么时候应该用到index却没用到，关于extra列出现了usetempory 和 filesort分别的原因和如何着手优化等） </p>
 <p> show profile 怎么使用。</p>
 
       
@@ -723,7 +723,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">203</span>
+                  <span class="site-state-item-count">204</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -735,7 +735,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -782,7 +782,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#慢查询日志"><span class="nav-number">1.</span> <span class="nav-text">慢查询日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Show-status"><span class="nav-number">2.</span> <span class="nav-text">Show status</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#show-profile-SQL耗时出现在哪个环节"><span class="nav-number">3.</span> <span class="nav-text">show profile(SQL耗时出现在哪个环节)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#开启-profiles"><span class="nav-number">3.1.</span> <span class="nav-text">开启 profiles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开始分析"><span class="nav-number">3.2.</span> <span class="nav-text">开始分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#show-profile返回结果字段含义"><span class="nav-number">3.3.</span> <span class="nav-text">show profile返回结果字段含义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#show-profile-type-选项"><span class="nav-number">3.4.</span> <span class="nav-text">show profile type 选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#status出现以下情况的建议"><span class="nav-number">3.5.</span> <span class="nav-text">status出现以下情况的建议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#explain"><span class="nav-number">4.</span> <span class="nav-text">explain</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一、开始装逼：分类讨论"><span class="nav-number"></span> <span class="nav-text">一、开始装逼：分类讨论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、针对偶尔很慢的情况"><span class="nav-number"></span> <span class="nav-text">二、针对偶尔很慢的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、数据库在刷新脏页我也无奈啊"><span class="nav-number">1.</span> <span class="nav-text">1、数据库在刷新脏页我也无奈啊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、拿不到锁我能怎么办"><span class="nav-number">2.</span> <span class="nav-text">2、拿不到锁我能怎么办</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、针对一直都这么慢的情况"><span class="nav-number"></span> <span class="nav-text">三、针对一直都这么慢的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、扎心了，没用到索引"><span class="nav-number">1.</span> <span class="nav-text">1、扎心了，没用到索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、呵呵，数据库自己选错索引了"><span class="nav-number">2.</span> <span class="nav-text">2、呵呵，数据库自己选错索引了</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#慢查询日志"><span class="nav-number">1.</span> <span class="nav-text">慢查询日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#explain"><span class="nav-number">2.</span> <span class="nav-text">explain</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id"><span class="nav-number"></span> <span class="nav-text">id</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#select-type"><span class="nav-number">1.</span> <span class="nav-text">select_type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#type"><span class="nav-number">2.</span> <span class="nav-text">type:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#System与-const"><span class="nav-number">2.1.</span> <span class="nav-text">System与 const</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#eq-ref"><span class="nav-number">2.2.</span> <span class="nav-text">eq_ref</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ref"><span class="nav-number">2.3.</span> <span class="nav-text">ref</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Range"><span class="nav-number">2.4.</span> <span class="nav-text">Range</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ALL"><span class="nav-number">2.5.</span> <span class="nav-text">ALL</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#key-len列"><span class="nav-number"></span> <span class="nav-text">key_len列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rows-列"><span class="nav-number"></span> <span class="nav-text">Rows 列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Extra-列"><span class="nav-number"></span> <span class="nav-text">Extra 列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-filesort"><span class="nav-number">1.</span> <span class="nav-text">Using filesort</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-temporary"><span class="nav-number">2.</span> <span class="nav-text">Using temporary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-index"><span class="nav-number">3.</span> <span class="nav-text">Using index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化数据访问"><span class="nav-number">4.</span> <span class="nav-text">优化数据访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#索引优化"><span class="nav-number"></span> <span class="nav-text">索引优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#应该做的原则："><span class="nav-number">0.1.</span> <span class="nav-text">应该做的原则：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#联合索引最左前缀原则"><span class="nav-number">0.1.1.</span> <span class="nav-text">联合索引最左前缀原则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用覆盖索引"><span class="nav-number">0.1.2.</span> <span class="nav-text">使用覆盖索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#范围列可以用到索引"><span class="nav-number">0.1.3.</span> <span class="nav-text">范围列可以用到索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果出现了filesort"><span class="nav-number">0.1.4.</span> <span class="nav-text">如果出现了filesort</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不应该做的原则："><span class="nav-number">0.2.</span> <span class="nav-text">不应该做的原则：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#不要在列上使用函数和进行运算"><span class="nav-number">0.2.1.</span> <span class="nav-text">不要在列上使用函数和进行运算</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#负向条件查询不能使用索引"><span class="nav-number">0.2.2.</span> <span class="nav-text">负向条件查询不能使用索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#更新频繁、数据区分度不高的字段上不宜建立索引"><span class="nav-number">0.2.3.</span> <span class="nav-text">更新频繁、数据区分度不高的字段上不宜建立索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#索引列不允许为null"><span class="nav-number">0.2.4.</span> <span class="nav-text">索引列不允许为null</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#避免使用or来连接条件"><span class="nav-number">0.2.5.</span> <span class="nav-text">避免使用or来连接条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#模糊查询"><span class="nav-number">0.2.6.</span> <span class="nav-text">模糊查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分库分表"><span class="nav-number">1.</span> <span class="nav-text">分库分表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式ID"><span class="nav-number">1.1.</span> <span class="nav-text">分布式ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式事务"><span class="nav-number">1.2.</span> <span class="nav-text">分布式事务</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -832,7 +832,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共341.7k字</span>
+  <span class="post-count">博客全站共344k字</span>
 </div>
 
         
