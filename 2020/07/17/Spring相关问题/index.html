@@ -79,18 +79,22 @@
 
 
 
-<meta name="description" content="[TOC] Spring IoCQ1：IoC 是什么？IoC 即控制反转，简单来说就是把原来代码里需要实现的对象创建、依赖反转给容器来帮忙实现，需要创建一个容器并且需要一种描述让容器知道要创建的对象间的关系，在 Spring 中管理对象及其依赖关系是通过 Spring 的 IoC 容器实现的。 IoC 的实现方式有依赖注入和依赖查找，由于依赖查找使用的很少，因此 IoC 也叫做依赖注入。依赖注入指">
+<meta name="description" content="[TOC] Spring IoCQ1：IoC 是什么？ioc，控制反转。平时传统方式中，当我们需要使用对象的时候，我们就必须自己手动地去创建，比如直接new一个对象。这样当我们在项目中需要使用大量对象时，就显得特别繁琐，而且各个对象之间可能存在依赖关系（比如一个对象是另一个对象的属性），我们就要自己去维护这种依赖，耦合度很大。    通过ioc就可以解决这些问题，我们不用再自己去手动new对象了，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring相关问题">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] Spring IoCQ1：IoC 是什么？IoC 即控制反转，简单来说就是把原来代码里需要实现的对象创建、依赖反转给容器来帮忙实现，需要创建一个容器并且需要一种描述让容器知道要创建的对象间的关系，在 Spring 中管理对象及其依赖关系是通过 Spring 的 IoC 容器实现的。 IoC 的实现方式有依赖注入和依赖查找，由于依赖查找使用的很少，因此 IoC 也叫做依赖注入。依赖注入指">
+<meta property="og:description" content="[TOC] Spring IoCQ1：IoC 是什么？ioc，控制反转。平时传统方式中，当我们需要使用对象的时候，我们就必须自己手动地去创建，比如直接new一个对象。这样当我们在项目中需要使用大量对象时，就显得特别繁琐，而且各个对象之间可能存在依赖关系（比如一个对象是另一个对象的属性），我们就要自己去维护这种依赖，耦合度很大。    通过ioc就可以解决这些问题，我们不用再自己去手动new对象了，">
+<meta property="og:image" content="https://images2017.cnblogs.com/blog/584866/201710/584866-20171019103913927-1865904529.png">
+<meta property="og:image" content="http://aamingaa.github.io/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201205160024907.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20180604094219689?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Nfcm95aQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190817182633273.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzIyMTcy,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://camo.githubusercontent.com/f5433f5b67095bda3ba5a96079a21411e3d58292/68747470733a2f2f757365722d676f6c642d63646e2e786974752e696f2f323031382f31312f31302f313636666434353738373339343139323f773d3130313526683d34363626663d7765627026733d3335333532">
 <meta property="article:published_time" content="2020-07-17T04:57:59.000Z">
-<meta property="article:modified_time" content="2020-11-19T07:25:33.333Z">
+<meta property="article:modified_time" content="2020-12-05T09:19:46.163Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://camo.githubusercontent.com/f5433f5b67095bda3ba5a96079a21411e3d58292/68747470733a2f2f757365722d676f6c642d63646e2e786974752e696f2f323031382f31312f31302f313636666434353738373339343139323f773d3130313526683d34363626663d7765627026733d3335333532">
+<meta name="twitter:image" content="https://images2017.cnblogs.com/blog/584866/201710/584866-20171019103913927-1865904529.png">
 
 
 
@@ -375,7 +379,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6.2k
+                  6.8k
                 </span>
               
 
@@ -391,7 +395,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  22
+                  25
                 </span>
               
             </div>
@@ -413,60 +417,111 @@
 
       
         <p>[TOC]</p>
-<h3 id="Spring-IoC"><a href="#Spring-IoC" class="headerlink" title="Spring IoC"></a>Spring IoC</h3><h4 id="Q1：IoC-是什么？"><a href="#Q1：IoC-是什么？" class="headerlink" title="Q1：IoC 是什么？"></a>Q1：IoC 是什么？</h4><p>IoC 即控制反转，简单来说就是把原来代码里需要实现的对象创建、依赖反转给容器来帮忙实现，需要创建一个容器并且需要一种描述让容器知道要创建的对象间的关系，在 Spring 中管理对象及其依赖关系是通过 Spring 的 IoC 容器实现的。</p>
-<p>IoC 的实现方式有依赖注入和依赖查找，由于依赖查找使用的很少，因此 IoC 也叫做依赖注入。依赖注入指对象被动地接受依赖类而不用自己主动去找，对象不是从容器中查找它依赖的类，而是在容器实例化对象时主动将它依赖的类注入给它。假设一个 Car 类需要一个 Engine 的对象，那么一般需要需要手动 new 一个 Engine，利用 IoC 就只需要定义一个私有的 Engine 类型的成员变量，容器会在运行时自动创建一个 Engine 的实例对象并将引用自动注入给成员变量。</p>
+<h3 id="Spring-IoC"><a href="#Spring-IoC" class="headerlink" title="Spring IoC"></a>Spring IoC</h3><h4 id="Q1：IoC-是什么？"><a href="#Q1：IoC-是什么？" class="headerlink" title="Q1：IoC 是什么？"></a>Q1：IoC 是什么？</h4><p>ioc，控制反转。平时传统方式中，当我们需要使用对象的时候，我们就必须自己手动地去创建，比如直接new一个对象。这样当我们在项目中需要使用大量对象时，就显得特别繁琐，而且各个对象之间可能存在依赖关系（比如一个对象是另一个对象的属性），我们就要自己去维护这种依赖，耦合度很大。 </p>
+<p>  通过ioc就可以解决这些问题，我们不用再自己去手动new对象了，我们只需要设置好配置信息，ioc容器就可以帮我们自动创建对象，并且进行依赖注入，对这些对象进行管理。当我们在需要相应对象时，直接去ioc容器里面获取即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">就是将依赖对象的创建和绑定转移到被依赖对象类的外部来实现</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h4 id="Q2：IoC-容器初始化过程？"><a href="#Q2：IoC-容器初始化过程？" class="headerlink" title="Q2：IoC 容器初始化过程？"></a>Q2：IoC 容器初始化过程？</h4><p><strong>基于 XML 的容器初始化</strong></p>
-<p>当创建一个 ClassPathXmlApplicationContext 时，构造方法做了两件事：① 调用父容器的构造方法为容器设置好 Bean 资源加载器。② 调用父类的 <code>setConfigLocations</code> 方法设置 Bean 配置信息的定位路径。</p>
-<p>ClassPathXmlApplicationContext 通过调用父类 AbstractApplicationContext 的 <code>refresh</code> 方法启动整个 IoC 容器对 Bean 定义的载入过程，<code>refresh</code> 是一个模板方法，规定了 IoC 容器的启动流程。在创建 IoC 容器前如果已有容器存在，需要把已有的容器销毁，保证在 <code>refresh</code> 方法后使用的是新创建的 IoC 容器。</p>
+<p>为了方便理解和追踪代码，使用常用实现类ClassPathXmlApplicationContext写了一个小例子，步骤如下：</p>
+<p>1）.在类路径下新建xml，定义一个bean,其中daoImpl就是bean的名字，spring.aop.xml.dao.impl.DaoImpl对应具体的一个pojo.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id&#x3D;&quot;daoImpl&quot; class&#x3D;&quot;spring.aop.xml.dao.impl.DaoImpl&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2）.main方法中直接载入xml,然后获取bean,最后执行bean实例的方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1     public static void main(String[] args) &#123;</span><br><span class="line">2         &#x2F;&#x2F;源码入口，从类路径下读取xml</span><br><span class="line">3         ApplicationContext ac1 &#x3D; new ClassPathXmlApplicationContext(&quot;aop.xml&quot;);</span><br><span class="line">4         Dao dao &#x3D; (Dao)ac1.getBean(&quot;daoImpl&quot;);&#x2F;&#x2F;根据名称获取Bean</span><br><span class="line">5         dao.select();&#x2F;&#x2F;执行Bean实例方法          &#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面我们就分析ClassPathXmlApplicationContext源码，来看看都做了什么。</p>
+<p>ClassPathXmlApplicationContext类图</p>
+<p><img src="https://images2017.cnblogs.com/blog/584866/201710/584866-20171019103913927-1865904529.png" alt="img"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">DefaultResourceLoader，该类设置classLoader，并且将配置文件 封装为Resource文件。</span><br><span class="line"></span><br><span class="line">AbstractApplicationContext，该类完成了大部分的IOC容器初始化工作，同时也提供了扩展接口留给子类去重载。该类的refresh()函数是核心初始化操作。</span><br><span class="line"></span><br><span class="line">AbstractRefreshableApplicationContext，该类支持刷新BeanFactory。</span><br><span class="line"></span><br><span class="line">AbstractRefreshableConfigApplicationContext，该类保存了配置文件路径</span><br><span class="line"></span><br><span class="line">AbstractXmlApplicationContext：该类支持解析bean定义文件</span><br><span class="line"></span><br><span class="line">最后ClassPathXmlApplicationContext:只提供了一个简单的构造函数</span><br><span class="line"></span><br><span class="line">Spring 将类职责分开，形成职责链，每一层次的扩展 都只是添加了某个功能</span><br><span class="line"></span><br><span class="line">然后父类定义大量的模板，让子类实现，父类层层传递到子类 直到某个子类重载了抽象方法。这里应用到了职责链设计模式和模板设计模式，IOC是个容器工厂设计模式。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当创建一个 ClassPathXmlApplicationContext 时，构造方法做了两件事：① 调用父容器的构造方法为容器设置好 Bean 资源加载器。② 调用父类的 &#96;setConfigLocations&#96; 方法设置 Bean 配置信息的定位路径。</span><br><span class="line"></span><br><span class="line">ClassPathXmlApplicationContext 通过调用父类 AbstractApplicationContext 的</span><br></pre></td></tr></table></figure>
+
+<p>refresh()方法,其实标志容器初始化过程的正式启动.</p>
+<p><code>refresh</code> 方法启动整个 IoC 容器对 Bean 定义的载入过程，<code>refresh</code> 是一个模板方法，规定了 IoC 容器的启动流程。在创建 IoC 容器前如果已有容器存在，需要把已有的容器销毁，保证在 <code>refresh</code> 方法后使用的是新创建的 IoC 容器。</p>
 <p>容器创建后通过 <code>loadBeanDefinitions</code> 方法加载 Bean 配置资源，该方法做两件事：① 调用资源加载器的方法获取要加载的资源。② 真正执行加载功能，由子类 XmlBeanDefinitionReader 实现。加载资源时首先解析配置文件路径，读取配置文件的内容，然后通过 XML 解析器将 Bean 配置信息转换成文档对象，之后按照 Spring Bean 的定义规则对文档对象进行解析。</p>
 <p>Spring IoC 容器中注册解析的 Bean 信息存放在一个 HashMap 集合中，key 是字符串，值是 BeanDefinition，注册过程中需要使用 synchronized 保证线程安全。当配置信息中配置的 Bean 被解析且被注册到 IoC 容器中后，初始化就算真正完成了，Bean 定义信息已经可以使用且可被检索。Spring IoC 容器的作用就是对这些注册的 Bean 定义信息进行处理和维护，注册的 Bean 定义信息是控制反转和依赖注入的基础。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> public void refresh() throws BeansException, IllegalStateException &#123;</span><br><span class="line">          synchronized (this.startupShutdownMonitor) &#123;</span><br><span class="line">              &#x2F;&#x2F;准备刷新的上下文环境，例如对系统属性或者环境变量进行准备及验证。</span><br><span class="line">              prepareRefresh();</span><br><span class="line">             &#x2F;&#x2F;启动子类的refreshBeanFactory方法.解析xml</span><br><span class="line">              ConfigurableListableBeanFactory beanFactory &#x3D; obtainFreshBeanFactory();</span><br><span class="line">               ... </span><br><span class="line">&#125;</span><br><span class="line">     &#125;</span><br><span class="line">protected final void refreshBeanFactory() throws BeansException &#123;</span><br><span class="line">            ... </span><br><span class="line">            loadBeanDefinitions(beanFactory);&#x2F;&#x2F;核心方法</span><br><span class="line">            ...</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <p><strong>基于注解的容器初始化</strong></p>
-<p>分为两种：① 直接将注解 Bean 注册到容器中，可以在初始化容器时注册，也可以在容器创建之后手动注册，然后刷新容器使其对注册的注解 Bean 进行处理。② 通过扫描指定的包及其子包的所有类处理，在初始化注解容器时指定要自动扫描的路径。</p>
+<p>分为两种：① 直接将注解 Bean 注册到容器中。② 通过扫描指定的包及其子包的所有类处理，在初始化注解容器时指定要自动扫描的路径。</p>
 <hr>
-<h4 id="Q3：依赖注入的实现方法有哪些？"><a href="#Q3：依赖注入的实现方法有哪些？" class="headerlink" title="Q3：依赖注入的实现方法有哪些？"></a>Q3：依赖注入的实现方法有哪些？</h4><p><strong>构造方法注入：</strong> IoC Service Provider 会检查被注入对象的构造方法，取得它所需要的依赖对象列表，进而为其注入相应的对象。这种方法的优点是在对象构造完成后就处于就绪状态，可以马上使用。缺点是当依赖对象较多时，构造方法的参数列表会比较长，构造方法无法被继承，无法设置默认值。对于非必需的依赖处理可能需要引入多个构造方法，参数数量的变动可能会造成维护的困难。</p>
+<h4 id="Q3：依赖注入的实现方法有哪些？-和IOC的区别"><a href="#Q3：依赖注入的实现方法有哪些？-和IOC的区别" class="headerlink" title="Q3：依赖注入的实现方法有哪些？(和IOC的区别)"></a>Q3：依赖注入的实现方法有哪些？(和IOC的区别)</h4><p>(控制反转：创建对象实例的控制从代码控制剥离到IOC容器控制，实际就是你在xml文件shu控制，侧重于原理。<br>依赖注入：创建对象实例时，为这个对象注入属性值或其它对象实例，侧重于实现。)</p>
+<p><strong>它提供一种机制，将需要依赖（低层模块）对象的引用传递给被依赖（高层模块）对象</strong></p>
+<p><strong>构造方法注入：</strong> 构造函数注入可以通过配置文件的方法注入和不通过配置文件 </p>
+<p>配置文件，XML。</p>
 <p><strong>setter 方法注入：</strong> 当前对象只需要为其依赖对象对应的属性添加 setter 方法，就可以通过 setter 方法将依赖对象注入到被依赖对象中。setter 方法注入在描述性上要比构造方法注入强，并且可以被继承，允许设置默认值。缺点是无法在对象构造完成后马上进入就绪状态。</p>
 <p><strong>接口注入：</strong> 必须实现某个接口，接口提供方法来为其注入依赖对象。使用少，因为它强制要求被注入对象实现不必要接口，侵入性强。</p>
+<p>具体思路是先定义一个接口，包含一个设置依赖的方法。</p>
 <hr>
 <h4 id="Q4：依赖注入的相关注解？"><a href="#Q4：依赖注入的相关注解？" class="headerlink" title="Q4：依赖注入的相关注解？"></a>Q4：依赖注入的相关注解？</h4><p><code>@Autowired</code>：自动按类型注入，如果有多个匹配则按照指定 Bean 的 id 查找，查找不到会报错。</p>
 <p><code>@Qualifier</code>：在自动按照类型注入的基础上再按照 Bean 的 id 注入，给变量注入时必须搭配 <code>@Autowired</code>，给方法注入时可单独使用。</p>
 <p><code>@Resource</code> ：直接按照 Bean 的 id 注入，只能注入 Bean 类型。</p>
 <p><code>@Value</code> ：用于注入基本数据类型和 String 类型。</p>
 <hr>
-<h4 id="Q5：依赖注入的过程？"><a href="#Q5：依赖注入的过程？" class="headerlink" title="Q5：依赖注入的过程？"></a>Q5：依赖注入的过程？</h4><p><code>getBean</code> 方法获取 Bean 实例，该方***调用 <code>doGetBean</code> ，<code>doGetBean</code> 真正实现从 IoC 容器获取 Bean 的功能，也是触发依赖注入的地方。</p>
+<h4 id="Q5：依赖注入的过程？"><a href="#Q5：依赖注入的过程？" class="headerlink" title="Q5：依赖注入的过程？"></a>Q5：依赖注入的过程？</h4><p><code>getBean</code> 方法获取 Bean 实例，该方法调用 <code>doGetBean</code> ，<code>doGetBean</code> 真正实现从 IoC 容器获取 Bean 的功能，也是触发依赖注入的地方。</p>
 <p>具体创建 Bean 对象的过程由 ObjectFactory 的 <code>createBean</code> 完成，该方法主要通过 <code>createBeanInstance</code> 方法生成 Bean 包含的 Java 对象实例和 <code>populateBean</code> 方法对 Bean 属性的依赖注入进行处理。</p>
 <p>在 <code>populateBean</code>方法中，注入过程主要分为两种情况：① 属性值类型不需要强制转换时，不需要解析属性值，直接进行依赖注入。② 属性值类型需要强制转换时，首先解析属性值，然后对解析后的属性值进行依赖注入。依赖注入的过程就是将 Bean 对象实例设置到它所依赖的 Bean 对象属性上，真正的依赖注入是通过 <code>setPropertyValues</code> 方法实现的，该方法使用了委派模式。</p>
 <p>BeanWrapperImpl 类负责对完成初始化的 Bean 对象进行依赖注入，对于非集合类型属性，使用 JDK 反射，通过属性的 setter 方法为属性设置注入后的值。对于集合类型的属性，将属性值解析为目标类型的集合后直接赋值给属性。</p>
 <p>当容器对 Bean 的定位、载入、解析和依赖注入全部完成后就不再需要手动创建对象，IoC 容器会自动为我们创建对象并且注入依赖。</p>
 <hr>
-<h4 id="Q6：Bean-的生命周期？"><a href="#Q6：Bean-的生命周期？" class="headerlink" title="Q6：Bean 的生命周期？"></a>Q6：Bean 的生命周期？</h4><p>在 IoC 容器的初始化过程中会对 Bean 定义完成资源定位，加载读取配置并解析，最后将解析的 Bean 信息放在一个 HashMap 集合中。当 IoC 容器初始化完成后，会进行对 Bean 实例的创建和依赖注入过程，注入对象依赖的各种属性值，在初始化时可以指定自定义的初始化方法。经过这一系列初始化操作后 Bean 达到可用状态，接下来就可以使用 Bean 了，当使用完成后会调用 destroy 方法进行销毁，此时也可以指定自定义的销毁方法，最终 Bean 被销毁且从容器中移除。</p>
+<h4 id="Q6：Bean-的生命周期？"><a href="#Q6：Bean-的生命周期？" class="headerlink" title="Q6：Bean 的生命周期？"></a>Q6：Bean 的生命周期？</h4><ul>
+<li>实例化bean对象(通过构造方法或者工厂方法)</li>
+<li>设置对象属性(setter等)（依赖注入）</li>
+<li>检查Aware接口</li>
+<li>将Bean实例传递给Bean的前置处理器的postProcessBeforeInitialization(Object bean, String beanname)方法</li>
+<li>调用Bean的初始化方法</li>
+<li>将Bean实例传递给Bean的后置处理器的postProcessAfterInitialization(Object bean, String beanname)方法</li>
+<li>使用Bean</li>
+<li>当Bean不再需要时，会经过清理阶段，如果Bean实现了DisposableBean接口，会调用其实现的destroy方法</li>
+</ul>
+<p><img src="/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201205160024907.png" alt="image-20201205160024907"></p>
+<p>经过这一系列初始化操作后 Bean 达到可用状态，接下来就可以使用 Bean 了，当使用完成后会调用 destroy 方法进行销毁，此时也可以指定自定义的销毁方法，最终 Bean 被销毁且从容器中移除。</p>
 <p>XML 方式通过配置 bean 标签中的 init-Method 和 destory-Method 指定自定义初始化和销毁方法。 </p>
 <p>注解方式通过 <code>@PreConstruct</code> 和 <code>@PostConstruct</code> 注解指定自定义初始化和销毁方法。</p>
 <hr>
-<h4 id="Q7：Bean-的作用范围？"><a href="#Q7：Bean-的作用范围？" class="headerlink" title="Q7：Bean 的作用范围？"></a>Q7：Bean 的作用范围？</h4><p>通过 scope 属性指定 bean 的作用范围，包括：</p>
+<h4 id="Q7：Bean-的作用范围？-不用管了"><a href="#Q7：Bean-的作用范围？-不用管了" class="headerlink" title="Q7：Bean 的作用范围？(不用管了)"></a>Q7：Bean 的作用范围？(不用管了)</h4><p>通过 scope 属性指定 bean 的作用范围，包括：</p>
 <p>① singleton：单例模式，是默认作用域，不管收到多少 Bean 请求每个容器中只有一个唯一的 Bean 实例。</p>
 <p>② prototype：原型模式，和 singleton 相反，每次 Bean 请求都会创建一个新的实例。</p>
-<p>③ request：每次 HTTP 请求都会创建一个新的 Bean 并把它放到 request 域中，在请求完成后 Bean 会失效并被垃圾收集器回收。</p>
-<p>④ session：和 request 类似，确保每个 session 中有一个 Bean 实例，session 过期后 bean 会随之失效。</p>
-<p>⑤ global session：当应用部署在 Portlet 容器时，如果想让所有 Portlet 共用全局存储变量，那么该变量需要存储在 global session 中。</p>
 <hr>
-<h4 id="Q8：如何通过-XML-方式创建-Bean？"><a href="#Q8：如何通过-XML-方式创建-Bean？" class="headerlink" title="Q8：如何通过 XML 方式创建 Bean？"></a>Q8：如何通过 XML 方式创建 Bean？</h4><p>默认无参构造方法，只需要指明 bean 标签中的 id 和 class 属性，如果没有无参构造方***报错。</p>
-<p>静态工厂方法，通过 bean 标签中的 class 属性指明静态工厂，factory-method 属性指明静态工厂方法。</p>
-<p>实例工厂方法，通过 bean 标签中的 factory-bean 属性指明实例工厂，factory-method 属性指明实例工厂方法。</p>
+<h4 id="Q8：如何通过-XML-方式创建-Bean？"><a href="#Q8：如何通过-XML-方式创建-Bean？" class="headerlink" title="Q8：如何通过 XML 方式创建 Bean？"></a>Q8：如何通过 XML 方式创建 Bean？</h4><p>默认无参构造方法，只需要指明 bean 标签中的 id 和 class 属性，如果没有无参构造方报错。</p>
 <hr>
 <h4 id="Q9：如何通过注解创建-Bean？"><a href="#Q9：如何通过注解创建-Bean？" class="headerlink" title="Q9：如何通过注解创建 Bean？"></a>Q9：如何通过注解创建 Bean？</h4><p><code>@Component</code> 把当前类对象存入 Spring 容器中，相当于在 xml 中配置一个 bean 标签。value 属性指定 bean 的 id，默认使用当前类的首字母小写的类名。</p>
 <p><code>@Controller</code>，<code>@Service</code>，<code>@Repository</code> 三个注解都是 <code>@Component</code>  的衍生注解，作用及属性都是一模一样的。只是提供了更加明确语义，<code>@Controller</code> 用于表现层，<code>@Service</code>用于业务层，<code>@Repository</code>用于持久层。如果注解中有且只有一个 value 属性要赋值时可以省略 value。</p>
 <p>如果想将第三方的类变成组件又没有源代码，也就没办法使用 <code>@Component</code> 进行自动配置，这种时候就要使用 <code>@Bean</code> 注解。被 <code>@Bean</code> 注解的方法返回值是一个对象，将会实例化，配置和初始化一个新对象并返回，这个对象由 Spring 的 IoC 容器管理。name 属性用于给当前 <code>@Bean</code>  注解方法创建的对象指定一个名称，即 bean 的 id。当使用注解配置方法时，如果方法有参数，Spring 会去容器查找是否有可用 bean对象，查找方式和 <code>@Autowired</code> 一样。</p>
 <hr>
 <h4 id="Q10：如何通过注解配置文件？"><a href="#Q10：如何通过注解配置文件？" class="headerlink" title="Q10：如何通过注解配置文件？"></a>Q10：如何通过注解配置文件？</h4><p><code>@Configuration</code> 用于指定当前类是一个 spring 配置类，当创建容器时会从该类上加载注解，value 属性用于指定配置类的字节码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> package config;</span><br><span class="line"> </span><br><span class="line"> import model.User;</span><br><span class="line"> import org.springframework.context.annotation.Bean;</span><br><span class="line"> import org.springframework.context.annotation.Configuration;</span><br><span class="line"> import org.springframework.context.annotation.Scope;</span><br><span class="line"> </span><br><span class="line"> @Configuration</span><br><span class="line"> public class TestConfiguration &#123;</span><br><span class="line"></span><br><span class="line">    public TestConfiguration()&#123;</span><br><span class="line">        System.out.println(&quot;TestConfiguration 容器启动初始化...&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @Scope(&quot;prototype&quot;)</span><br><span class="line">    public User user()&#123;</span><br><span class="line">        return new User();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;获取bean</span><br><span class="line">      User user &#x3D; (User)context.getBean(&quot;user&quot;);</span><br></pre></td></tr></table></figure>
+
 <p><code>@ComponentScan</code> 用于指定 Spring 在初始化容器时要扫描的包。basePackages 属性用于指定要扫描的包。</p>
-<p><code>@PropertySource</code> 用于加载 <code>.properties</code> 文件中的配置。value 属性用于指定文件位置，如果是在类路径下需要加上 classpath。</p>
-<p><code>@Import</code> 用于导入其他配置类，在引入其他配置类时可以不用再写 <code>@Configuration</code> 注解。有 <code>@Import</code> 的是父配置类，引入的是子配置类。value 属性用于指定其他配置类的字节码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#96;@PropertySource&#96; 用于加载 &#96;.properties&#96; 文件中的配置。value 属性用于指定文件位置，如果是在类路径下需要加上 classpath。</span><br><span class="line"></span><br><span class="line">&#96;@Import&#96; 用于导入其他配置类，在引入其他配置类时可以不用再写 &#96;@Configuration&#96; 注解。有 &#96;@Import&#96; 的是父配置类，引入的是子配置类。value 属性用于指定其他配置类的字节码。</span><br></pre></td></tr></table></figure>
+
 <hr>
-<h4 id="Q11：BeanFactory、FactoryBean-和-ApplicationContext-的区别？"><a href="#Q11：BeanFactory、FactoryBean-和-ApplicationContext-的区别？" class="headerlink" title="Q11：BeanFactory、FactoryBean 和 ApplicationContext 的区别？"></a>Q11：BeanFactory、FactoryBean 和 ApplicationContext 的区别？</h4><p>BeanFactory 是一个 Bean 工厂，使用简单工厂模式，是 Spring IoC 容器顶级接口，可以理解为含有 Bean 集合的工厂类，作用是管理 Bean，包括实例化、定位、配置对象及建立这些对象间的依赖。BeanFactory 实例化后并不会自动实例化 Bean，只有当 Bean 被使用时才实例化与装配依赖关系，属于延迟加载，适合多例模式。</p>
-<p>FactoryBean 是一个工厂 Bean，使用了工厂方法模式，作用是生产其他 Bean 实例，可以通过实现该接口，提供一个工厂方法来自定义实例化 Bean 的逻辑。FactoryBean 接口由 BeanFactory 中配置的对象实现，这些对象本身就是用于创建对象的工厂，如果一个 Bean 实现了这个接口，那么它就是创建对象的工厂 Bean，而不是 Bean 实例本身。</p>
-<p>ApplicationConext 是 BeanFactory 的子接口，扩展了 BeanFactory 的功能，提供了支持国际化的文本消息，统一的资源文件读取方式，事件传播以及应用层的特别配置等。容器会在初始化时对配置的 Bean 进行预实例化，Bean 的依赖注入在容器初始化时就已经完成，属于立即加载，适合单例模式，一般推荐使用。</p>
-<h4 id="Q12-Sping中的单例bean是否可以依赖多例bean"><a href="#Q12-Sping中的单例bean是否可以依赖多例bean" class="headerlink" title="Q12: Sping中的单例bean是否可以依赖多例bean"></a>Q12: Sping中的单例bean是否可以依赖多例bean</h4><h4 id="Q13-Sping启动过程"><a href="#Q13-Sping启动过程" class="headerlink" title="Q13: Sping启动过程"></a>Q13: Sping启动过程</h4><h4 id="Q13-Bean的销毁"><a href="#Q13-Bean的销毁" class="headerlink" title="Q13: Bean的销毁"></a>Q13: Bean的销毁</h4><h4 id="Q14：spring中哪里用到了工厂模式"><a href="#Q14：spring中哪里用到了工厂模式" class="headerlink" title="Q14：spring中哪里用到了工厂模式"></a>Q14：spring中哪里用到了工厂模式</h4><h4 id="Q15-Spring如何解决循环依赖（三级缓存）（必考）"><a href="#Q15-Spring如何解决循环依赖（三级缓存）（必考）" class="headerlink" title="Q15: Spring如何解决循环依赖（三级缓存）（必考）"></a>Q15: Spring如何解决循环依赖（三级缓存）（必考）</h4><h4 id="Q16-Spring的后置处理器"><a href="#Q16-Spring的后置处理器" class="headerlink" title="Q16: Spring的后置处理器"></a>Q16: Spring的后置处理器</h4><h4 id="Q17-Spring的-Transactional如何实现的（必考）"><a href="#Q17-Spring的-Transactional如何实现的（必考）" class="headerlink" title="Q17: Spring的@Transactional如何实现的（必考）"></a>Q17: Spring的@Transactional如何实现的（必考）</h4><h4 id="Q18-Spring的事务传播级别"><a href="#Q18-Spring的事务传播级别" class="headerlink" title="Q18: Spring的事务传播级别"></a>Q18: Spring的事务传播级别</h4><h4 id="Q19-拦截器，监听器和过滤器区别"><a href="#Q19-拦截器，监听器和过滤器区别" class="headerlink" title="Q19: 拦截器，监听器和过滤器区别"></a>Q19: 拦截器，监听器和过滤器区别</h4><h4 id="Q20-Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池"><a href="#Q20-Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池" class="headerlink" title="Q20: Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池"></a>Q20: Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池</h4><hr>
+<h4 id="Q11：BeanFactory、FactoryBean-和-ApplicationContext-的区别？"><a href="#Q11：BeanFactory、FactoryBean-和-ApplicationContext-的区别？" class="headerlink" title="Q11：BeanFactory、FactoryBean 和 ApplicationContext 的区别？"></a>Q11：BeanFactory、FactoryBean 和 ApplicationContext 的区别？</h4><p>BeanFactory 是一个 Bean 工厂，是 Spring IoC 容器顶级接口，作用是管理 Bean，包括实例化、定位、配置对象及建立这些对象间的依赖。BeanFactory 实例化后并不会自动实例化 Bean，只有当 Bean 被使用时才实例化与装配依赖关系，属于延迟加载，适合多例模式。</p>
+<p>FactoryBean 是一个工厂 Bean，是一个能生产或者修饰对象生成的工厂Bean</p>
+<p>ApplicationConext 是 BeanFactory 的子接口，扩展了 BeanFactory 的功能。BeanFactory在启动的时候不会去实例化Bean，- –  </p>
+<ul>
+<li>ApplicationContext在启动的时候就把所有的Bean全部实例化了。</li>
+<li>资源访问，如URL和文件 </li>
+<li>事件传播 </li>
+</ul>
+<h4 id="Q13-Spring启动过程"><a href="#Q13-Spring启动过程" class="headerlink" title="Q13: Spring启动过程"></a>Q13: Spring启动过程</h4><h4 id="Q15-Spring如何解决循环依赖（三级缓存）（必考）"><a href="#Q15-Spring如何解决循环依赖（三级缓存）（必考）" class="headerlink" title="Q15: Spring如何解决循环依赖（三级缓存）（必考）"></a>Q15: Spring如何解决循环依赖（三级缓存）（必考）</h4><h4 id="Q17-Spring的-Transactional如何实现的（必考）"><a href="#Q17-Spring的-Transactional如何实现的（必考）" class="headerlink" title="Q17: Spring的@Transactional如何实现的（必考）"></a>Q17: Spring的@Transactional如何实现的（必考）</h4><h4 id="Q18-Spring的事务传播级别"><a href="#Q18-Spring的事务传播级别" class="headerlink" title="Q18: Spring的事务传播级别"></a>Q18: Spring的事务传播级别</h4><h4 id="Q19-拦截器，监听器和过滤器区别"><a href="#Q19-拦截器，监听器和过滤器区别" class="headerlink" title="Q19: 拦截器，监听器和过滤器区别"></a>Q19: 拦截器，监听器和过滤器区别</h4><p>拦截器依赖于SpringMVC框架。在实现上基于Java的反射机制，属于面向切面编程（AOP）面向切面编程的一种运用。</p>
+<p>过滤器实际上就是对web资源进行拦截，做一些处理后再交给下一个过滤器或servlet处理<br>通常都是用来拦截request进行处理的，也可以对返回的response进行拦截处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package filter;</span><br><span class="line">import javax.servlet.*;</span><br><span class="line">import javax.servlet.annotation.WebFilter;</span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">@WebFilter(filterName &#x3D; &quot;CharsetFilter&quot;)</span><br><span class="line">public class CharsetFilter implements Filter &#123;</span><br><span class="line">    public void destroy() &#123;</span><br><span class="line">        &#x2F;*销毁时调用*&#x2F;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException &#123;</span><br><span class="line">        &#x2F;*过滤方法 主要是对request和response进行一些处理，然后交给下一个过滤器或Servlet处理*&#x2F;</span><br><span class="line">       </span><br><span class="line">        chain.doFilter(req, resp);&#x2F;&#x2F;交给下一个过滤器或servlet处理</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void init(FilterConfig config) throws ServletException &#123;</span><br><span class="line"></span><br><span class="line">        &#x2F;*初始化方法  接收一个FilterConfig类型的参数 该参数是对Filter的一些配置*&#x2F;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdn.net/20180604094219689?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Nfcm95aQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>监听器</p>
+<p>1)用于监听应用程序环境对象(ServletContext)的事件监听器<br>2)用于监听用户会话对象(HttpSession)的事件监听器<br>3)用于监听请求消息对象(ServletRequest)的事件监听器</p>
+<p><img src="https://img-blog.csdnimg.cn/20190817182633273.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzIyMTcy,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="Q20-Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池"><a href="#Q20-Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池" class="headerlink" title="Q20: Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池"></a>Q20: Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池</h4><h4 id="Q21-Spring-框架中都用到了哪些设计模式？"><a href="#Q21-Spring-框架中都用到了哪些设计模式？" class="headerlink" title="Q21:Spring 框架中都用到了哪些设计模式？"></a>Q21:Spring 框架中都用到了哪些设计模式？</h4><p>Spring 框架中使用到了大量的设计模式，下面列举了比较有代表性的：</p>
+<p>（1）工厂模式：BeanFactory就是简单工厂模式的体现，用来创建对象的实例；</p>
+<p>（2）单例模式：Bean默认为单例模式。</p>
+<p>（3）代理模式：Spring的AOP功能用到了JDK的动态代理和CGLIB字节码生成技术；</p>
+<p>（4）模板方法：用来解决代码重复的问题。比如. RestTemplate, JmsTemplate, JpaTemplate。</p>
+<p>（5）观察者模式：定义对象键一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都会得到通知被制动更新，如Spring中listener的实现–ApplicationListener。</p>
+<hr>
 <h3 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h3><h4 id="Q1：AOP-是什么？"><a href="#Q1：AOP-是什么？" class="headerlink" title="Q1：AOP 是什么？"></a>Q1：AOP 是什么？</h4><p>AOP 即面向切面编程，简单地说就是将代码中重复的部分抽取出来，在需要执行的时候使用动态代理技术，在不修改源码的基础上对方法进行增强。</p>
 <p>Spring 根据类是否实现接口来判断动态代理方式，如果实现接口会使用 JDK 的动态代理，核心是 InvocationHandler 接口和 Proxy 类，如果没有实现接口会使用 CGLib 动态代理，CGLib 是在运行时动态生成某个类的子类，如果某个类被标记为 final，不能使用 CGLib 。</p>
 <p>JDK 动态代理主要通过重组字节码实现，首先获得被代理对象的引用和所有接口，生成新的类必须实现被代理类的所有接口，动态生成Java 代码后编译新生成的 <code>.class</code> 文件并重新加载到 JVM 运行。JDK 代理直接写 Class 字节码，CGLib 是采用 ASM 框架写字节码，生成代理类的效率低。但是 CGLib 调用方法的效率高，因为 JDK 使用反射调用方法，CGLib 使用 FastClass 机制为代理类和被代理类各生成一个类，这个类会为代理类或被代理类的方法生成一个 index，这个 index 可以作为参数直接定位要调用的方法。</p>
@@ -508,26 +563,7 @@
 <p><code>@RequtestMapping</code>：将URL请求和业务方法映射起来，在类和方法定义上都可以添加该注解。<code>value</code> 属性指定URL请求的实际地址，是默认值。<code>method</code> 属性限制请求的方法类型，包括GET、POST、PUT、DELETE等。如果没有使用指定的请求方法请求URL，会报405 Method Not Allowed 错误。<code>params</code> 属性限制必须提供的参数，如果没有会报错。</p>
 <p><code>@RequestParam</code>：如果 Controller 方法的形参和 URL 参数名一致可以不添加注解，如果不一致可以使用该注解绑定。<code>value</code> 属性表示HTTP请求中的参数名。<code>required</code> 属性设置参数是否必要，默认false。<code>defaultValue</code> 属性指定没有给参数赋值时的默认值。</p>
 <p><code>@PathVariable</code>：Spring MVC 支持 RESTful 风格 URL，通过 <code>@PathVariable</code> 完成请求参数与形参的绑定。</p>
-<h4 id="Q4-Spring-MVC如何进行类型转换？"><a href="#Q4-Spring-MVC如何进行类型转换？" class="headerlink" title="Q4: Spring MVC如何进行类型转换？"></a>Q4: Spring MVC如何进行类型转换？</h4><h4 id="Q5：mybatis的xml有什么标签？"><a href="#Q5：mybatis的xml有什么标签？" class="headerlink" title="Q5：mybatis的xml有什么标签？"></a>Q5：mybatis的xml有什么标签？</h4><hr>
-<h3 id="Spring-Data-JPA"><a href="#Spring-Data-JPA" class="headerlink" title="Spring Data JPA"></a>Spring Data JPA</h3><h4 id="Q1：ORM-是什么？"><a href="#Q1：ORM-是什么？" class="headerlink" title="Q1：ORM 是什么？"></a>Q1：ORM 是什么？</h4><p>ORM 即 Object-Relational Mapping ，表示对象关系映射，映射的不只是对象的值还有对象之间的关系，通过 ORM 就可以把对象映射到关系型数据库中。操作实体类就相当于操作数据库表，可以不再重点关注 SQL 语句。</p>
-<hr>
-<h4 id="Q2：JPA-如何使用？"><a href="#Q2：JPA-如何使用？" class="headerlink" title="Q2：JPA 如何使用？"></a>Q2：JPA 如何使用？</h4><p>只需要持久层接口继承 JpaRepository 即可，泛型参数列表中第一个参数是实体类类型，第二个参数是主键类型。</p>
-<p>运行时通过 <code>JdkDynamicAopProxy</code> 的 <code>invoke</code> 方法创建了一个动态代理对象 <code>SimpleJpaRepository</code>，<code>SimpleJpaRepository</code> 中封装了 JPA 的操作，通过 <code>hibernate</code>（封装了JDBC）完成数据库操作。</p>
-<hr>
-<h4 id="Q3：JPA-实体类相关注解有哪些？"><a href="#Q3：JPA-实体类相关注解有哪些？" class="headerlink" title="Q3：JPA 实体类相关注解有哪些？"></a>Q3：JPA 实体类相关注解有哪些？</h4><p><code>@Entity</code>：表明当前类是一个实体类。</p>
-<p><code>@Table</code> ：关联实体类和数据库表。</p>
-<p><code>@Column</code> ：关联实体类属性和数据库表中字段。</p>
-<p><code>@Id</code> ：声明当前属性为数据库表主键对应的属性。</p>
-<p><code>@GeneratedValue</code>： 配置主键生成策略。</p>
-<p><code>@OneToMany</code> ：配置一对多关系，mappedBy 属性值为主表实体类在从表实体类中对应的属性名。</p>
-<p><code>@ManyToOne</code> ：配置多对一关系，targetEntity 属性值为主表对应实体类的字节码。</p>
-<p><code>@JoinColumn</code>：配置外键关系，name 属性值为外键名称，referencedColumnName 属性值为主表主键名称。</p>
-<hr>
-<h4 id="Q4：对象导航查询是什么？"><a href="#Q4：对象导航查询是什么？" class="headerlink" title="Q4：对象导航查询是什么？"></a>Q4：对象导航查询是什么？</h4><p>通过 get 方法查询一个对象的同时，通过此对象可以查询它的关联对象。</p>
-<p>对象导航查询一到多默认使用延迟加载的形式， 关联对象是集合，因此使用立即加载可能浪费资源。</p>
-<p>对象导航查询多到一默认使用立即加载的形式， 关联对象是一个对象，因此使用立即加载。</p>
-<p>如果要改变加载方式，在实体类注解配置加上 fetch 属性即可，LAZY 表示延迟加载，EAGER 表示立即加载。</p>
-<hr>
+<h4 id="Q5：mybatis的xml有什么标签？"><a href="#Q5：mybatis的xml有什么标签？" class="headerlink" title="Q5：mybatis的xml有什么标签？"></a>Q5：mybatis的xml有什么标签？</h4><hr>
 <h3 id="Mybatis"><a href="#Mybatis" class="headerlink" title="Mybatis"></a>Mybatis</h3><h4 id="Q1：Mybatis-的优缺点？"><a href="#Q1：Mybatis-的优缺点？" class="headerlink" title="Q1：Mybatis 的优缺点？"></a>Q1：Mybatis 的优缺点？</h4><p><strong>优点</strong></p>
 <p>相比 JDBC 减少了大量代码量，减少冗余代码。</p>
 <p>使用灵活，SQL 语句写在 XML 里，从程序代码中彻底分离，降低了耦合度，便于管理。</p>
@@ -563,6 +599,24 @@
 <h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>RESTful 和SOAP</p>
 <p>SOA和微服务的区别</p>
 <p>springboot的优点</p>
+<h3 id="Spring-Data-JPA"><a href="#Spring-Data-JPA" class="headerlink" title="Spring Data JPA"></a>Spring Data JPA</h3><h4 id="Q1：ORM-是什么？"><a href="#Q1：ORM-是什么？" class="headerlink" title="Q1：ORM 是什么？"></a>Q1：ORM 是什么？</h4><p>ORM 即 Object-Relational Mapping ，表示对象关系映射，映射的不只是对象的值还有对象之间的关系，通过 ORM 就可以把对象映射到关系型数据库中。操作实体类就相当于操作数据库表，可以不再重点关注 SQL 语句。</p>
+<hr>
+<h4 id="Q2：JPA-如何使用？"><a href="#Q2：JPA-如何使用？" class="headerlink" title="Q2：JPA 如何使用？"></a>Q2：JPA 如何使用？</h4><p>只需要持久层接口继承 JpaRepository 即可，泛型参数列表中第一个参数是实体类类型，第二个参数是主键类型。</p>
+<p>运行时通过 <code>JdkDynamicAopProxy</code> 的 <code>invoke</code> 方法创建了一个动态代理对象 <code>SimpleJpaRepository</code>，<code>SimpleJpaRepository</code> 中封装了 JPA 的操作，通过 <code>hibernate</code>（封装了JDBC）完成数据库操作。</p>
+<hr>
+<h4 id="Q3：JPA-实体类相关注解有哪些？"><a href="#Q3：JPA-实体类相关注解有哪些？" class="headerlink" title="Q3：JPA 实体类相关注解有哪些？"></a>Q3：JPA 实体类相关注解有哪些？</h4><p><code>@Entity</code>：表明当前类是一个实体类。</p>
+<p><code>@Table</code> ：关联实体类和数据库表。</p>
+<p><code>@Column</code> ：关联实体类属性和数据库表中字段。</p>
+<p><code>@Id</code> ：声明当前属性为数据库表主键对应的属性。</p>
+<p><code>@GeneratedValue</code>： 配置主键生成策略。</p>
+<p><code>@OneToMany</code> ：配置一对多关系，mappedBy 属性值为主表实体类在从表实体类中对应的属性名。</p>
+<p><code>@ManyToOne</code> ：配置多对一关系，targetEntity 属性值为主表对应实体类的字节码。</p>
+<p><code>@JoinColumn</code>：配置外键关系，name 属性值为外键名称，referencedColumnName 属性值为主表主键名称。</p>
+<hr>
+<h4 id="Q4：对象导航查询是什么？"><a href="#Q4：对象导航查询是什么？" class="headerlink" title="Q4：对象导航查询是什么？"></a>Q4：对象导航查询是什么？</h4><p>通过 get 方法查询一个对象的同时，通过此对象可以查询它的关联对象。</p>
+<p>对象导航查询一到多默认使用延迟加载的形式， 关联对象是集合，因此使用立即加载可能浪费资源。</p>
+<p>对象导航查询多到一默认使用立即加载的形式， 关联对象是一个对象，因此使用立即加载。</p>
+<p>如果要改变加载方式，在实体类注解配置加上 fetch 属性即可，LAZY 表示延迟加载，EAGER 表示立即加载。</p>
 
       
     </div>
@@ -683,7 +737,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">206</span>
+                  <span class="site-state-item-count">208</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -742,7 +796,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-IoC"><span class="nav-number">1.</span> <span class="nav-text">Spring IoC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：IoC-是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">Q1：IoC 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：IoC-容器初始化过程？"><span class="nav-number">1.2.</span> <span class="nav-text">Q2：IoC 容器初始化过程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：依赖注入的实现方法有哪些？"><span class="nav-number">1.3.</span> <span class="nav-text">Q3：依赖注入的实现方法有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：依赖注入的相关注解？"><span class="nav-number">1.4.</span> <span class="nav-text">Q4：依赖注入的相关注解？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q5：依赖注入的过程？"><span class="nav-number">1.5.</span> <span class="nav-text">Q5：依赖注入的过程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q6：Bean-的生命周期？"><span class="nav-number">1.6.</span> <span class="nav-text">Q6：Bean 的生命周期？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q7：Bean-的作用范围？"><span class="nav-number">1.7.</span> <span class="nav-text">Q7：Bean 的作用范围？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q8：如何通过-XML-方式创建-Bean？"><span class="nav-number">1.8.</span> <span class="nav-text">Q8：如何通过 XML 方式创建 Bean？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q9：如何通过注解创建-Bean？"><span class="nav-number">1.9.</span> <span class="nav-text">Q9：如何通过注解创建 Bean？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q10：如何通过注解配置文件？"><span class="nav-number">1.10.</span> <span class="nav-text">Q10：如何通过注解配置文件？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q11：BeanFactory、FactoryBean-和-ApplicationContext-的区别？"><span class="nav-number">1.11.</span> <span class="nav-text">Q11：BeanFactory、FactoryBean 和 ApplicationContext 的区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q12-Sping中的单例bean是否可以依赖多例bean"><span class="nav-number">1.12.</span> <span class="nav-text">Q12: Sping中的单例bean是否可以依赖多例bean</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q13-Sping启动过程"><span class="nav-number">1.13.</span> <span class="nav-text">Q13: Sping启动过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q13-Bean的销毁"><span class="nav-number">1.14.</span> <span class="nav-text">Q13: Bean的销毁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q14：spring中哪里用到了工厂模式"><span class="nav-number">1.15.</span> <span class="nav-text">Q14：spring中哪里用到了工厂模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q15-Spring如何解决循环依赖（三级缓存）（必考）"><span class="nav-number">1.16.</span> <span class="nav-text">Q15: Spring如何解决循环依赖（三级缓存）（必考）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q16-Spring的后置处理器"><span class="nav-number">1.17.</span> <span class="nav-text">Q16: Spring的后置处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q17-Spring的-Transactional如何实现的（必考）"><span class="nav-number">1.18.</span> <span class="nav-text">Q17: Spring的@Transactional如何实现的（必考）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q18-Spring的事务传播级别"><span class="nav-number">1.19.</span> <span class="nav-text">Q18: Spring的事务传播级别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q19-拦截器，监听器和过滤器区别"><span class="nav-number">1.20.</span> <span class="nav-text">Q19: 拦截器，监听器和过滤器区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q20-Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池"><span class="nav-number">1.21.</span> <span class="nav-text">Q20: Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-AOP"><span class="nav-number">2.</span> <span class="nav-text">Spring AOP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：AOP-是什么？"><span class="nav-number">2.1.</span> <span class="nav-text">Q1：AOP 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：AOP-的相关注解有哪些？"><span class="nav-number">2.2.</span> <span class="nav-text">Q2：AOP 的相关注解有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：AOP-的相关术语有什么？"><span class="nav-number">2.3.</span> <span class="nav-text">Q3：AOP 的相关术语有什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：AOP-的过程？"><span class="nav-number">2.4.</span> <span class="nav-text">Q4：AOP 的过程？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-MVC"><span class="nav-number">3.</span> <span class="nav-text">Spring MVC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：Spring-MVC-的处理流程？"><span class="nav-number">3.1.</span> <span class="nav-text">Q1：Spring MVC 的处理流程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：Spring-MVC-有哪些组件？"><span class="nav-number">3.2.</span> <span class="nav-text">Q2：Spring MVC 有哪些组件？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：Spring-MVC-的相关注解？"><span class="nav-number">3.3.</span> <span class="nav-text">Q3：Spring MVC 的相关注解？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4-Spring-MVC如何进行类型转换？"><span class="nav-number">3.4.</span> <span class="nav-text">Q4: Spring MVC如何进行类型转换？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q5：mybatis的xml有什么标签？"><span class="nav-number">3.5.</span> <span class="nav-text">Q5：mybatis的xml有什么标签？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Data-JPA"><span class="nav-number">4.</span> <span class="nav-text">Spring Data JPA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：ORM-是什么？"><span class="nav-number">4.1.</span> <span class="nav-text">Q1：ORM 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：JPA-如何使用？"><span class="nav-number">4.2.</span> <span class="nav-text">Q2：JPA 如何使用？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：JPA-实体类相关注解有哪些？"><span class="nav-number">4.3.</span> <span class="nav-text">Q3：JPA 实体类相关注解有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：对象导航查询是什么？"><span class="nav-number">4.4.</span> <span class="nav-text">Q4：对象导航查询是什么？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mybatis"><span class="nav-number">5.</span> <span class="nav-text">Mybatis</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：Mybatis-的优缺点？"><span class="nav-number">5.1.</span> <span class="nav-text">Q1：Mybatis 的优缺点？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：Mybatis-的-XML-文件有哪些标签属性？"><span class="nav-number">5.2.</span> <span class="nav-text">Q2：Mybatis 的 XML 文件有哪些标签属性？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：Mybatis-的一级缓存是什么？"><span class="nav-number">5.3.</span> <span class="nav-text">Q3：Mybatis 的一级缓存是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：Mybatis-的二级缓存是什么？"><span class="nav-number">5.4.</span> <span class="nav-text">Q4：Mybatis 的二级缓存是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q5：Mybatis-和-的区别？"><span class="nav-number">5.5.</span> <span class="nav-text">Q5：Mybatis  #{} 和 ${} 的区别？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解"><span class="nav-number">6.</span> <span class="nav-text">注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Springboot"><span class="nav-number">7.</span> <span class="nav-text">Springboot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">8.</span> <span class="nav-text">其他</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-IoC"><span class="nav-number">1.</span> <span class="nav-text">Spring IoC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：IoC-是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">Q1：IoC 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：IoC-容器初始化过程？"><span class="nav-number">1.2.</span> <span class="nav-text">Q2：IoC 容器初始化过程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：依赖注入的实现方法有哪些？-和IOC的区别"><span class="nav-number">1.3.</span> <span class="nav-text">Q3：依赖注入的实现方法有哪些？(和IOC的区别)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：依赖注入的相关注解？"><span class="nav-number">1.4.</span> <span class="nav-text">Q4：依赖注入的相关注解？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q5：依赖注入的过程？"><span class="nav-number">1.5.</span> <span class="nav-text">Q5：依赖注入的过程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q6：Bean-的生命周期？"><span class="nav-number">1.6.</span> <span class="nav-text">Q6：Bean 的生命周期？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q7：Bean-的作用范围？-不用管了"><span class="nav-number">1.7.</span> <span class="nav-text">Q7：Bean 的作用范围？(不用管了)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q8：如何通过-XML-方式创建-Bean？"><span class="nav-number">1.8.</span> <span class="nav-text">Q8：如何通过 XML 方式创建 Bean？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q9：如何通过注解创建-Bean？"><span class="nav-number">1.9.</span> <span class="nav-text">Q9：如何通过注解创建 Bean？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q10：如何通过注解配置文件？"><span class="nav-number">1.10.</span> <span class="nav-text">Q10：如何通过注解配置文件？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q11：BeanFactory、FactoryBean-和-ApplicationContext-的区别？"><span class="nav-number">1.11.</span> <span class="nav-text">Q11：BeanFactory、FactoryBean 和 ApplicationContext 的区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q13-Spring启动过程"><span class="nav-number">1.12.</span> <span class="nav-text">Q13: Spring启动过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q15-Spring如何解决循环依赖（三级缓存）（必考）"><span class="nav-number">1.13.</span> <span class="nav-text">Q15: Spring如何解决循环依赖（三级缓存）（必考）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q17-Spring的-Transactional如何实现的（必考）"><span class="nav-number">1.14.</span> <span class="nav-text">Q17: Spring的@Transactional如何实现的（必考）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q18-Spring的事务传播级别"><span class="nav-number">1.15.</span> <span class="nav-text">Q18: Spring的事务传播级别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q19-拦截器，监听器和过滤器区别"><span class="nav-number">1.16.</span> <span class="nav-text">Q19: 拦截器，监听器和过滤器区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q20-Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池"><span class="nav-number">1.17.</span> <span class="nav-text">Q20: Springboot起步依赖有什么好处，为什么使用MyBatis不适用数据库连接池</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q21-Spring-框架中都用到了哪些设计模式？"><span class="nav-number">1.18.</span> <span class="nav-text">Q21:Spring 框架中都用到了哪些设计模式？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-AOP"><span class="nav-number">2.</span> <span class="nav-text">Spring AOP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：AOP-是什么？"><span class="nav-number">2.1.</span> <span class="nav-text">Q1：AOP 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：AOP-的相关注解有哪些？"><span class="nav-number">2.2.</span> <span class="nav-text">Q2：AOP 的相关注解有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：AOP-的相关术语有什么？"><span class="nav-number">2.3.</span> <span class="nav-text">Q3：AOP 的相关术语有什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：AOP-的过程？"><span class="nav-number">2.4.</span> <span class="nav-text">Q4：AOP 的过程？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-MVC"><span class="nav-number">3.</span> <span class="nav-text">Spring MVC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：Spring-MVC-的处理流程？"><span class="nav-number">3.1.</span> <span class="nav-text">Q1：Spring MVC 的处理流程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：Spring-MVC-有哪些组件？"><span class="nav-number">3.2.</span> <span class="nav-text">Q2：Spring MVC 有哪些组件？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：Spring-MVC-的相关注解？"><span class="nav-number">3.3.</span> <span class="nav-text">Q3：Spring MVC 的相关注解？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q5：mybatis的xml有什么标签？"><span class="nav-number">3.4.</span> <span class="nav-text">Q5：mybatis的xml有什么标签？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mybatis"><span class="nav-number">4.</span> <span class="nav-text">Mybatis</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：Mybatis-的优缺点？"><span class="nav-number">4.1.</span> <span class="nav-text">Q1：Mybatis 的优缺点？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：Mybatis-的-XML-文件有哪些标签属性？"><span class="nav-number">4.2.</span> <span class="nav-text">Q2：Mybatis 的 XML 文件有哪些标签属性？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：Mybatis-的一级缓存是什么？"><span class="nav-number">4.3.</span> <span class="nav-text">Q3：Mybatis 的一级缓存是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：Mybatis-的二级缓存是什么？"><span class="nav-number">4.4.</span> <span class="nav-text">Q4：Mybatis 的二级缓存是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q5：Mybatis-和-的区别？"><span class="nav-number">4.5.</span> <span class="nav-text">Q5：Mybatis  #{} 和 ${} 的区别？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解"><span class="nav-number">5.</span> <span class="nav-text">注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Springboot"><span class="nav-number">6.</span> <span class="nav-text">Springboot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">7.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Data-JPA"><span class="nav-number">8.</span> <span class="nav-text">Spring Data JPA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q1：ORM-是什么？"><span class="nav-number">8.1.</span> <span class="nav-text">Q1：ORM 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q2：JPA-如何使用？"><span class="nav-number">8.2.</span> <span class="nav-text">Q2：JPA 如何使用？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q3：JPA-实体类相关注解有哪些？"><span class="nav-number">8.3.</span> <span class="nav-text">Q3：JPA 实体类相关注解有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Q4：对象导航查询是什么？"><span class="nav-number">8.4.</span> <span class="nav-text">Q4：对象导航查询是什么？</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -792,7 +846,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共344.5k字</span>
+  <span class="post-count">博客全站共346k字</span>
 </div>
 
         
