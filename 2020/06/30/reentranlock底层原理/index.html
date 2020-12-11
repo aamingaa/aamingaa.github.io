@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/25/169b3432b128105d?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/25/169b3411b74cfff1?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-06-29T17:12:08.000Z">
-<meta property="article:modified_time" content="2020-07-19T00:52:06.527Z">
+<meta property="article:modified_time" content="2020-12-09T13:10:27.310Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="并发编程">
 <meta name="twitter:card" content="summary">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.2k
+                  3.4k
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  13
+                  14
                 </span>
               
             </div>
@@ -450,6 +450,9 @@
 <li>公平锁<br>公平锁是指多个线程在等待同一个锁时，必须按照申请锁的时间顺序来依次获得锁。<br>synchronized 中的锁是非公平的，ReentrantLock 默认情况下也是非公平的，但是也可以是公平的。</li>
 <li>锁绑定多个条件<br>一个 ReentrantLock 可以同时绑定多个 Condition 对象。<br>使用选择<br>除非需要使用 ReentrantLock 的高级功能，否则优先使用 synchronized。这是因为 synchronized 是 JVM 实现的一<br>种锁机制，JVM 原生地支持它，而 ReentrantLock 不是所有的 JDK 版本都支持。并且使用 synchronized 不用担心没<br>有释放锁而导致死锁问题，因为 JVM 会确保锁的释放。</li>
 </ol>
+<p>可中断</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public class hhh &#123;</span><br><span class="line">    static class ThreadDemo implements Runnable &#123;</span><br><span class="line">        Lock firstLock;</span><br><span class="line">        Lock secondLock;</span><br><span class="line">        public ThreadDemo(Lock firstLock, Lock secondLock) &#123;</span><br><span class="line">            this.firstLock &#x3D; firstLock;</span><br><span class="line">            this.secondLock &#x3D; secondLock;</span><br><span class="line">        &#125;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                firstLock.lockInterruptibly();</span><br><span class="line">                TimeUnit.MILLISECONDS.sleep(50);</span><br><span class="line">                secondLock.lockInterruptibly();</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                firstLock.unlock();</span><br><span class="line">                secondLock.unlock();</span><br><span class="line">                System.out.println(Thread.currentThread().getName()</span><br><span class="line">                        +&quot;获取到了资源，正常结束!&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    static Lock lock1 &#x3D; new ReentrantLock();</span><br><span class="line">    static Lock lock2 &#x3D; new ReentrantLock();</span><br><span class="line">    public static void main(String[] args)</span><br><span class="line">            throws InterruptedException &#123;</span><br><span class="line">        Thread thread &#x3D; new Thread(new ThreadDemo(lock1, lock2));</span><br><span class="line">        Thread thread1 &#x3D; new Thread(new ThreadDemo(lock2, lock1));</span><br><span class="line">        thread.start();</span><br><span class="line">        thread1.start();</span><br><span class="line">        thread.interrupt();&#x2F;&#x2F;是第一个线程中断</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>作者：薛8<br>链接：<a href="https://juejin.im/post/5c95df97e51d4551d06d8e8e" target="_blank" rel="noopener">https://juejin.im/post/5c95df97e51d4551d06d8e8e</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 <p><a href="https://www.javadoop.com/post/AbstractQueuedSynchronizer" target="_blank" rel="noopener">https://www.javadoop.com/post/AbstractQueuedSynchronizer</a></p>
 
@@ -578,7 +581,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">209</span>
+                  <span class="site-state-item-count">211</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -687,7 +690,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共348.2k字</span>
+  <span class="post-count">博客全站共354.4k字</span>
 </div>
 
         

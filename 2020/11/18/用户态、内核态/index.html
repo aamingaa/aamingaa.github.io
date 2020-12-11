@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC] 内核态和用户态？为什么？ 假设没有这种内核态和用户态之分，程序随随便便就能访问硬件资源，比如说分配内存，程序能随意的读写所有的内存空间，如果程序员一不小心将不适当的内容写到了不该写的地方，就很可能导致系统崩溃。用户程序是不可信的，不管程序员是有意的还是无意的，都很容易将系统干到崩溃。 ​    正因为如此，Intel就发明了ring0-ring3这些访问控制级别来保护硬件资源，ring">
 <meta property="og:image" content="http://aamingaa.github.io/2020/11/18/%E7%94%A8%E6%88%B7%E6%80%81%E3%80%81%E5%86%85%E6%A0%B8%E6%80%81/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201203193354517.png">
 <meta property="article:published_time" content="2020-11-18T12:31:12.000Z">
-<meta property="article:modified_time" content="2020-12-03T11:35:13.142Z">
+<meta property="article:modified_time" content="2020-12-10T02:29:59.218Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/11/18/%E7%94%A8%E6%88%B7%E6%80%81%E3%80%81%E5%86%85%E6%A0%B8%E6%80%81/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201203193354517.png">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1k
+                  1.3k
                 </span>
               
 
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  4
                 </span>
               
             </div>
@@ -415,6 +415,7 @@
         <p>[TOC]</p>
 <h3 id="内核态和用户态？为什么？"><a href="#内核态和用户态？为什么？" class="headerlink" title="内核态和用户态？为什么？"></a>内核态和用户态？为什么？</h3><p> 假设没有这种内核态和用户态之分，程序随随便便就能访问硬件资源，比如说分配内存，程序能随意的读写所有的内存空间，如果程序员一不小心将不适当的内容写到了不该写的地方，就很可能导致系统崩溃。用户程序是不可信的，不管程序员是有意的还是无意的，都很容易将系统干到崩溃。</p>
 <p>​    正因为如此，Intel就发明了ring0-ring3这些访问控制级别来保护硬件资源，ring0的就是我们所说的内核级别,要想使用硬件资源就必须获取相应的权限（设置PSW寄存器，这个操作只能由操作系统设置）。操作系统对内核级别的指令进行封装，统一管理硬件资源，然后向用户程序提供系统服务，用户程序进行系统调用后，操作系统执行一系列的检查验证，确保这次调用是安全的，再进行相应的资源访问操作。<strong>内核态能有效保护硬件资源的安全。</strong></p>
+<p>补充：Unix/Linux的特权级<br>特权级是非常有效的管理和控制程序执行的手段，因此在硬件上对特权级做了很多支持，就Intel x86架构的CPU来说一共有0~3四个特权级，0级最高，3级最低，硬件上在执行每条指令时都会对指令所具有的特权级做相应的检查。对于Unix/Linux来说，只使用了0级特权级和3级特权级。也就是说在Unix/Linux系统中，一条工作在0级特权级的指令具有了CPU能提供的最高权力，而一条工作在3级特权级的指令具有CPU提供的最低或者说最基本权力。当程序运行在3级特权级上时，就可以称之为运行在用户态，因为这是最低特权级，是普通的用户进程运行的特权级，大部分用户直接面对的程序都是运行在用户态；反之，当程序运行在0级特权级上时，就可以称之为运行在内核态。</p>
 <h3 id="大内核和微内核"><a href="#大内核和微内核" class="headerlink" title="大内核和微内核"></a>大内核和微内核</h3><ol>
 <li>大内核<br>大内核是将操作系统功能作为一个紧密结合的整体放到内核。<br>由于各模块共享信息，因此有很高的性能。</li>
 <li>微内核<br>由于操作系统不断复杂，因此将一部分操作系统功能移出内核，从而降低内核的复杂性。移出的部分根据分层的原则<br>划分成若干服务，相互独立。<br>在微内核结构下，操作系统被划分成小的、定义良好的模块，只有微内核这一个模块运行在内核态，其余模块运行在<br>用户态。<br>因为需要频繁地在用户态和核心态之间进行切换，所以会有一定的性能损失。</li>
@@ -551,7 +552,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">209</span>
+                  <span class="site-state-item-count">211</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -660,7 +661,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共348.2k字</span>
+  <span class="post-count">博客全站共354.4k字</span>
 </div>
 
         

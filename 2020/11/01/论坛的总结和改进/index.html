@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC]  数据库用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 id（索引）、评论实体 id（索引）、评论类型（帖子&#x2F;回复）、被评论目标 id、评论内容、评论状态（有效&#x2F;无效">
 <meta property="og:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
 <meta property="article:published_time" content="2020-11-01T02:28:23.000Z">
-<meta property="article:modified_time" content="2020-11-22T07:17:01.412Z">
+<meta property="article:modified_time" content="2020-12-11T14:29:43.721Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  5.3k
+                  6.3k
                 </span>
               
 
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  23
+                  28
                 </span>
               
             </div>
@@ -423,7 +423,7 @@
 <p><strong>社区论坛</strong></p>
 <p><strong>项目描述</strong>：该项目是设计一个社区论坛，方便用户发言与讨论</p>
 <p><strong>使用技术</strong>：本项目使用SpringBoot进行开发，使用的技术主要有 MySQL，Redis , Kafka , Quartz</p>
-<p><strong>主要功能</strong>：登录注册，发帖评论，点赞关注，消息提醒，帖子搜索，热帖排行</p>
+<p><strong>主要功能</strong>：登录注册，发帖评论，点赞关注，消息提醒，热帖排行</p>
 <p><strong>项目亮点</strong>：</p>
 <ul>
 <li>通过Kaptcha来生成验证码图片，作登录和注册的验证。</li>
@@ -431,28 +431,30 @@
 <li>利用数据结构Trie实现前缀树，对发表帖子评论进行简单的敏感词过滤。</li>
 <li>对点赞关注等高频功能利用Redis的Set来提升性能，并通过Redis的Hyperloglog统计UV, Bitmap统计DAU。</li>
 <li>利用Kafka来实现消息提醒功能，起到异步和解耦的功能。</li>
-<li>利用本地缓存优化社区主页的加载，测试其QPS从9提高到196。</li>
+<li>使用定时任务Quartz来更新帖子的评分，实现帖子排行</li>
 </ul>
 <hr>
 <h3 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h3><p><strong>判断注册合法性</strong></p>
 <ul>
-<li>利用 StringUtils 判断用户名、密码、邮箱是否非空。</li>
-<li>分别通过用户名和邮箱查询是否已经注册（为数据库的用户名和邮箱字段添加索引）。</li>
-</ul>
-<p><strong>通过 <code>set</code> 方法为用户设置各项信息</strong>，包括 MD5 加密后的密码、激活码等，然后插入数据库。（keyProperty=”id” 标明主键)</p>
-<p><strong>给用户发送激活邮件</strong></p>
-<ul>
-<li><p>在新浪邮箱打开 SMTP 服务，引入 <code>spring-boot-starter-mail</code> 依赖。</p>
+<li><p>利用 StringUtils 判断用户名、密码、邮箱是否非空。</p>
 </li>
-<li><p>在配置文件配置主机（smtp.sina.com）、端口（465）、邮箱、授权码、协议（smtps），设置 smtp.ssl.enable = true。</p>
-</li>
-<li><p>调用 JavaMailSender 的 API 发送邮件，激活 url 由用户 id 和用户的激活码拼接而成。点击激活 url 后由 controller 中的方法进行处理（成功/重复/失败），调用 Model 对象的 <code>addAttribute</code> 方法将结果返回前端。</p>
+<li><p>分别通过用户名和邮箱查询是否已经注册（为数据库的用户名和邮箱字段添加索引）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;Service层</span><br><span class="line">public Map&lt;String, Object&gt; register(User user)</span><br><span class="line">&#123;</span><br><span class="line">   &#x2F;&#x2F;Mapper层</span><br><span class="line">   User u &#x3D; userMapper.selectByName(user.getUsername());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 </li>
 </ul>
+<p><strong>通过 <code>set</code> 方法为用户设置各项信息</strong>，包括 salt，MD5 加密后的密码、用户类型type，用户status状态、创建时间等，然后插入数据库。（keyProperty=”id” 标明主键)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">user.setSalt(CommunityUtil.generateUUID().substring(0, 5));</span><br><span class="line">user.setPassword(CommunityUtil.md5(user.getPassword() + user.getSalt()));</span><br><span class="line">user.setType(0);</span><br><span class="line">user.setStatus(0);</span><br><span class="line">user.setActivationCode(CommunityUtil.generateUUID());</span><br><span class="line">user.setHeaderUrl(String.format(&quot;http:&#x2F;&#x2F;images.nowcoder.com&#x2F;head&#x2F;%dt.png&quot;, new Random().nextInt(1000)));</span><br><span class="line">user.setCreateTime(new Date());</span><br><span class="line">userMapper.insertUser(user);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">**给用户发送激活邮件**</span><br><span class="line"></span><br><span class="line">- 在新浪邮箱打开 SMTP 服务，引入 &#96;spring-boot-starter-mail&#96; 依赖。</span><br><span class="line">- 在配置文件配置主机（smtp.sina.com）、端口（465）、邮箱、授权码、协议（smtps），设置 smtp.ssl.enable &#x3D; true。</span><br><span class="line">- 调用 JavaMailSender 的 API 发送邮件，激活 url 由用户 id 和用户的激活码拼接而成。点击激活 url 后由 controller 中的方法进行处理（成功&#x2F;重复&#x2F;失败），调用 Model 对象的 &#96;addAttribute&#96; 方法将结果返回前端。</span><br></pre></td></tr></table></figure>
+
+<p><strong>用户表</strong>，包括 id、用户名、密码、盐值、类型（普通/管理员/版主）、状态（激活/未激活）、注册时间。</p>
 <hr>
 <h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p><strong>生成验证码</strong></p>
 <ul>
-<li><p>引入 kaptcha 依赖，将验证码的大小、范围、长度等属性封装到 Properties 对象，作为参数构造 Config 对象，再用 Config 对象作为 DeafultKaptcha 对象  <code>setConfig</code> 方法的参数为验证码设置属性。</p>
+<li><p>引入 kaptcha 依赖，将验证码的大小、范围、长度等属性封装到 Properties 对象，作为参数构造 Config 对象，再用 Config 对象作为 DeafultKaptcha 对象  <code>setConfig</code> 方法的参数为验证码设置属性。随后在登录模块就通过kaptchaProducer.createText()生成并封装在BufferedImage里，最后通过ImageIO写到response的输出流里</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String text &#x3D; kaptchaProducer.createText();</span><br><span class="line"> BufferedImage image &#x3D; kaptchaProducer.createImage(text);</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@Bean</span><br><span class="line">public Producer kaptchaProducer() &#123;</span><br><span class="line">    Properties properties &#x3D; new Properties();</span><br><span class="line">    properties.setProperty(&quot;kaptcha.image.width&quot;, &quot;100&quot;);</span><br><span class="line">    properties.setProperty(&quot;kaptcha.image.height&quot;, &quot;40&quot;);</span><br><span class="line">    properties.setProperty(&quot;kaptcha.textproducer.font.size&quot;, &quot;32&quot;);</span><br><span class="line">    properties.setProperty(&quot;kaptcha.textproducer.font.color&quot;, &quot;0,0,0&quot;);</span><br><span class="line">    properties.setProperty(&quot;kaptcha.textproducer.char.string&quot;, &quot;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYAZ&quot;);</span><br><span class="line">    properties.setProperty(&quot;kaptcha.textproducer.char.length&quot;, &quot;4&quot;);</span><br><span class="line">    properties.setProperty(&quot;kaptcha.noise.impl&quot;, &quot;com.google.code.kaptcha.impl.NoNoise&quot;);</span><br><span class="line">  </span><br><span class="line">    DefaultKaptcha kaptcha &#x3D; new DefaultKaptcha();</span><br><span class="line">    Config config &#x3D; new Config(properties);</span><br><span class="line">    kaptcha.setConfig(config);</span><br><span class="line">    return kaptcha;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>在登录的 controller 处理验证码，设置页面的响应类型为 png，通过 ImageIO 的 <code>write</code> 方法将图片输出到浏览器。</p>
@@ -460,11 +462,14 @@
 
 </li>
 </ul>
+<p>验证码我们会生成一个随机ID，写到cookie设置过期时间，并把真正的value值设置到redis里面。在后面的登录模块就根据cookie的值从redis里面取出验证码，与传入的验证码进行验证。</p>
 <p><strong>判断验证码正确后，调用业务层处理</strong></p>
 <ul>
 <li><p>利用 StringUtils 判断用户名、密码是否非空，之后判断用户是否存在、用户是否激活、密码是否正确，将错误信息存到 map 集合。(LoginTicketMapper)</p>
 </li>
-<li><p>如果全部合法，为用户生成一个包含过期时间的登录凭证，将凭证存入 redis 和 map 集合。</p>
+<li><p>如果全部合法，为用户生成一个包含过期时间的登录凭证，将凭证存入 redis 和 map 集合。(redis的key以及cookie存储loginTicket.getTicket()，value是loginTicket)</p>
+<p>用户ID，ticket，状态status，expired</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LoginTicket loginTicket &#x3D; new LoginTicket();</span><br><span class="line">loginTicket.setUserId(user.getId());</span><br><span class="line">loginTicket.setTicket(CommunityUtil.generateUUID());</span><br><span class="line">loginTicket.setStatus(0);</span><br><span class="line">loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));</span><br></pre></td></tr></table></figure>
 </li>
 <li><pre><code>@Insert({
         &quot;insert into login_ticket(user_id,ticket,status,expired) &quot;,
@@ -472,7 +477,13 @@
 })
 @Options(useGeneratedKeys = true, keyProperty = &quot;id&quot;)
 int insertLoginTicket(LoginTicket loginTicket);
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**根据返回的 map 是否包含登陆凭证判断登陆状态**</span><br><span class="line"></span><br><span class="line">- 如果登录成功，将凭证存入 cookie 并重定向至首页。</span><br><span class="line">- 如果登陆失败，将 map 中的错误信息添加到 Model 对象，返回登录页。</span><br><span class="line"></span><br><span class="line">### 会话管理</span><br><span class="line"></span><br><span class="line">### 显示登录信息</span><br><span class="line"></span><br><span class="line">(HttpServletResponse)</span><br><span class="line"></span><br><span class="line">创建 CookieUtil 工具类，通过 name 查询对应 cookie 的 value。</span><br><span class="line"></span><br><span class="line">在 UserService 中新增 &#96;findLoginTicket&#96; 方法，根据 ticket 查询 LoginTicket。</span><br><span class="line"></span><br><span class="line">创建 HostHolder 类用来模拟 session 的功能，利用 ThreadLocal 实现，存储用户信息。</span><br><span class="line"></span><br><span class="line">创建 LoginTicketInterceptor 拦截器，实现 HandlerInterceptor 接口。</span><br><span class="line"></span><br><span class="line">- 在 &#96;preHandle&#96; 方法中通过 CookieUtil 的 &#96;getValue&#96; 方法查询是否有凭证 cookie，如果有则通过 UserService 的  &#96;findloginTicket&#96; 方法查询用户 ID，再通过用户 ID 查询用户。最后将用户放入 hostHolder 中。</span><br><span class="line">- 在 &#96;postHandle&#96; 方法中通过 hostHolder 的 &#96;get&#96; 方法获取用户，并将其存入视图中。</span><br><span class="line">- 在 &#96;afterCompletion&#96; 方法中清除 hostHolder 中存放的用户信息。</span><br><span class="line"></span><br><span class="line">创建 WebMvcConfig 配置类，实现 WebMvcConfigurer接口，配置 LoginTicketInterceptor，拦截除了静态资源之外的所有路径。</span><br><span class="line"></span><br><span class="line">### 检查登录状态</span><br><span class="line"></span><br><span class="line">**目标**：防止用户通过url直接访问相应的页面。</span><br><span class="line"></span><br><span class="line">只处理带有自定义注解的方法，防止用户在未登录情况下通过 url 访问没有权限的页面。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**根据返回的 map 是否包含登陆凭证判断登陆状态**</span><br><span class="line"></span><br><span class="line">- 如果登录成功，将凭证存入 cookie 并重定向至首页。</span><br><span class="line">- 如果登陆失败，将 map 中的错误信息添加到 Model 对象，返回登录页。</span><br><span class="line"></span><br><span class="line">### 会话管理</span><br><span class="line"></span><br><span class="line">### 显示登录信息</span><br><span class="line"></span><br><span class="line">(HttpServletResponse)</span><br><span class="line"></span><br><span class="line">创建 CookieUtil 工具类，通过 name 查询对应 cookie 的 value。</span><br><span class="line"></span><br><span class="line">在 UserService 中新增 &#96;findLoginTicket&#96; 方法，根据 ticket 查询 LoginTicket。(redis的key以及cookie存储loginTicket.getTicket()，value是loginTicket)</span><br></pre></td></tr></table></figure>
+          // 检查凭证是否有效
+          if (loginTicket != null &amp;&amp; loginTicket.getStatus() == 0 &amp;&amp; loginTicket.getExpired().after(new Date())) {
+              // 根据凭证查询用户
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">创建 HostHolder 类用来模拟 session 的功能，利用 ThreadLocal 实现，存储用户信息。</span><br></pre></td></tr></table></figure>
+hostHolder.setUser(user);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">创建 LoginTicketInterceptor 拦截器，实现 HandlerInterceptor 接口。</span><br><span class="line"></span><br><span class="line">- 在 &#96;preHandle&#96; 方法中通过 CookieUtil 的 &#96;getValue&#96; 方法查询是否有凭证 cookie，如果有则通过 UserService 的  &#96;findloginTicket&#96; 方法查询用户 ID，再通过用户 ID 查询用户。最后将用户放入 hostHolder 中。</span><br><span class="line">- 在 &#96;postHandle&#96; 方法中通过 hostHolder 的 &#96;get&#96; 方法获取用户，并将其存入视图中。</span><br><span class="line">- 在 &#96;afterCompletion&#96; 方法中清除 hostHolder 中存放的用户信息。</span><br><span class="line"></span><br><span class="line">创建 WebMvcConfig 配置类，实现 WebMvcConfigurer接口，配置 LoginTicketInterceptor，拦截除了静态资源之外的所有路径。</span><br><span class="line"></span><br><span class="line">### 检查登录状态</span><br><span class="line"></span><br><span class="line">**目标**：防止用户通过url直接访问相应的页面。</span><br><span class="line"></span><br><span class="line">只处理带有自定义注解的方法，防止用户在未登录情况下通过 url 访问没有权限的页面。</span><br></pre></td></tr></table></figure>
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)//有效的时长
 public @interface LoginRequired {
@@ -503,7 +514,7 @@ public void addInterceptors(InterceptorRegistry registry) {
       registry.addInterceptor(alphaInterceptor)
               .excludePathPatterns(&quot;/**/*.css&quot;, &quot;/**/*.js&quot;, &quot;/**/*.png&quot;, &quot;/**/*.jpg&quot;, &quot;/**/*.jpeg&quot;)
               .addPathPatterns(&quot;/register&quot;, &quot;/login&quot;);
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 发帖、评论、私信</span><br><span class="line"></span><br><span class="line">**敏感词过滤**</span><br><span class="line"></span><br><span class="line">- 创建静态内部类 TrieNode ，通过 boolean 结束符判断是否匹配到关键字尾部。</span><br><span class="line">- 利用 &#96;@PostConstruct&#96; 注解，在构造方法执行后初始化字典树。</span><br><span class="line">- 添加 &#96;filter&#96; 方法，利用双指针进行匹配，过滤敏感词。</span><br><span class="line"></span><br><span class="line">**发帖、评论、私信**</span><br><span class="line"></span><br><span class="line">- 对内容进行 HTML 转义以及过滤敏感词。</span><br><span class="line"></span><br><span class="line">- 将信息插入数据库的帖子&#x2F;评论&#x2F;消息表。</span><br><span class="line"></span><br><span class="line">  发帖</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 发帖、评论、私信</span><br><span class="line"></span><br><span class="line">**敏感词过滤**</span><br><span class="line"></span><br><span class="line">- 创建静态内部类 TrieNode ，通过 boolean 结束符判断是否匹配到关键字尾部。</span><br><span class="line">- 利用 &#96;@PostConstruct&#96; 注解，在构造方法执行后初始化字典树。</span><br><span class="line">- 添加 &#96;filter&#96; 方法，利用双指针进行匹配，过滤敏感词。</span><br><span class="line"></span><br><span class="line">**发帖、评论、私信**</span><br><span class="line"></span><br><span class="line">- 对内容进行 HTML 转义以及过滤敏感词。</span><br><span class="line"></span><br><span class="line">- 将信息插入数据库的帖子&#x2F;评论&#x2F;消息表。</span><br><span class="line"></span><br><span class="line">  发帖</span><br><span class="line">  </span><br><span class="line">  涉及的数据库的字段：用户id，title，content，createTime</span><br></pre></td></tr></table></figure>
 @RequestMapping(path = &quot;/add&quot;, method = RequestMethod.POST)
 @ResponseBody
 public String addDiscussPost(String title, String content) {
@@ -538,7 +549,17 @@ public int addDiscussPost(DiscussPost post) {
   insert into discuss_post(&lt;include refid=&quot;insertFields&quot;&gt;&lt;/include&gt;)
   values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
 &lt;/insert&gt;
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">帖子详情</span><br><span class="line"></span><br><span class="line">- 通过帖子id，查出帖子的相关信息</span><br><span class="line">- 根据帖子实体传来的用户id查出作者，根据帖子类型和帖子id找出点赞数量</span><br><span class="line">- 获取评论列表</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">帖子详情</span><br><span class="line"></span><br><span class="line">- 通过帖子id，查出帖子的相关信息</span><br></pre></td></tr></table></figure>
+DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 根据帖子实体传来的用户id查出作者</span><br></pre></td></tr></table></figure>
+User user = userService.findUserById(post.getUserId());
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 根据帖子类型和帖子id找出点赞数量</span><br></pre></td></tr></table></figure>
+long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, discussPostId);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+///点赞状态
+int likeStatus = hostHolder.getUser() == null ? 0 :
+              likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ENTITY_TYPE_POST, discussPostId);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 获取评论列表</span><br></pre></td></tr></table></figure>
 List&lt;Comment&gt; commentList = commentService.findCommentsByEntity(
           ENTITY_TYPE_POST, post.getId(), page.getOffset(), page.getLimit());
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 对每一个评论，也会根据评论进行查询</span><br></pre></td></tr></table></figure>
@@ -625,7 +646,13 @@ return &quot;/site/discuss-detail&quot;;</code></pre><p>}</p>
 // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
 // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 点赞</span><br><span class="line"></span><br><span class="line">创建 RedisKeyUtil 工具类，通过实体类型和实体 id 生成对应实体获得赞的 key。</span><br><span class="line"></span><br><span class="line">点赞&#x2F;取消点赞：</span><br><span class="line"></span><br><span class="line">- 通过 RedisKeyUtil 获得实体点赞的 key，然后通过 RedisTemplate 的 API 操作，调用集合的 &#96;isMember&#96; 方法查询 userId 是否存在于对应集合中，如果存在则移除出点赞的用户集合，如果不存在则添加到点赞的用户集合。</span><br><span class="line">- 通过 RedisTemplate 的 &#96;execute&#96; 方法实现事务，保证被点赞用户点和点赞用户的数据更新一致。通过 &#96;isMember&#96; 方法查询用户的点赞状态，之后通过 &#96;mutli&#96; 方法开启事务。</span><br><span class="line"></span><br><span class="line">点赞数量：通过调用 set 集合的 &#96;size&#96; 方法查询元素个数。</span><br><span class="line"></span><br><span class="line">点赞状态：通过 set 集合的 &#96;isMember&#96; 方法实现。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 点赞</span><br><span class="line"></span><br><span class="line">创建 RedisKeyUtil 工具类，通过实体类型和实体 id 生成对应实体获得赞的 key。、</span><br><span class="line"></span><br><span class="line">需要四个字段</span><br></pre></td></tr></table></figure>
+int userId, int entityType, int entityId, int entityUserId
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">点赞&#x2F;取消点赞：</span><br><span class="line"></span><br><span class="line">- 通过 RedisKeyUtil 获得实体点赞的 key，然后通过 RedisTemplate 的 API 操作，调用集合的 &#96;isMember&#96; 方法查询 userId 是否存在于对应集合中，如果存在则移除出点赞的用户集合，如果不存在则添加到点赞的用户集合。</span><br><span class="line">- 通过 RedisTemplate 的 &#96;execute&#96; 方法实现事务，保证被点赞用户点和点赞用户的数据更新一致。通过 &#96;isMember&#96; 方法查询用户的点赞状态，之后通过 &#96;mutli&#96; 方法开启事务。</span><br><span class="line"></span><br><span class="line">点赞数量：通过调用 set 集合的 &#96;size&#96; 方法查询元素个数。</span><br></pre></td></tr></table></figure>
+redisTemplate.opsForSet().size(entityLikeKey);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">点赞状态：通过 set 集合的 &#96;isMember&#96; 方法实现。</span><br></pre></td></tr></table></figure>
+ return redisTemplate.opsForSet().isMember(entityLikeKey, userId) ? 1 : 0;
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 public void like(int userId, int entityType, int entityId, int entityUserId) {
     redisTemplate.execute(new SessionCallback() {
         @Override
@@ -668,7 +695,9 @@ public RedisTemplate&lt;String, Object&gt; redisTemplate(RedisConnectionFactory 
 }</code></pre><p>}</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>// 某个实体的赞<br>// like:entity:entityType:entityId -&gt; set(userId)<br>public static String getEntityLikeKey(int entityType, int entityId) {<br>    return PREFIX_ENTITY_LIKE + SPLIT + entityType + SPLIT + entityId;<br>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 关注和粉丝</span><br><span class="line"></span><br><span class="line">在 RedisUnitl 工具类增加两个方法</span><br><span class="line"></span><br><span class="line">- 通过用户 id 和实体类型获得用户关注的实体集合的 key。</span><br><span class="line"></span><br><span class="line">- 通过实体类型和实体 id 获得实体拥有的粉丝集合的 key。</span><br><span class="line"></span><br><span class="line">当用户关注某实体时，</span><br><span class="line"></span><br><span class="line">- 将实体 id 和时间作为 value 和 score 加入用户的关注集合。</span><br><span class="line">- 将用户 id 和时间作为 value 和 score 加入实体的粉丝集合。</span><br><span class="line"></span><br><span class="line">当用户取消关注某实体时，将实体从用户的关注集合移除，用户从实体的粉丝集合移除。</span><br><span class="line"></span><br><span class="line">**关注列表和粉丝列表**</span><br><span class="line"></span><br><span class="line">- 用户的关注列表，通过 zset 的  &#96;reverseRange&#96; 获取 value 即关注用户的 userId，再查询出 user，通过 &#96;score&#96; 获取关注时间。</span><br><span class="line">- 用户的粉丝列表，通过 zset 的  &#96;reverseRange&#96; 获取 value 即粉丝的 userId，再查询出 user，通过 &#96;score&#96; 获取关注时间。</span><br><span class="line">- 列表信息封装在 list 集合中，再将 list 添加到 Model 对象里。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 关注和粉丝</span><br><span class="line"></span><br><span class="line">在 RedisUnitl 工具类增加两个方法</span><br><span class="line"></span><br><span class="line">- 通过用户 id 和实体类型获得用户关注的实体集合的 key。</span><br><span class="line"></span><br><span class="line">- 通过实体类型和实体 id 获得实体拥有的粉丝集合的 key。</span><br><span class="line"></span><br><span class="line">当用户关注某实体时，</span><br><span class="line"></span><br><span class="line">- 将实体 id 和时间作为 value 和 score 加入用户的关注集合。</span><br><span class="line">- 将用户 id 和时间作为 value 和 score 加入实体的粉丝集合。</span><br><span class="line"></span><br><span class="line">当用户取消关注某实体时，将实体从用户的关注集合移除，用户从实体的粉丝集合移除。</span><br><span class="line"></span><br><span class="line">**关注列表和粉丝列表**</span><br><span class="line"></span><br><span class="line">需要三个变量</span><br></pre></td></tr></table></figure>
+<p>int userId, int entityType, int entityId</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">某人的关注，就以userId和关注的类型entityType作为key，以entityID作为value进行设置，传入当前时间作为zset的score</span><br><span class="line"></span><br><span class="line">某个实体的粉丝，就以entityType, entityId作为key，以userID作为value进行设置，传入当前时间作为zset的score</span><br><span class="line"></span><br><span class="line">- 用户的关注列表，通过 zset 的  &#96;reverseRange&#96; 获取 value 即关注用户的 userId，再查询出 user，通过 &#96;score&#96; 获取关注时间。</span><br><span class="line">- 用户的粉丝列表，通过 zset 的  &#96;reverseRange&#96; 获取 value 即粉丝的 userId，再查询出 user，通过 &#96;score&#96; 获取关注时间。</span><br><span class="line">- 列表信息封装在 list 集合中，再将 list 添加到 Model 对象里。</span><br></pre></td></tr></table></figure>
 <p>public void follow(int userId, int entityType, int entityId) {<br>    redisTemplate.execute(new SessionCallback() {<br>        @Override<br>        public Object execute(RedisOperations operations) throws DataAccessException {<br>            String followeeKey = RedisKeyUtil.getFolloweeKey(userId, entityType);<br>            String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);</p>
 <pre><code>        operations.multi();
 
@@ -721,7 +750,35 @@ for (Integer targetId : targetIds) {
 }
 
 return list;</code></pre><p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### Kafka</span><br><span class="line"></span><br><span class="line">### 发送系统通知</span><br><span class="line"></span><br><span class="line">在 CommunityConstant 接口中新增三个常量，代表三个主题：评论、点赞、关注。</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题、用户 id、实体类型、实体 id、实体用户 id 以及一个 map 集合存放其它信息。</span><br><span class="line"></span><br><span class="line">#### 触发事件</span><br><span class="line"></span><br><span class="line">创建 EventProducer 事件生产者，新增 &#96;fireEvent(Event event)&#96; 方法，通过 Event 获取事件类型，并将其封装成 JSON 数据，然后调用注入的 KafkaTemplate 实例的 send 方法发送。</span><br><span class="line"></span><br><span class="line">在 CommentController、LikeControler、FollowController 中注入 EventProducer 实例，分别重构 &#96;addComment&#96; 方法、&#96;like&#96; 方法、&#96;follow&#96; 方法，封装 Event 对象，然后调用 EventProducer 的&#96;fireEvent&#96; 方法发布通知。</span><br><span class="line"></span><br><span class="line">#### 消费事件</span><br><span class="line"></span><br><span class="line">创建 EventConsumer 事件消费者，消费者是被动触发的。</span><br><span class="line"></span><br><span class="line">- 注入 MessageService 实例。</span><br><span class="line">- 增加 &#96;handleCommentMessage(ConsumerRecord record)&#96; 方法，通过 &#96;@KafkaListener&#96; 注解，topic 包括了评论、点赞和关注。从 recored 中获取信息，封装成 Message 对象然后调用 &#96;addMessage&#96; 方法插入数据库。</span><br><span class="line"></span><br><span class="line">【问题】没有向数据库插入系统通知记录，原因是 ServiceLogAspect 类进行日志处理时要获取 ServletRequestAttributes 请求对象，Kafka 的消费事件是自动触发的，没有进行新的请求，产生了请求对象的空指针异常。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 显示系统通知</span><br><span class="line"></span><br><span class="line">#### 通知列表</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口中</span><br><span class="line"></span><br><span class="line">- 新增 &#96;selectLatestNotice(int userId, String topic)&#96; 方法，查询某主题最新的通知。</span><br><span class="line">- 新增 &#96;selectNoticeCount(int userId, String topic)&#96; 方法，查询某主题通知的数量。</span><br><span class="line">- 新增 &#96;selectNoticeUnreadCount(int userId, String topic)&#96; 方法，查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">- 在 &#96;message-mapper.xml&#96; 配置三个方法的 sql 语句，其中查询未读通知时使用 if 动态语句，如果没有传入 topic 就查询未读总量。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中</span><br><span class="line"></span><br><span class="line">- 新增 &#96;findLatestNotice&#96; 方法，调用 &#96;selectLatestNotice&#96; 方法查询最新通知。</span><br><span class="line">- 新增 &#96;findNoticeCount&#96; 方法，调用 &#96;selectNoticeCount&#96; 方法查询某主题通知的数量。</span><br><span class="line">- 新增 &#96;findNoticeUnreadCount&#96; 方法，调用 &#96;selectNoticeUnreadCount&#96; 方法查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeList&#96; 方法，获取通知列表</span><br><span class="line"></span><br><span class="line">- 调用业务层 MessageService 的方法查询评论、点赞、关注的通知，将其封装在一个 HashMap 集合中然后添加到 Model 对象里。</span><br><span class="line">- 调用业务层 MessageService 的方法查询私信和通知的总未读数量，添加到 Model 对象里。</span><br><span class="line">- 返回 &#96;notice.html&#96; 页面。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### 显示通知详情</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口新增 &#96;selectNotices&#96; 方法，查询某个主题的通知列表，在 &#96;message-mapper.xml&#96; 配置 SQL。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中新增 &#96;findNotices&#96; 方法，调用 &#96;selectNotices&#96; 方法。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeDetail&#96; 方法</span><br><span class="line"></span><br><span class="line">- 调用 &#96;findNotices&#96; 方法获取通知列表详情，封装到 List 集合并存入 Model 对象。</span><br><span class="line">- 从通知集合中获取 id 集合，调用 &#96;readMessage&#96; 方法将消息设为已读。</span><br><span class="line">- 返回 &#96;notice-detail.html&#96; 页面。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### 显示未读通知总数</span><br><span class="line"></span><br><span class="line">创建 MessageInterceptor 拦截器</span><br><span class="line"></span><br><span class="line">- 注入 MessageService 实例和 HostHolder 实例。</span><br><span class="line">- 重写 &#96;postHandle&#96; 方法，查询私信和通知的未读数量和，然后添加到 ModelAndView 对象。</span><br><span class="line"></span><br><span class="line">在 WebConfig 中注入 MessageInterceptor 实例，并在 &#96;addInterceptors&#96; 方法中添加该拦截器。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">**发送系统通知**</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题（评论、点赞、关注）、用户 id、实体类型、实体 id，以及一个 map 集合存放其它信息.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### Kafka</span><br><span class="line"></span><br><span class="line">### 发送系统通知</span><br><span class="line"></span><br><span class="line">在 CommunityConstant 接口中新增三个常量，代表三个主题：评论、点赞、关注。</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题、用户 id、实体类型、实体 id、实体用户 id 以及一个 map 集合存放其它信息。</span><br></pre></td></tr></table></figure>
+<p>public class Event {</p>
+<pre><code>private String topic;
+private int userId;
+private int entityType;
+private int entityId;
+private int entityUserId;
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 触发事件</span><br><span class="line"></span><br><span class="line">创建 EventProducer 事件生产者，新增 &#96;fireEvent(Event event)&#96; 方法，通过 Event 获取事件类型，并将其封装成 JSON 数据，然后调用注入的 KafkaTemplate 实例的 send 方法发送。</span><br><span class="line"></span><br><span class="line">在 CommentController、LikeControler、FollowController 中注入 EventProducer 实例，分别重构 &#96;addComment&#96; 方法、&#96;like&#96; 方法、&#96;follow&#96; 方法，封装 Event 对象，然后调用 EventProducer 的&#96;fireEvent&#96; 方法发布通知。</span><br><span class="line"></span><br><span class="line">#### 消费事件</span><br><span class="line"></span><br><span class="line">创建 EventConsumer 事件消费者，消费者是被动触发的。</span><br><span class="line"></span><br><span class="line">- 注入 MessageService 实例。</span><br><span class="line"></span><br><span class="line">- 增加 &#96;handleCommentMessage(ConsumerRecord record)&#96; 方法，通过 &#96;@KafkaListener&#96; 注解，topic 包括了评论、点赞和关注。从 recored 中获取信息，封装成 Message 对象然后调用 &#96;addMessage&#96; 方法插入数据库。</span><br><span class="line"></span><br><span class="line">          &#x2F;&#x2F; 发送站内通知</span><br><span class="line">          Message message &#x3D; new Message();</span><br><span class="line">          message.setFromId(SYSTEM_USER_ID);</span><br><span class="line">          message.setToId(event.getEntityUserId());</span><br><span class="line">          message.setConversationId(event.getTopic());</span><br><span class="line">          message.setCreateTime(new Date());</span><br><span class="line"></span><br><span class="line">【问题】没有向数据库插入系统通知记录，原因是 ServiceLogAspect 类进行日志处理时要获取 ServletRequestAttributes 请求对象，Kafka 的消费事件是自动触发的，没有进行新的请求，产生了请求对象的空指针异常。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 显示系统通知</span><br></pre></td></tr></table></figure>
+
+<p>public class Message {</p>
+<pre><code>private int id;
+private int fromId;
+private int toId;
+private String conversationId;
+private String content;
+private int status;
+private Date createTime;
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 通知列表</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口中</span><br></pre></td></tr></table></figure>
+<p>map.put(“unreadCount”, messageService.findLetterUnreadCount(user.getId(), message.getConversationId()));</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 新增 &#96;selectLatestNotice(int userId, String topic)&#96; 方法，查询某主题最新的通知。</span><br><span class="line">- 新增 &#96;selectNoticeCount(int userId, String topic)&#96; 方法，查询某主题通知的数量。</span><br><span class="line"></span><br><span class="line">- 新增 &#96;selectNoticeUnreadCount(int userId, String topic)&#96; 方法，查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">- 在 &#96;message-mapper.xml&#96; 配置三个方法的 sql 语句，其中查询未读通知时使用 if 动态语句，如果没有传入 topic 就查询未读总量。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中</span><br><span class="line"></span><br><span class="line">- 新增 &#96;findLatestNotice&#96; 方法，调用 &#96;selectLatestNotice&#96; 方法查询最新通知。</span><br><span class="line"></span><br><span class="line">- 新增 &#96;findNoticeCount&#96; 方法，调用 &#96;selectNoticeCount&#96; 方法查询某主题通知的数量。</span><br><span class="line">- 新增 &#96;findNoticeUnreadCount&#96; 方法，调用 &#96;selectNoticeUnreadCount&#96; 方法查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeList&#96; 方法，获取通知列表</span><br><span class="line"></span><br><span class="line">- 调用业务层 MessageService 的方法查询评论、点赞、关注的通知，将其封装在一个 HashMap 集合中然后添加到 Model 对象里。</span><br><span class="line">- 调用业务层 MessageService 的方法查询私信和通知的总未读数量，添加到 Model 对象里。</span><br><span class="line">- 返回 &#96;notice.html&#96; 页面。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### 显示通知详情</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口新增 &#96;selectNotices&#96; 方法，查询某个主题的通知列表，在 &#96;message-mapper.xml&#96; 配置 SQL。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中新增 &#96;findNotices&#96; 方法，调用 &#96;selectNotices&#96; 方法。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeDetail&#96; 方法</span><br><span class="line"></span><br><span class="line">- 调用 &#96;findNotices&#96; 方法获取通知列表详情，封装到 List 集合并存入 Model 对象。</span><br><span class="line">- 从通知集合中获取 id 集合，调用 &#96;readMessage&#96; 方法将消息设为已读。</span><br><span class="line">- 返回 &#96;notice-detail.html&#96; 页面。</span><br></pre></td></tr></table></figure>
+<p>  2已读<br>  0未读<br>  <select id="selectNoticeCount" resulttype="int"><br>        select count(id) from message<br>        where status != 2<br>        and from_id = 1<br>        and to_id = #{userId}<br>        and conversation_id = #{topic}<br>    </select></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### 显示未读通知总数</span><br><span class="line"></span><br><span class="line">创建 MessageInterceptor 拦截器</span><br><span class="line"></span><br><span class="line">- 注入 MessageService 实例和 HostHolder 实例。</span><br><span class="line">- 重写 &#96;postHandle&#96; 方法，查询私信和通知的未读数量和，然后添加到 ModelAndView 对象。</span><br><span class="line"></span><br><span class="line">在 WebConfig 中注入 MessageInterceptor 实例，并在 &#96;addInterceptors&#96; 方法中添加该拦截器。</span><br></pre></td></tr></table></figure>
+<pre><code>public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    User user = hostHolder.getUser();
+    if (user != null &amp;&amp; modelAndView != null) {
+        int letterUnreadCount = messageService.findLetterUnreadCount(user.getId(), null);
+        int noticeUnreadCount = messageService.findNoticeUnreadCount(user.getId(), null);
+        modelAndView.addObject(&quot;allUnreadCount&quot;, letterUnreadCount + noticeUnreadCount);
+    }</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">**发送系统通知**</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题（评论、点赞、关注）、用户 id、实体类型、实体 id，以及一个 map 集合存放其它信息.</span><br></pre></td></tr></table></figure>
 <p>public class Event {</p>
 <pre><code>private String topic;
 private int userId;
@@ -758,7 +815,22 @@ public void handlePublishMessage(ConsumerRecord record) {
 
     DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
     elasticsearchService.saveDiscussPost(post);
-}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### UV</span><br><span class="line"></span><br><span class="line">Unique Visitor 独立游客</span><br><span class="line"></span><br><span class="line">通过用户IP排重统计数据。</span><br><span class="line"></span><br><span class="line">### DAU</span><br><span class="line"></span><br><span class="line">Daily Active User  日活跃用户</span><br><span class="line"></span><br><span class="line">通过用户ID排重统计数据</span><br><span class="line"></span><br><span class="line">![image-20201115211418953](C:\Users\77406\AppData\Roaming\Typora\typora-user-images\image-20201115211418953.png)</span><br></pre></td></tr></table></figure>
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### UV</span><br><span class="line"></span><br><span class="line">Unique Visitor 独立游客</span><br><span class="line"></span><br><span class="line">通过用户IP排重统计数据。</span><br><span class="line"></span><br><span class="line">### DAU</span><br><span class="line"></span><br><span class="line">Daily Active User  日活跃用户</span><br><span class="line"></span><br><span class="line">通过用户ID排重统计数据</span><br><span class="line"></span><br><span class="line">![image-20201115211418953](C:\Users\77406\AppData\Roaming\Typora\typora-user-images\image-20201115211418953.png)</span><br><span class="line"></span><br><span class="line">首先就在preHandle那里，通过HttpServletRequest的getRemoteHost（）来获取相应的IP，随后以日期为key，ip为value进行插入opsForHyperLogLog().add来加入。如果我们要统计一定时间的UV的话，我们会有一个Date类型的start和end，接下来 使用Calendar 来对时间进行遍历，存到一个List里面，然后通过opsForHyperLogLog().union(redisKey, keyList.toArray())来合并，随后通过opsForHyperLogLog().size（redisKey）来返回统计的结果</span><br></pre></td></tr></table></figure>
+<pre><code>@Override
+public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    // 统计UV
+    String ip = request.getRemoteHost();
+    dataService.recordUV(ip);
+
+    // 统计DAU
+    User user = hostHolder.getUser();
+    if (user != null) {
+        dataService.recordDAU(user.getId());
+    }
+
+    return true;
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>// 将指定的IP计入UV<br>public void recordUV(String ip) {<br>    String redisKey = RedisKeyUtil.getUVKey(df.format(new Date()));<br>    redisTemplate.opsForHyperLogLog().add(redisKey, ip);<br>}</p>
 <p>// 统计指定日期范围内的UV<br>public long calculateUV(Date start, Date end) {<br>    if (start == null || end == null) {<br>        throw new IllegalArgumentException(“参数不能为空!”);<br>    }</p>
 <pre><code>// 整理该日期范围内的key
@@ -777,51 +849,7 @@ redisTemplate.opsForHyperLogLog().union(redisKey, keyList.toArray());
 
 // 返回统计的结果
 return redisTemplate.opsForHyperLogLog().size(redisKey);</code></pre><p>}</p>
-<p>// 将指定用户计入DAU<br>public void recordDAU(int userId) {<br>    String redisKey = RedisKeyUtil.getDAUKey(df.format(new Date()));<br>    redisTemplate.opsForValue().setBit(redisKey, userId, true);<br>}</p>
-<p>// 统计指定日期范围内的DAU<br>public long calculateDAU(Date start, Date end) {<br>    if (start == null || end == null) {<br>        throw new IllegalArgumentException(“参数不能为空!”);<br>    }</p>
-<pre><code>// 整理该日期范围内的key
-List&lt;byte[]&gt; keyList = new ArrayList&lt;&gt;();
-Calendar calendar = Calendar.getInstance();
-calendar.setTime(start);
-while (!calendar.getTime().after(end)) {
-    String key = RedisKeyUtil.getDAUKey(df.format(calendar.getTime()));
-    keyList.add(key.getBytes());
-    calendar.add(Calendar.DATE, 1);
-}
-
-// 进行OR运算
-return (long) redisTemplate.execute(new RedisCallback() {
-    @Override
-    public Object doInRedis(RedisConnection connection) throws DataAccessException {
-        String redisKey = RedisKeyUtil.getDAUKey(df.format(start), df.format(end));
-        connection.bitOp(RedisStringCommands.BitOperation.OR,
-                redisKey.getBytes(), keyList.toArray(new byte[0][0]));
-        return connection.bitCount(redisKey.getBytes());
-    }
-});</code></pre><p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>@Component<br>public class DataInterceptor implements HandlerInterceptor {</p>
-<pre><code>@Autowired
-private DataService dataService;
-
-@Autowired
-private HostHolder hostHolder;
-
-@Override
-public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    // 统计UV
-    String ip = request.getRemoteHost();
-    dataService.recordUV(ip);
-
-    // 统计DAU
-    User user = hostHolder.getUser();
-    if (user != null) {
-        dataService.recordDAU(user.getId());
-    }
-
-    return true;
-}</code></pre><p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### Guava</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">DAU的计算</span><br><span class="line"></span><br><span class="line">    public void recordDAU(int userId) &#123;</span><br><span class="line">        String redisKey &#x3D; RedisKeyUtil.getDAUKey(df.format(new Date()));</span><br><span class="line">        redisTemplate.opsForValue().setBit(redisKey, userId, true);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 统计指定日期范围内的DAU</span><br><span class="line">    public long calculateDAU(Date start, Date end) &#123;</span><br><span class="line">        if (start &#x3D;&#x3D; null || end &#x3D;&#x3D; null) &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;参数不能为空!&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#x2F;&#x2F; 整理该日期范围内的key</span><br><span class="line">    List&lt;byte[]&gt; keyList &#x3D; new ArrayList&lt;&gt;();</span><br><span class="line">    Calendar calendar &#x3D; Calendar.getInstance();</span><br><span class="line">    calendar.setTime(start);</span><br><span class="line">    while (!calendar.getTime().after(end)) &#123;</span><br><span class="line">        String key &#x3D; RedisKeyUtil.getDAUKey(df.format(calendar.getTime()));</span><br><span class="line">        keyList.add(key.getBytes());</span><br><span class="line">        calendar.add(Calendar.DATE, 1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 进行OR运算</span><br><span class="line">    return (long) redisTemplate.execute(new RedisCallback() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public Object doInRedis(RedisConnection connection) throws DataAccessException &#123;</span><br><span class="line">            String redisKey &#x3D; RedisKeyUtil.getDAUKey(df.format(start), df.format(end));</span><br><span class="line">            connection.bitOp(RedisStringCommands.BitOperation.OR,</span><br><span class="line">                    redisKey.getBytes(), keyList.toArray(new byte[0][0]));</span><br><span class="line">            return connection.bitCount(redisKey.getBytes());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">### Guava</span><br></pre></td></tr></table></figure>
 <p>@PostConstruct<br>public void init() {<br>    // 初始化帖子列表缓存<br>    postListCache = Caffeine.newBuilder()<br>            .maximumSize(maxSize)<br>            .expireAfterWrite(expireSeconds, TimeUnit.SECONDS)<br>            .build(new CacheLoader&lt;String, List<DiscussPost>&gt;() {<br>                @Nullable<br>                @Override<br>                public List<DiscussPost> load(@NonNull String key) throws Exception {<br>                    if (key == null || key.length() == 0) {<br>                        throw new IllegalArgumentException(“参数错误!”);<br>                    }</DiscussPost></DiscussPost></p>
 <pre><code>                String[] params = key.split(&quot;:&quot;);
                 if (params == null || params.length != 2) {
@@ -872,11 +900,36 @@ public SimpleTriggerFactoryBean postScoreRefreshTrigger(JobDetail postScoreRefre
     factoryBean.setRepeatInterval(1000 * 60 * 5);
     factoryBean.setJobDataMap(new JobDataMap());
     return factoryBean;
-}</code></pre><pre><code>
-log(评论数*10+点赞数*2)
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">log(评论数*10+点赞数*2)</span><br><span class="line"></span><br><span class="line">新加帖子，先把id作为value加入、</span><br></pre></td></tr></table></figure>
+<p>Comment<br>String redisKey = RedisKeyUtil.getPostScoreKey();<br>redisTemplate.opsForSet().add(redisKey, discussPostId);<br>点赞<br>           // 计算帖子分数<br>            String redisKey = RedisKeyUtil.getPostScoreKey();<br>            redisTemplate.opsForSet().add(redisKey, postId);</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">不需要刷新</span><br></pre></td></tr></table></figure>
+<pre><code>String redisKey = RedisKeyUtil.getPostScoreKey();
+BoundSetOperations operations = redisTemplate.boundSetOps(redisKey);
 
-新加帖子，先把id作为value加入
-</code></pre>
+if (operations.size() == 0) {
+    logger.info(&quot;[任务取消] 没有需要刷新的帖子!&quot;);
+    return;
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p> epoch = new SimpleDateFormat(“yyyy-MM-dd HH:mm:ss”).parse(“2014-08-01 00:00:00”);</p>
+<p> double score = Math.log10(Math.max(w, 1))<br>                + (post.getCreateTime().getTime() - epoch.getTime()) / (1000 * 3600 * 24);</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">页面的排序</span><br></pre></td></tr></table></figure>
+<p>@RequestParam(name = “orderMode”, defaultValue = “0”)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>&lt;select id=&quot;selectDiscussPosts&quot; resultType=&quot;DiscussPost&quot;&gt;
+    select &lt;include refid=&quot;selectFields&quot;&gt;&lt;/include&gt;
+    from discuss_post
+    where status != 2
+    &lt;if test=&quot;userId!=0&quot;&gt;
+        and user_id = #{userId}
+    &lt;/if&gt;
+    &lt;if test=&quot;orderMode==0&quot;&gt;
+        order by type desc, create_time desc
+    &lt;/if&gt;
+    &lt;if test=&quot;orderMode==1&quot;&gt;
+        order by type desc, score desc, create_time desc
+    &lt;/if&gt;
+    limit #{offset}, #{limit}
+&lt;/select&gt;</code></pre><pre><code></code></pre>
       
     </div>
     
@@ -996,7 +1049,7 @@ log(评论数*10+点赞数*2)
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">209</span>
+                  <span class="site-state-item-count">211</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1105,7 +1158,7 @@ log(评论数*10+点赞数*2)
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共348.2k字</span>
+  <span class="post-count">博客全站共354.4k字</span>
 </div>
 
         

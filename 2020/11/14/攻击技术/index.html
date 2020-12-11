@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="[TOC] arp欺骗在使用以太网交换机的网络中，攻击者向某个以太网交换机发送大量的伪造源 MAC 地址，以太网交换机收到这样的帧就把虚假的 MAC 源地址填入到交换表中，由于伪造的数量很大很快就填满了表，导致以太网交换机无法正常工作。  1.解决方法：利用交换机防止ARP攻击 在交换机上绑定MAC地址与IP地址，为每台主机添加一条IP地址和MAC地址对应的关系静态地址表。用户发送数据包时，若交换">
+<meta name="description" content="[TOC] arp欺骗在使用以太网交换机的网络中，攻击者向某个以太网交换机发送大量的伪造源 MAC 地址，以太网交换机收到这样的帧就把虚假的 MAC 源地址填入到交换表中，由于伪造的数量很大很快就填满了表，导致以太网交换机无法正常工作。  1.解决方法： 利用交换机防止ARP攻击 在交换机上绑定MAC地址与IP地址，为每台主机添加一条IP地址和MAC地址对应的关系静态地址表。用户发送数据包时，若交">
 <meta property="og:type" content="article">
 <meta property="og:title" content="攻击技术">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/14/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] arp欺骗在使用以太网交换机的网络中，攻击者向某个以太网交换机发送大量的伪造源 MAC 地址，以太网交换机收到这样的帧就把虚假的 MAC 源地址填入到交换表中，由于伪造的数量很大很快就填满了表，导致以太网交换机无法正常工作。  1.解决方法：利用交换机防止ARP攻击 在交换机上绑定MAC地址与IP地址，为每台主机添加一条IP地址和MAC地址对应的关系静态地址表。用户发送数据包时，若交换">
+<meta property="og:description" content="[TOC] arp欺骗在使用以太网交换机的网络中，攻击者向某个以太网交换机发送大量的伪造源 MAC 地址，以太网交换机收到这样的帧就把虚假的 MAC 源地址填入到交换表中，由于伪造的数量很大很快就填满了表，导致以太网交换机无法正常工作。  1.解决方法： 利用交换机防止ARP攻击 在交换机上绑定MAC地址与IP地址，为每台主机添加一条IP地址和MAC地址对应的关系静态地址表。用户发送数据包时，若交">
 <meta property="article:published_time" content="2020-11-14T01:24:24.000Z">
-<meta property="article:modified_time" content="2020-12-06T00:28:51.836Z">
+<meta property="article:modified_time" content="2020-12-09T07:28:54.841Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k
+                  1.1k
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  3
                 </span>
               
             </div>
@@ -412,36 +412,31 @@
       
         <p>[TOC]</p>
 <h3 id="arp欺骗"><a href="#arp欺骗" class="headerlink" title="arp欺骗"></a>arp欺骗</h3><p>在使用以太网交换机的网络中，攻击者向某个以太网交换机发送大量的伪造源 MAC 地址，以太网交换机收到这样的帧就把虚假的 MAC 源地址填入到交换表中，由于伪造的数量很大很快就填满了表，导致以太网交换机无法正常工作。</p>
-<p> 1.解决方法：利用交换机防止ARP攻击</p>
+<p> 1.解决方法：</p>
+<p>利用交换机防止ARP攻击</p>
 <p>在交换机上绑定MAC地址与IP地址，为每台主机添加一条IP地址和MAC地址对应的关系静态地址表。用户发送数据包时，若交换机获得的IP和MAC地址与之前建立的映射表匹配，则发送的包能通过，否则将丢弃该数据包，从而有效地防止ARP欺骗。</p>
-<p>2.[DHCP snooping](<a href="https://baike.baidu.com/item/DHCP" target="_blank" rel="noopener">https://baike.baidu.com/item/DHCP</a> snooping)，网上设备可借由<a href="https://baike.baidu.com/item/DHCP" target="_blank" rel="noopener">DHCP</a>保留网络上各计算机的MAC地址，在伪造的ARP数据包发出时即可侦测到。此方式已在一些厂牌的网上设备产品所支持。</p>
-<p>3.每台计算机的ARP一律改用静态的方式，不过这在大型的网上是不可行的，因为需要经常更新每台计算机的ARP表。</p>
+<p>2.DHCP snooping，网上设备可借由DHCP保留网络上各计算机的MAC地址。</p>
 <h3 id="SYN-flood"><a href="#SYN-flood" class="headerlink" title="SYN flood"></a>SYN flood</h3><p>Syn-Flood攻击是当前网络上最为常见的DDoS攻击，也是最为经典的拒绝服务攻击，它利用了TCP协议实现上的一个缺陷，通过向网络服务所在端口发送大量的伪造源地址的攻击报文，就可能造成目标服务器中的半开连接队列被占满，从而阻止其他合法用户进行访问。</p>
 <p>解决方法</p>
 <p>1.缩短超时（SYN Timeout）时间</p>
 <p>2.增加最大半连接数</p>
 <p>3.延缓TCB分配方法</p>
 <p>从前面SYN Flood原理可以看到，消耗服务器资源主要是因为当SYN数据报文一到达，系统立即分配TCB，从而占用了资源。而SYN Flood由于很难建立起正常连接，因此，当正常连接建立起来后再分配TCB则可以有效地减轻服务器资源的消耗。常见的方法是使用SYN Cache和SYN Cookie技术。</p>
-<p>SYN Cache技术：</p>
-<p>这种技术是在收到SYN数据报文时不急于去分配TCB，而是先回应一个SYN ACK报文，并在一个专用HASH表（Cache）中保存这种半开连接信息，直到收到正确的回应ACK报文再分配TCB。</p>
 <p>SYN cookies技术： </p>
 <ol>
-<li><strong>当服务器接受到 SYN 报文段时，不直接为该 TCP 分配资源</strong>，而只是打开一个半开的套接字。接着会使用 SYN 报文段的源 Id，目的 Id，端口号以及只有服务器自己知道的一个秘密函数<strong>生成一个 cookie，并把 cookie 作为序列号响应给<a href>客户端</a></strong>。 </li>
-<li><strong>如果<a href>客户端</a>是正常建立连接，将会返回一个确认字段为 cookie + 1 的报文段</strong>。接下来服务器会根据确认报文的源 Id，目的 Id，端口号以及秘密函数计算出一个结果，<strong>如果结果的值 + 1 等于确认字段的值，则证明是刚刚请求连接的<a href>客户端</a>，这时候才为该 TCP 分配资源</strong></li>
+<li><strong>当服务器接受到 SYN 报文段时，不直接为该 TCP 分配资源</strong>，而只是打开一个半开的套接字。接着会使用 SYN 报文段的源 Id，目的 Id，端口号以及只有服务器自己知道的一个秘密函数**生成一个 cookie，并把 cookie 作为序列号响应给客户端。 </li>
+<li><strong>如果客户端是正常建立连接，将会返回一个确认字段为 cookie + 1 的报文段</strong>。接下来服务器会根据确认报文的源 Id，目的 Id，端口号以及秘密函数计算出一个结果，<strong>如果结果的值 + 1 等于确认字段的值，则证明是刚刚请求连接的客户端，这时候才为该 TCP 分配资源</strong></li>
 </ol>
-<h3 id="DNS欺骗？"><a href="#DNS欺骗？" class="headerlink" title="DNS欺骗？"></a>DNS欺骗？</h3><p> DNS欺骗就是攻击者冒充<a href="https://baike.baidu.com/item/域名服务器/9705133" target="_blank" rel="noopener">域名服务器</a>的一种欺骗行为。 原理：如果可以冒充域名服务器，然后把查询的IP地址设为攻击者的IP地址，这样的话，用户上网就只能看到攻击者的主页，而不是用户想要取得的网站的主页了，这就是DNS欺骗的基本原理。</p>
-<ol>
-<li><p>进行IP地址和MAC地址的绑定</p>
-<p>(1)预防ARP欺骗攻击。因为DNS攻击的欺骗行为要以ARP欺骗作为开端，所以如果能有效防范或避免ARP欺骗，也就使得DNS ID欺骗攻击无从下手。例如可以通过将Gateway Router 的Ip Address和MAC Address静态绑定在一起，就可以防范ARP攻击欺骗。</p>
-</li>
-</ol>
+<h3 id="DNS欺骗？"><a href="#DNS欺骗？" class="headerlink" title="DNS欺骗？"></a>DNS欺骗？</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">首先欺骗者向目标机器发送构造好的ARP应答数据包，ARP欺骗成功后，嗅探到对方发出的DNS请求数据包，分析数据包取得ID和端口号后，向目标发送自己构造好的一个DNS返回包，对方收到DNS应答包后，发现ID和端口号全部正确，即把返回数据包中的域名和对应的IP地址保存进DNS缓存表中，而后来的当真实的DNS应答包返回时则被丢弃。</span><br></pre></td></tr></table></figure>
+
+<p>原理：如果可以冒充域名服务器，把域名指往不正确的IP地址。</p>
+<p>1.预防ARP欺骗攻击</p>
 <p>2.直接使用IP地址访问</p>
-<p>   对个别信息安全等级要求十分严格的WEB站点尽量不要使用DNS进行解析。由于DNS欺骗攻击中不少是针对窃取客户的私密数据而来的，而多数用户访问的站点并不涉及这些隐私信息，因此当访问具有严格保密信息的站点时，可以直接使用IP地址而无需通过DNS解析，这样所有的DNS欺骗攻击可能造成的危害就可以避免了。除此，应该做好DNS Server的安全配置项目和升级DNS软件，合理限定DNS Server进行响应的IP地址区间，关闭DNS Server的递归查询项目等。</p>
 <p>3.对DNS数据包进行监测</p>
-<p>   在DNS欺骗攻击中，Client会接收到至少两个DNS的数据响应包，一个是真实的数据包，另一个是攻击数据包。欺骗攻击数据包为了抢在真实应答包之前回复给Client，它的信息数据结构与真实的数据包相比十分简单，只有应答域，而不包括授权域和附加域。因此，可以通过监测DNS响应包，遵循相应的原则和模型算法对这两种响应包进行分辨，从而避免虚假数据包的攻击。</p>
+<p>   在DNS欺骗攻击中，Client会接收到至少两个DNS的数据响应包，一个是真实的数据包，另一个是攻击数据包。欺骗攻击数据包为了抢在真实应答包之前回复给Client，它的信息数据结构与真实的数据包相比十分简单，只有应答域，而不包括授权域和附加域。。</p>
 <h3 id="中间人攻击？"><a href="#中间人攻击？" class="headerlink" title="中间人攻击？"></a>中间人攻击？</h3><p>中间人（MITM）攻击是一种攻击类型，其中攻击者将它自己放到两方之间，通常是客户端和服务端通信线路的中间。这可以通过破坏原始频道之后拦截一方的消息并将它们转发（有时会有改变）给另一方来实现。(DNS欺骗等攻击都是典型的MITM攻击)</p>
 <p>攻击者常考虑的方式是ARP欺骗或DNS欺骗等，将会话双方的通讯流暗中改变</p>
-<h3 id="跨域攻击-CSRF-？"><a href="#跨域攻击-CSRF-？" class="headerlink" title="跨域攻击(CSRF)？"></a>跨域攻击(CSRF)？</h3>
+
       
     </div>
     
@@ -561,7 +556,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">209</span>
+                  <span class="site-state-item-count">211</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -620,7 +615,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#arp欺骗"><span class="nav-number">1.</span> <span class="nav-text">arp欺骗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SYN-flood"><span class="nav-number">2.</span> <span class="nav-text">SYN flood</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS欺骗？"><span class="nav-number">3.</span> <span class="nav-text">DNS欺骗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#中间人攻击？"><span class="nav-number">4.</span> <span class="nav-text">中间人攻击？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域攻击-CSRF-？"><span class="nav-number">5.</span> <span class="nav-text">跨域攻击(CSRF)？</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#arp欺骗"><span class="nav-number">1.</span> <span class="nav-text">arp欺骗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SYN-flood"><span class="nav-number">2.</span> <span class="nav-text">SYN flood</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS欺骗？"><span class="nav-number">3.</span> <span class="nav-text">DNS欺骗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#中间人攻击？"><span class="nav-number">4.</span> <span class="nav-text">中间人攻击？</span></a></li></ol></div>
             
 
           </div>
@@ -670,7 +665,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共348.2k字</span>
+  <span class="post-count">博客全站共354.4k字</span>
 </div>
 
         

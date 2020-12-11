@@ -79,18 +79,21 @@
 
 
 
-<meta name="description" content="[TOC] 对于socket流而言,数据的流向经历两个阶段：\  第一步通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。 第二步把数据从内核缓冲区复制到应用进程缓冲区。  recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中 阻塞IO应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。  blocking IO的特点就是在IO">
+<meta name="description" content="[TOC] 定义对于socket流而言,数据的流向经历两个阶段：  第一步通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。 第二步把数据从内核缓冲区复制到应用进程缓冲区。  recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中 阻塞IO应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。  blocking IO的特点就是在I">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IO多路复用">
 <meta property="og:url" content="http://aamingaa.github.io/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 对于socket流而言,数据的流向经历两个阶段：\  第一步通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。 第二步把数据从内核缓冲区复制到应用进程缓冲区。  recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中 阻塞IO应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。  blocking IO的特点就是在IO">
+<meta property="og:description" content="[TOC] 定义对于socket流而言,数据的流向经历两个阶段：  第一步通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。 第二步把数据从内核缓冲区复制到应用进程缓冲区。  recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中 阻塞IO应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。  blocking IO的特点就是在I">
+<meta property="og:image" content="http://aamingaa.github.io/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201211193546070.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200715094639319.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="http://aamingaa.github.io/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201211193643656.png">
+<meta property="og:image" content="http://aamingaa.github.io/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201211193658657.png">
 <meta property="article:published_time" content="2020-07-04T12:38:38.000Z">
-<meta property="article:modified_time" content="2020-11-18T07:23:50.541Z">
+<meta property="article:modified_time" content="2020-12-11T11:40:44.305Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200715094639319.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70">
+<meta name="twitter:image" content="http://aamingaa.github.io/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201211193546070.png">
 
 
 
@@ -375,7 +378,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.6k
+                  1.9k
                 </span>
               
 
@@ -391,7 +394,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  11
+                  6
                 </span>
               
             </div>
@@ -413,7 +416,7 @@
 
       
         <p>[TOC]</p>
-<p><strong><em>对于socket流而言,数据的流向经历两个阶段：\</em></strong></p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>对于socket流而言,数据的流向经历两个阶段：</p>
 <ul>
 <li>第一步通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。</li>
 <li>第二步把数据从内核缓冲区复制到应用进程缓冲区。</li>
@@ -427,47 +430,36 @@
 <blockquote>
 <p><strong>此时的非阻塞IO只是应用到等待数据上,当真正有数据到达执行recvfrom的时候,还是同步阻塞IO来的</strong></p>
 </blockquote>
-<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><p>同步异步指的是被调用者结果返回时通知线程的一种机制，阻塞非阻塞指的是调用结果返回前 线程的状态，是挂起还是继续处理其他任务。</p>
+<p><img src="/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201211193546070.png" alt="image-20201211193546070"></p>
 <h2 id="I-O-复用"><a href="#I-O-复用" class="headerlink" title="I/O 复用"></a>I/O 复用</h2><p>主要有 三种机制，分别是select  poll epoll  ，让它们等待数据，当某一个套接字可读时返回，之后再使用 recvfrom 把数据从内核复制到进程中。</p>
 <p>好处:<br>如果一个 Web 服务器没有 I/O 复用，那么每一个 Socket 连接都需要创建一个线程去处理。如果同时有几万个连接，<br>那么就需要创建相同数量的线程。相比于多进程和多线程技术，I/O 复用不需要进程线程创建和切换的开销，系统开<br>销更小。<br><img src="https://img-blog.csdnimg.cn/20200715094639319.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FtaW5nMg==,size_16,color_FFFFFF,t_70" alt="img"></p>
 <p>select/poll/epoll 都是 I/O 多路复用的具体实现，select 出现的最早，之后是 poll，再是 epoll。</p>
-<h2 id="select"><a href="#select" class="headerlink" title="select"></a>select</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int select(int n, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval</span><br><span class="line">*timeout);</span><br></pre></td></tr></table></figure>
+<h3 id="select"><a href="#select" class="headerlink" title="select"></a>select</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int select(int n, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval</span><br><span class="line">*timeout);</span><br></pre></td></tr></table></figure>
 
 <p>有三种类型的描述符类型：readfds、writefds、exceptdfs，分别对应读、写、异常条件的描述符集合。fd_set 使用<br>数组实现，数组大小使用 FD_SETSIZE 定义。</p>
 <p><strong>timeout 为超时参数，调用 select 会一直阻塞直到有描述符的事件到达或者等待的时间超过 timeout。</strong></p>
 <p>成功调用返回结果大于 0，出错返回结果为 -1，超时返回结果为 0。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">fd_set fd_in, fd_out;</span><br><span class="line">struct timeval tv;</span><br><span class="line">&#x2F;&#x2F; Reset the sets</span><br><span class="line">FD_ZERO( &amp;fd_in );</span><br><span class="line">FD_ZERO( &amp;fd_out );</span><br><span class="line">&#x2F;&#x2F; Monitor sock1 for input events</span><br><span class="line">FD_SET( sock1, &amp;fd_in );</span><br><span class="line">&#x2F;&#x2F; Monitor sock2 for output events</span><br><span class="line">FD_SET( sock2, &amp;fd_out );</span><br><span class="line">&#x2F;&#x2F; Find out which socket has the largest numeric value as select requires it</span><br><span class="line">int largest_sock &#x3D; sock1 &gt; sock2 ? sock1 : sock2;</span><br><span class="line">&#x2F;&#x2F; Wait up to 10 seconds</span><br><span class="line">tv.tv_sec &#x3D; 10;</span><br><span class="line">tv.tv_usec &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F; Call the select</span><br><span class="line">int ret &#x3D; select( largest_sock + 1, &amp;fd_in, &amp;fd_out, NULL, &amp;tv );</span><br><span class="line">&#x2F;&#x2F; Check if select actually succeed</span><br><span class="line">if ( ret &#x3D;&#x3D; -1 )</span><br><span class="line">&#x2F;&#x2F; report error and abort</span><br><span class="line">else if ( ret &#x3D;&#x3D; 0 )</span><br><span class="line">&#x2F;&#x2F; timeout; no event detected</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">if ( FD_ISSET( sock1, &amp;fd_in ) )</span><br><span class="line">&#x2F;&#x2F; input event on sock1</span><br><span class="line">if ( FD_ISSET( sock2, &amp;fd_out ) )</span><br><span class="line">&#x2F;&#x2F; output event on sock2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h2><p>int poll(struct pollfd *fds, unsigned int nfds, int timeout);</p>
+<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><p>int poll(struct pollfd *fds, unsigned int nfds, int timeout);</p>
 <p>poll 的机制与 select 类似，与 select 在本质上没有多大差别，但是 poll 没有最大文件描述符数量的限制。poll改变了fds集合的描述方式，使用了pollfd结构而不是select的fd_set结构 .pollfd 使用链表实现。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; The structure for two events</span><br><span class="line">struct pollfd fds[2];</span><br><span class="line">&#x2F;&#x2F; Monitor sock1 for input</span><br><span class="line">fds[0].fd &#x3D; sock1;</span><br><span class="line">fds[0].events &#x3D; POLLIN;</span><br><span class="line">&#x2F;&#x2F; Monitor sock2 for output</span><br><span class="line">fds[1].fd &#x3D; sock2;</span><br><span class="line">fds[1].events &#x3D; POLLOUT;</span><br><span class="line">&#x2F;&#x2F; Wait 10 seconds</span><br><span class="line">int ret &#x3D; poll( &amp;fds, 2, 10000 );</span><br><span class="line">&#x2F;&#x2F; Check if poll actually succeed</span><br><span class="line">if ( ret &#x3D;&#x3D; -1 )</span><br><span class="line">&#x2F;&#x2F; report error and abort</span><br><span class="line">else if ( ret &#x3D;&#x3D; 0 )</span><br><span class="line">&#x2F;&#x2F; timeout; no event detected</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">&#x2F;&#x2F; If we detect the event, zero it out so we can reuse the structure</span><br><span class="line">if ( fds[0].revents &amp; POLLIN )</span><br><span class="line">fds[0].revents &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F; input event on sock1</span><br><span class="line">if ( fds[1].revents &amp; POLLOUT )</span><br><span class="line">fds[1].revents &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F; output event on sock2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><ol>
-<li><p>功能<br> select 和 poll 的功能基本相同，不过在一些实现细节上有所不同。</p>
-<p>select 会修改描述符，而 poll 不会；<br>select 的描述符类型使用数组实现，大小默认为 1024，因此默认只能监听 1024 个描述符。而 poll 的描述符类型使用链表实现，没有描述符数量的限制；<br>poll 提供了更多的事件类型，并且对描述符的重复利用上比 select 高。<br>如果一个线程对某个描述符调用了 select 或者 poll，另一个线程关闭了该描述符，会导致调用结果不确定。</p>
-</li>
-<li><p>速度<br> select 和 poll 速度都比较慢。<br> select 和 poll 每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。<br> select 和 poll 的返回结果中没有声明哪些描述符已经准备好，所以如果返回值大于 0 时，应用进程都需要使用<br> 轮询的方式来找到 I/O 完成的描述符。</p>
-</li>
-<li><p>可移植性<br> 几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
-</li>
-</ol>
-<h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int epoll_create(int size);</span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)；</span><br><span class="line">int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);</span><br></pre></td></tr></table></figure>
+<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int epoll_create(int size);</span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)；</span><br><span class="line">int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);</span><br></pre></td></tr></table></figure>
 
 <p>epoll_ctl() 用于向内核注册新的描述符或者是改变某个文件描述符的状态。已注册的描述符在内核中会被维护在一棵<br>红黑树上，通过回调函数内核会将 I/O 准备好的描述符加入到一个链表中管理，进程调用 epoll_wait() 便可以得到事<br>件完成的描述符。<br>从上面的描述可以看出，epoll 只需要将描述符从进程缓冲区向内核缓冲区拷贝一次，并且进程不需要通过轮询来获<br>得事件完成的描述符。</p>
 <p>epoll 仅适用于 Linux OS。<br>epoll 比 select 和 poll 更加灵活而且没有描述符数量限制。</p>
 <p>epoll 对多线程编程更有友好，一个线程调用了 epoll_wait() 另一个线程关闭了同一个描述符也不会产生像 select 和<br>poll 的不确定情况。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Create the epoll descriptor. Only one is needed per app, and is used to monitor all</span><br><span class="line">sockets.</span><br><span class="line">&#x2F;&#x2F; The function argument is ignored (it was not before, but now it is), so put your favorite</span><br><span class="line">number here</span><br><span class="line">int pollingfd &#x3D; epoll_create( 0xCAFE );</span><br><span class="line">if ( pollingfd &lt; 0 )</span><br><span class="line">&#x2F;&#x2F; report error</span><br><span class="line">&#x2F;&#x2F; Initialize the epoll structure in case more members are added in future</span><br><span class="line">struct epoll_event ev &#x3D; &#123; 0 &#125;;</span><br><span class="line">&#x2F;&#x2F; Associate the connection class instance with the event. You can associate anything</span><br><span class="line">&#x2F;&#x2F; you want, epoll does not use this information. We store a connection class pointer,</span><br><span class="line">pConnection1</span><br><span class="line">ev.data.ptr &#x3D; pConnection1;</span><br><span class="line">&#x2F;&#x2F; Monitor for input, and do not automatically rearm the descriptor after the event</span><br><span class="line">ev.events &#x3D; EPOLLIN | EPOLLONESHOT;</span><br><span class="line">&#x2F;&#x2F; Add the descriptor into the monitoring list. We can do it even if another thread is</span><br><span class="line">&#x2F;&#x2F; waiting in epoll_wait - the descriptor will be properly added</span><br><span class="line">if ( epoll_ctl( epollfd, EPOLL_CTL_ADD, pConnection1-&gt;getSocket(), &amp;ev ) !&#x3D; 0 )</span><br><span class="line">&#x2F;&#x2F; report error</span><br><span class="line">&#x2F;&#x2F; Wait for up to 20 events (assuming we have added maybe 200 sockets before that it may</span><br><span class="line">happen)</span><br><span class="line">struct epoll_event pevents[ 20 ];</span><br><span class="line">&#x2F;&#x2F; Wait for 10 seconds, and retrieve less than 20 epoll_event and store them into</span><br><span class="line">epoll_event array</span><br><span class="line">int ready &#x3D; epoll_wait( pollingfd, pevents, 20, 10000 );</span><br><span class="line">&#x2F;&#x2F; Check if epoll actually succeed</span><br><span class="line">if ( ret &#x3D;&#x3D; -1 )</span><br><span class="line">&#x2F;&#x2F; report error and abort</span><br><span class="line">else if ( ret &#x3D;&#x3D; 0 )</span><br><span class="line">&#x2F;&#x2F; timeout; no event detected</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">&#x2F;&#x2F; Check if any events detected</span><br><span class="line">for ( int i &#x3D; 0; i &lt; ret; i++ )</span><br><span class="line">&#123;</span><br><span class="line">if ( pevents[i].events &amp; EPOLLIN )</span><br><span class="line">&#123;</span><br><span class="line">&#x2F;&#x2F; Get back our connection pointer</span><br><span class="line">Connection * c &#x3D; (Connection*) pevents[i].data.ptr;</span><br><span class="line">c-&gt;handleReadEvent();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h2><p>epoll 的描述符事件有两种触发模式：LT（level trigger）和 ET（edge trigger）。</p>
+<h3 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h3><p>epoll 的描述符事件有两种触发模式：LT（level trigger）和 ET（edge trigger）。</p>
 <p>   <strong>水平触发:</strong>如果文件描述符已经就绪可以非阻塞的执行IO操作了,此时会触发通知.允许在任意时刻重复检测IO的状态.select,poll就属于水平触发.</p>
 <p>   <strong>边缘触发:</strong>如果文件描述符自上次状态改变后有新的IO活动到来,此时会触发通知.在收到一个IO事件通知后要尽可能多的执行IO操作,因为如果在一次通知中没有执行完IO那么就需要等到下一次新的IO活动到来才能获取到就绪的描述符.信号驱动式IO就属于边缘触发.</p>
-<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>IO复用？<br>select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO。它的基本原理就是select/epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，就通知用户进程。<br>select、poll和epoll ·select、poll、epoll都可以监听多个文件描述符，等待指定的超时时间，直到一个或者多个文件描述符上有事件发生时返回。返回的值就是文件描述符的数量。返回0表示没有事件发生。<br>·差别： </p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>IO复用？<br>select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO。它的基本原理就是select/epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，就通知用户进程。<br>select、poll和epoll ·select、poll、epoll都可以监听多个文件描述符，等待指定的超时时间，直到一个或者多个文件描述符上有事件发生时返回。返回的值就是文件描述符的数量。返回0表示没有事件发生。<br>·差别： </p>
 <ul>
 <li>事件集和工作原理 ： select有三种类型的描述符类型：readfds、writefds、exceptfds，分别对应读、写、异常条件的描述符集合。因此，select不能处理这三种事件以外的事件类型。并且，每一次select会使得内核直接对fd_set进行修改，再下一次使用select的时候需要重置fd_set。每次select返回的都是注册了的事件集合，包括了就绪和没有就绪的，程序检索就绪事件的时间复杂度为O(n)<br>poll对select进行了改进，poll的参数是一个结构体pollfd。poll不会修改描述符，因此每次使用不需要重置pollfd。但是，poll仍然是返回注册了的事件集合，包括了就绪和没有就绪的，程序检索就绪事件的时间复杂度为O(n)。<br>·epoll_ctl() 用于向内核注册新的描述符或者是改变某个描述符的状态。已注册的描述符在内核中会被维护在一棵 红黑树上，通过回调函数内核会将 I/O 准备好的描述符加入到一个链表中管理，进程调用 epoll_wait() 便可以得到事 件完成的描述符。使得检索的时间复杂度达到O(1)</li>
 <li>支持最大的文件描述符 ： select：受到系统的限制，由&lt;sys/select.h&gt;头文件中的FD_SETSIZE宏决定，通常是1024 ·poll和epoll一般为65535 </li>
 <li>工作模式 ·select和poll只能工作在相对来说低效的水平触发模式(LT) ·epoll可以工作在高效的边缘触发模式(ET),也可以工作在水平触发模式</li>
 </ul>
 <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>　Linux 系统中，把一切都看做是文件，当进程打开现有文件或创建新文件时，内核向进程返回一个文件描述符，文件描述符就是内核为了高效管理已被打开的文件所创建的索引，用来指向被打开的文件，所有执行I/O操作的系统调用都会通过文件描述符。</p>
+<h2 id="信号驱动-I-O"><a href="#信号驱动-I-O" class="headerlink" title="信号驱动 I/O"></a>信号驱动 I/O</h2><p>应用进程使用 sigaction 系统调用，内核立即返回，应用进程可以继续执行，也就是说等待数据阶段应用进程是非阻<br>塞的。内核在数据到达时向应用进程发送 SIGIO 信号，应用进程收到之后在信号处理程序中调用 recvfrom 将数据从<br>内核复制到应用进程中。</p>
+<p><img src="/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201211193643656.png" alt="image-20201211193643656"></p>
+<h2 id="异步-I-O"><a href="#异步-I-O" class="headerlink" title="异步 I/O"></a>异步 I/O</h2><p>应用进程执行 aio_read 系统调用会立即返回，应用进程可以继续执行，不会被阻塞，内核会在所有操作完成之后向<br>应用进程发送信号。</p>
+<p><img src="/2020/07/04/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201211193658657.png" alt="image-20201211193658657"></p>
 
       
     </div>
@@ -588,7 +580,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">209</span>
+                  <span class="site-state-item-count">211</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -647,7 +639,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞IO"><span class="nav-number">1.</span> <span class="nav-text">阻塞IO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非阻塞式-I-O"><span class="nav-number">2.</span> <span class="nav-text">非阻塞式 I&#x2F;O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对比"><span class="nav-number">3.</span> <span class="nav-text">对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O-复用"><span class="nav-number">4.</span> <span class="nav-text">I&#x2F;O 复用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select"><span class="nav-number">5.</span> <span class="nav-text">select</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll"><span class="nav-number">6.</span> <span class="nav-text">poll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#比较"><span class="nav-number">7.</span> <span class="nav-text">比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll"><span class="nav-number">8.</span> <span class="nav-text">epoll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工作模式"><span class="nav-number">9.</span> <span class="nav-text">工作模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景"><span class="nav-number">10.</span> <span class="nav-text">应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">10.1.</span> <span class="nav-text">概念</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞IO"><span class="nav-number">2.</span> <span class="nav-text">阻塞IO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非阻塞式-I-O"><span class="nav-number">3.</span> <span class="nav-text">非阻塞式 I&#x2F;O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O-复用"><span class="nav-number">4.</span> <span class="nav-text">I&#x2F;O 复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#select"><span class="nav-number">4.1.</span> <span class="nav-text">select</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poll"><span class="nav-number">4.2.</span> <span class="nav-text">poll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll"><span class="nav-number">4.3.</span> <span class="nav-text">epoll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作模式"><span class="nav-number">4.4.</span> <span class="nav-text">工作模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用场景"><span class="nav-number">4.5.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">4.6.</span> <span class="nav-text">概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信号驱动-I-O"><span class="nav-number">5.</span> <span class="nav-text">信号驱动 I&#x2F;O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步-I-O"><span class="nav-number">6.</span> <span class="nav-text">异步 I&#x2F;O</span></a></li></ol></div>
             
 
           </div>
@@ -697,7 +689,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共348.2k字</span>
+  <span class="post-count">博客全站共354.4k字</span>
 </div>
 
         

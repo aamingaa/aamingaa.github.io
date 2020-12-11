@@ -85,10 +85,12 @@
 <meta property="og:url" content="http://aamingaa.github.io/2020/12/05/mybatis%E7%9A%84xml%E6%A0%87%E7%AD%BE/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="一、SQL语句标签： 1234567891011121314151617181920212223242526272829&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot; ?&gt;&lt;!DOCTYPE mapper        PUBLIC &quot;-&#x2F;&#x2F;mybatis.org&amp;">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190617214513154.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9feGlhbzM2MDE=,size_16,color_FFFFFF,t_70">
 <meta property="article:published_time" content="2020-12-05T09:27:41.000Z">
-<meta property="article:modified_time" content="2020-12-05T09:29:13.169Z">
+<meta property="article:modified_time" content="2020-12-11T08:29:04.120Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190617214513154.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9feGlhbzM2MDE=,size_16,color_FFFFFF,t_70">
 
 
 
@@ -351,7 +353,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  970
+                  1.9k
                 </span>
               
 
@@ -367,7 +369,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  9
                 </span>
               
             </div>
@@ -403,6 +405,30 @@
 <p>传参和取值：mapper.xml 的灵活性还体现在SQL执行语句可以传参，参数类型通过parameterType= “” 定义</p>
 <p>取值方式1：#{value jdbcType = valuetype}：jdbcType 表示该属性的数据类型在数据库中对应的类型，如 #{user jdbcType=varchar} 等价于 String username；</p>
 <p>取值方式2：${value } : 这种方式不建议大量使用，可能会发送sql注入而导致安全性问题。一般该取值方式可用在非经常变化的值上，如orderby ${columnName}；</p>
+<h3 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;sql id&#x3D;&quot;selectFields&quot;&gt;</span><br><span class="line">    id, from_id, to_id, conversation_id, content, status, create_time</span><br><span class="line">&lt;&#x2F;sql&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="if标签"><a href="#if标签" class="headerlink" title="if标签"></a>if标签</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;if test&#x3D;&quot;name!&#x3D;null&quot;&gt;</span><br><span class="line">	where name like concat(&#39;%&#39;,#&#123;name&#125;,&#39;%&#39;)</span><br><span class="line">&lt;&#x2F;if&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Foreach标签"><a href="#Foreach标签" class="headerlink" title="Foreach标签"></a>Foreach标签</h3><p>1、首先在po类中定义一个集合或者数组 比如 private List<Integer> ids;</Integer></p>
+<p>2、在映射文件中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;foreach collection&#x3D;&quot;ids&quot; item&#x3D;&quot;ids&quot; item&#x3D;&quot;user_id&quot; open&#x3D;&quot;AND(&quot; close&#x3D;&quot;)&quot; seperator&#x3D;&quot;or&quot;&gt;&lt;foreach&#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>collection:指定输入对象中集合属性</p>
+<p>item：每次遍历生成的对象</p>
+<p>open:开始遍历时拼接的串</p>
+<p>close:结束遍历时两个对象需要拼接的串</p>
+<h2 id="ResultMap"><a href="#ResultMap" class="headerlink" title="ResultMap"></a>ResultMap</h2><p><img src="https://img-blog.csdnimg.cn/20190617214513154.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9feGlhbzM2MDE=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>当数据库方法返回的是复合数据类型（如list等），通常使用<code>resultMap</code>而非<code>resultType</code>。</p>
+<h3 id="一对一："><a href="#一对一：" class="headerlink" title="一对一："></a>一对一：</h3><p>使用一对一查询时，在一个实体类中添加另一实体类属性。用resultMap实现映射关系时，使用association连接，<strong>javaType为封装的类型。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">resultType</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">public class Person &#123;</span><br><span class="line">    private Integer pid;&#x2F;&#x2F;人的id</span><br><span class="line">    private String pname;&#x2F;&#x2F;人的姓名</span><br><span class="line">    private Card card;&#x2F;&#x2F;人的身份证</span><br><span class="line">    public Integer getPid() &#123;</span><br><span class="line">        return pid;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setPid(Integer pid) &#123;</span><br><span class="line">        this.pid &#x3D; pid;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getPname() &#123;</span><br><span class="line">        return pname;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setPname(String pname) &#123;</span><br><span class="line">        this.pname &#x3D; pname;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Card getCard() &#123;</span><br><span class="line">        return card;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setCard(Card card) &#123;</span><br><span class="line">        this.card &#x3D; card;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Person(Integer pid, String pname, Card card) &#123;</span><br><span class="line">        this.pid &#x3D; pid;</span><br><span class="line">        this.pname &#x3D; pname;</span><br><span class="line">        this.card &#x3D; card;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Person(Integer pid, String pname) &#123;</span><br><span class="line">        this.pid &#x3D; pid;</span><br><span class="line">        this.pname &#x3D; pname;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Person() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id&#x3D;&quot;getPersonByPid&quot; resultMap&#x3D;&quot;person_card&quot; parameterType&#x3D;&quot;int&quot; &gt;</span><br><span class="line">    select *  from person p,card c where p.cid&#x3D;c.cid and p.pid&#x3D;#&#123;pid&#125;</span><br><span class="line">&lt;&#x2F;select&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--自定义返回结果集--&gt;</span><br><span class="line">&lt;!--id是这个结果集的唯一标识符，方便根据Id调用，type是主体返回的实体类--&gt;</span><br><span class="line">&lt;resultMap id&#x3D;&quot;person_card&quot; type&#x3D;&quot;Person&quot; &gt;</span><br><span class="line">    &lt;!--主键--&gt;</span><br><span class="line">    &lt;id column&#x3D;&quot;pid&quot; property&#x3D;&quot;pid&quot;&gt;&lt;&#x2F;id&gt;</span><br><span class="line">    &lt;!--普通属性--&gt;</span><br><span class="line">    &lt;result column&#x3D;&quot;pname&quot; property&#x3D;&quot;pname&quot;&gt;&lt;&#x2F;result&gt;</span><br><span class="line">    &lt;!--一对一的映射:人对应他的卡 javaType代表对应的类的类型，column代表是通过哪一列段进行关联--&gt;</span><br><span class="line">    &lt;association property&#x3D;&quot;card&quot; javaType&#x3D;&quot;Card&quot; column&#x3D;&quot;cid&quot; &gt;</span><br><span class="line">        &lt;id property&#x3D;&quot;cid&quot; column&#x3D;&quot;cid&quot;&gt;&lt;&#x2F;id&gt;</span><br><span class="line">        &lt;result property&#x3D;&quot;cnumber&quot; column&#x3D;&quot;cnumber&quot;&gt;&lt;&#x2F;result&gt;</span><br><span class="line">    &lt;&#x2F;association&gt;</span><br><span class="line">&lt;&#x2F;resultMap&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="一对多"><a href="#一对多" class="headerlink" title="一对多"></a>一对多</h3><p>一对多是在一个类中包含另一个类list的集合，在映射时，使用Collection，<strong>ofType为封装类型。注意封装类型与一对一不同</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"> &lt;!--</span><br><span class="line">    id：指定主键列的封装规则（主键也可以使用result来定义）</span><br><span class="line">    column：指定哪一列</span><br><span class="line">    property：指定对应的javaBean属性</span><br><span class="line">    --&gt;</span><br><span class="line">    &lt;id column&#x3D;&quot;id&quot; property&#x3D;&quot;id&quot;&gt;&lt;&#x2F;id&gt;</span><br><span class="line">&lt;!DOCTYPE mapper</span><br><span class="line">    PUBLIC &quot;-&#x2F;&#x2F;mybatis.org&#x2F;&#x2F;DTD Mapper 3.0&#x2F;&#x2F;EN&quot;</span><br><span class="line">    &quot;http:&#x2F;&#x2F;mybatis.org&#x2F;dtd&#x2F;mybatis-3-mapper.dtd&quot;&gt;</span><br><span class="line">    &lt;mapper namespace&#x3D;&quot;com.how2java.pojo&quot;&gt;</span><br><span class="line">        &lt;resultMap type&#x3D;&quot;Category&quot; id&#x3D;&quot;categoryBean&quot;&gt;</span><br><span class="line">            &lt;id column&#x3D;&quot;cid&quot; property&#x3D;&quot;id&quot; &#x2F;&gt;</span><br><span class="line">            &lt;result column&#x3D;&quot;cname&quot; property&#x3D;&quot;name&quot; &#x2F;&gt;</span><br><span class="line">     </span><br><span class="line">            &lt;!-- 一对多的关系 --&gt;</span><br><span class="line">            &lt;!-- property: 指的是集合属性的值, ofType：指的是集合中元素的类型 --&gt;</span><br><span class="line">            &lt;collection property&#x3D;&quot;products&quot; ofType&#x3D;&quot;Product&quot;&gt;</span><br><span class="line">                &lt;id column&#x3D;&quot;pid&quot; property&#x3D;&quot;id&quot; &#x2F;&gt;</span><br><span class="line">                &lt;result column&#x3D;&quot;pname&quot; property&#x3D;&quot;name&quot; &#x2F;&gt;</span><br><span class="line">                &lt;result column&#x3D;&quot;price&quot; property&#x3D;&quot;price&quot; &#x2F;&gt;</span><br><span class="line">            &lt;&#x2F;collection&gt;</span><br><span class="line">        &lt;&#x2F;resultMap&gt;</span><br><span class="line">     </span><br><span class="line">        &lt;!-- 关联查询分类和产品表 --&gt;</span><br><span class="line">        &lt;select id&#x3D;&quot;listCategory&quot; resultMap&#x3D;&quot;categoryBean&quot;&gt;</span><br><span class="line">            select c.*, p.*, c.id &#39;cid&#39;, p.id &#39;pid&#39;, c.name &#39;cname&#39;, p.name &#39;pname&#39; from category_ c left join product_ p on c.id &#x3D; p.cid</span><br><span class="line">        &lt;&#x2F;select&gt;   </span><br><span class="line">    &lt;&#x2F;mapper&gt;</span><br></pre></td></tr></table></figure>
+
 <h2 id="二、if-标签"><a href="#二、if-标签" class="headerlink" title="二、if 标签"></a>二、if 标签</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--统计用户数量--&gt;</span><br><span class="line">&lt;select id&#x3D;&quot;countUserByNameAndGender&quot; parameterType&#x3D;&quot;com.liuyanzhao.mybatis.po.User&quot; resultType&#x3D;&quot;int&quot;&gt;</span><br><span class="line">    SELECT COUNT(*) FROM user</span><br><span class="line">    &lt;!--where标签可以去掉首部的AND符号--&gt;</span><br><span class="line">    &lt;where&gt;</span><br><span class="line">        &lt;if test&#x3D;&quot;gender!&#x3D;null and gender!&#x3D;&#39;&#39;&quot;&gt;</span><br><span class="line">            AND gender &#x3D; #&#123;gender&#125;</span><br><span class="line">        &lt;&#x2F;if&gt;</span><br><span class="line">        &lt;if test&#x3D;&quot;username!&#x3D;null and gender!&#x3D;&#39;&#39;&quot;&gt;</span><br><span class="line">            AND username LIKE &#39;%$&#123;username&#125;%&#39;</span><br><span class="line">        &lt;&#x2F;if&gt;</span><br><span class="line">    &lt;&#x2F;where&gt;</span><br><span class="line">&lt;&#x2F;select&gt;</span><br></pre></td></tr></table></figure>
 
 <h2 id="三、sql-片段"><a href="#三、sql-片段" class="headerlink" title="三、sql 片段"></a>三、sql 片段</h2><p>在没有使用 sql 片段之前</p>
@@ -410,8 +436,6 @@
 
 <p>定义和使用 sql 片段</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;!--定义sql片段--&gt;</span><br><span class="line">&lt;sql id&#x3D;&quot;user_table_all_columns&quot;&gt;</span><br><span class="line">    id,username,gender,birthday,address</span><br><span class="line">&lt;&#x2F;sql&gt;</span><br><span class="line">&lt;!--查询用户--&gt;</span><br><span class="line">&lt;select id&#x3D;&quot;findUserById&quot; parameterType&#x3D;&quot;int&quot; resultType&#x3D;&quot;com.liuyanzhao.mybatis.po.User&quot;&gt;</span><br><span class="line">    SELECT</span><br><span class="line">    &lt;include refid&#x3D;&quot;user_table_all_columns&quot;&#x2F;&gt;</span><br><span class="line">    FROM user WHERE id&#x3D;#&#123;value&#125;</span><br><span class="line">&lt;&#x2F;select&gt;</span><br></pre></td></tr></table></figure>
-
-
 
 <p>其中 sql 标签的 di 表示 sql 片段的唯一标识符</p>
 
@@ -447,6 +471,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/12/08/TCP%E5%8D%83%E5%B1%82%E5%A5%97%E8%B7%AF/" rel="prev" title="TCP千层套路">
+                TCP千层套路 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -530,7 +558,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">209</span>
+                  <span class="site-state-item-count">211</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -589,7 +617,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#二、if-标签"><span class="nav-number">1.</span> <span class="nav-text">二、if 标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、sql-片段"><span class="nav-number">2.</span> <span class="nav-text">三、sql 片段</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#封装"><span class="nav-number">1.</span> <span class="nav-text">封装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#if标签"><span class="nav-number">2.</span> <span class="nav-text">if标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Foreach标签"><span class="nav-number">3.</span> <span class="nav-text">Foreach标签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ResultMap"><span class="nav-number"></span> <span class="nav-text">ResultMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一对一："><span class="nav-number">1.</span> <span class="nav-text">一对一：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一对多"><span class="nav-number">2.</span> <span class="nav-text">一对多</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、if-标签"><span class="nav-number"></span> <span class="nav-text">二、if 标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、sql-片段"><span class="nav-number"></span> <span class="nav-text">三、sql 片段</span></a></div>
             
 
           </div>
@@ -639,7 +667,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共348.2k字</span>
+  <span class="post-count">博客全站共354.4k字</span>
 </div>
 
         
