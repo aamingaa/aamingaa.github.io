@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="[TOC] kafka的架构 Producer： 消息生产者，向 Kafka Broker 发消息的客户端。 Consumer： 消息消费者，从 Kafka Broker 取消息的客户端。 Consumer Group： 消费者组（CG），消费者组内每个消费者负责消费不同分区的数据，提高消费能力。一个分区只能由组内一个消费者消费，消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻">
+<meta name="description" content="[TOC] kafka的架构 Producer： 消息生产者，向 Kafka Broker 发消息的客户端。 Consumer： 消息消费者，从 Kafka Broker 取消息的客户端。 Consumer Group： 多个消费者实例共同组成的一个组，同时消费多个分区以实现高吞吐。 重平衡：Rebalance。消费者组内某个消费者实例挂掉后，其他消费者实例自动重新分配订阅主题分区的过程。Reba">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kafka剖析">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/04/kafka%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] kafka的架构 Producer： 消息生产者，向 Kafka Broker 发消息的客户端。 Consumer： 消息消费者，从 Kafka Broker 取消息的客户端。 Consumer Group： 消费者组（CG），消费者组内每个消费者负责消费不同分区的数据，提高消费能力。一个分区只能由组内一个消费者消费，消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻">
+<meta property="og:description" content="[TOC] kafka的架构 Producer： 消息生产者，向 Kafka Broker 发消息的客户端。 Consumer： 消息消费者，从 Kafka Broker 取消息的客户端。 Consumer Group： 多个消费者实例共同组成的一个组，同时消费多个分区以实现高吞吐。 重平衡：Rebalance。消费者组内某个消费者实例挂掉后，其他消费者实例自动重新分配订阅主题分区的过程。Reba">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/1/17/16fb2cd4f1223ab9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/1/17/16fb2cd4f14b369d?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/1/17/16fb2cd4f11f1b55?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -92,10 +92,9 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/1/20/16fc0ef626139ae5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/1/20/16fc0ef62659d31e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/1/20/16fc0ef626ae3ed5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190523181118864.png#pic_center">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190523181559385.png#pic_center">
 <meta property="article:published_time" content="2020-11-04T01:10:03.000Z">
-<meta property="article:modified_time" content="2020-11-04T08:01:29.676Z">
+<meta property="article:modified_time" content="2020-12-16T01:47:47.194Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2020/1/17/16fb2cd4f1223ab9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -383,7 +382,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.4k
+                  3.3k
                 </span>
               
 
@@ -399,7 +398,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  12
+                  11
                 </span>
               
             </div>
@@ -424,10 +423,11 @@
 <h3 id="kafka的架构"><a href="#kafka的架构" class="headerlink" title="kafka的架构"></a>kafka的架构</h3><p><img src="https://user-gold-cdn.xitu.io/2020/1/17/16fb2cd4f1223ab9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
 <p><strong>Producer：</strong> 消息生产者，向 Kafka Broker 发消息的客户端。</p>
 <p><strong>Consumer：</strong> 消息消费者，从 Kafka Broker 取消息的客户端。</p>
-<p><strong>Consumer Group：</strong> 消费者组（CG），消费者组内每个消费者负责消费不同分区的数据，提高消费能力。一个分区只能由组内一个消费者消费，消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者。</p>
+<p><strong>Consumer Group：</strong> 多个消费者实例共同组成的一个组，同时消费多个分区以实现高吞吐。</p>
+<p><strong>重平衡</strong>：Rebalance。消费者组内某个消费者实例挂掉后，其他消费者实例自动重新分配订阅主题分区的过程。Rebalance 是 Kafka 消费者端实现高可用的重要手段。</p>
 <p><strong>Broker：</strong> 一台 Kafka 机器就是一个 broker。一个集群由多个 broker 组成。一个 broker 可以容纳多个 topic。</p>
 <p><strong>Topic：</strong> 可以理解为一个队列，topic 将消息分类，生产者和消费者面向的是同一个 topic。</p>
-<p><strong>Partition：</strong> 为了实现扩展性，提高并发能力，一个非常大的 topic 可以分布到多个 broker （即服务器）上，一个 topic 可以分为多个 partition，每个 partition 是一个 有序的队列。</p>
+<p><strong>Partition(分区)：</strong> 为了实现扩展性，提高并发能力，一个非常大的 topic 可以分布到多个 broker （即服务器）上，一个 topic 可以分为多个 partition，每个 partition 是一个 有序的队列。</p>
 <p><strong>Replica：</strong> 副本，为实现备份的功能，保证集群中的某个节点发生故障时，该节点上的 partition 数据不丢失，且 Kafka 仍然能够继续工作，Kafka 提供了副本机制，一个 topic 的每个分区都有若干个副本，一个 leader 和若干个 follower。</p>
 <p><strong>Leader：</strong> 每个分区多个副本的“主”副本，生产者发送数据的对象，以及消费者消费数据的对象，都是 leader。</p>
 <p><strong>Follower：</strong> 每个分区多个副本的“从”副本，实时从 leader 中同步数据，保持和 leader 数据的同步。leader 发生故障时，某个 follower 还会成为新的 leader。</p>
@@ -436,7 +436,6 @@
 <h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>Kafka集群将 Record 流存储在称为 topic 的类别中，每个记录由一个键、一个值和一个时间戳组成。<strong>Kafka 是一个分布式流平台</strong>，这到底是什么意思？</p>
 <p><img src="https://user-gold-cdn.xitu.io/2020/1/17/16fb2cd4f14b369d?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Kafka 工作流程"></p>
 <p>Kafka 中消息是以 topic 进行分类的，生产者生产消息，消费者消费消息，面向的都是同一个 topic。<br> topic 是逻辑上的概念，而 partition 是物理上的概念，每个 partition 对应于一个 log 文件，该 log 文件中存储的就是 Producer 生产的数据。Producer 生产的数据会不断追加到该 log 文件末端，且每条数据都有自己的 offset。消费者组中的每个消费者，都会实时记录自己消费到了哪个 offset，以便出错恢复时，从上次的位置继续消费。</p>
-<p>作者：臧小晶<br>链接：<a href="https://juejin.im/post/6844904050064883725" target="_blank" rel="noopener">https://juejin.im/post/6844904050064883725</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 <h3 id="存储机制"><a href="#存储机制" class="headerlink" title="存储机制"></a>存储机制</h3><p><img src="https://user-gold-cdn.xitu.io/2020/1/17/16fb2cd4f11f1b55?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Kafka文件存储机制"></p>
 <p>由于生产者生产的消息会不断追加到 log 文件末尾，为防止 log 文件过大导致数据定位效率低下，Kafka 采取了<strong>分片</strong>和<strong>索引</strong>机制，将每个 partition 分为多个 segment，每个 segment 对应两个文件：“.index” 索引文件和 “.log” 数据文件。</p>
 <h3 id="分区原因"><a href="#分区原因" class="headerlink" title="分区原因"></a>分区原因</h3><p>方便在集群中扩展，每个 partition 可以通过调整以适应它所在的机器，而一个 topic 又可以有多个 partition 组成，因此可以以 partition 为单位读写了。</p>
@@ -453,18 +452,23 @@
 </ul>
 <p><img src="https://user-gold-cdn.xitu.io/2020/1/20/16fc0ef62659d31e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="acks=-1 造成数据重复分析"></p>
 <h4 id="故障处理细节"><a href="#故障处理细节" class="headerlink" title="故障处理细节"></a>故障处理细节</h4><p><img src="https://user-gold-cdn.xitu.io/2020/1/20/16fc0ef626ae3ed5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Log 文件中的 HW 和 LEO"></p>
-<p><strong>LEO：每个副本最大的 offset。<br> HW：消费者能见到的最大的 offset，ISR 队列中最小的 LEO。</strong><br><strong>（1）Follower 故障</strong><br> follower 发生故障后会被临时踢出 ISR 集合，待该 follower 恢复后，follower 会 读取本地磁盘记录的上次的 HW，并将 log 文件高于 HW 的部分截取掉，从 HW 开始向 leader 进行同步数据操作。等该 follower 的 LEO 大于等于该 partition 的 HW，即 follower 追上 leader 后，就可以重新加入 ISR 了。<br><strong>（2）Leader 故障</strong><br> leader 发生故障后，会从 ISR 中选出一个新的 leader，之后，为保证多个副本之间的数据一致性，其余的 follower 会先将各自的 log 文件高于 HW 的部分截掉，然后从新的 leader 同步数据。<br><strong>注意：这只能保证副本之间的数据一致性，并不能保证数据不丢失或者不重复。</strong></p>
+<p>LEO：每个副本最大的 offset。<br> HW：消费者能见到的最大的 offset。</p>
+<p>高水位和 LEO 是副本对象的两个重要属性。Kafka 所有副本都有对应的高水位和 LEO 值，而不仅仅是 Leader 副本。只不过 Leader 副本比较特殊，Kafka 使用 Leader 副本的高水位来定义所在分区的高水位。换句话说，分区的高水位就是其 Leader 副本的高水位。</p>
+<p><strong>（1）Follower 故障</strong><br> follower 发生故障后会被临时踢出 ISR 集合，待该 follower 恢复后，follower 会 读取本地磁盘记录的上次的 HW，并将 log 文件高于 HW 的部分截取掉，从 HW 开始向 leader 进行同步数据操作。等该 follower 的 LEO 大于等于该 partition 的 HW，即 follower 追上 leader 后，就可以重新加入 ISR 了。<br><strong>（2）Leader 故障</strong><br> leader 发生故障后，会从 ISR 中选出一个新的 leader，之后，为保证多个副本之间的数据一致性，其余的 follower 会先将各自的 log 文件高于 HW 的部分截掉，然后从新的 leader 同步数据。<br><strong>注意：这只能保证副本之间的数据一致性，并不能保证数据不丢失或者不重复。</strong></p>
 <p>作者：臧小晶<br>链接：<a href="https://juejin.im/post/6844904050064883725" target="_blank" rel="noopener">https://juejin.im/post/6844904050064883725</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 <h3 id="kafka的特点"><a href="#kafka的特点" class="headerlink" title="kafka的特点"></a>kafka的特点</h3><p>　　高吞吐量：Kafka 每秒可以生产约 25 万消息（50 MB），每秒处理 55 万消息（110 MB）<br>　　持久化数据存储：可进行持久化操作。将消息持久化到磁盘，因此可用于批量消费，例如 ETL，以及实时应用程序。通过将数据持久化到硬盘以及replication 防止数据丢失。<br>　　分布式系统易于扩展：所有的 producer、broker 和 consumer 都会有多个，均为分布式的。无需停机即可扩展机器。<br>　　客户端状态维护：消息被处理的状态是在 consumer 端维护，而不是由 server 端维护。当失败时能自动平衡。</p>
-<h3 id="Zookeeper在kafka中的作用"><a href="#Zookeeper在kafka中的作用" class="headerlink" title="Zookeeper在kafka中的作用?"></a>Zookeeper在kafka中的作用?</h3><h3 id="kafka基于硬盘为什么这么快"><a href="#kafka基于硬盘为什么这么快" class="headerlink" title="kafka基于硬盘为什么这么快"></a>kafka基于硬盘为什么这么快</h3><h4 id="顺序读写"><a href="#顺序读写" class="headerlink" title="顺序读写"></a>顺序读写</h4><p>众所周知Kafka是将消息记录持久化到本地磁盘中的，一般人会认为磁盘读写性能差，可能会对Kafka性能如何保证提出质疑。实际上不管是内存还是磁盘，快或慢关键在于寻址的方式，磁盘分为顺序读写与随机读写，内存也一样分为顺序读写与随机读写。基于磁盘的随机读写确实很慢，但磁盘的顺序读写性能却很高，一般而言要高出磁盘随机读写三个数量级，一些情况下磁盘顺序读写性能甚至要高于内存随机读写，这里给出著名学术期刊 ACM Queue 上的一张性能对比图：</p>
-<p><img src="https://img-blog.csdnimg.cn/20190523181118864.png#pic_center" alt="img"><br>磁盘的顺序读写是磁盘使用模式中最有规律的，并且操作系统也对这种模式做了大量优化，Kafka就是使用了磁盘顺序读写来提升的性能。Kafka的message是不断追加到本地磁盘文件末尾的，而不是随机的写入，这使得Kafka写入吞吐量得到了显著提升。</p>
-<h4 id="Page-Cache"><a href="#Page-Cache" class="headerlink" title="Page Cache"></a>Page Cache</h4><p>为了优化读写性能，Kafka利用了操作系统本身的Page Cache，就是利用操作系统自身的内存而不是JVM空间内存。这样做的好处有：</p>
+<h3 id="Zookeeper在kafka中的作用"><a href="#Zookeeper在kafka中的作用" class="headerlink" title="Zookeeper在kafka中的作用?"></a>Zookeeper在kafka中的作用?</h3><h3 id="kafka基于硬盘为什么这么快"><a href="#kafka基于硬盘为什么这么快" class="headerlink" title="kafka基于硬盘为什么这么快"></a>kafka基于硬盘为什么这么快</h3><h4 id="顺序读写"><a href="#顺序读写" class="headerlink" title="顺序读写"></a>顺序读写</h4><p>众所周知Kafka是将消息记录持久化到本地磁盘中的.Kafka的message是不断追加到本地磁盘文件末尾的，而不是随机的写入，这使得Kafka写入吞吐量得到了显著提升。</p>
+<h4 id="Page-Cache"><a href="#Page-Cache" class="headerlink" title="Page Cache"></a>Page Cache</h4><p>为了优化读写性能，Kafka利用了操作系统本身的Page Cache</p>
+<ul>
+<li>首先，操作系统层面的缓存利用率会更高，因为存储的都是紧凑的字节结构而不是独立的对象。</li>
+<li>其次，操作系统本身也对于Page Cache做了大量优化，提供了write-behind、read-ahead以及flush等多种机制。再者，即使服务进程重启，系统缓存依然不会消失，避免了in-process cache重建缓存的过程。</li>
+</ul>
+<p>通过操作系统的Page Cache，Kafka的读写操作基本上是基于内存的，读写速度得到了极大的提升。</p>
+<p>就是利用操作系统自身的内存而不是JVM空间内存。这样做的好处有：</p>
 <ul>
 <li>避免Object消耗：如果是使用Java堆，Java对象的内存消耗比较大，通常是所存储数据的两倍甚至更多。</li>
 <li>避免GC问题：随着JVM中数据不断增多，垃圾回收将会变得复杂与缓慢，使用系统缓存就不会存在GC问题。</li>
 </ul>
-<p>相比于使用JVM或in-memory cache等数据结构，利用操作系统的Page Cache更加简单可靠。首先，操作系统层面的缓存利用率会更高，因为存储的都是紧凑的字节结构而不是独立的对象。其次，操作系统本身也对于Page Cache做了大量优化，提供了write-behind、read-ahead以及flush等多种机制。再者，即使服务进程重启，系统缓存依然不会消失，避免了in-process cache重建缓存的过程。</p>
-<p>通过操作系统的Page Cache，Kafka的读写操作基本上是基于内存的，读写速度得到了极大的提升。</p>
 <h4 id="零拷贝"><a href="#零拷贝" class="headerlink" title="零拷贝"></a>零拷贝</h4><p>这里主要讲的是Kafka利用linux操作系统的 “零拷贝（zero-copy）” 机制在消费端做的优化。首先来了解下数据从文件发送到socket网络连接中的常规传输路径：</p>
 <ul>
 <li>操作系统从磁盘读取数据到内核空间（kernel space）的Page Cache</li>
@@ -476,7 +480,11 @@
 <h4 id="分区分段"><a href="#分区分段" class="headerlink" title="分区分段"></a>分区分段</h4><p>Kafka的message是按topic分类存储的，topic中的数据又是按照一个一个的partition即分区存储到不同broker节点。每个partition对应了操作系统上的一个文件夹，partition实际上又是按照segment分段存储的。这也非常符合分布式系统分区分桶的设计思想。</p>
 <p>通过这种分区分段的设计，Kafka的message消息实际上是分布式存储在一个一个小的segment中的，每次文件操作也是直接操作的segment。为了进一步的查询优化，Kafka又默认为分段后的数据文件建立了索引文件，就是文件系统上的.index文件。这种分区分段+索引的设计，不仅提升了数据读取的效率，同时也提高了数据操作的并行度。</p>
 <h4 id="批量发送"><a href="#批量发送" class="headerlink" title="批量发送"></a>批量发送</h4><p>Kafka允许进行批量发送消息，先将消息缓存在内存中，然后一次请求批量发送出去<br>比如可以指定缓存的消息达到某个量的时候就发出去，或者缓存了固定的时间后就发送出去</p>
-<h3 id="和其他消息中间件的对比"><a href="#和其他消息中间件的对比" class="headerlink" title="和其他消息中间件的对比"></a>和其他消息中间件的对比</h3><table>
+<h3 id="和其他消息中间件的对比"><a href="#和其他消息中间件的对比" class="headerlink" title="和其他消息中间件的对比"></a>和其他消息中间件的对比</h3><p>吞吐量：10 万级，高吞吐，一般配合大数据类的系统来进行实时数据计算、日志采集等场景  RabbitMQ比kafka低一个级别</p>
+<p>可用性：  非常高，分布式，一个数据多个副本，少数机器宕机，不会丢失数据，不会导致不可用</p>
+<p>RabbitMQ基于主从架构实现高可用</p>
+<p>可靠性：  经过参数优化配置，可以做到 0 丢失</p>
+<table>
 <thead>
 <tr>
 <th>特性</th>
@@ -649,7 +657,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">212</span>
+                  <span class="site-state-item-count">214</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -758,7 +766,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共355k字</span>
+  <span class="post-count">博客全站共353.6k字</span>
 </div>
 
         

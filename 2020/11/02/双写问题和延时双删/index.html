@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="[TOC] 我们讨论两种更新策略：  1.先删除缓存，再更新数据库 2.先更新数据库，再删除缓存  先删缓存，再更新数据库该方案会导致不一致的原因是。同时有一个请求A进行更新操作，另一个请求B进行查询操作。那么会出现如下情形:  （1）请求A进行写操作，删除缓存  （2）请求B查询发现缓存不存在  （3）请求B去数据库查询得到旧值  （4）请求B将旧值写入缓存  （5）请求A将新值写入数据库 上述">
+<meta name="description" content="[TOC] 我们讨论两种更新策略：  1.先删除缓存，再更新数据库 2.先更新数据库，再删除缓存  先更新DB再删除缓存首先，先说一下。老外提出了一个缓存更新套路，名为《Cache-Aside pattern》。其中就指出  失效：应用程序先从cache取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。 命中：应用程序从cache中取数据，取到后返回。 更新：先把数据存到数据库中，成功后，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="双写问题和延时双删">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/02/%E5%8F%8C%E5%86%99%E9%97%AE%E9%A2%98%E5%92%8C%E5%BB%B6%E6%97%B6%E5%8F%8C%E5%88%A0/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 我们讨论两种更新策略：  1.先删除缓存，再更新数据库 2.先更新数据库，再删除缓存  先删缓存，再更新数据库该方案会导致不一致的原因是。同时有一个请求A进行更新操作，另一个请求B进行查询操作。那么会出现如下情形:  （1）请求A进行写操作，删除缓存  （2）请求B查询发现缓存不存在  （3）请求B去数据库查询得到旧值  （4）请求B将旧值写入缓存  （5）请求A将新值写入数据库 上述">
+<meta property="og:description" content="[TOC] 我们讨论两种更新策略：  1.先删除缓存，再更新数据库 2.先更新数据库，再删除缓存  先更新DB再删除缓存首先，先说一下。老外提出了一个缓存更新套路，名为《Cache-Aside pattern》。其中就指出  失效：应用程序先从cache取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。 命中：应用程序从cache中取数据，取到后返回。 更新：先把数据存到数据库中，成功后，">
 <meta property="article:published_time" content="2020-11-02T14:01:19.000Z">
-<meta property="article:modified_time" content="2020-11-03T08:42:28.037Z">
+<meta property="article:modified_time" content="2020-12-14T02:55:10.973Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.1k
+                  796
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  2
                 </span>
               
             </div>
@@ -416,34 +416,6 @@
 <li>1.先删除缓存，再更新数据库</li>
 <li>2.先更新数据库，再删除缓存</li>
 </ul>
-<h2 id="先删缓存，再更新数据库"><a href="#先删缓存，再更新数据库" class="headerlink" title="先删缓存，再更新数据库"></a>先删缓存，再更新数据库</h2><p>该方案会导致不一致的原因是。同时有一个请求A进行更新操作，另一个请求B进行查询操作。那么会出现如下情形:</p>
-<ul>
-<li><p>（1）请求A进行写操作，删除缓存</p>
-</li>
-<li><p>（2）请求B查询发现缓存不存在</p>
-</li>
-<li><p>（3）请求B去数据库查询得到旧值</p>
-</li>
-<li><p>（4）请求B将旧值写入缓存</p>
-</li>
-<li><p>（5）请求A将新值写入数据库 上述情况就会导致不一致的情形出现。而且，如果不采用给缓存设置过期时间策略，该数据永远都是脏数据。</p>
-<p>那么，如何解决呢？采用延时双删策略 伪代码如下</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public void write(String key,Object data)&#123;</span><br><span class="line">        redis.delKey(key);</span><br><span class="line">        db.updateData(data);</span><br><span class="line">        Thread.sleep(1000);</span><br><span class="line">        redis.delKey(key);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>转化为中文描述就是</p>
-<p>（1）先淘汰缓存<br>（2）再写数据库（这两步和原来一样）<br>（3）休眠1秒，再次淘汰缓存 这么做，可以将1秒内所造成的缓存脏数据，再次删除。</p>
-<p><strong>第二次删除,如果删除失败怎么办？</strong></p>
-<p>这是个非常好的问题，因为第二次删除失败，就会出现如下情形。还是有两个请求，一个请求A进行更新操作，另一个请求B进行查询操作，为了方便，假设是单库：</p>
-<ul>
-<li>（1）请求A进行写操作，删除缓存</li>
-<li>（2）请求B查询发现缓存不存在</li>
-<li>（3）请求B去数据库查询得到旧值</li>
-<li>（4）请求B将旧值写入缓存</li>
-<li>（5）请求A将新值写入数据库</li>
-<li>（6）请求A试图去删除请求B写入对缓存值，结果失败了。 ok,这也就是说。如果第二次删除缓存失败，会再次出现缓存和数据库不一致的问题。 <strong>如何解决呢？</strong> 具体解决方案，且看博主对第(3)种更新策略的解析。</li>
-</ul>
 <h3 id="先更新DB再删除缓存"><a href="#先更新DB再删除缓存" class="headerlink" title="先更新DB再删除缓存"></a>先更新DB再删除缓存</h3><p>首先，先说一下。老外提出了一个缓存更新套路，名为<a href="https://link.zhihu.com/?target=https%3A//docs.microsoft.com/en-us/azure/architecture/patterns/cache-aside">《Cache-Aside pattern》</a>。其中就指出</p>
 <ol>
 <li><strong>失效</strong>：应用程序先从cache取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。</li>
@@ -460,6 +432,8 @@
 <p><strong>然而，发生这种情况的概率又有多少呢？</strong></p>
 <p>发生上述情况有一个先天性条件，就是步骤（3）的写数据库操作比步骤（2）的读数据库操作耗时更短，才有可能使得步骤（4）先于步骤（5）。</p>
 <p>可是，大家想想，数据库的读操作的速度远快于写操作的（不然做读写分离干嘛，做读写分离的意义就是因为读操作比较快，耗资源少），因此步骤（3）耗时比步骤（2）更短，这一情形很难出现。 假设，有人非要抬杠，有强迫症，一定要解决怎么办？</p>
+<p>如何解决上述并发问题？</p>
+<p>首先，给缓存设有效时间是一种方案。其次，采用策略（2）里给出的异步延时删除策略，保证读请求完成以后，再进行删除操作。<br><strong>还有其他造成不一致的原因么？</strong><br>有的，这也是缓存更新策略（2）和缓存更新策略（3）都存在的一个问题，如果删缓存失败了怎么办，那不是会有不一致的情况出现么。比如一个写数据请求，然后写入数据库了，删缓存失败了，这会就出现不一致的情况了。这也是缓存更新策略（2）里留下的最后一个疑问。</p>
 <ol>
 <li><strong>缓存失效时间变短（不推荐，治标不治本）</strong> ：我们让缓存数据的过期时间变短，这样的话缓存就会从数据库中加载数据。另外，这种解决办法对于先操作缓存后操作数据库的场景不适用。</li>
 <li><strong>增加cache更新重试机制（常用）</strong>： 如果 cache 服务当前不可用导致缓存删除失败的话，我们就隔一段时间进行重试，重试次数可以自己定。如果多次重试还是失败的话，我们可以把当前更新失败的 key 存入队列中，等缓存服务可用之后，再将 缓存中对应的 key 删除即可。</li>
@@ -584,7 +558,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">212</span>
+                  <span class="site-state-item-count">214</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -643,7 +617,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#先删缓存，再更新数据库"><span class="nav-number">1.</span> <span class="nav-text">先删缓存，再更新数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#先更新DB再删除缓存"><span class="nav-number">1.1.</span> <span class="nav-text">先更新DB再删除缓存</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#先更新DB再删除缓存"><span class="nav-number">1.</span> <span class="nav-text">先更新DB再删除缓存</span></a></li></ol></div>
             
 
           </div>
@@ -693,7 +667,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共355k字</span>
+  <span class="post-count">博客全站共353.6k字</span>
 </div>
 
         

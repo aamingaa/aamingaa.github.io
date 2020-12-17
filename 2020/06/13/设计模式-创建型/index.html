@@ -85,10 +85,12 @@
 <meta property="og:url" content="http://aamingaa.github.io/2020/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%88%9B%E5%BB%BA%E5%9E%8B/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] Ⅰ 懒汉式-线程不安全1234567891011121314public class Singleton&amp;#123;    private static Singleton s;    private Singleton()&amp;#123;            &amp;#125;    public static Singleton get uniqueInstance()    &amp;#123;">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f36a2287a9f494dbf1652f2fde11c77~tplv-k3u1fbpfcp-zoom-1.image">
 <meta property="article:published_time" content="2020-06-13T12:26:29.000Z">
-<meta property="article:modified_time" content="2020-11-13T07:41:28.379Z">
+<meta property="article:modified_time" content="2020-12-17T13:03:14.855Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f36a2287a9f494dbf1652f2fde11c77~tplv-k3u1fbpfcp-zoom-1.image">
 
 
 
@@ -373,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  849
+                  853
                 </span>
               
 
@@ -446,6 +448,9 @@
 <p>工厂方法</p>
 <p>多个工厂，一种抽象产品。例如一个麦当劳店，可以生产多种汉堡，一个肯德基店，也可以生产多种汉堡。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">作者：冠状病毒biss</span><br><span class="line">链接：https:<span class="comment">//www.nowcoder.com/discuss/438905?type=all&amp;order=time&amp;pos=&amp;page=1&amp;channel=666&amp;source_id=search_all</span></span><br><span class="line">来源：牛客网</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HamburgerFactory</span> </span>&#123;</span><br><span class="line">    <span class="function">Hamburger <span class="title">build</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MCFactory</span> <span class="keyword">implements</span> <span class="title">HamburgerFactory</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Hamburger <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MCHamburger();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KFCFactory</span> <span class="keyword">implements</span> <span class="title">HamburgerFactory</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Hamburger <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> KFCHamburger();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Hamburger</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">eat</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MCHamburger</span> <span class="keyword">implements</span> <span class="title">Hamburger</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eat</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"吃麦当劳汉堡"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KFCHamburger</span> <span class="keyword">implements</span> <span class="title">Hamburger</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eat</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"吃肯德基汉堡"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    HamburgerFactory mcFactory=<span class="keyword">new</span> MCFactory();</span><br><span class="line">    Hamburger hamburger=mcFactory.build();</span><br><span class="line">    hamburger.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="抽象工厂"><a href="#抽象工厂" class="headerlink" title="抽象工厂"></a>抽象工厂</h3><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f36a2287a9f494dbf1652f2fde11c77~tplv-k3u1fbpfcp-zoom-1.image" alt="img"></p>
+
       
     </div>
     
@@ -565,7 +570,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">212</span>
+                  <span class="site-state-item-count">214</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -624,7 +629,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅰ-懒汉式-线程不安全"><span class="nav-number">1.</span> <span class="nav-text">Ⅰ 懒汉式-线程不安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅱ-饿汉式-线程安全"><span class="nav-number">2.</span> <span class="nav-text">Ⅱ 饿汉式-线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅲ-懒汉式-线程安全"><span class="nav-number">3.</span> <span class="nav-text">Ⅲ 懒汉式-线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅳ-双重校验锁-线程安全"><span class="nav-number">4.</span> <span class="nav-text">Ⅳ 双重校验锁-线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅴ-静态内部类实现"><span class="nav-number">5.</span> <span class="nav-text">Ⅴ 静态内部类实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单工厂"><span class="nav-number">6.</span> <span class="nav-text">简单工厂</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅰ-懒汉式-线程不安全"><span class="nav-number">1.</span> <span class="nav-text">Ⅰ 懒汉式-线程不安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅱ-饿汉式-线程安全"><span class="nav-number">2.</span> <span class="nav-text">Ⅱ 饿汉式-线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅲ-懒汉式-线程安全"><span class="nav-number">3.</span> <span class="nav-text">Ⅲ 懒汉式-线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅳ-双重校验锁-线程安全"><span class="nav-number">4.</span> <span class="nav-text">Ⅳ 双重校验锁-线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅴ-静态内部类实现"><span class="nav-number">5.</span> <span class="nav-text">Ⅴ 静态内部类实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单工厂"><span class="nav-number">6.</span> <span class="nav-text">简单工厂</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象工厂"><span class="nav-number">6.1.</span> <span class="nav-text">抽象工厂</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -674,7 +679,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共355k字</span>
+  <span class="post-count">博客全站共353.6k字</span>
 </div>
 
         

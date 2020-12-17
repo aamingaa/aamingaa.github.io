@@ -96,7 +96,7 @@
 <meta property="og:image" content="https://snailclimb.gitee.io/javaguide/docs/database/Redis/images/redis-all/redis%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%99%A8.png">
 <meta property="og:image" content="https://pic3.zhimg.com/80/v2-0e5e3f73c7cc427a688c6d45cf1f445a_hd.jpg">
 <meta property="article:published_time" content="2020-07-05T12:19:55.000Z">
-<meta property="article:modified_time" content="2020-11-13T13:09:34.196Z">
+<meta property="article:modified_time" content="2020-12-14T09:06:13.321Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10378860-f024bea7843b5e07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/507/format/webp">
@@ -384,7 +384,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  18k
+                  16.4k
                 </span>
               
 
@@ -400,7 +400,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  65
+                  59
                 </span>
               
             </div>
@@ -949,27 +949,6 @@
 
 <p>视频服务收到消息，对视频信息进行更新..</p>
 <hr>
-<h3 id="GEO"><a href="#GEO" class="headerlink" title="GEO"></a>GEO</h3><p>Redis 3.2 版本提供了 GEO 地理信息定位功能，支持存储地理位置信息用来实现诸如附近位置、摇一摇这一类依赖于地理位置信息的功能。</p>
-<p><strong>增加地理位置信息</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geoadd key longitude latitude member [longitude latitude member...]</span><br></pre></td></tr></table></figure>
-
-<p>longitude、latitude、member 分别是该地理位置的经度、纬度、成员。</p>
-<p>例如添加北京的地理位置信息：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geoadd cities:locations 116.28 39.55 beijing</span><br></pre></td></tr></table></figure>
-
-<p>返回结果表示成功添加的个数，如果需要更新地理位置信息仍然可以使用 geoadd 命令，返回结果为 0。</p>
-<p><strong>获取地理位置信息</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getpos key member [member...]</span><br></pre></td></tr></table></figure>
-
-<p><strong>获取两个地理位置的距离</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geodist key member1 member2 [unit]</span><br></pre></td></tr></table></figure>
-
-<p>其中 unit 代表返回结果的单位，包含 m 米、km 公里、mi 英里、ft 英尺。</p>
-<p><strong>删除地理位置信息</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrem key member</span><br></pre></td></tr></table></figure>
-
-<p>GEO 没有提供删除成员的命令，但由于它底层是 zset，可以使用 zrem 删除。</p>
-<hr>
 <h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>慢查询中有两个重要参数 slowlog-log-slower-than 和 slowlog-max-len。</p>
 <p>慢查询不包括命令网络传输和排队时间。</p>
 <p>有必要将慢查询定期存放。</p>
@@ -1168,53 +1147,7 @@
 <li>用底层模型不同：它们之间底层实现方式以及与客户端之间通信的应用协议不一样。redis直接自己构建了VM机制，因为一般的系统调用系统函数的话，会浪费一定的时间去移动和请求。</li>
 <li>value的大小：<strong><em>\</em>redis可以达到1GB，而memcache只有1MB**</strong>。</li>
 </ul>
-<h3 id="如何保证缓存与数据库双写时的数据一致性？"><a href="#如何保证缓存与数据库双写时的数据一致性？" class="headerlink" title="如何保证缓存与数据库双写时的数据一致性？"></a>如何保证缓存与数据库双写时的数据一致性？</h3><p>Cache Aside Pattern 中遇到写请求是这样的：更新 DB，然后直接删除 cache 。</p>
-<p>如果更新数据库成功，而删除缓存这一步失败的情况的话，简单说两个解决方案：</p>
-<ol>
-<li><strong>缓存失效时间变短（不推荐，治标不治本）</strong> ：我们让缓存数据的过期时间变短，这样的话缓存就会从数据库中加载数据。另外，这种解决办法对于先操作缓存后操作数据库的场景不适用。</li>
-<li><strong>增加cache更新重试机制（常用）</strong>： 如果 cache 服务当前不可用导致缓存删除失败的话，我们就隔一段时间进行重试，重试次数可以自己定。如果多次重试还是失败的话，我们可以把当前更新失败的 key 存入队列中，等缓存服务可用之后，再将 缓存中对应的 key 删除即可。</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
 <h3 id="假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><a href="#假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？" class="headerlink" title="假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"></a>假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</h3><p>使用keys指令可以扫出指定模式的key列表。<br>对方接着追问：如果这个redis正在给线上的业务提供服务，那使用keys指令会有什么问题？<br>这个时候你要回答redis关键的一个特性：redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。这个时候可以使用scan指令，scan指令可以无阻塞的提取出指定模式的key列表，但是会有一定的重复概率，在客户端做一次去重就可以了，但是整体所花费的时间会比直接用keys指令长。</p>
-<h3 id="高并发情况下，对于Redis的更新操作有哪些注意事项？"><a href="#高并发情况下，对于Redis的更新操作有哪些注意事项？" class="headerlink" title="高并发情况下，对于Redis的更新操作有哪些注意事项？"></a>高并发情况下，对于Redis的更新操作有哪些注意事项？</h3><p>操作：先更新数据库，再删除缓存<br>正常的情况是这样的：  </p>
-<ul>
-<li>1、 先操作数据库，成功</li>
-<li>2、再删除缓存，也成功</li>
-<li>3、 如果原子性被破坏了：第一步成功(操作数据库)，第二步失败(删除缓存)，会导致数据库里是新数据，而缓存里是旧数据。</li>
-</ul>
-<p>如果第一步(操作数据库)就失败了，我们可以直接返回错误(Exception)，不会出现数据不一致。<br>如果在高并发的场景下，出现数据库与缓存数据不一致的概率特别低，也不是没有：缓存刚好失效//线程A查询数据库，得一个旧值//线程B将新值写入数据库//线程B删除缓存//线程A将查到的旧值写入缓存<br>要达成上述情况，还是说一句概率特别低,因为这个条件需要发生在读缓存时缓存失效，而且并发着有一个写操作。而实际上数据库的写操作会比读操作慢得多，而且还要锁表，而读操作必需在写操作前进入数据库操作，而又要晚于写操作更新缓存，所有的这些条件都具备的概率基本并不大。对于这种策略，其实是一种设计模式：Cache Aside Pattern<br><strong>解决删除缓存失败的解决思路</strong>：将需要删除的key发送到消息队列中—自己消费消息，获得需要删除的key—不断重试删除操作，直到成功</p>
-<h3 id="LRU"><a href="#LRU" class="headerlink" title="LRU"></a>LRU</h3><p>Redis每次按key获取一个值的时候，都会更新value中的<strong>lru字段</strong>为当前秒级别的时间戳。</p>
-<p>Redis初始的实现算法很简单，随机从dict中取出五个key,淘汰一个lru字段值最小的。</p>
-<p>在3.0的时候，又改进了一版算法：</p>
-<ul>
-<li>首先第一次随机选取的key都会放入一个pool中(pool的大小为16)，pool中的key是按lru大小顺序排列的。</li>
-<li>接下来每次随机选取的key <strong>lru值必须小于pool中最小的lru</strong>才会继续放入，直到将pool放满。</li>
-<li>放满之后，每次如果有新的key需要放入，需要将pool中lru最大的一个key取出。</li>
-<li><strong><em>\</em>淘汰的时候，直接从pool中选取一个lru最小的值然后将其淘汰**</strong>。</li>
-</ul>
 <h3 id="Redis的IO复用"><a href="#Redis的IO复用" class="headerlink" title="Redis的IO复用"></a>Redis的IO复用</h3><p><strong>Redis 基于 Reactor 模式来设计开发了自己的一套高效的事件处理模型</strong> （Netty 的线程模型也基于 Reactor 模式，Reactor 模式不愧是高性能 IO 的基石），这套事件处理模型对应的是 Redis 中的文件事件处理器（file event handler）。由于文件事件处理器（file event handler）是单线程方式运行的，所以我们一般都说 Redis 是单线程模型。</p>
 <p><strong>既然是单线程，那怎么监听大量的客户端连接呢？</strong></p>
 <p>Redis 通过<strong>IO 多路复用程序</strong> 来监听来自客户端的大量连接（或者说是监听多个 socket），它会将感兴趣的事件及类型(读、写）注册到内核中并监听每个事件是否发生。</p>
@@ -1235,12 +1168,6 @@
 <li>事件处理器（连接应答处理器、命令请求处理器、命令回复处理器）</li>
 </ul>
 <p><img src="https://snailclimb.gitee.io/javaguide/docs/database/Redis/images/redis-all/redis%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%99%A8.png" alt="img"></p>
-<h4 id="master结点挂了"><a href="#master结点挂了" class="headerlink" title="master结点挂了"></a>master结点挂了</h4><p>raft选举出新的leader</p>
-<h3 id="节点间通信机制"><a href="#节点间通信机制" class="headerlink" title="节点间通信机制"></a>节点间通信机制</h3><p>支撑N个redis master node，每个master node都可以挂载多个slave node</p>
-<p>读写分离的架构，对于每个master来说，写就写到master，然后读就从mater对应的slave去读</p>
-<p>高可用，因为每个master都有salve节点，那么如果mater挂掉，redis cluster这套机制，就会自动将某个slave切换成master</p>
-<h3 id="hash-slot"><a href="#hash-slot" class="headerlink" title="hash slot"></a>hash slot</h3><p>redis cluster有固定的16384个hash slot，对每个key计算CRC16值，然后对16384取模，可以获取key对应的hash slot</p>
-<p>redis cluster中每个master都会持有部分slot，比如有3个master，那么可能每个master持有5000多个hash slot</p>
 <h3 id="gossip？"><a href="#gossip？" class="headerlink" title="gossip？"></a>gossip？</h3><p>gossip协议包含多种消息，包括ping，pong，meet，fail，等等</p>
 <p>Redis 集群是去中心化的，彼此之间状态同步靠 gossip 协议通信，集群的消息有以下几种类型：</p>
 <ul>
@@ -1261,32 +1188,6 @@
 
 <p>属于前两种方法的折中.但要注意操作检查执行的时间和频率，如果删除操作做的太频繁，或者检查执行的时间太长，定期策略就会退化成定时策略。</p>
 <p>Redis服务器实际使用的是惰性删除和定期删除策略两种策略，配合使用两种策略和在使用CPU和内存找到平衡点。</p>
-<h4 id="延时双删"><a href="#延时双删" class="headerlink" title="延时双删"></a>延时双删</h4><h3 id="写"><a href="#写" class="headerlink" title="写"></a>写</h3><p>有几种</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1.先更新redis再更新db</span><br><span class="line">2.先更新db再更新redis</span><br><span class="line">3.先更新DB再删除redis</span><br><span class="line">4.先删除redis再更新DB</span><br><span class="line">5.延迟双删</span><br><span class="line">6.延迟删除等变种</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="1-先更新redis再更新db"><a href="#1-先更新redis再更新db" class="headerlink" title="1.先更新redis再更新db"></a>1.先更新redis再更新db</h4><p>按下面步骤会有问题,AB是两个线程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A_update_redis</span><br><span class="line">B_update_redis</span><br><span class="line">B_update_db</span><br><span class="line">A_update_db</span><br></pre></td></tr></table></figure>
-
-<p>最终db是a值但是redis是b值，不一致</p>
-<h4 id="2-先更新db再更新redis"><a href="#2-先更新db再更新redis" class="headerlink" title="2.先更新db再更新redis"></a>2.先更新db再更新redis</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A_update_db</span><br><span class="line">B_update_db</span><br><span class="line">B_update_redis</span><br><span class="line">A_update_redis</span><br></pre></td></tr></table></figure>
-
-<p>最终db是b值但是redis是a值</p>
-<h4 id="3-先更新DB再删除redis"><a href="#3-先更新DB再删除redis" class="headerlink" title="3.先更新DB再删除redis"></a>3.先更新DB再删除redis</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A_update_db</span><br><span class="line">B_update_db</span><br><span class="line">B_rm_redis</span><br><span class="line">A_rm_redis</span><br></pre></td></tr></table></figure>
-
-<p>是不是不明白。想不出来怎么不一致了？<br> 不是这样的，没这么简单，第二次rm_redis就会保证后面的redis和db是一致的<br> 实际是下面这种形式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">A_get_data</span><br><span class="line">redis_cache_miss</span><br><span class="line">A_get_db</span><br><span class="line">B_update_db</span><br><span class="line">B_rm_redis</span><br><span class="line">(此时如果拿db是b值，但是redis没有值)</span><br><span class="line">A_update_redis</span><br></pre></td></tr></table></figure>
-
-<p>依赖于A_update_redis在B_update_db之后，极端情况<br> 此时redis是old，db是new</p>
-<h4 id="4-先删除redis再更新DB"><a href="#4-先删除redis再更新DB" class="headerlink" title="4.先删除redis再更新DB"></a>4.先删除redis再更新DB</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">A_rm_redis</span><br><span class="line">B_get_data</span><br><span class="line">B_redis_miss</span><br><span class="line">B_get_db</span><br><span class="line">B_update_redis</span><br><span class="line">A_update_db</span><br></pre></td></tr></table></figure>
-
-<p>此时redis是old值，db是new值</p>
-<h4 id="5-延迟双删"><a href="#5-延迟双删" class="headerlink" title="5.延迟双删"></a>5.延迟双删</h4><p>即</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rm_redis</span><br><span class="line">update_db</span><br><span class="line">sleep xxx ms</span><br><span class="line">rm_redis</span><br></pre></td></tr></table></figure>
-
-<p>这样叫做双删，最后一次sleep一段时间再rm_redis保证再次读请求回溯打到db，用最新值写redis</p>
-<p>作者：赤子心_d709<br>链接：<a href="https://www.jianshu.com/p/125bba448cdd" target="_blank" rel="noopener">https://www.jianshu.com/p/125bba448cdd</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 <h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>I/O 多路复用模型是利用select、poll、epoll可以同时监察多个流的 I/O 事件的能力，在空闲的时候，会把当前线程阻塞掉，当有一个或多个流有I/O事件时，就从阻塞态中唤醒，于是程序就会轮询一遍所有的流（epoll是只轮询那些真正发出了事件的流），依次顺序的处理就绪的流，这种做法就避免了大量的无用操作。这里“多路”指的是多个网络连接，“复用”指的是复用同一个线程。采用多路 I/O 复用技术可以让单个线程高效的处理多个连接请求（尽量减少网络IO的时间消耗），且Redis在内存中操作数据的速度非常快（内存内的操作不会成为这里的性能瓶颈），主要以上两点造就了Redis具有很高的吞吐量。</p>
 
       
@@ -1408,7 +1309,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">212</span>
+                  <span class="site-state-item-count">214</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1467,7 +1368,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-学习笔记"><span class="nav-number">1.</span> <span class="nav-text">Redis 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初识-Redis"><span class="nav-number">1.1.</span> <span class="nav-text">初识 Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的特性"><span class="nav-number">1.1.1.</span> <span class="nav-text">Redis 的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的使用场景"><span class="nav-number">1.1.2.</span> <span class="nav-text">Redis 的使用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-的理解和使用"><span class="nav-number">1.2.</span> <span class="nav-text">API 的理解和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串"><span class="nav-number">1.2.1.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不常用命令"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">不常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#典型使用场景"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">典型使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希"><span class="nav-number">1.2.2.</span> <span class="nav-text">哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表"><span class="nav-number">1.2.3.</span> <span class="nav-text">列表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-1"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-2"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-1"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合"><span class="nav-number">1.2.4.</span> <span class="nav-text">集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-2"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-3"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-2"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有序集合"><span class="nav-number">1.2.5.</span> <span class="nav-text">有序集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-3"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-4"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-3"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#键管理"><span class="nav-number">1.2.6.</span> <span class="nav-text">键管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单个键管理"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">单个键管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遍历键"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">遍历键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库管理"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">数据库管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.7.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级功能"><span class="nav-number">1.3.</span> <span class="nav-text">高级功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务"><span class="nav-number">1.3.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmaps"><span class="nav-number">1.3.2.</span> <span class="nav-text">Bitmaps</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-4"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">1.3.3.</span> <span class="nav-text">HyperLogLog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布订阅"><span class="nav-number">1.3.4.</span> <span class="nav-text">发布订阅</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-5"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-4"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO"><span class="nav-number">1.3.5.</span> <span class="nav-text">GEO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结-1"><span class="nav-number">1.3.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式"><span class="nav-number">1.4.</span> <span class="nav-text">分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis实现分布式锁"><span class="nav-number">1.4.1.</span> <span class="nav-text">Redis实现分布式锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存异常"><span class="nav-number">1.5.</span> <span class="nav-text">缓存异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存穿透"><span class="nav-number">1.5.1.</span> <span class="nav-text">缓存穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存雪崩"><span class="nav-number">1.5.2.</span> <span class="nav-text">缓存雪崩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存击穿"><span class="nav-number">1.5.3.</span> <span class="nav-text">缓存击穿</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持久化"><span class="nav-number">1.6.</span> <span class="nav-text">持久化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他问题"><span class="nav-number">1.7.</span> <span class="nav-text">其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务-1"><span class="nav-number">1.7.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis线程模型"><span class="nav-number">1.7.2.</span> <span class="nav-text">Redis线程模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#淘汰策略"><span class="nav-number">1.7.3.</span> <span class="nav-text">淘汰策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis与Memcached的区别"><span class="nav-number">1.7.4.</span> <span class="nav-text">Redis与Memcached的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证缓存与数据库双写时的数据一致性？"><span class="nav-number">1.7.5.</span> <span class="nav-text">如何保证缓存与数据库双写时的数据一致性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><span class="nav-number">1.7.6.</span> <span class="nav-text">假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高并发情况下，对于Redis的更新操作有哪些注意事项？"><span class="nav-number">1.7.7.</span> <span class="nav-text">高并发情况下，对于Redis的更新操作有哪些注意事项？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LRU"><span class="nav-number">1.7.8.</span> <span class="nav-text">LRU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis的IO复用"><span class="nav-number">1.7.9.</span> <span class="nav-text">Redis的IO复用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master结点挂了"><span class="nav-number">1.7.9.1.</span> <span class="nav-text">master结点挂了</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#节点间通信机制"><span class="nav-number">1.7.10.</span> <span class="nav-text">节点间通信机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hash-slot"><span class="nav-number">1.7.11.</span> <span class="nav-text">hash slot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gossip？"><span class="nav-number">1.7.12.</span> <span class="nav-text">gossip？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redis键的删除策略"><span class="nav-number">1.7.12.1.</span> <span class="nav-text">redis键的删除策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#延时双删"><span class="nav-number">1.7.12.2.</span> <span class="nav-text">延时双删</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#写"><span class="nav-number">1.7.13.</span> <span class="nav-text">写</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-先更新redis再更新db"><span class="nav-number">1.7.13.1.</span> <span class="nav-text">1.先更新redis再更新db</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-先更新db再更新redis"><span class="nav-number">1.7.13.2.</span> <span class="nav-text">2.先更新db再更新redis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-先更新DB再删除redis"><span class="nav-number">1.7.13.3.</span> <span class="nav-text">3.先更新DB再删除redis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-先删除redis再更新DB"><span class="nav-number">1.7.13.4.</span> <span class="nav-text">4.先删除redis再更新DB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-延迟双删"><span class="nav-number">1.7.13.5.</span> <span class="nav-text">5.延迟双删</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-2"><span class="nav-number">1.8.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-学习笔记"><span class="nav-number">1.</span> <span class="nav-text">Redis 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初识-Redis"><span class="nav-number">1.1.</span> <span class="nav-text">初识 Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的特性"><span class="nav-number">1.1.1.</span> <span class="nav-text">Redis 的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-的使用场景"><span class="nav-number">1.1.2.</span> <span class="nav-text">Redis 的使用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-的理解和使用"><span class="nav-number">1.2.</span> <span class="nav-text">API 的理解和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串"><span class="nav-number">1.2.1.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不常用命令"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">不常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#典型使用场景"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">典型使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希"><span class="nav-number">1.2.2.</span> <span class="nav-text">哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表"><span class="nav-number">1.2.3.</span> <span class="nav-text">列表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-1"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-2"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-1"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合"><span class="nav-number">1.2.4.</span> <span class="nav-text">集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-2"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-3"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-2"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有序集合"><span class="nav-number">1.2.5.</span> <span class="nav-text">有序集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-3"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码-4"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-3"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#键管理"><span class="nav-number">1.2.6.</span> <span class="nav-text">键管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单个键管理"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">单个键管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遍历键"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">遍历键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库管理"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">数据库管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.7.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级功能"><span class="nav-number">1.3.</span> <span class="nav-text">高级功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务"><span class="nav-number">1.3.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmaps"><span class="nav-number">1.3.2.</span> <span class="nav-text">Bitmaps</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-4"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">1.3.3.</span> <span class="nav-text">HyperLogLog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布订阅"><span class="nav-number">1.3.4.</span> <span class="nav-text">发布订阅</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令-5"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-4"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结-1"><span class="nav-number">1.3.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式"><span class="nav-number">1.4.</span> <span class="nav-text">分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis实现分布式锁"><span class="nav-number">1.4.1.</span> <span class="nav-text">Redis实现分布式锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存异常"><span class="nav-number">1.5.</span> <span class="nav-text">缓存异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存穿透"><span class="nav-number">1.5.1.</span> <span class="nav-text">缓存穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存雪崩"><span class="nav-number">1.5.2.</span> <span class="nav-text">缓存雪崩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存击穿"><span class="nav-number">1.5.3.</span> <span class="nav-text">缓存击穿</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持久化"><span class="nav-number">1.6.</span> <span class="nav-text">持久化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他问题"><span class="nav-number">1.7.</span> <span class="nav-text">其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务-1"><span class="nav-number">1.7.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis线程模型"><span class="nav-number">1.7.2.</span> <span class="nav-text">Redis线程模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#淘汰策略"><span class="nav-number">1.7.3.</span> <span class="nav-text">淘汰策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis与Memcached的区别"><span class="nav-number">1.7.4.</span> <span class="nav-text">Redis与Memcached的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><span class="nav-number">1.7.5.</span> <span class="nav-text">假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis的IO复用"><span class="nav-number">1.7.6.</span> <span class="nav-text">Redis的IO复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gossip？"><span class="nav-number">1.7.7.</span> <span class="nav-text">gossip？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redis键的删除策略"><span class="nav-number">1.7.7.1.</span> <span class="nav-text">redis键的删除策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-2"><span class="nav-number">1.8.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1517,7 +1418,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共355k字</span>
+  <span class="post-count">博客全站共353.6k字</span>
 </div>
 
         

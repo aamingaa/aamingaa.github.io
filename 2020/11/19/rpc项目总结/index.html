@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="[TOC] kyrio序列化123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051&#x2F;** * Kryo序列化类，Kryo序列化效率很高，但是只兼容 Java 语言 * * @author shuang.kou * @createTime 2020年05月13">
+<meta name="description" content="[TOC] 分布式RPC框架 项目描述：该项目是编写一个RPC调度框架，实现跨服务调度 使用技术：本项目使用的技术主要有Netty, Kryo , Hook 主要功能：实现了网络传输，注册中心，序列化，动态均衡，自动注销服务等功能 项目亮点：  通过Netty基于Nio的方式实现了网络传输。 通过自定义编码器解码器，使用Kryo的方式实现了数据格式的序列化。 使用Nacos方式实现服务的注册与发现">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rpc项目总结">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/19/rpc%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] kyrio序列化123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051&#x2F;** * Kryo序列化类，Kryo序列化效率很高，但是只兼容 Java 语言 * * @author shuang.kou * @createTime 2020年05月13">
+<meta property="og:description" content="[TOC] 分布式RPC框架 项目描述：该项目是编写一个RPC调度框架，实现跨服务调度 使用技术：本项目使用的技术主要有Netty, Kryo , Hook 主要功能：实现了网络传输，注册中心，序列化，动态均衡，自动注销服务等功能 项目亮点：  通过Netty基于Nio的方式实现了网络传输。 通过自定义编码器解码器，使用Kryo的方式实现了数据格式的序列化。 使用Nacos方式实现服务的注册与发现">
 <meta property="og:image" content="http://aamingaa.github.io/2020/11/19/rpc%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201120101454330.png">
 <meta property="article:published_time" content="2020-11-19T12:02:38.000Z">
-<meta property="article:modified_time" content="2020-11-24T08:48:18.382Z">
+<meta property="article:modified_time" content="2020-12-14T07:47:25.868Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/11/19/rpc%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201120101454330.png">
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  14
+                  13
                 </span>
               
             </div>
@@ -413,39 +413,58 @@
 
       
         <p>[TOC]</p>
+<p><strong>分布式RPC框架</strong></p>
+<p><strong>项目描述</strong>：该项目是编写一个RPC调度框架，实现跨服务调度</p>
+<p><strong>使用技术</strong>：本项目使用的技术主要有Netty, Kryo , Hook</p>
+<p><strong>主要功能</strong>：实现了网络传输，注册中心，序列化，动态均衡，自动注销服务等功能</p>
+<p><strong>项目亮点</strong>：</p>
+<ul>
+<li>通过Netty基于Nio的方式实现了网络传输。</li>
+<li>通过自定义编码器解码器，使用Kryo的方式实现了数据格式的序列化。</li>
+<li>使用Nacos方式实现服务的注册与发现，并使用ConcurrentHashMap来重用服务。</li>
+<li>实现了随机算法和轮询算法来实现负载均衡。</li>
+<li>使用单例模式获取Runtime 对象，采用线程池的方式实现服务的注销。</li>
+<li>利用CompletableFuture来获取结果，避免使用sync方式的阻塞问题</li>
+</ul>
+<h3 id="启动过程"><a href="#启动过程" class="headerlink" title="启动过程"></a>启动过程</h3><p>客户端启动过程：我们会先new一个NettyClient的对象，这个对象有服务发现的功能，还有sendRequest发送消息的功能，接下来new一个代理方法，传入这个NettyClient对象，我们会通过代理消息发送的功能，然后在invoke方法里进行功能增强。</p>
+<p>具体功能的增强就是把我们要调用的服务具体信息包装成一个RpcRequest，里面有请求号，接口名称，调用方法名称，调用方法的参数，调用方法的参数类型，是否是心跳包</p>
+<p>接下来调用NettyClient的发送方法，返回值会封装在CompletableFuture<Respnose>里面，调用服务发现功能，根据接口的名称获取地址</Respnose></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InetSocketAddress inetSocketAddress &#x3D; serviceDiscovery.lookupService(rpcRequest.getInterfaceName());</span><br></pre></td></tr></table></figure>
+
+<p>取到地址后我们就可以根据地址，调用Netty进行发送消息，在pipeline里自定义编码器，设置心跳时间，设置解码器</p>
+<p>然后连接服务端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel &#x3D; connect(bootstrap, inetSocketAddress);</span><br></pre></td></tr></table></figure>
+
+<p>设置监听器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel.writeAndFlush(rpcRequest)</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取服务名字"><a href="#获取服务名字" class="headerlink" title="获取服务名字"></a>获取服务名字</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NacosUtil.getAllInstance(serviceName);</span><br></pre></td></tr></table></figure>
+
+<h4 id="获取服务"><a href="#获取服务" class="headerlink" title="获取服务"></a>获取服务</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadBalancer.select(instances);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return instances.get(new Random().nextInt(instances.size()));</span><br></pre></td></tr></table></figure>
+
+<h3 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS))</span><br></pre></td></tr></table></figure>
+
+<h3 id="CompletableFuture"><a href="#CompletableFuture" class="headerlink" title="CompletableFuture"></a>CompletableFuture</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);</span><br></pre></td></tr></table></figure>
+
+<p>在NettyClientHandler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unprocessedRequests.complete(msg);</span><br></pre></td></tr></table></figure>
+
+<p>在invoke方法里</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpcResponse &#x3D; completableFuture.get();</span><br></pre></td></tr></table></figure>
+
 <h3 id="kyrio序列化"><a href="#kyrio序列化" class="headerlink" title="kyrio序列化"></a>kyrio序列化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Kryo序列化类，Kryo序列化效率很高，但是只兼容 Java 语言</span><br><span class="line"> *</span><br><span class="line"> * @author shuang.kou</span><br><span class="line"> * @createTime 2020年05月13日 19:29:00</span><br><span class="line"> *&#x2F;</span><br><span class="line">@Slf4j</span><br><span class="line">public class KryoSerializer implements Serializer &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 由于 Kryo 不是线程安全的。每个线程都应该有自己的 Kryo，Input 和 Output 实例。</span><br><span class="line">     * 所以，使用 ThreadLocal 存放 Kryo 对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private final ThreadLocal&lt;Kryo&gt; kryoThreadLocal &#x3D; ThreadLocal.withInitial(() -&gt; &#123;</span><br><span class="line">        Kryo kryo &#x3D; new Kryo();</span><br><span class="line">        kryo.register(RpcResponse.class);</span><br><span class="line">        kryo.register(RpcRequest.class);</span><br><span class="line">        kryo.setReferences(true); &#x2F;&#x2F;默认值为true,是否关闭注册行为,关闭之后可能存在序列化问题，一般推荐设置为 true</span><br><span class="line">        kryo.setRegistrationRequired(false); &#x2F;&#x2F;默认值为false,是否关闭循环引用，可以提高性能，但是一般不推荐设置为 true</span><br><span class="line">        return kryo;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public byte[] serialize(Object obj) &#123;</span><br><span class="line">        try (ByteArrayOutputStream byteArrayOutputStream &#x3D; new ByteArrayOutputStream();</span><br><span class="line">             Output output &#x3D; new Output(byteArrayOutputStream)) &#123;</span><br><span class="line">            Kryo kryo &#x3D; kryoThreadLocal.get();</span><br><span class="line">            &#x2F;&#x2F; Object-&gt;byte:将对象序列化为byte数组</span><br><span class="line">            kryo.writeObject(output, obj);</span><br><span class="line">            kryoThreadLocal.remove();</span><br><span class="line">            return output.toBytes();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            throw new SerializeException(&quot;序列化失败&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public &lt;T&gt; T deserialize(byte[] bytes, Class&lt;T&gt; clazz) &#123;</span><br><span class="line">        try (ByteArrayInputStream byteArrayInputStream &#x3D; new ByteArrayInputStream(bytes);</span><br><span class="line">             Input input &#x3D; new Input(byteArrayInputStream)) &#123;</span><br><span class="line">            Kryo kryo &#x3D; kryoThreadLocal.get();</span><br><span class="line">            &#x2F;&#x2F; byte-&gt;Object:从byte数组中反序列化出对对象</span><br><span class="line">            Object o &#x3D; kryo.readObject(input, clazz);</span><br><span class="line">            kryoThreadLocal.remove();</span><br><span class="line">            return clazz.cast(o);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            throw new SerializeException(&quot;反序列化失败&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="Netty"><a href="#Netty" class="headerlink" title="Netty"></a>Netty</h3><h4 id="自定义协议与编解码器"><a href="#自定义协议与编解码器" class="headerlink" title="自定义协议与编解码器"></a>自定义协议与编解码器</h4><p>在传输过程中，我们可以在发送的数据上加上各种必要的数据，形成自定义的协议，而自动加上这个数据就是编码器的工作，解析数据获得原始数据就是解码器的工作。</p>
 <p>我们定义的协议是这样的：</p>
 <p><img src="/2020/11/19/rpc%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201120101454330.png" alt="image-20201120101454330"></p>
 <p>首先是 4 字节魔数，表识一个协议包。接着是 Package Type，标明这是一个调用请求还是调用响应，Serializer Type 标明了实际数据使用的序列化器，这个服务端和客户端应当使用统一标准；Data Length 就是实际数据的长度，设置这个字段主要防止<strong>粘包</strong>，最后就是经过序列化后的实际数据，可能是 RpcRequest 也可能是 RpcResponse 经过序列化后的字节，取决于 Package Type。</p>
-<h4 id="NettyServerHandler-和-NettyClientHandler"><a href="#NettyServerHandler-和-NettyClientHandler" class="headerlink" title="NettyServerHandler 和 NettyClientHandler"></a>NettyServerHandler 和 NettyClientHandler</h4><p>NettyServerHandler 和 NettyClientHandler 都分别位于服务器端和客户端责任链的尾部，直接和 RpcServer 对象或 RpcClient 对象打交道，而无需关心字节序列的情况。</p>
-<p>NettyServerhandler 用于接收 RpcRequest，并且执行调用，将调用结果返回封装成 RpcResponse 发送出去。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class NettyServerHandler extends SimpleChannelInboundHandler&lt;RpcRequest&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private static final Logger logger &#x3D; LoggerFactory.getLogger(NettyServerHandler.class);</span><br><span class="line">    private static RequestHandler requestHandler;</span><br><span class="line">    private static ServiceRegistry serviceRegistry;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        requestHandler &#x3D; new RequestHandler();</span><br><span class="line">        serviceRegistry &#x3D; new DefaultServiceRegistry();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            logger.info(&quot;服务器接收到请求: &#123;&#125;&quot;, msg);</span><br><span class="line">            String interfaceName &#x3D; msg.getInterfaceName();</span><br><span class="line">            Object service &#x3D; serviceRegistry.getService(interfaceName);</span><br><span class="line">            Object result &#x3D; requestHandler.handle(msg, service);</span><br><span class="line">            ChannelFuture future &#x3D; ctx.writeAndFlush(RpcResponse.success(result));</span><br><span class="line">            future.addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            ReferenceCountUtil.release(msg);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception &#123;</span><br><span class="line">        logger.error(&quot;处理过程调用时有错误发生:&quot;);</span><br><span class="line">        cause.printStackTrace();</span><br><span class="line">        ctx.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception &#123;</span><br><span class="line">    out.writeInt(MAGIC_NUMBER);</span><br><span class="line">    if (msg instanceof RpcRequest) &#123;</span><br><span class="line">        out.writeInt(PackageType.REQUEST_PACK.getCode());</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        out.writeInt(PackageType.RESPONSE_PACK.getCode());</span><br><span class="line">    &#125;</span><br><span class="line">    out.writeInt(serializer.getCode());</span><br><span class="line">    byte[] bytes &#x3D; serializer.serialize(msg);</span><br><span class="line">    out.writeInt(bytes.length);</span><br><span class="line">    out.writeBytes(bytes);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>NettyClientHandler</p>
-<p>public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {</RpcResponse></p>
-<pre><code>private static final Logger logger = LoggerFactory.getLogger(NettyClientHandler.class);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CommonEncoder extends MessageToByteEncoder</span><br></pre></td></tr></table></figure>
 
-@Override
-protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
-    try {
-        logger.info(String.format(&quot;客户端接收到消息: %s&quot;, msg));
-        AttributeKey&lt;RpcResponse&gt; key = AttributeKey.valueOf(&quot;rpcResponse&quot;);
-        ctx.channel().attr(key).set(msg);
-        ctx.channel().close();
-    } finally {
-        ReferenceCountUtil.release(msg);
-    }
-}
-
-@Override
-public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    logger.error(&quot;过程调用时有错误发生:&quot;);
-    cause.printStackTrace();
-    ctx.close();
-}
-}</code></pre><h3 id="汇总"><a href="#汇总" class="headerlink" title="汇总"></a>汇总</h3><p>对于Server端来说，先初始化一个服务(HelloService),再启动一个NettyServer</p>
+<h4 id="NettyServerHandler-和-NettyClientHandler"><a href="#NettyServerHandler-和-NettyClientHandler" class="headerlink" title="NettyServerHandler 和 NettyClientHandler"></a>NettyServerHandler 和 NettyClientHandler</h4><h3 id="汇总"><a href="#汇总" class="headerlink" title="汇总"></a>汇总</h3><p>对于Server端来说，先初始化一个服务(HelloService),再启动一个NettyServer</p>
 <ul>
 <li><p>这个NettyServer会在构造器里初始化 host、port和serviceRegistry方法以及serviceProvider方法。前者是Nacos服务注册中心，用于向nacos注册和获取服务，后者是本地保存和提供服务实例对象</p>
 </li>
@@ -457,9 +476,18 @@ public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws E
 <h4 id="NacosServiceRegistry"><a href="#NacosServiceRegistry" class="headerlink" title="NacosServiceRegistry"></a>NacosServiceRegistry</h4><p>静态代码块li向nacos进行注册</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void register(String serviceName, InetSocketAddress inetSocketAddress) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        namingService.registerInstance(serviceName, inetSocketAddress.getHostName(), inetSocketAddress.getPort());&#x2F;&#x2F;top.guoziyang.rpc.api.HelloService</span><br><span class="line">    &#125; catch (NacosException e) &#123;</span><br><span class="line">        logger.error(&quot;注册服务时有错误发生:&quot;, e);</span><br><span class="line">        throw new RpcException(RpcError.REGISTER_SERVICE_FAILED);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="ServiceProviderImpl"><a href="#ServiceProviderImpl" class="headerlink" title="ServiceProviderImpl"></a>ServiceProviderImpl</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private static final Map&lt;String, Object&gt; serviceMap &#x3D; new ConcurrentHashMap&lt;&gt;();</span><br><span class="line">private static final Set&lt;String&gt; registeredService &#x3D; ConcurrentHashMap.newKeySet();</span><br><span class="line">addServiceProvider(T service)</span><br><span class="line">getServiceProvider(String serviceName)</span><br></pre></td></tr></table></figure>
+<h4 id="ServiceProviderImpl-默认的服务注册表，保存服务端本地服务"><a href="#ServiceProviderImpl-默认的服务注册表，保存服务端本地服务" class="headerlink" title="ServiceProviderImpl(默认的服务注册表，保存服务端本地服务)"></a>ServiceProviderImpl(默认的服务注册表，保存服务端本地服务)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private static final Map&lt;String, Object&gt; serviceMap &#x3D; new ConcurrentHashMap&lt;&gt;();</span><br><span class="line">private static final Set&lt;String&gt; registeredService &#x3D; ConcurrentHashMap.newKeySet();</span><br><span class="line">addServiceProvider(T service)</span><br><span class="line">getServiceProvider(String serviceName)</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; void addServiceProvider(T service) &#123;</span><br><span class="line">       String serviceName &#x3D; service.getClass().getCanonicalName();&#x2F;&#x2F;top.guoziyang.test.HelloServiceImpl</span><br><span class="line">       if (registeredService.contains(serviceName)) return;</span><br><span class="line">       registeredService.add(serviceName);</span><br><span class="line">       Class&lt;?&gt;[] interfaces &#x3D; service.getClass().getInterfaces();</span><br><span class="line">       if (interfaces.length &#x3D;&#x3D; 0) &#123;</span><br><span class="line">           throw new RpcException(RpcError.SERVICE_NOT_IMPLEMENT_ANY_INTERFACE);</span><br><span class="line">       &#125;</span><br><span class="line">       for (Class&lt;?&gt; i : interfaces) &#123;</span><br><span class="line">           serviceMap.put(i.getCanonicalName(), service);</span><br><span class="line">       &#125;</span><br><span class="line">       logger.info(&quot;向接口: &#123;&#125; 注册服务: &#123;&#125;&quot;, interfaces, serviceName);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>向registeredService  集合添加服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">registeredService.add(serviceName);</span><br></pre></td></tr></table></figure>
+
+<p>向serviceMap里放入服务的名字和具体的服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serviceMap.put(serviceName, service);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public &lt;T&gt; void addServiceProvider(T service, Class&lt;T&gt; serviceClass) &#123;</span><br><span class="line">    String serviceName &#x3D; serviceClass.getCanonicalName();</span><br><span class="line">    if (registeredService.contains(serviceName)) return;</span><br><span class="line">    registeredService.add(serviceName);</span><br><span class="line">    serviceMap.put(serviceName, service);</span><br><span class="line">    logger.info(&quot;向接口: &#123;&#125; 注册服务: &#123;&#125;&quot;, service.getClass().getInterfaces(), serviceName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="NacosServiceRegistry-1"><a href="#NacosServiceRegistry-1" class="headerlink" title="NacosServiceRegistry"></a>NacosServiceRegistry</h3><p>调用NacosUtil的方法进行服务发布</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NacosUtil.registerService(serviceName, inetSocketAddress);</span><br></pre></td></tr></table></figure>
 
 <h4 id="NettyServerhandler"><a href="#NettyServerhandler" class="headerlink" title="NettyServerhandler"></a>NettyServerhandler</h4><p>初始化一个线程池,线程池里调用requestHandler，这个requestHandler用于处理客户端传过来的rpcRequest, 通过serviceProvider和传过来的rpcRequest的接口，返回一个服务，并返回相应的结果。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">requestHandler.handle(msg);</span><br></pre></td></tr></table></figure>
@@ -468,60 +496,14 @@ public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws E
 <p>这个requestHandler通过本地的serviceProvider来处理信息，</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object service &#x3D; serviceProvider.getServiceProvider(rpcRequest.getInterfaceName());</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public Object getServiceProvider(String serviceName) &#123;</span><br><span class="line">       Object service &#x3D; serviceMap.get(serviceName);</span><br><span class="line">       if (service &#x3D;&#x3D; null) &#123;</span><br><span class="line">           throw new RpcException(RpcError.SERVICE_NOT_FOUND);</span><br><span class="line">       &#125;</span><br><span class="line">       return service;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
 <p>通过反射来获取相应的方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">method &#x3D; service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Method method &#x3D; service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());</span><br><span class="line">result &#x3D; method.invoke(service, rpcRequest.getParameters());</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h3 id="对于Client端来说"><a href="#对于Client端来说" class="headerlink" title="对于Client端来说"></a>对于Client端来说</h3><p>新建一个NettyClient,在构造器里初始化NacosServiceRegistry()，然后通过动态代理生成一个HelloService.class的对象，把client传入RpcClientProxy,这个helloService在调用hello方法的时候，会生成一个RpcRequest，并调用sendRequest把rpcRequest发送出去。</p>
-<p>这个sendRequest会根据serviceRegistry.lookupService,来获取相应的ip地址，并通过ChannelProvider来获取Channel对象，这个ChannelProvider来连接服务器</p>
-<p>调用Bootstrap的connect连接，返回ChannelFuture.channel，返回一个futureChannel，通过 <code>Channel</code> 向服务端发送消息<code>RpcRequest</code></p>
-<p>发送成功后，阻塞等待 ，直到<code>Channel</code>关闭，拿到服务端返回的结果 <code>RpcResponse</code>    AttributeKey</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ChannelFuture f &#x3D; b.connect(host, port).sync();</span><br><span class="line">logger.info(&quot;client connect  &#123;&#125;&quot;, host + &quot;:&quot; + port);</span><br><span class="line">Channel futureChannel &#x3D; f.channel();</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ChannelHandlerContext</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">            if (futureChannel !&#x3D; null) &#123;</span><br><span class="line">                futureChannel.writeAndFlush(rpcRequest).addListener(future -&gt; &#123;</span><br><span class="line">                  ...</span><br><span class="line">                &#125;);</span><br><span class="line">                futureChannel.closeFuture().sync();</span><br><span class="line">...</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AttributeKey&lt;RpcResponse&gt; key &#x3D; AttributeKey.valueOf(&quot;rpcResponse&quot;);</span><br><span class="line">return futureChannel.attr(key).get();</span><br></pre></td></tr></table></figure>
-
-<h4 id="本地注册"><a href="#本地注册" class="headerlink" title="本地注册"></a>本地注册</h4><h4 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h4><ul>
-<li><p>获取服务名字: top.guoziyang.test.HelloServiceImpl</p>
-</li>
-<li><p>判断名字是否在列表中，在的话说明已经注册过，返回</p>
-</li>
-<li><p>加到服务列表，迭代遍历，获取这个服务的接口</p>
-</li>
-<li><p>在map里加入接口名字和服务名</p>
-<p>  public class ServiceProviderImpl implements ServiceProvider {</p>
-<pre><code>private static final Logger logger = LoggerFactory.getLogger(ServiceProviderImpl.class);
-
-private static final Map&lt;String, Object&gt; serviceMap = new ConcurrentHashMap&lt;&gt;();
-private static final Set&lt;String&gt; registeredService = ConcurrentHashMap.newKeySet();
-
-@Override
-public &lt;T&gt; void addServiceProvider(T service) {
-    String serviceName = service.getClass().getCanonicalName();//top.guoziyang.test.HelloServiceImpl
-    if (registeredService.contains(serviceName)) return;
-    registeredService.add(serviceName);
-    Class&lt;?&gt;[] interfaces = service.getClass().getInterfaces();
-    if (interfaces.length == 0) {
-        throw new RpcException(RpcError.SERVICE_NOT_IMPLEMENT_ANY_INTERFACE);
-    }
-    for (Class&lt;?&gt; i : interfaces) {
-        serviceMap.put(i.getCanonicalName(), service);//top.guoziyang.test.HelloService
-    }
-    logger.info(&quot;向接口: {} 注册服务: {}&quot;, interfaces, serviceName);
-}
-
-@Override
-public Object getServiceProvider(String serviceName) {
-    Object service = serviceMap.get(serviceName);
-    if (service == null) {
-        throw new RpcException(RpcError.SERVICE_NOT_FOUND);
-    }
-    return service;
-}</code></pre><p>  }</p>
-<h3 id="服务自动注销"><a href="#服务自动注销" class="headerlink" title="服务自动注销"></a>服务自动注销</h3></li>
-</ul>
-<p>注销的方法</p>
+<h3 id="服务自动注销"><a href="#服务自动注销" class="headerlink" title="服务自动注销"></a>服务自动注销</h3><p>注销的方法</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class NacosUtil &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    public static NamingService getNacosNamingService() </span><br><span class="line"></span><br><span class="line">    public static void registerService(String serviceName, InetSocketAddress address) </span><br><span class="line"></span><br><span class="line">    public static List&lt;Instance&gt; getAllInstance(String serviceName) </span><br><span class="line"></span><br><span class="line">    public static void clearRegistry() &#123;</span><br><span class="line">        if(!serviceNames.isEmpty() &amp;&amp; address !&#x3D; null) &#123;</span><br><span class="line">            String host &#x3D; address.getHostName();</span><br><span class="line">            int port &#x3D; address.getPort();</span><br><span class="line">            Iterator&lt;String&gt; iterator &#x3D; serviceNames.iterator();</span><br><span class="line">            while(iterator.hasNext()) &#123;</span><br><span class="line">                String serviceName &#x3D; iterator.next();</span><br><span class="line">                try &#123;</span><br><span class="line">                    namingService.deregisterInstance(serviceName, host, port);</span><br><span class="line">                &#125; catch (NacosException e) &#123;</span><br><span class="line">                    logger.error(&quot;注销服务 &#123;&#125; 失败&quot;, serviceName, e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>钩子</p>
@@ -692,7 +674,7 @@ public Object getServiceProvider(String serviceName) {
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">212</span>
+                  <span class="site-state-item-count">214</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -751,7 +733,7 @@ public Object getServiceProvider(String serviceName) {
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#kyrio序列化"><span class="nav-number">1.</span> <span class="nav-text">kyrio序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty"><span class="nav-number">2.</span> <span class="nav-text">Netty</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义协议与编解码器"><span class="nav-number">2.1.</span> <span class="nav-text">自定义协议与编解码器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NettyServerHandler-和-NettyClientHandler"><span class="nav-number">2.2.</span> <span class="nav-text">NettyServerHandler 和 NettyClientHandler</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#汇总"><span class="nav-number">3.</span> <span class="nav-text">汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NacosServiceRegistry"><span class="nav-number">3.1.</span> <span class="nav-text">NacosServiceRegistry</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ServiceProviderImpl"><span class="nav-number">3.2.</span> <span class="nav-text">ServiceProviderImpl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NettyServerhandler"><span class="nav-number">3.3.</span> <span class="nav-text">NettyServerhandler</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对于Client端来说"><span class="nav-number">4.</span> <span class="nav-text">对于Client端来说</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#本地注册"><span class="nav-number">4.1.</span> <span class="nav-text">本地注册</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注册"><span class="nav-number">4.2.</span> <span class="nav-text">注册</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务自动注销"><span class="nav-number">5.</span> <span class="nav-text">服务自动注销</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#负载均衡策略"><span class="nav-number">6.</span> <span class="nav-text">负载均衡策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务自动注册"><span class="nav-number">7.</span> <span class="nav-text">服务自动注册</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义注解"><span class="nav-number"></span> <span class="nav-text">定义注解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#工具类ReflectUtil"><span class="nav-number">0.1.</span> <span class="nav-text">工具类ReflectUtil</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描服务"><span class="nav-number">1.</span> <span class="nav-text">扫描服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开启自动注册并测试"><span class="nav-number"></span> <span class="nav-text">开启自动注册并测试</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动过程"><span class="nav-number">1.</span> <span class="nav-text">启动过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取服务名字"><span class="nav-number">2.</span> <span class="nav-text">获取服务名字</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取服务"><span class="nav-number">2.1.</span> <span class="nav-text">获取服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#心跳机制"><span class="nav-number">3.</span> <span class="nav-text">心跳机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CompletableFuture"><span class="nav-number">4.</span> <span class="nav-text">CompletableFuture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kyrio序列化"><span class="nav-number">5.</span> <span class="nav-text">kyrio序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty"><span class="nav-number">6.</span> <span class="nav-text">Netty</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义协议与编解码器"><span class="nav-number">6.1.</span> <span class="nav-text">自定义协议与编解码器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NettyServerHandler-和-NettyClientHandler"><span class="nav-number">6.2.</span> <span class="nav-text">NettyServerHandler 和 NettyClientHandler</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#汇总"><span class="nav-number">7.</span> <span class="nav-text">汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NacosServiceRegistry"><span class="nav-number">7.1.</span> <span class="nav-text">NacosServiceRegistry</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ServiceProviderImpl-默认的服务注册表，保存服务端本地服务"><span class="nav-number">7.2.</span> <span class="nav-text">ServiceProviderImpl(默认的服务注册表，保存服务端本地服务)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NacosServiceRegistry-1"><span class="nav-number">8.</span> <span class="nav-text">NacosServiceRegistry</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NettyServerhandler"><span class="nav-number">8.1.</span> <span class="nav-text">NettyServerhandler</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务自动注销"><span class="nav-number">9.</span> <span class="nav-text">服务自动注销</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#负载均衡策略"><span class="nav-number">10.</span> <span class="nav-text">负载均衡策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务自动注册"><span class="nav-number">11.</span> <span class="nav-text">服务自动注册</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义注解"><span class="nav-number"></span> <span class="nav-text">定义注解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#工具类ReflectUtil"><span class="nav-number">0.1.</span> <span class="nav-text">工具类ReflectUtil</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描服务"><span class="nav-number">1.</span> <span class="nav-text">扫描服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开启自动注册并测试"><span class="nav-number"></span> <span class="nav-text">开启自动注册并测试</span></a></div>
             
 
           </div>
@@ -801,7 +783,7 @@ public Object getServiceProvider(String serviceName) {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共355k字</span>
+  <span class="post-count">博客全站共353.6k字</span>
 </div>
 
         

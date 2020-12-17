@@ -105,6 +105,8 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/30/1739da6ae014913d?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/30/1739da6ae08fb489?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/7/30/1739da6b451b7570?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://private.codecogs.com/gif.latex?2%5E%7Bn%7D">
+<meta property="og:image" content="https://private.codecogs.com/gif.latex?2%5E%7Bn%7D">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758921c661d?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200413141708514.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9mZW5nMTAzMzAxMTE=,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200413191759762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9mZW5nMTAzMzAxMTE=,size_16,color_FFFFFF,t_70">
@@ -118,7 +120,7 @@
 <meta property="og:image" content="https://img-blog.csdn.net/20160412202104618">
 <meta property="og:image" content="https://img-blog.csdn.net/20160412202419032">
 <meta property="article:published_time" content="2020-10-24T02:34:07.000Z">
-<meta property="article:modified_time" content="2020-12-06T05:48:22.595Z">
+<meta property="article:modified_time" content="2020-12-14T01:52:54.896Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/6/11/16b44758550e143b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -406,7 +408,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  9.6k
+                  10.5k
                 </span>
               
 
@@ -422,7 +424,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  36
+                  39
                 </span>
               
             </div>
@@ -692,6 +694,44 @@
 <p><img src="https://user-gold-cdn.xitu.io/2020/7/30/1739da6b451b7570?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Redis五种数据类型"></p>
 <p>因为 dictEntry 节点组成的链表没有指向链表表尾的指针， 所以为了速度考虑， 程序总是将新节点添加到链表的表头位置（复杂度为 O(1)）， 排在其他已有节点的前面。</p>
 <h4 id="3-rehash"><a href="#3-rehash" class="headerlink" title="3.rehash"></a>3.rehash</h4><p>rehash 操作不是一次性完成，而是采用渐进方式，这是为了避免一次性执行过多的 rehash 操作给服务器带来过大<br>的负担。<br>渐进式 rehash 通过记录 dict 的 rehashidx 完成，它从 0 开始，然后每执行一次 rehash 都会递增。例如在一次<br>rehash 中，要把 dict[0] rehash 到 dict[1]，这一次会把 dict[0] 上 table[rehashidx] 的键值对 rehash 到 dict[1]<br>上，dict[0] 的 table[rehashidx] 指向 null，并令 rehashidx++。<br>在 rehash 期间，每次对字典执行添加、删除、查找或者更新操作时，都会执行一次渐进式 rehash。<br>采用渐进式 rehash 会导致字典中的数据分散在两个 dictht 上，因此对字典的查找操作也需要到对应的 dictht 去执<br>行。</p>
+<h4 id="4-扩容或者缩容"><a href="#4-扩容或者缩容" class="headerlink" title="4. 扩容或者缩容"></a>4. 扩容或者缩容</h4><ul>
+<li>随着操作的不断执行，哈希表保存的键值对会<strong>逐渐地增多或者减少</strong>，为了让哈希表的<strong>负载因子（load factor）</strong>维持在一个合理的范围之内，当哈希表保存的键值对数量太多或者太少时，程序需要对哈希表的大小进行相应的扩展或者收缩</li>
+<li>扩展和收缩哈希表的工作可以</li>
+</ul>
+<blockquote>
+<h3 id="哈希表的自动扩展与收缩"><a href="#哈希表的自动扩展与收缩" class="headerlink" title="哈希表的自动扩展与收缩"></a>哈希表的自动扩展与收缩</h3><ul>
+<li><p>当以下条件中的任意一个被满足时，程序</p>
+<p><strong>会自动开始对哈希表执行扩展操作：</strong></p>
+<ul>
+<li>①服务器目前没有在执行BGSAVE命令或者BGREWRITEAOF命令，并且哈希表的负载因子大于等于1</li>
+<li>②服务器目前正在执行BGSAVE命令或者BGREWRITEAOF命令，并且哈希表的负载因子大于等于5</li>
+</ul>
+</li>
+<li><p>其中哈希表的<strong><em>\</em>负载因子可以通过下列公式得出：**</strong></p>
+</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#负载因子= 哈希表已保存节点数量/哈希表大小</span><br><span class="line">load_factor = ht[<span class="number">0</span>].used/ht[<span class="number">0</span>].size</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>例如，对于一个大小为4，包含4个键值对的哈希表来说，这个哈希表的负载因子为：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load_factor = <span class="number">4</span>/<span class="number">4</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>又例如，对于一个大小为512，包含256个键值对的哈希表来说，这个哈希表的负载因子为：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load_factor = <span class="number">256</span>/<span class="number">512</span>=<span class="number">0.5</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>根据BGSAVE命令或BGREWRITEAOF命令是否正在执行，服务器执行扩展操作所需的负载因子并不相同，这是因为在执行BGSAVE命令或BGREWRITEAOF命令的过程中，Redis 需要创建当前服务器进程的子进程，而大多数操作系统都采用写时复制（copy-on-write）技 术来优化子进程的使用效率，所以在子进程存在期间，服务器会提高执行扩展操作所需的负 载因子，从而尽可能地避免在子进程存在期间进行哈希表扩展操作，这可以避免不必要的内 存写入操作，最大限度地节约内存</li>
+<li>另一方面，当哈希表的负载因子小于0.1时，程序自动开始对哈希表执行收缩操作</li>
+</ul>
+</blockquote>
+<p>如果执行的是扩展操作，那么ht[1]的大小为第一个大于等于ht[0].used*2的<img src="https://private.codecogs.com/gif.latex?2%5E%7Bn%7D" alt="2^{n}">（2的n次方幂）； ·如果执行的是收缩操作，那么ht[1]的大小为第一个大于等于ht[0].used的<img src="https://private.codecogs.com/gif.latex?2%5E%7Bn%7D" alt="2^{n}"></p>
+<h4 id="5-渐进式rehash执行期间的哈希表操作"><a href="#5-渐进式rehash执行期间的哈希表操作" class="headerlink" title="5.渐进式rehash执行期间的哈希表操作"></a>5.渐进式rehash执行期间的哈希表操作</h4><ul>
+<li>因为在进行渐进式rehash的过程中，字典会同时使用ht[0]和ht[1]两个哈希表，所以在渐 进式rehash进行期间，字典的删除（delete）、查找（find）、更新（update）等操作会在两 个哈希表上进行。例如，要在字典里面查找一个键的话，程序会先在ht[0]里面进行查找，如 果没找到的话，就会继续到ht[1]里面进行查找，诸如此类</li>
+<li>另外，在渐进式rehash执行期间，新添加到字典的键值对一律会被保存到ht[1]里面，而 ht[0]则不再进行任何添加操作，这一措施保证了ht[0]包含的键值对数量会只减不增，并随着 rehash操作的执行而最终变成空表</li>
+</ul>
 <h2 id="四、要点总结"><a href="#四、要点总结" class="headerlink" title="四、要点总结"></a>四、要点总结</h2><blockquote>
 <p>1.字典 ht 属性是包含两个哈希表项的数组，一般情况下， 字典只使用 ht[0]， ht[1] 哈希表只会在对 ht[0] 哈希表进行 rehash (下节分析) 时使用</p>
 </blockquote>
@@ -931,7 +971,7 @@ typedef struct zskiplist {
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">212</span>
+                  <span class="site-state-item-count">214</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -990,7 +1030,7 @@ typedef struct zskiplist {
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Redis的数据模型"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Redis支持的数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis支持的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-string字符串"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 string字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#raw类型和embstr类型对比"><span class="nav-number">2.1.1.</span> <span class="nav-text">raw类型和embstr类型对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-List"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 List</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ziplist-压缩列表"><span class="nav-number">2.2.1.</span> <span class="nav-text">ziplist 压缩列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#双端列表（linkedlist）"><span class="nav-number">2.2.2.</span> <span class="nav-text">双端列表（linkedlist）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速列表（quicklist）"><span class="nav-number">2.2.3.</span> <span class="nav-text">快速列表（quicklist）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Hash"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Hash</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis中的字典"><span class="nav-number">2.3.1.</span> <span class="nav-text">Redis中的字典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现分析"><span class="nav-number">2.3.2.</span> <span class="nav-text">实现分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希表结构"><span class="nav-number">2.3.3.</span> <span class="nav-text">1.哈希表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-哈希表节点"><span class="nav-number">2.3.4.</span> <span class="nav-text">2.哈希表节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-字典结构实现"><span class="nav-number">2.3.5.</span> <span class="nav-text">3.字典结构实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哈希表分析"><span class="nav-number">2.3.6.</span> <span class="nav-text">哈希表分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希算法"><span class="nav-number">2.3.7.</span> <span class="nav-text">1.哈希算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-键冲突解决"><span class="nav-number">2.3.8.</span> <span class="nav-text">2.键冲突解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-rehash"><span class="nav-number">2.3.9.</span> <span class="nav-text">3.rehash</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、要点总结"><span class="nav-number">3.</span> <span class="nav-text">四、要点总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Set"><span class="nav-number">3.1.</span> <span class="nav-text">2.4 Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Zset"><span class="nav-number">3.2.</span> <span class="nav-text">2.5 Zset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跳跃表的实现"><span class="nav-number">3.3.</span> <span class="nav-text">跳跃表的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#跳跃表"><span class="nav-number">3.3.1.</span> <span class="nav-text">跳跃表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Redis的数据模型"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Redis支持的数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis支持的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-string字符串"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 string字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#raw类型和embstr类型对比"><span class="nav-number">2.1.1.</span> <span class="nav-text">raw类型和embstr类型对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-List"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 List</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ziplist-压缩列表"><span class="nav-number">2.2.1.</span> <span class="nav-text">ziplist 压缩列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#双端列表（linkedlist）"><span class="nav-number">2.2.2.</span> <span class="nav-text">双端列表（linkedlist）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速列表（quicklist）"><span class="nav-number">2.2.3.</span> <span class="nav-text">快速列表（quicklist）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Hash"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Hash</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis中的字典"><span class="nav-number">2.3.1.</span> <span class="nav-text">Redis中的字典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现分析"><span class="nav-number">2.3.2.</span> <span class="nav-text">实现分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希表结构"><span class="nav-number">2.3.3.</span> <span class="nav-text">1.哈希表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-哈希表节点"><span class="nav-number">2.3.4.</span> <span class="nav-text">2.哈希表节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-字典结构实现"><span class="nav-number">2.3.5.</span> <span class="nav-text">3.字典结构实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哈希表分析"><span class="nav-number">2.3.6.</span> <span class="nav-text">哈希表分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-哈希算法"><span class="nav-number">2.3.7.</span> <span class="nav-text">1.哈希算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-键冲突解决"><span class="nav-number">2.3.8.</span> <span class="nav-text">2.键冲突解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-rehash"><span class="nav-number">2.3.9.</span> <span class="nav-text">3.rehash</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-扩容或者缩容"><span class="nav-number">2.3.10.</span> <span class="nav-text">4. 扩容或者缩容</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希表的自动扩展与收缩"><span class="nav-number">2.4.</span> <span class="nav-text">哈希表的自动扩展与收缩</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-渐进式rehash执行期间的哈希表操作"><span class="nav-number">2.4.1.</span> <span class="nav-text">5.渐进式rehash执行期间的哈希表操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、要点总结"><span class="nav-number">3.</span> <span class="nav-text">四、要点总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Set"><span class="nav-number">3.1.</span> <span class="nav-text">2.4 Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Zset"><span class="nav-number">3.2.</span> <span class="nav-text">2.5 Zset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跳跃表的实现"><span class="nav-number">3.3.</span> <span class="nav-text">跳跃表的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#跳跃表"><span class="nav-number">3.3.1.</span> <span class="nav-text">跳跃表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
@@ -1040,7 +1080,7 @@ typedef struct zskiplist {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共355k字</span>
+  <span class="post-count">博客全站共353.6k字</span>
 </div>
 
         
