@@ -85,14 +85,15 @@
 <meta property="og:url" content="http://aamingaa.github.io/2020/05/31/%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9D%A2%E8%AF%95%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] STW在垃圾回收过程中经常涉及到对对象的挪动（比如上文提到的对象在Survivor 0和Survivor 1之间的复制），进而导致需要对对象引用进行更新。为了保证引用更新的正确性，Java将暂停所有其他的线程，这种情况被称为“Stop-The-World”，导致系统全局停顿 JDBC和双亲委派模型关系JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1295451/201808/1295451-20180813215247162-2020433549.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190628122703735.png">
 <meta property="og:image" content="https://images2015.cnblogs.com/blog/285763/201611/285763-20161118115316810-1826109116.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/blog/285763/201912/285763-20191205135008326-1042628756.png">
 <meta property="article:published_time" content="2020-05-31T02:10:13.000Z">
-<meta property="article:modified_time" content="2020-11-19T02:23:26.341Z">
+<meta property="article:modified_time" content="2020-12-20T02:04:25.329Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190628122703735.png">
+<meta name="twitter:image" content="https://images2018.cnblogs.com/blog/1295451/201808/1295451-20180813215247162-2020433549.png">
 
 
 
@@ -377,7 +378,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.3k
+                  2.4k
                 </span>
               
 
@@ -431,16 +432,15 @@
 <li>CMS收集器提供了一个-XX：+UseCMS-CompactAtFullCollection开关参数（默认是开启的，此参数从<br>JDK 9开始废弃），用于在CMS收集器不得不进行Full GC时开启内存碎片的合并整理过程，由于这个<br>内存整理必须移动存活对象，（在Shenandoah和ZGC出现前）是无法并发的。这样空间碎片问题是解<br>决了，但停顿时间又会变长，因此虚拟机设计者们还提供了另外一个参数-XX：CMSFullGCsBefore-<br>Compaction（此参数从JDK 9开始废弃），这个参数的作用是要求CMS收集器在执行过若干次（数量<br>由参数值决定）不整理空间的Full GC之后，下一次进入Full GC前会先进行碎片整理（默认值为0，表<br>示每次进入Full GC时都进行碎片整理）。</li>
 </ul>
 </blockquote>
-<h3 id="new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"><a href="#new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程" class="headerlink" title="new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"></a>new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程</h3><p>（回答会把创建的实例对象放到堆内存区域，然后再把指向对象的内存地址赋值给符号引用，让这个符号引用指向对应的堆内存区域)?</p>
+<h3 id="new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"><a href="#new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程" class="headerlink" title="new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"></a>new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程</h3><p><img src="https://images2018.cnblogs.com/blog/1295451/201808/1295451-20180813215247162-2020433549.png" alt="img"></p>
+<p>（回答会把创建的实例对象放到堆内存区域，然后再把指向对象的内存地址赋值给符号引用，让这个符号引用指向对应的堆内存区域)?</p>
 <p>如果我要设置一个内存缓冲区，让垃圾收集器不对其进行操作怎么办</p>
 <p> 代码实现每五分钟一次Minor GC，如果要FullGC呢?</p>
 <p>类加载，class.forname 和 classloader的区别，双亲委派原则。被问到不使用双亲委派原则，如何自定义java.lang.Integer会怎么样（我自定义过 java.lang.Integer，使用直接抛出异常，说包违法）。可能还是不够深入。</p>
 <p>方法区会不会 OOM</p>
-<p><strong>Class.forName 是否会初始化类</strong> （这里我智障了，振振有词地说 说不会初始化……感觉要凉。。） </p>
-<p>使用类加载器和Class.forName来获取class的时候，是否进行了初始化？</p>
-<p>实际上使用类加载器来加载class的时候，只是加载该类，没有初始化，但是Class.forName就初始化了的</p>
-<p>如果初始化一个类，首先是运行里面的静态代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package classLoader;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class A&#123;</span><br><span class="line">	public A()&#123;</span><br><span class="line">		System.out.println(&quot;创建类的时候运行这段代码&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	static&#123;</span><br><span class="line">		System.out.println(&quot;这里是类静态代码块，初始化类的时候就会运行一次&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class ClassLoaderT &#123;</span><br><span class="line">public static void main(String[] args) throws ClassNotFoundException &#123;</span><br><span class="line">	&#x2F;&#x2F;首先是获得类加载器</span><br><span class="line">	ClassLoader cl&#x3D;ClassLoader.getSystemClassLoader();</span><br><span class="line">	cl.loadClass(&quot;classLoader.A&quot;);&#x2F;&#x2F;这里根据全类名来查找这个类，所以如果只是输入&quot;A&quot;就会报错。</span><br><span class="line">	System.out.println(&quot;-----------------------------&quot;);</span><br><span class="line">	Class.forName(&quot;classLoader.A&quot;);这里根据全类名来查找这个类，所以如果只是输入&quot;A&quot;就会报错。</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Class-forName-是否会初始化类"><a href="#Class-forName-是否会初始化类" class="headerlink" title="Class.forName 是否会初始化类"></a><strong>Class.forName 是否会初始化类</strong></h3><p>Class.forName除了将类的.class文件加载到jvm中之外，还会对类进行解释，执行类中的static块。 b).而classloader只干一件事情，就是将.class文件加载到jvm中，不会执行static中的内容，只有在newInstance才会去执行static块。</p>
+<p>(会进行初始化)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package classLoader;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class A&#123;</span><br><span class="line">	public A()&#123;</span><br><span class="line">		System.out.println(&quot;创建类的时候运行这段代码&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	static&#123;</span><br><span class="line">		System.out.println(&quot;这里是类静态代码块，初始化类的时候就会运行一次&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class ClassLoaderT &#123;</span><br><span class="line">    public static void main(String[] args) throws ClassNotFoundException &#123;</span><br><span class="line">        &#x2F;&#x2F;首先是获得类加载器</span><br><span class="line">        ClassLoader cl&#x3D;ClassLoader.getSystemClassLoader();</span><br><span class="line">        cl.loadClass(&quot;classLoader.A&quot;);&#x2F;&#x2F;这里根据全类名来查找这个类，所以如果只是输入&quot;A&quot;就会报错。</span><br><span class="line">        System.out.println(&quot;-----------------------------&quot;);</span><br><span class="line">        Class.forName(&quot;classLoader.A&quot;);这里根据全类名来查找这个类，所以如果只是输入&quot;A&quot;就会报错。</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>控制台：</p>
 <p><img src="https://img-blog.csdnimg.cn/20190628122703735.png" alt="img"></p>
@@ -466,9 +466,48 @@
 <p>  其实到这里我心态已经崩了，只想退出面试间 😔</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">引用技术除了循环依赖问题（可以通过弱引用解决），最大的问题就是开销大，因为他要计算实时计算局部信息，导致整个系统的吞吐量降低，优点是几乎是实时的，这也从侧面说明了，吞吐量和延迟是不可兼得的，但是局部性原理和堆大小不知道跟这个有啥关系。可能是需要实时计算引用关系，导致cache平繁被刷新从而导致程序访问的时候命中率底？</span><br></pre></td></tr></table></figure>
 
-<p><strong>追问不同的类加载器加载同一个类是隔离还是共享</strong></p>
-<p>答了隔离，他大概觉得我说的没有底气，就跟我解释了为什么是隔离的（除bug）。</p>
+<h3 id="追问不同的类加载器加载同一个类是隔离还是共享"><a href="#追问不同的类加载器加载同一个类是隔离还是共享" class="headerlink" title="追问不同的类加载器加载同一个类是隔离还是共享"></a><strong>追问不同的类加载器加载同一个类是隔离还是共享</strong></h3><p>答了隔离，他大概觉得我说的没有底气，就跟我解释了为什么是隔离的（除bug）。</p>
 <p>类的全称是相同的，类加载器相同.这里的初始化可以理解为,类加载的最后一步(调用<code>&lt;clinit&gt;</code>),如果是两个不同的ClassLoad加载的话那么<code>&lt;clinit&gt;</code>会被执行两次,加载的<code>Class</code>对象在方法区(永久代),并且会对应两个<code>Class</code>对象.</p>
+<h3 id="OOM的区域"><a href="#OOM的区域" class="headerlink" title="OOM的区域"></a>OOM的区域</h3><table>
+<thead>
+<tr>
+<th>数据区</th>
+<th>线程私有</th>
+<th>作用</th>
+<th>异常</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>程序计数器</td>
+<td>是</td>
+<td>记录当前线程执行到的字节码行号</td>
+<td>无任何异常</td>
+</tr>
+<tr>
+<td>虚拟机栈</td>
+<td>是</td>
+<td>存放栈帧（方法执行时的基础数据结构，存储局部变量表等信息）以及入栈出栈</td>
+<td>StackoverflowError与OutOfMemoryError</td>
+</tr>
+<tr>
+<td>本地方法栈</td>
+<td>是</td>
+<td>与虚拟机栈类似，用于Native方法执行</td>
+<td>StackoverflowError与OutOfMemoryError</td>
+</tr>
+<tr>
+<td>堆</td>
+<td>否</td>
+<td>存放对象实例</td>
+<td>OutOfMemoryError</td>
+</tr>
+<tr>
+<td>方法区</td>
+<td>否</td>
+<td>存储已被虚拟机加载的类信息、常量、静态变量和JIT编译后的代码等数据</td>
+<td>OutOfMemoryError</td>
+</tr>
+</tbody></table>
 
       
     </div>
@@ -589,7 +628,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">214</span>
+                  <span class="site-state-item-count">217</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -648,7 +687,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#STW"><span class="nav-number">1.</span> <span class="nav-text">STW</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC和双亲委派模型关系"><span class="nav-number">2.</span> <span class="nav-text">JDBC和双亲委派模型关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数"><span class="nav-number">3.</span> <span class="nav-text">JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一次完整的gc过程"><span class="nav-number">3.0.1.</span> <span class="nav-text">一次完整的gc过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#对象晋升到老年代一共有四种情况"><span class="nav-number">3.0.2.</span> <span class="nav-text">对象晋升到老年代一共有四种情况</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cms怎么解决内存碎片的问题（full-gc）"><span class="nav-number">4.</span> <span class="nav-text">cms怎么解决内存碎片的问题（full gc）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"><span class="nav-number">5.</span> <span class="nav-text">new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Full-GC-发生的条件、怎么设置永久代和堆的大小、怎么减少-Full-GC-、JVM-调优"><span class="nav-number">6.</span> <span class="nav-text">Full GC 发生的条件、怎么设置永久代和堆的大小、怎么减少 Full GC 、JVM 调优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？"><span class="nav-number">7.</span> <span class="nav-text">为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gc引用计数法的缺点，除了循环引用，说一到两个"><span class="nav-number">8.</span> <span class="nav-text">gc引用计数法的缺点，除了循环引用，说一到两个</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#STW"><span class="nav-number">1.</span> <span class="nav-text">STW</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC和双亲委派模型关系"><span class="nav-number">2.</span> <span class="nav-text">JDBC和双亲委派模型关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-中一次完整的-GC-流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的-JVM-参数"><span class="nav-number">3.</span> <span class="nav-text">JVM 中一次完整的 GC 流程是什么样子的，对象如何晋升到老年代，说说你知道的几种主要的 JVM 参数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一次完整的gc过程"><span class="nav-number">3.0.1.</span> <span class="nav-text">一次完整的gc过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#对象晋升到老年代一共有四种情况"><span class="nav-number">3.0.2.</span> <span class="nav-text">对象晋升到老年代一共有四种情况</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cms怎么解决内存碎片的问题（full-gc）"><span class="nav-number">4.</span> <span class="nav-text">cms怎么解决内存碎片的问题（full gc）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程"><span class="nav-number">5.</span> <span class="nav-text">new一个object对象，然后再赋值给一个静态变量，然后问这个过程在JVM内存是什么个过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Class-forName-是否会初始化类"><span class="nav-number">6.</span> <span class="nav-text">Class.forName 是否会初始化类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Full-GC-发生的条件、怎么设置永久代和堆的大小、怎么减少-Full-GC-、JVM-调优"><span class="nav-number">7.</span> <span class="nav-text">Full GC 发生的条件、怎么设置永久代和堆的大小、怎么减少 Full GC 、JVM 调优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？"><span class="nav-number">8.</span> <span class="nav-text">为什么用元空间替代了永久代，元空间里面的对象是会被回收的吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gc引用计数法的缺点，除了循环引用，说一到两个"><span class="nav-number">9.</span> <span class="nav-text">gc引用计数法的缺点，除了循环引用，说一到两个</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#追问不同的类加载器加载同一个类是隔离还是共享"><span class="nav-number">10.</span> <span class="nav-text">追问不同的类加载器加载同一个类是隔离还是共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OOM的区域"><span class="nav-number">11.</span> <span class="nav-text">OOM的区域</span></a></li></ol></div>
             
 
           </div>
@@ -698,7 +737,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共353.6k字</span>
+  <span class="post-count">博客全站共357.4k字</span>
 </div>
 
         

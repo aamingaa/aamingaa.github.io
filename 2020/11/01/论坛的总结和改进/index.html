@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC]  数据库用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 id（索引）、评论实体 id（索引）、评论类型（帖子&#x2F;回复）、被评论目标 id、评论内容、评论状态（有效&#x2F;无效">
 <meta property="og:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
 <meta property="article:published_time" content="2020-11-01T02:28:23.000Z">
-<meta property="article:modified_time" content="2020-12-11T14:29:43.721Z">
+<meta property="article:modified_time" content="2020-12-22T01:37:40.269Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6.3k
+                  6.5k
                 </span>
               
 
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  28
+                  29
                 </span>
               
             </div>
@@ -767,7 +767,19 @@ private String conversationId;
 private String content;
 private int status;
 private Date createTime;
-}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 通知列表</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口中</span><br></pre></td></tr></table></figure>
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 通知列表</span><br></pre></td></tr></table></figure>
+<p> // 修改消息的状态<br>    int updateStatus(List<Integer> ids, int status);</Integer></p>
+<pre><code>// 查询某个主题下最新的通知
+Message selectLatestNotice(int userId, String topic);
+
+// 查询某个主题所包含的通知数量
+int selectNoticeCount(int userId, String topic);
+
+// 查询未读的通知的数量
+int selectNoticeUnreadCount(int userId, String topic);
+
+// 查询某个主题所包含的通知列表
+List&lt;Message&gt; selectNotices(int userId, String topic, int offset, int limit);</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在 MessageMapper 接口中</span><br></pre></td></tr></table></figure>
 <p>map.put(“unreadCount”, messageService.findLetterUnreadCount(user.getId(), message.getConversationId()));</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 新增 &#96;selectLatestNotice(int userId, String topic)&#96; 方法，查询某主题最新的通知。</span><br><span class="line">- 新增 &#96;selectNoticeCount(int userId, String topic)&#96; 方法，查询某主题通知的数量。</span><br><span class="line"></span><br><span class="line">- 新增 &#96;selectNoticeUnreadCount(int userId, String topic)&#96; 方法，查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">- 在 &#96;message-mapper.xml&#96; 配置三个方法的 sql 语句，其中查询未读通知时使用 if 动态语句，如果没有传入 topic 就查询未读总量。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中</span><br><span class="line"></span><br><span class="line">- 新增 &#96;findLatestNotice&#96; 方法，调用 &#96;selectLatestNotice&#96; 方法查询最新通知。</span><br><span class="line"></span><br><span class="line">- 新增 &#96;findNoticeCount&#96; 方法，调用 &#96;selectNoticeCount&#96; 方法查询某主题通知的数量。</span><br><span class="line">- 新增 &#96;findNoticeUnreadCount&#96; 方法，调用 &#96;selectNoticeUnreadCount&#96; 方法查询未读通知的数量。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeList&#96; 方法，获取通知列表</span><br><span class="line"></span><br><span class="line">- 调用业务层 MessageService 的方法查询评论、点赞、关注的通知，将其封装在一个 HashMap 集合中然后添加到 Model 对象里。</span><br><span class="line">- 调用业务层 MessageService 的方法查询私信和通知的总未读数量，添加到 Model 对象里。</span><br><span class="line">- 返回 &#96;notice.html&#96; 页面。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### 显示通知详情</span><br><span class="line"></span><br><span class="line">在 MessageMapper 接口新增 &#96;selectNotices&#96; 方法，查询某个主题的通知列表，在 &#96;message-mapper.xml&#96; 配置 SQL。</span><br><span class="line"></span><br><span class="line">在业务层的 MessageService 中新增 &#96;findNotices&#96; 方法，调用 &#96;selectNotices&#96; 方法。</span><br><span class="line"></span><br><span class="line">在表现层的 MessageController 中新增 &#96;getNoticeDetail&#96; 方法</span><br><span class="line"></span><br><span class="line">- 调用 &#96;findNotices&#96; 方法获取通知列表详情，封装到 List 集合并存入 Model 对象。</span><br><span class="line">- 从通知集合中获取 id 集合，调用 &#96;readMessage&#96; 方法将消息设为已读。</span><br><span class="line">- 返回 &#96;notice-detail.html&#96; 页面。</span><br></pre></td></tr></table></figure>
 <p>  2已读<br>  0未读<br>  <select id="selectNoticeCount" resulttype="int"><br>        select count(id) from message<br>        where status != 2<br>        and from_id = 1<br>        and to_id = #{userId}<br>        and conversation_id = #{topic}<br>    </select></p>
@@ -929,7 +941,13 @@ if (operations.size() == 0) {
         order by type desc, score desc, create_time desc
     &lt;/if&gt;
     limit #{offset}, #{limit}
-&lt;/select&gt;</code></pre><pre><code></code></pre>
+&lt;/select&gt;</code></pre><p>```</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>编译期和运行时注解的区别</p>
+<p>怎么样去实现一个编译型的注解</p>
+<p>注解是如何注入的（不是声明，是底层原理！）通用的逻辑注入的原理，是这样完成的</p>
+<p>lamda为什么能推导出哪个类型（参数中为什么只写x，y就够了）</p>
+<p>mybatis mapper为啥不需要实现类，jdk动态代理原理</p>
+
       
     </div>
     
@@ -1049,7 +1067,7 @@ if (operations.size() == 0) {
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">214</span>
+                  <span class="site-state-item-count">217</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1108,7 +1126,7 @@ if (operations.size() == 0) {
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">1.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册"><span class="nav-number">2.</span> <span class="nav-text">注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">3.</span> <span class="nav-text">登录</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">1.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册"><span class="nav-number">2.</span> <span class="nav-text">注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">3.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li></ol></div>
             
 
           </div>
@@ -1158,7 +1176,7 @@ if (operations.size() == 0) {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共353.6k字</span>
+  <span class="post-count">博客全站共357.4k字</span>
 </div>
 
         

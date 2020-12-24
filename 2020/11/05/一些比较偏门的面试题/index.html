@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="[TOC] Java基础计算机网络10.101.102.103是公网IP还是内网IP，如何区分公网内网？ &#x2F;&#x2F;了解中间人攻击和跨域攻击吗? &#x2F;&#x2F;可以伪造证书吗？ &#x2F;&#x2F; BBR 怎么快，怎么实现，和之前的有什么区别? 操作系统算法说一下快排的最好和最坏的时间复杂度？稳定吗？ 邻接表和邻接矩阵？ 识别2的n次方 用int值表示ip如何做（刚好32位bit一对一映射），写个伪代码做transfer 数据">
+<meta name="description" content="[TOC] Java基础枚举可以new吗 不行 私有构造 unicode与utf-8  Unicode 是「字符集」 UTF-8 是「编码规则」  UTF-16（字符用两个字节或四个字节表示）和 UTF-32（字符用四个字节表示）UTF-8 最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号 UTF-8表示最小单位1字节 GBK编码：是指中国的中文字符，其它它包含了简体">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一些比较偏门的面试题">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/05/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%81%8F%E9%97%A8%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] Java基础计算机网络10.101.102.103是公网IP还是内网IP，如何区分公网内网？ &#x2F;&#x2F;了解中间人攻击和跨域攻击吗? &#x2F;&#x2F;可以伪造证书吗？ &#x2F;&#x2F; BBR 怎么快，怎么实现，和之前的有什么区别? 操作系统算法说一下快排的最好和最坏的时间复杂度？稳定吗？ 邻接表和邻接矩阵？ 识别2的n次方 用int值表示ip如何做（刚好32位bit一对一映射），写个伪代码做transfer 数据">
+<meta property="og:description" content="[TOC] Java基础枚举可以new吗 不行 私有构造 unicode与utf-8  Unicode 是「字符集」 UTF-8 是「编码规则」  UTF-16（字符用两个字节或四个字节表示）和 UTF-32（字符用四个字节表示）UTF-8 最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号 UTF-8表示最小单位1字节 GBK编码：是指中国的中文字符，其它它包含了简体">
 <meta property="article:published_time" content="2020-11-05T03:19:28.000Z">
-<meta property="article:modified_time" content="2020-11-19T00:59:30.491Z">
+<meta property="article:modified_time" content="2020-12-20T13:57:05.850Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.7k
+                  2.8k
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  10
                 </span>
               
             </div>
@@ -411,11 +411,36 @@
 
       
         <p>[TOC]</p>
-<h3 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h3><h3 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h3><p>10.101.102.103是公网IP还是内网IP，如何区分公网内网？</p>
+<h3 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h3><p>枚举可以new吗 不行 私有构造</p>
+<p>unicode与utf-8</p>
+<ul>
+<li>Unicode 是「字符集」</li>
+<li>UTF-8 是「编码规则」</li>
+</ul>
+<p>UTF-16（字符用两个字节或四个字节表示）和 UTF-32（字符用四个字节表示）UTF-8 最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号</p>
+<p>UTF-8表示最小单位1字节</p>
+<p>GBK编码：是指中国的中文字符，其它它包含了简体中文与繁体中文字符</p>
+<p>ASCII 主要用于显示现代英语和其他西欧语言</p>
+<hr>
+<p>说说NIO是什么，为什么快</p>
+<p>5.NIO的Buffer到底是啥</p>
+<p>6.你提到NIO用到了直接内存，那直接内存在用户态还是内核态</p>
+<p>NIO介绍一下（Selector、Channel、ByteBuffer，IO多路复用，底层的select、poll、epoll（这里我只是了解，不清楚具体实现））</p>
+<p>面向对象和面向过程</p>
+<p>String，StringBuffer，StringBuilder</p>
+<p>Integer自动拆箱装箱（可能和字面量类型一块考，比如包装类的对象和字面量相加有几次拆箱装箱）什么类是final的（String，Integer等包装类）</p>
+<p>\5. 类加载过程和机制（可能在原理的基础上，结合实际的例子考察，如各种地方加了各种修饰符后new一个子类或者父类输出什么）<br>\6. 对象死亡的条件<br>\7. OOM发生的位置和解决办法</p>
+<h3 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h3><p>10.101.102.103是公网IP还是内网IP，如何区分公网内网？</p>
 <p>//了解中间人攻击和跨域攻击吗?</p>
 <p>//可以伪造证书吗？</p>
 <p>// BBR 怎么快，怎么实现，和之前的有什么区别?</p>
-<h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p>说一下快排的最好和最坏的时间复杂度？稳定吗？</p>
+<ol>
+<li>TCP 是怎么判断一个包丢了？</li>
+<li><a href="https://www.nowcoder.com/jump/super-jump/word?word=客户端" target="_blank" rel="noopener">客户端</a>向服务器发送一个包，它一直都没有收到服务器返回的 ACK，该怎么处理？</li>
+</ol>
+<p>滑动窗口大小如何确定</p>
+<h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><p>线程与协程。（协程不会）</p>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p>说一下快排的最好和最坏的时间复杂度？稳定吗？</p>
 <p>邻接表和邻接矩阵？</p>
 <p>识别2的n次方</p>
 <p>用int值表示ip如何做（刚好32位bit一对一映射），写个伪代码做transfer</p>
@@ -428,6 +453,10 @@
 <p><a href="#">复制代码</a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string wildcardname &#x3D; “smi”;&#96;&#96;list names &#x3D; mapper.selectlike(wildcardname);&#96; &#96;   &#96;&#96;select * from foo where bar like &#96;&#96;&quot;%&quot;&#96;&#96;#&#123;value&#125;&#96;&#96;&quot;%&quot;</span><br></pre></td></tr></table></figure>
 
+
+
+<p>**</p>
+<p>索引下推和索引覆盖</p>
 <p><strong>数据库中为什么不推荐使用外键约束</strong><br>电商<a href>项目</a>中数据库表不推荐外键关联，但是在被关联表中删除数据时会导致关联表中经常出现数据缺失的问题，但如果在删除数据时在业务层删除数据做关联查询来判断是否被关联使用，会导致业务层逻辑复杂，特别是被多个业务表关联，会导致多次关联查询操作，后面每次增加一个业务关联都得增加一次判断。<br>解决方案：<br>可以在关联表中增加一个被关联次数的字段，每次关联时都加1，每次取消关联都减一。</p>
 <p>讲一下char和varchar的区别？优缺点？索引用char还是varchar好？</p>
 <p>假如现在读写有10%的概率冲突，用什么隔离级别?</p>
@@ -437,15 +466,37 @@
 <p>2.md5也很长，只存前几个字符的话可能会冲突，所以可以同时存md5的前几个字符和原url，然后where md5 = ‘xxxx’ and url = ‘xxxxx’，让md5走索引。 </p>
 <p>3.自己构建哈希映射</p>
 <p>drop delete truncate 区别</p>
+<p>Mysql聚蔟索引和非聚簇索引的区别（讲了Innodb和Myisyam的区别，文件结构，和两种索引的区别）</p>
+<p>要求建立学生、课程、选课、成绩四张表，要求设计字段及相应的数据类型并建立主键</p>
 <h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>redis的跳表要实现快速查找第k小的元素怎么做</p>
-<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>linux 文件系统架构</p>
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>CAS怎么实现禁止指令重排？</p>
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>linux 文件系统架构</p>
 <p>inode 有什么信息</p>
 <p>看tw状态的进程load average 是什么，怎么看，怎么分析</p>
 <p>linux底层的零拷贝技术（<strong>经历4次 -》3次 -》2次拷贝的优化历程）</strong></p>
 <h3 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h3><p> tomcat如果有两个<a href>项目</a>，两个<a href>项目</a>里面如果有相同的class，那么tomcat是如何对其进行区别?</p>
 <p>分布式系统如何实现数据一致性</p>
-<h3 id="虚拟机？"><a href="#虚拟机？" class="headerlink" title="虚拟机？"></a>虚拟机？</h3><h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><p>单例模式，懒汉，饿汉，双重校验的优缺点</p>
-<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>登录怎么做。判断用户是否登录。</p>
+<h3 id="虚拟机？"><a href="#虚拟机？" class="headerlink" title="虚拟机？"></a>虚拟机？</h3><p>栈区内存会有垃圾回收吗？</p>
+<p>在什么情况下，Java对象不需要垃圾回收也能回收掉？</p>
+<p>类加载机制卸载条件</p>
+<p>JVM调优了解吗，OOM了怎么排查（拷贝Dump文件，使用工具查看）</p>
+<p>了解哪些工具（JvisualVM、Jprofiler、Jstack）</p>
+<p>Jmap了解吗（no）</p>
+<p>如果想把JVM内存固定为32M如何操作？（XMS、XMX同时设置）</p>
+<h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><p>单例模式，懒汉，饿汉，双重校验的优缺点</p>
+<h3 id="Netty"><a href="#Netty" class="headerlink" title="Netty"></a>Netty</h3><ol>
+<li>如何保持长连接（Netty）</li>
+<li>如何实现心跳保持（IDLE编解码器监听事件）</li>
+<li>Netty为什么快（基于NIO+零拷贝）</li>
+</ol>
+<h3 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h3><p>怎么实现透明调用的（自定义一个注解，然后在BeanPostProcesser中拦截使用了这个注解的接口，然后使用Cglib动态代理进行远程调用） </p>
+<p>如何实现异步调用的？（将Future储存起来，再新建一个线程去维护这个Future的状态）</p>
+<p>定期删除怎么做的？（服务器事件循环）</p>
+<p>你刚才说<a href="https://www.nowcoder.com/jump/super-jump/word?word=redis" target="_blank" rel="noopener">redis</a>的所有定时器是用<a href="https://www.nowcoder.com/jump/super-jump/word?word=链表" target="_blank" rel="noopener">链表</a>存储的，还知不知道别的处理方式（不确定对不对，答了quartz的定时任务是用两个队列保存的）</p>
+<p>9.Kafka的消息模型是什么<br>10.Kafka的架构是怎样的<br>11.Kafka怎样保证消息消费不重复的<br>12.Kafka、RocketMQ、RabbitMQ的区别是什么</p>
+<h3 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h3><p>同一个类中一个没有事务的 A 方法调用有事务的 B 方法，会发生什么事？如果 B 异常了，会发生什么事？从动态代理的角度给我解释</p>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>restful的设计理念、修改和删除资源的时候为什么要把id放在url里而不放在http的参数里</p>
+<p>登录怎么做。判断用户是否登录。</p>
 <p>高并发系统的限流如何实现</p>
 <p>高并发秒杀系统的设计</p>
 <p>负载均衡如何设计</p>
@@ -472,6 +523,8 @@
 
 <p>RSA 具体说说?</p>
 <p>DES 和 AES 区别?</p>
+<p>rpc 微服务？ 怎么保证数据一致？</p>
+<h3 id="算法-1"><a href="#算法-1" class="headerlink" title="算法"></a>算法</h3><p>看你一面也写了一个topk的算法，那我变一下，依然是这个场景，只不过我现在要统计字符出现的次数，拿两个or多个线程去统计，怎么做？<br>括号匹配<br>括号匹配变式：括号中有一个特殊符号<em>，这个</em>可以替代左括号或者右括号，也可以代表一个空，即什么也不代表，来做做？</p>
 
       
     </div>
@@ -592,7 +645,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">214</span>
+                  <span class="site-state-item-count">217</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -651,7 +704,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java基础"><span class="nav-number">1.</span> <span class="nav-text">Java基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机网络"><span class="nav-number">2.</span> <span class="nav-text">计算机网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统"><span class="nav-number">3.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">4.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">5.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">6.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">7.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">8.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架"><span class="nav-number">9.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机？"><span class="nav-number">10.</span> <span class="nav-text">虚拟机？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">11.</span> <span class="nav-text">设计模式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number"></span> <span class="nav-text">其他</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java基础"><span class="nav-number">1.</span> <span class="nav-text">Java基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机网络"><span class="nav-number">2.</span> <span class="nav-text">计算机网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统"><span class="nav-number">3.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">4.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">5.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">6.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">7.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">8.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架"><span class="nav-number">9.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机？"><span class="nav-number">10.</span> <span class="nav-text">虚拟机？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">11.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty"><span class="nav-number">12.</span> <span class="nav-text">Netty</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目"><span class="nav-number">13.</span> <span class="nav-text">项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring"><span class="nav-number">14.</span> <span class="nav-text">Spring</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number"></span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法-1"><span class="nav-number">1.</span> <span class="nav-text">算法</span></a></li></ol></div>
             
 
           </div>
@@ -701,7 +754,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共353.6k字</span>
+  <span class="post-count">博客全站共357.4k字</span>
 </div>
 
         
