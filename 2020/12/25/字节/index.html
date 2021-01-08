@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="字节跳动," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] Java基础java中Object类中有哪些方法，他们的作用分别是什么？ java中的多态的含义？ java常用的会抛出哪些异常类型？ 代理模式的API 集合 HashMap多线程下会有什么问题？ 基本数据类型 装箱拆箱？（-128到127） 说说String、StringBuilder和StringBuffer吧 创建一个String对象，内部怎么说？（字符串池那一套） String">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字节">
+<meta property="og:url" content="http://aamingaa.github.io/2020/12/25/%E5%AD%97%E8%8A%82/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] Java基础java中Object类中有哪些方法，他们的作用分别是什么？ java中的多态的含义？ java常用的会抛出哪些异常类型？ 代理模式的API 集合 HashMap多线程下会有什么问题？ 基本数据类型 装箱拆箱？（-128到127） 说说String、StringBuilder和StringBuffer吧 创建一个String对象，内部怎么说？（字符串池那一套） String">
+<meta property="article:published_time" content="2020-12-25T02:46:44.000Z">
+<meta property="article:modified_time" content="2020-12-27T11:30:48.572Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="字节跳动">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2020/12/25/字节/"/>
+
+
+
+
+
+  <title>字节 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/12/25/%E5%AD%97%E8%8A%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">字节</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-25T10:46:44+08:00">
+                2020-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%A2%E7%BB%8F/" itemprop="url" rel="index">
+                    <span itemprop="name">面经</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h3><p>java中Object类中有哪些方法，他们的作用分别是什么？</p>
+<p>java中的多态的含义？</p>
+<p>java常用的会抛出哪些异常类型？</p>
+<p>代理模式的API</p>
+<p>集合</p>
+<p>HashMap多线程下会有什么问题？</p>
+<p>基本数据类型</p>
+<p>装箱拆箱？（-128到127）</p>
+<p>说说String、StringBuilder和StringBuffer吧</p>
+<p>创建一个String对象，内部怎么说？（字符串池那一套）</p>
+<p>StringBuffer <a href="https://www.nowcoder.com/jump/super-jump/word?word=源码" target="_blank" rel="noopener">源码</a>如何实现 ？</p>
+<p>String s = new String(“abc”) 创建了几个 String 对象</p>
+<p>a=a+b 与 a+=b 有什么区别吗</p>
+<p>switch 中能否使用 String 做参数 </p>
+<p> 什么是编译期常量? 使用它有什么风险 </p>
+<p><a href="https://blog.csdn.net/qq_34802416/article/details/83548369?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.control&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.control" target="_blank" rel="noopener">https://blog.csdn.net/qq_34802416/article/details/83548369?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.control&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.control</a></p>
+<p> 为什么Java 中只有值传递  </p>
+<p> Static Nested Class 和 Inner Class 有什么不同</p>
+<p>构造器 Constructor 是否可被重写</p>
+<p>final，finalize() 和 finally{} 的区别</p>
+<p><a href="https://blog.csdn.net/qq_39135287/article/details/78455525" target="_blank" rel="noopener">https://blog.csdn.net/qq_39135287/article/details/78455525</a></p>
+<p>深拷贝和浅拷贝的区别是什么</p>
+<p>快速失败 和 安全失败 的区别是什么</p>
+<p>Iterator 和 ListIterator 的区别是什么</p>
+<p>将 Java 代码编译成字节码的过程</p>
+<p>Java 是解释执行还是编译执行，Java 为什么采用这种执行模式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">解释运行： 一边对程序进行翻译，翻译成计算机可以执行的指令，一边交给计算机执行，翻译一句执行一句。</span><br><span class="line"></span><br><span class="line">编译运行： 对整个程序先翻译成计算机可以理解的指令，然后计算机可以直接执行。</span><br><span class="line">1. Java代码经过javac编译成class文件（字节码）</span><br><span class="line">2. class（字节码）文件经过JVM编译成机器码进行解释执行**（解释执行）**</span><br><span class="line">   1. 对于热点代码，JIT（JustInTime）编译器会在运行时将其编译为机器码执行**（编译运行）**</span><br><span class="line"></span><br><span class="line">特点：</span><br><span class="line">编译型语言，执行速度快、效率高；依靠编译器、跨平台性差。</span><br><span class="line">解释型语言，执行速度慢、效率低；依靠解释器、跨平台性好。</span><br><span class="line"></span><br><span class="line">编译型的语言包括：C、C++、Delphi、Pascal、Fortran</span><br><span class="line">Python是一门解释型语言</span><br></pre></td></tr></table></figure>
+
+<p>Arrays.sort()使用的什么排序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在数组的数量小于47的情况下使用插入排序,在大于或等于47或少于286会进入快速排序（双轴快排）</span><br><span class="line">大于286采用归并排序</span><br></pre></td></tr></table></figure>
+
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>线程池的七大参数<br>核心线程数 和 最大线程数的作用和使用过程中的变化</p>
+<p>volatile</p>
+<p> 原子类的实现方式</p>
+<p>锁的AQS的实现方式</p>
+<p>阻塞队列的Java API有那些</p>
+<p>JUC包下的锁以及用法(CyclicBrarry,CondownLatch,ReentrantLock,信号量以及其用法) </p>
+<p> Synchronized底层实现(偏向锁,轻量级锁,重量级锁具体实现,包括重量级锁中cxq队列以及EntryList,WaitSet) </p>
+<p> Synchronized与ReentrantLock区别(可打断,非阻塞获取,Condition)</p>
+<p>ThreadLocal的实现(ThreadLocalMap,WeakRefence的使用,内存泄漏问题,ThreadLocal的启发式清理以及段落式清理</p>
+<p>两个线程交替打印</p>
+<p>保证线程安全</p>
+<p>线程间是如何通信的</p>
+<p>如何停止一个正在运行的线程 ？</p>
+<p>常见的原子类有哪些，它有什么不足 ？如何进行优化 ？</p>
+<p>什么是公平锁，什么是非公平锁？有哪些常见的公平锁和非公平锁？为什么说synchronized 是非公平锁？ </p>
+<p> 什么是乐观锁，什么是悲观锁？为什么说 synchronized 是悲观锁？乐观锁的实现原理是什么？乐观锁一定好吗？</p>
+<p>Condition 接口及其实现原理 ？</p>
+<p>什么是 Callable ？ 什么是 Future ？</p>
+<p>线程池是自己创建的吗？</p>
+<p>线程池七大参数都是什么？</p>
+<p>各个参数都是怎样设置的？</p>
+<p>线程池核心线程数和最大线程数为什么要设置成这样？</p>
+<p>线程池池化技术<br>何时创建核心线程，何时创建最大线程<br>线程池拒绝策略</p>
+<p>由RPC<a href="https://www.nowcoder.com/jump/super-jump/word?word=项目" target="_blank" rel="noopener">项目</a>问到了序列化反序列化，问到了对象有一个属性是对象引用，怎么序列化。</p>
+<p>可重入锁和synchronized区别</p>
+<p>volatile为什么使用缓存行</p>
+<p>volatile对于64位缓存行的优化</p>
+<p>手撕生产者、消费者模型。10个生产者，10个消费者，队列容量为30个</p>
+<h3 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h3><p>JMM内存模型(主要说的工作内存以及共享内存,volatile关键字的实现,按需禁用缓存以及编译优化,Happens-before原则) </p>
+<p> JVM运行时数据区(堆栈方法区,方法区为什么要从永久代改为元空间)</p>
+<p>类加载机制说说吧</p>
+<p>说说双亲委派机制吧</p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>sql入侵？如何防止sql侵入</p>
+<p>http请求行的各个字段及含义，发生重定向时返回的状态码是多少？正常是多少？</p>
+<p>http和https的区别？</p>
+<p>说一下应用层常用的几个协议？</p>
+<p>浏览器输入URL之后的过程？</p>
+<p>域名投毒</p>
+<p>计算机网络的7层模型</p>
+<p>Http状态码中的302和401是什么用的</p>
+<p>证书在ssl过程中的作用</p>
+<p>网络通道非常拥塞时，TCP如何保证数据可以正确到达对方</p>
+<p>三次握手的过程中有哪些攻击方式，举例子</p>
+<p>应用程序如何将数据从网卡上面读取到进程当中<br>同步IO和异步IO<br>reactor模型<br>IO多路复用<br> Linux中有那些多路复用方式</p>
+<p>计算机在设置ip的时候会设置哪些参数(ip地址,子网掩码,网关地址)</p>
+<p>说说子网掩码以及网关的作用</p>
+<p>301，302有什么区别</p>
+<p>三次握手</p>
+<p> 那为什么它们的seq需要不同的seq呢，我可以直接在seq上加个1，把收到的seq置为相同的不久行了吗，为什么我服务器端要单独发送自己的seq呢 </p>
+<p> 为什么建立连接需要三次握手，断开连接需要四次挥手 </p>
+<p> 为什么会有一个半关闭的状态，明明客户端已经要求断开连接了呀，你还向客户端发送报文（不知道，瞎猜数据没传输完） </p>
+<p> 这个数据没传输完指的什么，客户端请求断开连接的时候数据没有传输完吗，谁的数据没有传输完（尴尬了2分多钟） </p>
+<p> TCP连接他有一个四元组知道吧 </p>
+<p> ICMP这个协议他位于网络的第几层知道吧 </p>
+<p> 那链路层的协议有哪些啊</p>
+<p>TCP三次握手四次挥手？为什么四次挥手等待2MSL？</p>
+<p>转发和重定向区别?</p>
+<p>操作系统分配的进程空间是怎样的？线程能共享哪些</p>
+<p>滑动窗口大小如何确定</p>
+<h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><p>进程和线程的区别？</p>
+<p>进程的几种状态，CPU如何在这几种状态中调度</p>
+<p>操作系统为什么要设置用户态和内核态</p>
+<p>讲一下DMA的作用</p>
+<p>进程间的通信方式(无名管道,命名管道,共享内存,消息队列,套接字)</p>
+<p>分别有哪些例子</p>
+<p>协程有了解吗 ？</p>
+<p>内存的缺页中断、页面置换<a href="https://www.nowcoder.com/jump/super-jump/word?word=算法" target="_blank" rel="noopener">算法</a></p>
+<p>CPU调度</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>谈谈幻读<br>幻读和脏读的区别<br>MySQL中 redo log 和 binary log 的区别和场景的使用意义</p>
+<p>redo log 和 undo log 实现了什么功能</p>
+<p>为什么innoDB使用B+树</p>
+<p>mysql事务的隔离级别以及分别如何实现 以及解决什么问题</p>
+<p>mysql索引的数据结构以及分类(B+树以及和B-树,<a href="https://www.nowcoder.com/jump/super-jump/word?word=红黑树" target="_blank" rel="noopener">红黑树</a>,<a href="https://www.nowcoder.com/jump/super-jump/word?word=二叉树" target="_blank" rel="noopener">二叉树</a>优缺点,聚集索引,非聚集索引,Hash索引的优缺点以及实现)</p>
+<p>锁</p>
+<p>explain 的用法，ref 代表什么意思 ？ index 代表什么意思 ？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BufferPool 内部的数据结构</span><br><span class="line"></span><br><span class="line">InnoDB 的页结构，有哪些常见的压缩[算法](https:&#x2F;&#x2F;www.nowcoder.com&#x2F;jump&#x2F;super-jump&#x2F;word?word&#x3D;算法)，行记录通常有包含哪些字段</span><br></pre></td></tr></table></figure>
+
+<p>唯一性索引和主键索引的区别？</p>
+<p>聚簇索引与非聚簇索引的区别？</p>
+<p>什么是覆盖索引？</p>
+<p>什么情况下索引会失效？</p>
+<p>什么是最左匹配原则？</p>
+<p>在 MySQL 中怎么给 Select 语句显示加锁呢 ？ </p>
+<p> MVCC 机制能解决幻读问题吗？ </p>
+<p> InnoDB 是怎么解决幻读问题的？ </p>
+<p> 说一下 nextkey lock 的原理? </p>
+<p> 既然在可重复读隔离级别下结合nextkey lock可以解决幻读问题，为什么还需要 S 可串行化呢？</p>
+<p>行锁什么时候变表锁</p>
+<p>select语句什么时候行锁变表锁</p>
+<p>索引下推</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">查到符合条件的索引-&gt;逐个回表，判断别的条件是否满足；</span><br><span class="line">索引下推：根据联合查询的其他索引做一个筛选，筛选通过的才回表查询，减少回表次数；</span><br></pre></td></tr></table></figure>
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p><a href="https://www.nowcoder.com/jump/super-jump/word?word=redis" target="_blank" rel="noopener">redis</a>是用来干什么的？<a href="https://www.nowcoder.com/jump/super-jump/word?word=redis" target="_blank" rel="noopener">redis</a>如何做缓存</p>
+<p>Redis是单线程模型还是多线程模型?</p>
+<p>Redis单线程模型为什么可以那么快(说了非阻塞IO的实现,Selector,定时任务的实现)</p>
+<h3 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h3><p>AOP解决了什么问题</p>
+<p>说说AOP(面向切面编程,动态代理的实现jdk实现以及CGLib实现) </p>
+<p> 说说循环依赖的实现(一级缓存缓存以及创建完成的对象,二级缓存没有创建完成,三级缓存解决被代理对象的循环依赖) </p>
+<p> Spring中对象的生命周期(单例,多例,globl session,session,application)</p>
+<h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><p>策略模式</p>
+<p>手写DCL</p>
+<p>说说你用到过的设计模式(主要说了Spring里面的几个) </p>
+<p> 简单工厂模式-&gt;BeanFactory </p>
+<p> 策略模式 </p>
+<p> 装饰者模式-&gt;Wapper</p>
+<p> 单例模式(Spring的Bean默认生命周期,好处) </p>
+<p> 模版方法模式(jdbcTemplate这种,好处)</p>
+<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>消息队列说一下</p>
+<p>sql的索引是什么，常见的索引方式，什么时候索引失效？</p>
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>linux用户权限最大的是谁？root与普通用户之间转换的指令？</p>
+<p>如何找到一个进程并杀死他？</p>
+<h3 id="设计题"><a href="#设计题" class="headerlink" title="设计题"></a>设计题</h3><ul>
+<li>100亿黑名单URL，每个64B,判断一个URL是否在黑名单中  </li>
+<li>2GB内存在20亿整数中找到出现次数最多的数  </li>
+<li>40亿个非负整数中找到没有出现的数  </li>
+<li>40亿个非负整数中找到一个没有出现的数，内存限制10MB  </li>
+<li>找到100亿个URL中重复的URL  </li>
+<li>海量搜索词汇，找到最热TOP100词汇的方法  </li>
+<li>40亿个无符号整数，1GB内存，找到所有出现两次的数  </li>
+<li>10MB内存，找到40亿整数的中位数  </li>
+<li>设计短域名系统，将长URL转化成短的URL.(<a href>知乎</a>老哥给出了答案，博客有人根据他的总结了一下，很好) </li>
+<li>让你系统的设计一个高并发的架构，你会从哪几个方面考虑？  </li>
+<li>一个千万级的APP，你要搞定关注和粉丝列表，你用什么来做。要求最后一个关注的在最前面。新增和取关都要比较快的反馈你怎么做？如果一个人关注了之后，服务器宕机了怎么办？  </li>
+<li>OOD design：计费停车场  </li>
+<li>假设有这么一个场景，有一条新闻，新闻的评论量可能很大，如何设计评论的读和写  </li>
+<li>显示网站的用户在线数的解决思路 </li>
+</ul>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p>排序方法，并给出他们的时间复杂度？</p>
+<p>交换俩个对象swap（Object obj1， Object obj2）{}  </p>
+<p>快排 堆排评价（时空复杂度 最优 最差 是否稳定）</p>
+<h3 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h3><p>还是问了RPC<a href>项目</a>，问到了注册中心怎么进行心跳检测 </p>
+<p> 注册中心对于服务端掉线时怎么处理 </p>
+<p> 服务端用的哪个类监听的（ServerSocket） </p>
+<p> 自己实现的定时器是啥？ </p>
+<p> 动态代理 </p>
+<p> NIO</p>
+<p>除了MD5，你还知道哪些加密<a href="https://www.nowcoder.com/jump/super-jump/word?word=算法" target="_blank" rel="noopener">算法</a>？</p>
+<p>设计学生成绩系统，如何建表，如何建索引</p>
+<p>主键和索引的区别</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8/" rel="tag"># 字节跳动</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/23/%E4%BA%A4%E6%9B%BF%E6%89%93%E5%8D%B0ABC/" rel="next" title="交替打印ABC">
+                <i class="fa fa-chevron-left"></i> 交替打印ABC
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/01/05/Flink%E6%A6%82%E5%BF%B5/" rel="prev" title="Flink概念">
+                Flink概念 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">226</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java基础"><span class="nav-number">1.</span> <span class="nav-text">Java基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">2.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM"><span class="nav-number">3.</span> <span class="nav-text">JVM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络"><span class="nav-number">4.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统"><span class="nav-number">5.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">6.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">7.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架"><span class="nav-number">8.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">9.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列"><span class="nav-number">10.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">11.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计题"><span class="nav-number">12.</span> <span class="nav-text">设计题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">13.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目"><span class="nav-number">14.</span> <span class="nav-text">项目</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共378.4k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

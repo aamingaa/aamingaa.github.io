@@ -86,6 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 概念ThreadLocal 用于提供线程局部变量，在多线程环境可以保证各个线程里的变量独立于其它线程里的变量。 也就是说 ThreadLocal 可以为每个线程创建一个【单独的变量副本】，相当于线程的 private static 类型变量。 示例12345678910111213141516171819202122232425262728293031public class Thre">
 <meta property="og:image" content="https://snailclimb.gitee.io/javaguide/docs/java/multi-thread/images/thread-local/6.png">
+<meta property="og:image" content="http://aamingaa.github.io/2020/06/24/ThreadLocal%E7%9A%84%E5%8E%9F%E7%90%86/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201228223358391.png">
 <meta property="og:image" content="https://snailclimb.gitee.io/javaguide/docs/java/multi-thread/images/thread-local/8.png">
 <meta property="og:image" content="https://snailclimb.gitee.io/javaguide/docs/java/multi-thread/images/thread-local/7.png">
 <meta property="og:image" content="https://snailclimb.gitee.io/javaguide/docs/java/multi-thread/images/thread-local/18.png">
@@ -93,7 +94,7 @@
 <meta property="og:image" content="http://localhost:4000/2020/06/24/ThreadLocal%E7%9A%84%E5%8E%9F%E7%90%86/1.png">
 <meta property="og:image" content="http://aamingaa.github.io/2020/06/24/ThreadLocal%E7%9A%84%E5%8E%9F%E7%90%86/1.png">
 <meta property="article:published_time" content="2020-06-24T01:51:27.000Z">
-<meta property="article:modified_time" content="2020-12-02T09:31:08.459Z">
+<meta property="article:modified_time" content="2020-12-28T14:34:12.366Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://snailclimb.gitee.io/javaguide/docs/java/multi-thread/images/thread-local/6.png">
@@ -427,6 +428,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">strLabel = child</span><br><span class="line">threadLabel = main</span><br></pre></td></tr></table></figure>
 
 <h3 id="ThreadLocal-set"><a href="#ThreadLocal-set" class="headerlink" title="ThreadLocal.set()"></a>ThreadLocal.set()</h3><p><img src="https://snailclimb.gitee.io/javaguide/docs/java/multi-thread/images/thread-local/6.png" alt="img"></p>
+<p><img src="/2020/06/24/ThreadLocal%E7%9A%84%E5%8E%9F%E7%90%86/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201228223358391.png" alt="image-20201228223358391"></p>
 <p><code>ThreadLocal</code>中的<code>set</code>方法原理如上图所示，很简单，主要是判断<code>ThreadLocalMap</code>是否存在，然后使用<code>ThreadLocal</code>中的<code>set</code>方法进行数据处理。</p>
 <p>代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">        map.set(<span class="keyword">this</span>, value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">createMap</span><span class="params">(Thread t, T firstValue)</span> </span>&#123;</span><br><span class="line">    t.threadLocals = <span class="keyword">new</span> `ThreadLocalMap`(<span class="keyword">this</span>, firstValue);</span><br><span class="line">&#125;Copy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
@@ -631,7 +633,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">217</span>
+                  <span class="site-state-item-count">226</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -643,7 +645,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -654,7 +656,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -711,7 +713,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -740,7 +742,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共357.4k字</span>
+  <span class="post-count">博客全站共378.4k字</span>
 </div>
 
         

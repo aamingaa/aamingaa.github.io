@@ -79,26 +79,25 @@
 
 
 
-<meta name="description" content="[TOC] 原理123我们想想抛硬币，反面记0，正面记1，正反面的概率都是1&#x2F;2。第一次出现正面的位置记为ρ(x)，那么ρ(0001)&#x3D;3，0001出现的概率是1&#x2F;23&#x3D;1&#x2F;16。换句话讲，就是进行16次实验，很可能出现一次或以上0001。再换句话讲，进行n轮实验，最大ρ(x)为y，那么可以估算进行出n&#x3D;2y。我们可以通过多次抛硬币实验的">
+<meta name="description" content="[TOC] 原理举一个例子，假设你抛很多次硬币，如果抛到正面，就继续抛；如果抛到反面，就记录下在这之前连续抛到了多少次正面k，然后开始下一轮。 如果你告诉我，你最多的时候，连续抛了2次正面后就抛到反面了。那我认为你可能并没有抛多少轮，可能是3轮或者4轮就会发生这样的情况。 但如果你告诉我，你最多的时候，连续抛了10次正面后就抛到反面了，那我认为你可能抛的轮次比较多，因为连续抛到10次正面的概率是非">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hyperloglog底层剖析">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/21/hyperloglog%E5%BA%95%E5%B1%82%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 原理123我们想想抛硬币，反面记0，正面记1，正反面的概率都是1&#x2F;2。第一次出现正面的位置记为ρ(x)，那么ρ(0001)&#x3D;3，0001出现的概率是1&#x2F;23&#x3D;1&#x2F;16。换句话讲，就是进行16次实验，很可能出现一次或以上0001。再换句话讲，进行n轮实验，最大ρ(x)为y，那么可以估算进行出n&#x3D;2y。我们可以通过多次抛硬币实验的">
+<meta property="og:description" content="[TOC] 原理举一个例子，假设你抛很多次硬币，如果抛到正面，就继续抛；如果抛到反面，就记录下在这之前连续抛到了多少次正面k，然后开始下一轮。 如果你告诉我，你最多的时候，连续抛了2次正面后就抛到反面了。那我认为你可能并没有抛多少轮，可能是3轮或者4轮就会发生这样的情况。 但如果你告诉我，你最多的时候，连续抛了10次正面后就抛到反面了，那我认为你可能抛的轮次比较多，因为连续抛到10次正面的概率是非">
+<meta property="og:image" content="http://aamingaa.github.io/2020/11/21/hyperloglog%E5%BA%95%E5%B1%82%E5%89%96%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201226154059005.png">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/6/169539f8269d09d0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c167c6e4e954088bcdc352c5732e99b~tplv-k3u1fbpfcp-zoom-1.image">
 <meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bae26dd2cd3a47099dc787068ab3db29~tplv-k3u1fbpfcp-zoom-1.image">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/17/16b65c0399c60b74?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/17/16b65c039ac3a37f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03bd0cd911?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/3/2/1709a63dc7ef91de?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03caeee530?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03d0dbae03?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03d45eeb8f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/3/2/1709a63de16bc015?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-11-21T05:56:19.000Z">
-<meta property="article:modified_time" content="2020-11-21T08:13:09.676Z">
+<meta property="article:modified_time" content="2020-12-31T12:24:06.256Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/3/6/169539f8269d09d0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta name="twitter:image" content="http://aamingaa.github.io/2020/11/21/hyperloglog%E5%BA%95%E5%B1%82%E5%89%96%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201226154059005.png">
 
 
 
@@ -383,7 +382,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.9k
+                  2.3k
                 </span>
               
 
@@ -399,7 +398,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  8
                 </span>
               
             </div>
@@ -421,11 +420,16 @@
 
       
         <p>[TOC]</p>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们想想抛硬币，反面记0，正面记1，正反面的概率都是1&#x2F;2。第一次出现正面的位置记为ρ(x)，那么ρ(0001)&#x3D;3，0001出现的概率是1&#x2F;23&#x3D;1&#x2F;16。换句话讲，就是进行16次实验，很可能出现一次或以上0001。再换句话讲，进行n轮实验，最大ρ(x)为y，那么可以估算进行出n&#x3D;2y。</span><br><span class="line">我们可以通过多次抛硬币实验的最大抛到正面的次数来预估总共进行了多少次实验，同样可以可以通过第一个1出现位置的最大值k_max来预估总共有多少个不同的数字（整体基数）。</span><br><span class="line">我们只要把要去重的key，转换成一串01字符串，就能套用上面的统计方法了。在数据量小时，误差会比较大.于是引入了桶的概念，计算m个桶的加权平均值，这样就能得到比较准确的答案了</span><br></pre></td></tr></table></figure>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>举一个例子，假设你抛很多次硬币，如果抛到正面，就继续抛；如果抛到反面，就记录下在这之前连续抛到了多少次正面k，然后开始下一轮。</p>
+<p>如果你告诉我，你最多的时候，连续抛了2次正面后就抛到反面了。那我认为你可能并没有抛多少轮，可能是3轮或者4轮就会发生这样的情况。</p>
+<p>但如果你告诉我，你最多的时候，连续抛了10次正面后就抛到反面了，那我认为你可能抛的轮次比较多，因为连续抛到10次正面的概率是非常小的。那如果要根据这个已知信息估计你总共抛了多少轮硬币呢？这就是HLL的原理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们想想抛硬币，反面记0，正面记1，正反面的概率都是1&#x2F;2。第一次出现正面的位置记为ρ(x)，那么ρ(0001)&#x3D;3，0001出现的概率是1&#x2F;23&#x3D;1&#x2F;16。换句话讲，就是进行16次实验，很可能出现一次或以上0001。再换句话讲，进行n轮实验，最大ρ(x)为y，那么可以估算进行出n&#x3D;2y。</span><br><span class="line">我们可以通过多次抛硬币实验的最大抛到正面的次数来预估总共进行了多少次实验，同样可以可以通过第一个1出现位置的最大值k_max来预估总共有多少个不同的数字（整体基数）。</span><br><span class="line">我们只要把要去重的key，转换成一串01字符串，就能套用上面的统计方法了。在数据量小时，误差会比较大.于是引入了桶的概念，计算m个桶的加权平均值，这样就能得到比较准确的答案了</span><br></pre></td></tr></table></figure>
 
-<p>既然是基于概率的统计方法。<br> 我们想想抛硬币，反面记0，正面记1，正反面的概率都是1/2。第一次出现正面的位置记为ρ(x)，那么ρ(0001)=3，0001出现的概率是1/23=1/16。换句话讲，就是进行16次实验，很可能出现一次或以上0001。再换句话讲，进行n轮实验，最大ρ(x)为y，那么可以估算进行出n=2y。</p>
-<p>然后，我们只要把要去重的key，转换成一串01字符串，就能套用上面的统计方法了。</p>
-<p>记hash函数的最大值为2L，把hash(key)看成长度为L的01串，换句话说，hash(key)就是进行L次抛硬币，并且每次只要key相同，抛硬币的结果就相同（去重了），然后从左到右找第一个1的位置就ok了。例如：<br> 有三个key，相当于进行三次试验<br> hash(key1) = 01010110，ρ(01010110) = 2<br> hash(key2) = 01110010，ρ(01110010) = 2<br> hash(key3) = 00100110，ρ(00100110) = 3<br> 最大值是3，所以根据概率看，有23=8次。可以看到，在数据量小时，误差会比较大，而且根据这个算法，统计出来的数字只会是2的次幂，虽然这样，但是基本思想已经掌握，接下来的就是优化了。</p>
+<p><img src="/2020/11/21/hyperloglog%E5%BA%95%E5%B1%82%E5%89%96%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201226154059005.png" alt="image-20201226154059005"></p>
+<ul>
+<li>对于一个输入的字符串，首先得到64位的hash值，用前14位来定位桶的位置（共有 2的14次方 ，即16384个桶）。后面50位即为伯努利过程，每个桶有6bit，记录第一次出现1的位置count，如果count&gt;oldcount，就用count替换oldcount。</li>
+</ul>
+<p>模仿上面的流程，多个不同的用户 id，就被分散到不同的桶中去了，且每个桶有其 k_max。然后当要统计出页面有多少用户点击量的时候，就是一次估算。最终结合所有桶中的 k_max，代入估算公式，便能得出估算值。<br>每个桶有6bit，即[000 000],最大为[111 111]，表示63。</p>
 <h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>于是引入了桶的概念，计算m个桶的加权平均值，这样就能得到比较准确的答案了（实际上还要进行其他修正）。最终的公式如图</p>
 <img src="https://user-gold-cdn.xitu.io/2019/3/6/169539f8269d09d0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="HyperLogLog公式 hei" style="zoom:80%;">
 
@@ -433,10 +437,14 @@
 
 <p>其中m是桶的数量，const是修正常数，它的取值会根据m而变化。p=log2m</p>
 <p>我们回到Redis，对于一个输入的字符串，首先得到64位的hash值，用前14位来定位桶的位置（共有214，即16384个桶）。后面50位即为伯努利过程，每个桶有6bit，记录第一次出现1的位置count，如果count&gt;oldcount，就用count替换oldcount。</p>
+<h3 id="为什么要统计-Hash-值中第一个-1-出现的位置？"><a href="#为什么要统计-Hash-值中第一个-1-出现的位置？" class="headerlink" title="为什么要统计 Hash 值中第一个 1 出现的位置？"></a>为什么要统计 Hash 值中第一个 1 出现的位置？</h3><p>因为第一个 1 出现的位置可以同我们抛硬币的游戏中第一次抛到正面的抛掷次数对应起来，根据上面掷硬币实验的结论，记录每个数据的第一个出现的位置 <code>K</code>，就可以通过其中最大值 Kmax 来推导出数据集合中的基数：<strong>N = 2Kmax</strong></p>
 <h4 id="1-比特串"><a href="#1-比特串" class="headerlink" title="1.比特串"></a>1.比特串</h4><p>通过<code>hash</code>函数，将数据转为<code>比特串</code>，例如输入5，便转为：101。为什么要这样转化呢？</p>
 <p>是因为要和抛硬币对应上，<code>比特串</code>中，0 代表了反面，1 代表了正面，如果一个数据最终被转化了 <code>10010000</code>，那么从右往左，从低位往高位看，我们可以认为，首次出现 1 的时候，就是正面。</p>
 <p>那么基于上面的估算结论，我们可以通过多次抛硬币实验的最大抛到正面的次数来预估总共进行了多少次实验，同样也就可以根据存入数据中，转化后的出现了 1 的最大的位置 k_max 来估算存入了多少数据。</p>
-<h4 id="2-分桶"><a href="#2-分桶" class="headerlink" title="2.分桶"></a>2.分桶</h4><p>在<code>Redis</code>中的<code>HyperLogLog</code>中，共分为<code>2^14</code>个桶，每个桶有<code>6</code>个<code>bit</code>，占用内存为=<code>2^14*6/8/1024=12K</code>。 <img src="https:////p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c167c6e4e954088bcdc352c5732e99b~tplv-k3u1fbpfcp-zoom-1.image" alt="redis-hyperloglog"></p>
+<h4 id="2-分桶"><a href="#2-分桶" class="headerlink" title="2.分桶"></a>2.分桶</h4><p>在<code>Redis</code>中的<code>HyperLogLog</code>中，共分为<code>2^14</code>个桶，每个桶有<code>6</code>个<code>bit</code>，占用内存为=<code>2^14*6/8/1024=12K</code>。 </p>
+<p><img src="https:////p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c167c6e4e954088bcdc352c5732e99b~tplv-k3u1fbpfcp-zoom-1.image" alt="redis-hyperloglog"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">而Redis 最大能够统计的数据量是 264，即每个桶的 maxbit 需要 6 个 bit 来存储，最大可以表示 maxbit &#x3D; 63，于是总共占用内存就是：(214) x 6 &#x2F; 8 (每个桶 6 bit，而这么多桶本身要占用 16384 bit，再除以 8 转换成 KB),算出来的结果就是 12 KB</span><br></pre></td></tr></table></figure>
+
 <p>当我们执行命令<code>pfadd key value</code>时，首先会通过<code>hash</code>函数将<code>value</code>转换为<code>64</code>位比特串。其中，前14位用来确定分桶(刚好有<code>2^14</code>个桶)，后<code>50</code>位用来获取第一个出现<code>1</code>的位数(从右向左)，因为最大为<code>50</code>，因此使用<code>6</code>个<code>bit</code>完全可以表示。 <img src="https:////p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bae26dd2cd3a47099dc787068ab3db29~tplv-k3u1fbpfcp-zoom-1.image" alt="pfadd"></p>
 <p>不同的<code>value</code>，会被设置到不同桶中去，如果出现了在同一个桶的，但是后面第一个出现<code>1</code>的位数不同。那么比较这个桶新的值是否比原来的值大，如果大于，则替换。否则，保持不变。</p>
 <h3 id="底层源码剖析"><a href="#底层源码剖析" class="headerlink" title="底层源码剖析"></a>底层源码剖析</h3><h3 id="Redis-源码分析"><a href="#Redis-源码分析" class="headerlink" title="Redis 源码分析"></a>Redis 源码分析</h3><p>我们首先来看一下 HyperLogLog 对象的定义</p>
@@ -444,28 +452,33 @@
 
 <p>HyperLogLog 对象中的 <code>registers</code> 数组就是桶，它有两种存储结构，分别为密集存储结构和稀疏存储结构，两种结构只涉及存储和桶的表现形式，从中我们可以看到 Redis 对节省内存极致地追求。</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/6/17/16b65c0399c60b74?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="密集存储结构"></p>
-<p>我们先看相对简单的密集存储结构，它也是十分的简单明了，既然要有 2^14 个 6 bit的桶，那么我就真使用足够多的 <code>uint8_t</code> 字节去表示，只是此时会涉及到字节位置和桶的转换，因为字节有 8 位，而桶只需要 6 位。</p>
-<p>所以我们需要将桶的序号转换成对应的字节偏移量 offset_bytes 和其内部的位数偏移量 offset_bits。需要注意的是小端字节序，高位在右侧，需要进行倒转。</p>
-<p>当 offset_bits 小于等于2时，说明一个桶就在该字节内，只需要进行倒转就能得到桶的值。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/17/16b65c039ac3a37f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="示意图"></p>
-<p>如果 offset_bits 大于 2 ，则说明一个桶分布在两个字节内，此时需要将两个字节的内容都进行倒置，然后再进行拼接得到桶的值，如下图所示。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03bd0cd911?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="示意图"></p>
-<p>HyperLogLog 的稀疏存储结构是为了节约内存消耗，它不像密集存储模式一样，真正找了那么多个字节数组来表示2^14 个桶，而是使用特殊的字节结构来表达。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03caeee530?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="示意图"></p>
-<p>Redis 为了方便表达稀疏存储，它将上面三种字节表示形式分别赋予了一条指令。</p>
+<p>密集型的存储结构非常简单，就是 <strong>16384 个 6 bit 连续串成</strong> 的字符串位图：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/3/2/1709a63dc7ef91de?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
+<p>我们都知道，一个字节是由 8 个 bit 组成的，这样 6 bit 排列的结构就会导致，有一些桶会 <strong>跨越字节边界</strong>，我们需要 <strong>对这一个或者两个字节进行适当的移位拼接</strong> 才可以得到具体的计数值。</p>
+<p>假设桶的编号为 <code>index</code>，这个 6 bity 计数值的起始字节偏移用 <code>offset_bytes</code> 表示，它在这个字节的其实比特位置偏移用 <code>offset_bits</code> 表示，于是我们有：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">offset_bytes &#x3D; (index * 6) &#x2F; 8</span><br><span class="line">offset_bits &#x3D; (index * 6) % 8</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>前者是商，后者是余数。比如 <code>bucket 2</code> 的字节偏移是 1，也就是第 2 个字节。它的位偏移是 4，也就是第 2 个字节的第 5 个位开始是 bucket 2 的计数值。需要注意的是 <strong>字节位序是左边低位右边高位</strong>，而通常我们使用的字节都是左边高位右边低位。</p>
+<p>这里就涉及到两种情况，<strong>如果 <code>offset_bits</code> 小于等于 2</strong>，说明这 <strong>6 bit 在一个字节的内部</strong>，可以直接使用下面的表达式得到计数值 <code>val</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">val &#x3D; buffer[offset_bytes] &gt;&gt; offset_bits  # 向右移位</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p><strong>如果 <code>offset_bits</code> 大于 2</strong>，那么就会涉及到 <strong>跨越字节边界</strong>，我们需要拼接两个字节的位片段：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03caeee530?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="示意图">稀疏存储结构</p>
+<p>稀疏存储适用于很多计数值都是零的情况。下图表示了一般稀疏存储计数值的状态：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/3/2/1709a63de16bc015?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
+<p>当 <strong>多个连续桶的计数值都是零</strong> 时，Redis 提供了几种不同的表达形式：</p>
+<p>（XX+1）</p>
+<p>(连续多少个桶)</p>
 <ul>
-<li>ZERO : 一字节，表示连续多少个桶计数为0，前两位为标志00，后6位表示有多少个桶，最大为64。</li>
-<li>XZERO : 两个字节，表示连续多少个桶计数为0，前两位为标志01，后14位表示有多少个桶，最大为16384。</li>
-<li>VAL : 一字节，表示连续多少个桶的计数为多少，前一位为标志1，四位表示连桶内计数，所以最大表示桶的计数为32。后两位表示连续多少个桶。</li>
+<li><code>00xxxxxx</code>：前缀两个零表示接下来的 6bit 整数值加 1 就是零值计数器的数量，注意这里要加 1 是因为数量如果为零是没有意义的。比如 <code>00010101</code> 表示连续 <code>22</code> 个桶为0。</li>
+<li><code>01xxxxxx yyyyyyyy</code>：6bit 最多只能表示连续 <code>64</code> 个零值计数器，这样扩展出的  14bit 可以表示最多连续 <code>16384</code> 个桶计数值。这意味着 HyperLogLog 数据结构中 <code>16384</code> 个桶的初始状态，所有的计数器都是零值，可以直接使用 2 个字节来表示。</li>
+<li><code>1vvvvvxx</code>：中间 5bit 表示计数值，尾部 2bit 表示连续几个桶。它的意思是连续 <code>(xx +1)</code> 个桶计数值都是 <code>(vvvvv + 1)</code>。比如 <code>10101011</code> 表示连续 <code>4</code> 个计数值都是 <code>11</code>。</li>
 </ul>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03d0dbae03?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="示意图"></p>
-<p>所以，一个初始状态的 HyperLogLog 对象只需要2 字节，也就是一个 XZERO 来存储其数据，而不需要消耗12K 内存。当 HyperLogLog 插入了少数元素时，可以只使用少量的 XZERO、VAL 和 ZERO 进行表示，如下图所示。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/6/17/16b65c03d45eeb8f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="示意图"></p>
-<p>Redis从稀疏存储转换到密集存储的条件是：</p>
-<ul>
-<li>任意一个计数值从 32 变成 33，因为 VAL 指令已经无法容纳，它能表示的计数值最大为 32</li>
-<li>稀疏存储占用的总字节数超过 3000 字节，这个阈值可以通过 hll_sparse_max_bytes 参数进行调整。</li>
-</ul>
+<p>1vvvvxx (xx+1)-&gt; (vvvv+1)</p>
+<p>注意</p>
+<p>上面第三种方式</p>
+<p> 的计数值最大只能表示到 <code>32</code>，而 HyperLogLog 的密集存储单个计数值用 6bit 表示，最大可以表示到 <code>63</code>。<strong>当稀疏存储的某个计数值需要调整到大于 <code>32</code> 时，Redis 就会立即转换 HyperLogLog 的存储结构，将稀疏存储转换成密集存储。</strong></p>
+<p>作者：我没有三颗心脏<br>链接：<a href="https://juejin.cn/post/6844904079601188877" target="_blank" rel="noopener">https://juejin.cn/post/6844904079601188877</a><br>来源：掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 
       
     </div>
@@ -586,7 +599,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">217</span>
+                  <span class="site-state-item-count">226</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -598,7 +611,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -609,7 +622,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -645,7 +658,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">2.</span> <span class="nav-text">优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-比特串"><span class="nav-number">2.1.</span> <span class="nav-text">1.比特串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-分桶"><span class="nav-number">2.2.</span> <span class="nav-text">2.分桶</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#底层源码剖析"><span class="nav-number">3.</span> <span class="nav-text">底层源码剖析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-源码分析"><span class="nav-number">4.</span> <span class="nav-text">Redis 源码分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">2.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要统计-Hash-值中第一个-1-出现的位置？"><span class="nav-number">3.</span> <span class="nav-text">为什么要统计 Hash 值中第一个 1 出现的位置？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-比特串"><span class="nav-number">3.1.</span> <span class="nav-text">1.比特串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-分桶"><span class="nav-number">3.2.</span> <span class="nav-text">2.分桶</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#底层源码剖析"><span class="nav-number">4.</span> <span class="nav-text">底层源码剖析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-源码分析"><span class="nav-number">5.</span> <span class="nav-text">Redis 源码分析</span></a></li></ol></div>
             
 
           </div>
@@ -666,7 +679,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -695,7 +708,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共357.4k字</span>
+  <span class="post-count">博客全站共378.4k字</span>
 </div>
 
         
