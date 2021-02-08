@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 用 Hystrix 构建高可用服务架构参考 Hystrix Home。 Hystrix 是什么？在分布式系统中，每个服务都可能会调用很多其他服务，被调用的那些服务就是依赖服务，有的时候某些依赖服务出现故障也是很正常的。 Hystrix 可以让我们在分布式系统中对服务间的调用进行控制，加入一些调用延迟或者依赖故障的容错机制。 Hystrix 通过将依赖服务进行资源隔离，进而阻止某个依赖服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hystrix汇总">
+<meta property="og:url" content="http://aamingaa.github.io/2021/01/30/hystrix%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 用 Hystrix 构建高可用服务架构参考 Hystrix Home。 Hystrix 是什么？在分布式系统中，每个服务都可能会调用很多其他服务，被调用的那些服务就是依赖服务，有的时候某些依赖服务出现故障也是很正常的。 Hystrix 可以让我们在分布式系统中对服务间的调用进行控制，加入一些调用延迟或者依赖故障的容错机制。 Hystrix 通过将依赖服务进行资源隔离，进而阻止某个依赖服">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/service-invoke-road.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-thread-pool-isolation.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-semphore.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-semphore-thread-pool.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-thread-pool-queue.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-request-cache.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/bulkhead-partition.jpg">
+<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/220px-Internet_dog.jpg">
+<meta property="article:published_time" content="2021-01-29T16:36:14.000Z">
+<meta property="article:modified_time" content="2021-01-29T16:39:39.326Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/service-invoke-road.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/01/30/hystrix汇总/"/>
+
+
+
+
+
+  <title>hystrix汇总 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/30/hystrix%E6%B1%87%E6%80%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">hystrix汇总</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-30T00:36:14+08:00">
+                2021-01-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B1%87%E6%80%BB/" itemprop="url" rel="index">
+                    <span itemprop="name">汇总</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  14.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  57
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h2 id="用-Hystrix-构建高可用服务架构"><a href="#用-Hystrix-构建高可用服务架构" class="headerlink" title="用 Hystrix 构建高可用服务架构"></a>用 Hystrix 构建高可用服务架构</h2><p>参考 <a href="https://github.com/Netflix/Hystrix/wiki#what" target="_blank" rel="noopener">Hystrix Home</a>。</p>
+<h3 id="Hystrix-是什么？"><a href="#Hystrix-是什么？" class="headerlink" title="Hystrix 是什么？"></a>Hystrix 是什么？</h3><p>在分布式系统中，每个服务都可能会调用很多其他服务，被调用的那些服务就是<strong>依赖服务</strong>，有的时候某些依赖服务出现故障也是很正常的。</p>
+<p>Hystrix 可以让我们在分布式系统中对服务间的调用进行控制，加入一些<strong>调用延迟</strong>或者<strong>依赖故障</strong>的<strong>容错机制</strong>。</p>
+<p>Hystrix 通过将依赖服务进行<strong>资源隔离</strong>，进而阻止某个依赖服务出现故障时在整个系统所有的依赖服务调用中进行蔓延；同时Hystrix 还提供故障时的 fallback 降级机制。</p>
+<p>总而言之，Hystrix 通过这些方法帮助我们提升分布式系统的可用性和稳定性。</p>
+<h3 id="Hystrix-的历史"><a href="#Hystrix-的历史" class="headerlink" title="Hystrix 的历史"></a>Hystrix 的历史</h3><p>Hystrix 是高可用性保障的一个框架。Netflix（可以认为是国外的优酷或者爱奇艺之类的视频网站）的 API 团队从 2011 年开始做一些提升系统可用性和稳定性的工作，Hystrix 就是从那时候开始发展出来的。</p>
+<p>在 2012 年的时候，Hystrix 就变得比较成熟和稳定了，Netflix 中，除了 API 团队以外，很多其他的团队都开始使用 Hystrix。</p>
+<p>时至今日，Netflix 中每天都有数十亿次的服务间调用，通过 Hystrix 框架在进行，而 Hystrix 也帮助 Netflix 网站提升了整体的可用性和稳定性。</p>
+<p><a href="https://github.com/Netflix/Hystrix/blob/master/README.md#hystrix-status" target="_blank" rel="noopener">2018 年 11 月，Hystrix 在其 Github 主页宣布，不再开放新功能，推荐开发者使用其他仍然活跃的开源项目</a>。维护模式的转变绝不意味着 Hystrix 不再有价值。相反，Hystrix 激发了很多伟大的想法和项目，我们高可用的这一块知识还是会针对 Hystrix 进行讲解。</p>
+<h3 id="Hystrix-的设计原则"><a href="#Hystrix-的设计原则" class="headerlink" title="Hystrix 的设计原则"></a>Hystrix 的设计原则</h3><ul>
+<li>对依赖服务调用时出现的调用延迟和调用失败进行<strong>控制和容错保护</strong>。</li>
+<li>在复杂的分布式系统中，阻止某一个依赖服务的故障在整个系统中蔓延。比如某一个服务故障了，导致其它服务也跟着故障。</li>
+<li>提供 <code>fail-fast</code>（快速失败）和快速恢复的支持。</li>
+<li>提供 fallback 优雅降级的支持。</li>
+<li>支持近实时的监控、报警以及运维操作。</li>
+</ul>
+<p>举个栗子。</p>
+<p>有这样一个分布式系统，服务 A 依赖于服务 B，服务 B 依赖于服务 C/D/E。在这样一个成熟的系统内，比如说最多可能只有 100 个线程资源。正常情况下，40 个线程并发调用服务 C，各 30 个线程并发调用 D/E。</p>
+<p>调用服务 C，只需要 20ms，现在因为服务 C 故障了，比如延迟，或者挂了，此时线程会 hang 住 2s 左右。40 个线程全部被卡住，由于请求不断涌入，其它的线程也用来调用服务 C，同样也会被卡住。这样导致服务 B 的线程资源被耗尽，无法接收新的请求，甚至可能因为大量线程不断的运转，导致自己宕机。服务 A 也挂。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/service-invoke-road.png" alt="service-invoke-road"></p>
+<p>Hystrix 可以对其进行资源隔离，比如限制服务 B 只有 40 个线程调用服务 C。当此 40 个线程被 hang 住时，其它 60 个线程依然能正常调用工作。从而确保整个系统不会被拖垮。</p>
+<h3 id="Hystrix-更加细节的设计原则"><a href="#Hystrix-更加细节的设计原则" class="headerlink" title="Hystrix 更加细节的设计原则"></a>Hystrix 更加细节的设计原则</h3><ul>
+<li>阻止任何一个依赖服务耗尽所有的资源，比如 tomcat 中的所有线程资源。</li>
+<li>避免请求排队和积压，采用限流和 <code>fail fast</code> 来控制故障。</li>
+<li>提供 fallback 降级机制来应对故障。</li>
+<li>使用资源隔离技术，比如 <code>bulkhead</code>（舱壁隔离技术）、<code>swimlane</code>（泳道技术）、<code>circuit breaker</code>（断路技术）来限制任何一个依赖服务的故障的影响。</li>
+<li>通过近实时的统计/监控/报警功能，来提高故障发现的速度。</li>
+<li>通过近实时的属性和配置<strong>热修改</strong>功能，来提高故障处理和恢复的速度。</li>
+<li>保护依赖服务调用的所有故障情况，而不仅仅只是网络故障情况。</li>
+</ul>
+<h2 id="基于-Hystrix-线程池技术实现资源隔离"><a href="#基于-Hystrix-线程池技术实现资源隔离" class="headerlink" title="基于 Hystrix 线程池技术实现资源隔离"></a>基于 Hystrix 线程池技术实现资源隔离</h2><p>上一讲提到，如果从 Nginx 开始，缓存都失效了，Nginx 会直接通过缓存服务调用商品服务获取最新商品数据（我们基于电商项目做个讨论），有可能出现调用延时而把缓存服务资源耗尽的情况。这里，我们就来说说，怎么通过 Hystrix 线程池技术实现资源隔离。</p>
+<p>资源隔离，就是说，你如果要把对某一个依赖服务的所有调用请求，全部隔离在同一份资源池内，不会去用其它资源了，这就叫资源隔离。哪怕对这个依赖服务，比如说商品服务，现在同时发起的调用量已经到了 1000，但是线程池内就 10 个线程，最多就只会用这 10 个线程去执行，不会说，对商品服务的请求，因为接口调用延时，将 tomcat 内部所有的线程资源全部耗尽。</p>
+<p>Hystrix 进行资源隔离，其实是提供了一个抽象，叫做 command。这也是 Hystrix 最最基本的资源隔离技术。</p>
+<h3 id="利用-HystrixCommand-获取单条数据"><a href="#利用-HystrixCommand-获取单条数据" class="headerlink" title="利用 HystrixCommand 获取单条数据"></a>利用 HystrixCommand 获取单条数据</h3><p>我们通过将调用商品服务的操作封装在 HystrixCommand 中，限定一个 key，比如下面的 <code>GetProductInfoCommandGroup</code>，在这里我们可以简单认为这是一个线程池，每次调用商品服务，就只会用该线程池中的资源，不会再去用其它线程资源了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class GetProductInfoCommand extends HystrixCommand&lt;ProductInfo&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    public GetProductInfoCommand(Long productId) &#123;</span><br><span class="line">        super(HystrixCommandGroupKey.Factory.asKey(&quot;GetProductInfoCommandGroup&quot;));</span><br><span class="line">        this.productId &#x3D; productId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo run() &#123;</span><br><span class="line">        String url &#x3D; &quot;http:&#x2F;&#x2F;localhost:8081&#x2F;getProductInfo?productId&#x3D;&quot; + productId;</span><br><span class="line">        &#x2F;&#x2F; 调用商品服务接口</span><br><span class="line">        String response &#x3D; HttpClientUtils.sendGetRequest(url);</span><br><span class="line">        return JSONObject.parseObject(response, ProductInfo.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在缓存服务接口中，根据 productId 创建 command 并执行，获取到商品数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;&#x2F;getProductInfo&quot;)</span><br><span class="line">@ResponseBody</span><br><span class="line">public String getProductInfo(Long productId) &#123;</span><br><span class="line">    HystrixCommand&lt;ProductInfo&gt; getProductInfoCommand &#x3D; new GetProductInfoCommand(productId);</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 通过command执行，获取最新商品数据</span><br><span class="line">    ProductInfo productInfo &#x3D; getProductInfoCommand.execute();</span><br><span class="line">    System.out.println(productInfo);</span><br><span class="line">    return &quot;success&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面执行的是 execute() 方法，其实是同步的。也可以对 command 调用 queue() 方法，它仅仅是将 command 放入线程池的一个等待队列，就立即返回，拿到一个 Future 对象，后面可以继续做其它一些事情，然后过一段时间对 Future 调用 get() 方法获取数据。这是异步的。</p>
+<h3 id="利用-HystrixObservableCommand-批量获取数据"><a href="#利用-HystrixObservableCommand-批量获取数据" class="headerlink" title="利用 HystrixObservableCommand 批量获取数据"></a>利用 HystrixObservableCommand 批量获取数据</h3><p>只要是获取商品数据，全部都绑定到同一个线程池里面去，我们通过 HystrixObservableCommand 的一个线程去执行，而在这个线程里面，批量把多个 productId 的 productInfo 拉回来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class GetProductInfosCommand extends HystrixObservableCommand&lt;ProductInfo&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private String[] productIds;</span><br><span class="line"></span><br><span class="line">    public GetProductInfosCommand(String[] productIds) &#123;</span><br><span class="line">        &#x2F;&#x2F; 还是绑定在同一个线程池</span><br><span class="line">        super(HystrixCommandGroupKey.Factory.asKey(&quot;GetProductInfoGroup&quot;));</span><br><span class="line">        this.productIds &#x3D; productIds;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected Observable&lt;ProductInfo&gt; construct() &#123;</span><br><span class="line">        return Observable.unsafeCreate((Observable.OnSubscribe&lt;ProductInfo&gt;) subscriber -&gt; &#123;</span><br><span class="line"></span><br><span class="line">            for (String productId : productIds) &#123;</span><br><span class="line">                &#x2F;&#x2F; 批量获取商品数据</span><br><span class="line">                String url &#x3D; &quot;http:&#x2F;&#x2F;localhost:8081&#x2F;getProductInfo?productId&#x3D;&quot; + productId;</span><br><span class="line">                String response &#x3D; HttpClientUtils.sendGetRequest(url);</span><br><span class="line">                ProductInfo productInfo &#x3D; JSONObject.parseObject(response, ProductInfo.class);</span><br><span class="line">                subscriber.onNext(productInfo);</span><br><span class="line">            &#125;</span><br><span class="line">            subscriber.onCompleted();</span><br><span class="line"></span><br><span class="line">        &#125;).subscribeOn(Schedulers.io());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在缓存服务接口中，根据传来的 id 列表，比如是以 <code>,</code> 分隔的 id 串，通过上面的 HystrixObservableCommand，执行 Hystrix 的一些 API 方法，获取到所有商品数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public String getProductInfos(String productIds) &#123;</span><br><span class="line">    String[] productIdArray &#x3D; productIds.split(&quot;,&quot;);</span><br><span class="line">    HystrixObservableCommand&lt;ProductInfo&gt; getProductInfosCommand &#x3D; new GetProductInfosCommand(productIdArray);</span><br><span class="line">    Observable&lt;ProductInfo&gt; observable &#x3D; getProductInfosCommand.observe();</span><br><span class="line"></span><br><span class="line">    observable.subscribe(new Observer&lt;ProductInfo&gt;() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void onCompleted() &#123;</span><br><span class="line">            System.out.println(&quot;获取完了所有的商品数据&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void onError(Throwable e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;**</span><br><span class="line">         * 获取完一条数据，就回调一次这个方法</span><br><span class="line">         * @param productInfo</span><br><span class="line">         *&#x2F;</span><br><span class="line">        @Override</span><br><span class="line">        public void onNext(ProductInfo productInfo) &#123;</span><br><span class="line">            System.out.println(productInfo);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    return &quot;success&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们回过头来，看看 Hystrix 线程池技术是如何实现资源隔离的。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-thread-pool-isolation.png" alt="hystrix-thread-pool-isolation"></p>
+<p>从 Nginx 开始，缓存都失效了，那么 Nginx 通过缓存服务去调用商品服务。缓存服务默认的线程大小是 10 个，最多就只有 10 个线程去调用商品服务的接口。即使商品服务接口故障了，最多就只有 10 个线程会 hang 死在调用商品服务接口的路上，缓存服务的 tomcat 内其它的线程还是可以用来调用其它的服务，干其它的事情。</p>
+<h2 id="基于-Hystrix-信号量机制实现资源隔离"><a href="#基于-Hystrix-信号量机制实现资源隔离" class="headerlink" title="基于 Hystrix 信号量机制实现资源隔离"></a>基于 Hystrix 信号量机制实现资源隔离</h2><p>Hystrix 里面核心的一项功能，其实就是所谓的<strong>资源隔离</strong>，要解决的最最核心的问题，就是将多个依赖服务的调用分别隔离到各自的资源池内。避免说对某一个依赖服务的调用，因为依赖服务的接口调用的延迟或者失败，导致服务所有的线程资源全部耗费在这个服务的接口调用上。一旦说某个服务的线程资源全部耗尽的话，就可能导致服务崩溃，甚至说这种故障会不断蔓延。</p>
+<p>Hystrix 实现资源隔离，主要有两种技术：</p>
+<ul>
+<li>线程池</li>
+<li>信号量</li>
+</ul>
+<p>默认情况下，Hystrix 使用线程池模式。</p>
+<p>前面已经说过线程池技术了，这一小节就来说说信号量机制实现资源隔离，以及这两种技术的区别与具体应用场景。</p>
+<h3 id="信号量机制"><a href="#信号量机制" class="headerlink" title="信号量机制"></a>信号量机制</h3><p>信号量的资源隔离只是起到一个开关的作用，比如，服务 A 的信号量大小为 10，那么就是说它同时只允许有 10 个 tomcat 线程来访问服务 A，其它的请求都会被拒绝，从而达到资源隔离和限流保护的作用。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-semphore.png" alt="hystrix-semphore"></p>
+<h3 id="线程池与信号量区别"><a href="#线程池与信号量区别" class="headerlink" title="线程池与信号量区别"></a>线程池与信号量区别</h3><p>线程池隔离技术，并不是说去控制类似 tomcat 这种 web 容器的线程。更加严格的意义上来说，Hystrix 的线程池隔离技术，控制的是 tomcat 线程的执行。Hystrix 线程池满后，会确保说，tomcat 的线程不会因为依赖服务的接口调用延迟或故障而被 hang 住，tomcat 其它的线程不会卡死，可以快速返回，然后支撑其它的事情。</p>
+<p>线程池隔离技术，是用 Hystrix 自己的线程去执行调用；而信号量隔离技术，是直接让 tomcat 线程去调用依赖服务。信号量隔离，只是一道关卡，信号量有多少，就允许多少个 tomcat 线程通过它，然后去执行。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-semphore-thread-pool.png" alt="hystrix-semphore-thread-pool"></p>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li><strong>线程池技术</strong>，适合绝大多数场景，比如说我们对依赖服务的网络请求的调用和访问、需要对调用的 timeout 进行控制（捕捉 timeout 超时异常）。</li>
+<li><strong>信号量技术</strong>，适合说你的访问不是对外部依赖的访问，而是对内部的一些比较复杂的业务逻辑的访问，并且系统内部的代码，其实不涉及任何的网络请求，那么只要做信号量的普通限流就可以了，因为不需要去捕获 timeout 类似的问题。</li>
+</ul>
+<h3 id="信号量简单-Demo"><a href="#信号量简单-Demo" class="headerlink" title="信号量简单 Demo"></a>信号量简单 Demo</h3><p>业务背景里，比较适合信号量的是什么场景呢？</p>
+<p>比如说，我们一般来说，缓存服务，可能会将一些量特别少、访问又特别频繁的数据，放在自己的纯内存中。</p>
+<p>举个栗子。一般我们在获取到商品数据之后，都要去获取商品是属于哪个地理位置、省、市、卖家等，可能在自己的纯内存中，比如就一个 Map 去获取。对于这种直接访问本地内存的逻辑，比较适合用信号量做一下简单的隔离。</p>
+<p>优点在于，不用自己管理线程池啦，不用 care timeout 超时啦，也不需要进行线程的上下文切换啦。信号量做隔离的话，性能相对来说会高一些。</p>
+<p>假如这是本地缓存，我们可以通过 cityId，拿到 cityName。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class LocationCache &#123;</span><br><span class="line">    private static Map&lt;Long, String&gt; cityMap &#x3D; new HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        cityMap.put(1L, &quot;北京&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 通过cityId 获取 cityName</span><br><span class="line">     *</span><br><span class="line">     * @param cityId 城市id</span><br><span class="line">     * @return 城市名</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public static String getCityName(Long cityId) &#123;</span><br><span class="line">        return cityMap.get(cityId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写一个 GetCityNameCommand，策略设置为<strong>信号量</strong>。run() 方法中获取本地缓存。我们目的就是对获取本地缓存的代码进行资源隔离。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class GetCityNameCommand extends HystrixCommand&lt;String&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long cityId;</span><br><span class="line"></span><br><span class="line">    public GetCityNameCommand(Long cityId) &#123;</span><br><span class="line">        &#x2F;&#x2F; 设置信号量隔离策略</span><br><span class="line">        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;GetCityNameGroup&quot;))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)));</span><br><span class="line"></span><br><span class="line">        this.cityId &#x3D; cityId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected String run() &#123;</span><br><span class="line">        &#x2F;&#x2F; 需要进行信号量隔离的代码</span><br><span class="line">        return LocationCache.getCityName(cityId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在接口层，通过创建 GetCityNameCommand，传入 cityId，执行 execute() 方法，那么获取本地 cityName 缓存的代码将会进行信号量的资源隔离。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;&#x2F;getProductInfo&quot;)</span><br><span class="line">@ResponseBody</span><br><span class="line">public String getProductInfo(Long productId) &#123;</span><br><span class="line">    HystrixCommand&lt;ProductInfo&gt; getProductInfoCommand &#x3D; new GetProductInfoCommand(productId);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 通过command执行，获取最新商品数据</span><br><span class="line">    ProductInfo productInfo &#x3D; getProductInfoCommand.execute();</span><br><span class="line"></span><br><span class="line">    Long cityId &#x3D; productInfo.getCityId();</span><br><span class="line"></span><br><span class="line">    GetCityNameCommand getCityNameCommand &#x3D; new GetCityNameCommand(cityId);</span><br><span class="line">    &#x2F;&#x2F; 获取本地内存(cityName)的代码会被信号量进行资源隔离</span><br><span class="line">    String cityName &#x3D; getCityNameCommand.execute();</span><br><span class="line"></span><br><span class="line">    productInfo.setCityName(cityName);</span><br><span class="line"></span><br><span class="line">    System.out.println(productInfo);</span><br><span class="line">    return &quot;success&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hystrix-隔离策略细粒度控制"><a href="#Hystrix-隔离策略细粒度控制" class="headerlink" title="Hystrix 隔离策略细粒度控制"></a>Hystrix 隔离策略细粒度控制</h2><p>Hystrix 实现资源隔离，有两种策略：</p>
+<ul>
+<li>线程池隔离</li>
+<li>信号量隔离</li>
+</ul>
+<p>对资源隔离这一块东西，其实可以做一定细粒度的一些控制。</p>
+<h3 id="execution-isolation-strategy"><a href="#execution-isolation-strategy" class="headerlink" title="execution.isolation.strategy"></a>execution.isolation.strategy</h3><p>指定了 HystrixCommand.run() 的资源隔离策略：<code>THREAD</code> or <code>SEMAPHORE</code>，一种基于线程池，一种基于信号量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; to use thread isolation</span><br><span class="line">HystrixCommandProperties.Setter().withExecutionIsolationStrategy(ExecutionIsolationStrategy.THREAD)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; to use semaphore isolation</span><br><span class="line">HystrixCommandProperties.Setter().withExecutionIsolationStrategy(ExecutionIsolationStrategy.SEMAPHORE)</span><br></pre></td></tr></table></figure>
+
+<p>线程池机制，每个 command 运行在一个线程中，限流是通过线程池的大小来控制的；信号量机制，command 是运行在调用线程中，通过信号量的容量来进行限流。</p>
+<p>如何在线程池和信号量之间做选择？</p>
+<p><strong>默认的策略</strong>就是线程池。</p>
+<p><strong>线程池</strong>其实最大的好处就是对于网络访问请求，如果有超时的话，可以避免调用线程阻塞住。</p>
+<p>而使用信号量的场景，通常是针对超大并发量的场景下，每个服务实例每秒都几百的 <code>QPS</code>，那么此时你用线程池的话，线程一般不会太多，可能撑不住那么高的并发，如果要撑住，可能要耗费大量的线程资源，那么就是用信号量，来进行限流保护。一般用信号量常见于那种基于纯内存的一些业务逻辑服务，而不涉及到任何网络访问请求。</p>
+<h3 id="command-key-amp-command-group"><a href="#command-key-amp-command-group" class="headerlink" title="command key &amp; command group"></a>command key &amp; command group</h3><p>我们使用线程池隔离，要怎么对<strong>依赖服务</strong>、<strong>依赖服务接口</strong>、<strong>线程池</strong>三者做划分呢？</p>
+<p>每一个 command，都可以设置一个自己的名称 command key，同时可以设置一个自己的组 command group。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private static final Setter cachedSetter &#x3D; Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;ExampleGroup&quot;))</span><br><span class="line">                                                .andCommandKey(HystrixCommandKey.Factory.asKey(&quot;HelloWorld&quot;)); </span><br><span class="line"></span><br><span class="line">public CommandHelloWorld(String name) &#123;</span><br><span class="line">    super(cachedSetter);</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>command group 是一个非常重要的概念，默认情况下，就是通过 command group 来定义一个线程池的，而且还会通过 command group 来聚合一些监控和报警信息。同一个 command group 中的请求，都会进入同一个线程池中。</p>
+<h3 id="command-thread-pool"><a href="#command-thread-pool" class="headerlink" title="command thread pool"></a>command thread pool</h3><p>ThreadPoolKey 代表了一个 HystrixThreadPool，用来进行统一监控、统计、缓存。默认的 ThreadPoolKey 就是 command group 的名称。每个 command 都会跟它的 ThreadPoolKey 对应的 ThreadPool 绑定在一起。</p>
+<p>如果不想直接用 command group，也可以手动设置 ThreadPool 的名称。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">private static final Setter cachedSetter &#x3D; Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;ExampleGroup&quot;))</span><br><span class="line">                                                .andCommandKey(HystrixCommandKey.Factory.asKey(&quot;HelloWorld&quot;))</span><br><span class="line">                                                .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(&quot;HelloWorldPool&quot;));</span><br><span class="line"></span><br><span class="line">public CommandHelloWorld(String name) &#123;</span><br><span class="line">    super(cachedSetter);</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="command-key-amp-command-group-amp-command-thread-pool"><a href="#command-key-amp-command-group-amp-command-thread-pool" class="headerlink" title="command key &amp; command group &amp; command thread pool"></a>command key &amp; command group &amp; command thread pool</h3><p><strong>command key</strong> ，代表了一类 command，一般来说，代表了底层的依赖服务的一个接口。</p>
+<p><strong>command group</strong> ，代表了某一个底层的依赖服务，这是很合理的，一个依赖服务可能会暴露出来多个接口，每个接口就是一个 command key。command group 在逻辑上去组织起来一堆 command key 的调用、统计信息、成功次数、timeout 超时次数、失败次数等，可以看到某一个服务整体的一些访问情况。一般来说，<strong>推荐</strong>根据一个服务区划分出一个线程池，command key 默认都是属于同一个线程池的。</p>
+<p>比如说你以一个服务为粒度，估算出来这个服务每秒的所有接口加起来的整体 <code>QPS</code> 在 100 左右，你调用这个服务，当前这个服务部署了 10 个服务实例，每个服务实例上，其实用这个 command group 对应这个服务，给一个线程池，量大概在 10 个左右就可以了，你对整个服务的整体的访问 QPS 就大概在每秒 100 左右。</p>
+<p>但是，如果说 command group 对应了一个服务，而这个服务暴露出来的几个接口，访问量很不一样，差异非常之大。你可能就希望在这个服务 command group 内部，包含的对应多个接口的 command key，做一些细粒度的资源隔离。就是说，对同一个服务的不同接口，使用不同的线程池。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">command key -&gt; command group</span><br><span class="line"></span><br><span class="line">command key -&gt; 自己的 thread pool key</span><br></pre></td></tr></table></figure>
+
+<p>逻辑上来说，多个 command key 属于一个command group，在做统计的时候，会放在一起统计。每个 command key 有自己的线程池，每个接口有自己的线程池，去做资源隔离和限流。</p>
+<p>说白点，就是说如果你的 command key 要用自己的线程池，可以定义自己的 thread pool key，就 ok 了。</p>
+<h3 id="coreSize"><a href="#coreSize" class="headerlink" title="coreSize"></a>coreSize</h3><p>设置线程池的大小，默认是 10。一般来说，用这个默认的 10 个线程大小就够了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HystrixThreadPoolProperties.Setter().withCoreSize(int value);</span><br></pre></td></tr></table></figure>
+
+<h3 id="queueSizeRejectionThreshold"><a href="#queueSizeRejectionThreshold" class="headerlink" title="queueSizeRejectionThreshold"></a>queueSizeRejectionThreshold</h3><p>如果说线程池中的 10 个线程都在工作中，没有空闲的线程来做其它的事情，此时再有请求过来，会先进入队列积压。如果说队列积压满了，再有请求过来，就直接 reject，拒绝请求，执行 fallback 降级的逻辑，快速返回。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-thread-pool-queue.png" alt="hystrix-thread-pool-queue"></p>
+<p>控制 queue 满了之后 reject 的 threshold，因为 maxQueueSize 不允许热修改，因此提供这个参数可以热修改，控制队列的最大大小。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HystrixThreadPoolProperties.Setter().withQueueSizeRejectionThreshold(int value);</span><br></pre></td></tr></table></figure>
+
+<h3 id="execution-isolation-semaphore-maxConcurrentRequests"><a href="#execution-isolation-semaphore-maxConcurrentRequests" class="headerlink" title="execution.isolation.semaphore.maxConcurrentRequests"></a>execution.isolation.semaphore.maxConcurrentRequests</h3><p>设置使用 SEMAPHORE 隔离策略的时候允许访问的最大并发量，超过这个最大并发量，请求直接被 reject。</p>
+<p>这个并发量的设置，跟线程池大小的设置，应该是类似的，但是基于信号量的话，性能会好很多，而且 Hystrix 框架本身的开销会小很多。</p>
+<p>默认值是 10，尽量设置的小一些，因为一旦设置的太大，而且有延时发生，可能瞬间导致 tomcat 本身的线程资源被占满。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter().withExecutionIsolationSemaphoreMaxConcurrentRequests(int value);</span><br></pre></td></tr></table></figure>
+
+<h2 id="深入-Hystrix-执行时内部原理"><a href="#深入-Hystrix-执行时内部原理" class="headerlink" title="深入 Hystrix 执行时内部原理"></a>深入 Hystrix 执行时内部原理</h2><p>前面我们了解了 Hystrix 最基本的支持高可用的技术：<strong>资源隔离</strong> + <strong>限流</strong>。</p>
+<ul>
+<li>创建 command；</li>
+<li>执行这个 command；</li>
+<li>配置这个 command 对应的 group 和线程池。</li>
+</ul>
+<p>这里，我们要讲一下，你开始执行这个 command，调用了这个 command 的 execute() 方法之后，Hystrix 底层的执行流程和步骤以及原理是什么。</p>
+<p>在讲解这个流程的过程中，我会带出来 Hystrix 其他的一些核心以及重要的功能。</p>
+<p>这里是整个 8 大步骤的流程图，我会对每个步骤进行细致的讲解。学习的过程中，对照着这个流程图，相信思路会比较清晰。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png" alt="hystrix-process"></p>
+<h3 id="步骤一：创建-command"><a href="#步骤一：创建-command" class="headerlink" title="步骤一：创建 command"></a>步骤一：创建 command</h3><p>一个 HystrixCommand 或 HystrixObservableCommand 对象，代表了对某个依赖服务发起的一次请求或者调用。创建的时候，可以在构造函数中传入任何需要的参数。</p>
+<ul>
+<li>HystrixCommand 主要用于仅仅会返回一个结果的调用。</li>
+<li>HystrixObservableCommand 主要用于可能会返回多条结果的调用。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 创建 HystrixCommand</span><br><span class="line">HystrixCommand hystrixCommand &#x3D; new HystrixCommand(arg1, arg2);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 创建 HystrixObservableCommand</span><br><span class="line">HystrixObservableCommand hystrixObservableCommand &#x3D; new HystrixObservableCommand(arg1, arg2);</span><br></pre></td></tr></table></figure>
+
+<h3 id="步骤二：调用-command-执行方法"><a href="#步骤二：调用-command-执行方法" class="headerlink" title="步骤二：调用 command 执行方法"></a>步骤二：调用 command 执行方法</h3><p>执行 command，就可以发起一次对依赖服务的调用。</p>
+<p>要执行 command，可以在 4 个方法中选择其中的一个：execute()、queue()、observe()、toObservable()。</p>
+<p>其中 execute() 和 queue() 方法仅仅对 HystrixCommand 适用。</p>
+<ul>
+<li>execute()：调用后直接 block 住，属于同步调用，直到依赖服务返回单条结果，或者抛出异常。</li>
+<li>queue()：返回一个 Future，属于异步调用，后面可以通过 Future 获取单条结果。</li>
+<li>observe()：订阅一个 Observable 对象，Observable 代表的是依赖服务返回的结果，获取到一个那个代表结果的 Observable 对象的拷贝对象。</li>
+<li>toObservable()：返回一个 Observable 对象，如果我们订阅这个对象，就会执行 command 并且获取返回结果。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">K             value    &#x3D; hystrixCommand.execute();</span><br><span class="line">Future&lt;K&gt;     fValue   &#x3D; hystrixCommand.queue();</span><br><span class="line">Observable&lt;K&gt; oValue   &#x3D; hystrixObservableCommand.observe();</span><br><span class="line">Observable&lt;K&gt; toOValue &#x3D; hystrixObservableCommand.toObservable();</span><br></pre></td></tr></table></figure>
+
+<p>execute() 实际上会调用 queue().get() 方法，可以看一下 Hystrix 源码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public R execute() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        return queue().get();</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        throw Exceptions.sneakyThrow(decomposeException(e));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而在 queue() 方法中，会调用 toObservable().toBlocking().toFuture()。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">final Future&lt;R&gt; delegate &#x3D; toObservable().toBlocking().toFuture();</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，先通过 toObservable() 获得 Future 对象，然后调用 Future 的 get() 方法。那么，其实无论是哪种方式执行 command，最终都是依赖于 toObservable() 去执行的。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png" alt="hystrix-process"></p>
+<h3 id="步骤三：检查是否开启缓存"><a href="#步骤三：检查是否开启缓存" class="headerlink" title="步骤三：检查是否开启缓存"></a>步骤三：检查是否开启缓存</h3><p>从这一步开始，就进入到 Hystrix 底层运行原理啦，看一下 Hystrix 一些更高级的功能和特性。</p>
+<p>如果这个 command 开启了请求缓存 Request Cache，而且这个调用的结果在缓存中存在，那么直接从缓存中返回结果。否则，继续往后的步骤。</p>
+<h3 id="步骤四：检查是否开启了断路器"><a href="#步骤四：检查是否开启了断路器" class="headerlink" title="步骤四：检查是否开启了断路器"></a>步骤四：检查是否开启了断路器</h3><p>检查这个 command 对应的依赖服务是否开启了断路器。如果断路器被打开了，那么 Hystrix 就不会执行这个 command，而是直接去执行 fallback 降级机制，返回降级结果。</p>
+<h3 id="步骤五：检查线程池-队列-信号量是否已满"><a href="#步骤五：检查线程池-队列-信号量是否已满" class="headerlink" title="步骤五：检查线程池/队列/信号量是否已满"></a>步骤五：检查线程池/队列/信号量是否已满</h3><p>如果这个 command 线程池和队列已满，或者 semaphore 信号量已满，那么也不会执行 command，而是直接去调用 fallback 降级机制，同时发送 reject 信息给断路器统计。</p>
+<h3 id="步骤六：执行-command"><a href="#步骤六：执行-command" class="headerlink" title="步骤六：执行 command"></a>步骤六：执行 command</h3><p>调用 HystrixObservableCommand 对象的 construct() 方法，或者 HystrixCommand 的 run() 方法来实际执行这个 command。</p>
+<ul>
+<li>HystrixCommand.run() 返回单条结果，或者抛出异常。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 通过command执行，获取最新一条商品数据</span><br><span class="line">ProductInfo productInfo &#x3D; getProductInfoCommand.execute();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>HystrixObservableCommand.construct() 返回一个 Observable 对象，可以获取多条结果。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Observable&lt;ProductInfo&gt; observable &#x3D; getProductInfosCommand.observe();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 订阅获取多条结果</span><br><span class="line">observable.subscribe(new Observer&lt;ProductInfo&gt;() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onCompleted() &#123;</span><br><span class="line">        System.out.println(&quot;获取完了所有的商品数据&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onError(Throwable e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 获取完一条数据，就回调一次这个方法</span><br><span class="line">     * </span><br><span class="line">     * @param productInfo 商品信息</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Override</span><br><span class="line">    public void onNext(ProductInfo productInfo) &#123;</span><br><span class="line">        System.out.println(productInfo);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>如果是采用线程池方式，并且 HystrixCommand.run() 或者 HystrixObservableCommand.construct() 的执行时间超过了 timeout 时长的话，那么 command 所在的线程会抛出一个 TimeoutException，这时会执行 fallback 降级机制，不会去管 run() 或 construct() 返回的值了。另一种情况，如果 command 执行出错抛出了其它异常，那么也会走 fallback 降级。这两种情况下，Hystrix 都会发送异常事件给断路器统计。</p>
+<p><strong>注意</strong>，我们是不可能终止掉一个调用严重延迟的依赖服务的线程的，只能说给你抛出来一个 TimeoutException。</p>
+<p>如果没有 timeout，也正常执行的话，那么调用线程就会拿到一些调用依赖服务获取到的结果，然后 Hystrix 也会做一些 logging 记录和 metric 度量统计。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png" alt="hystrix-process"></p>
+<h3 id="步骤七：断路健康检查"><a href="#步骤七：断路健康检查" class="headerlink" title="步骤七：断路健康检查"></a>步骤七：断路健康检查</h3><p>Hystrix 会把每一个依赖服务的调用成功、失败、Reject、Timeout 等事件发送给 circuit breaker 断路器。断路器就会对这些事件的次数进行统计，根据异常事件发生的比例来决定是否要进行断路（熔断）。如果打开了断路器，那么在接下来一段时间内，会直接断路，返回降级结果。</p>
+<p>如果在之后，断路器尝试执行 command，调用没有出错，返回了正常结果，那么 Hystrix 就会把断路器关闭。</p>
+<h3 id="步骤八：调用-fallback-降级机制"><a href="#步骤八：调用-fallback-降级机制" class="headerlink" title="步骤八：调用 fallback 降级机制"></a>步骤八：调用 fallback 降级机制</h3><p>在以下几种情况中，Hystrix 会调用 fallback 降级机制。</p>
+<ul>
+<li>断路器处于打开状态；</li>
+<li>线程池/队列/semaphore满了；</li>
+<li>command 执行超时；</li>
+<li>run() 或者 construct() 抛出异常。</li>
+</ul>
+<p>一般在降级机制中，都建议给出一些默认的返回值，比如静态的一些代码逻辑，或者从内存中的缓存中提取一些数据，在这里尽量不要再进行网络请求了。</p>
+<p>在降级中，如果一定要进行网络调用的话，也应该将那个调用放在一个 HystrixCommand 中进行隔离。</p>
+<ul>
+<li>HystrixCommand 中，实现 getFallback() 方法，可以提供降级机制。</li>
+<li>HystrixObservableCommand 中，实现 resumeWithFallback() 方法，返回一个 Observable 对象，可以提供降级结果。</li>
+</ul>
+<p>如果没有实现 fallback，或者 fallback 抛出了异常，Hystrix 会返回一个 Observable，但是不会返回任何数据。</p>
+<p>不同的 command 执行方式，其 fallback 为空或者异常时的返回结果不同。</p>
+<ul>
+<li>对于 execute()，直接抛出异常。</li>
+<li>对于 queue()，返回一个 Future，调用 get() 时抛出异常。</li>
+<li>对于 observe()，返回一个 Observable 对象，但是调用 subscribe() 方法订阅它时，立即抛出调用者的 onError() 方法。</li>
+<li>对于 toObservable()，返回一个 Observable 对象，但是调用 subscribe() 方法订阅它时，立即抛出调用者的 onError() 方法。</li>
+</ul>
+<h3 id="不同的执行方式"><a href="#不同的执行方式" class="headerlink" title="不同的执行方式"></a>不同的执行方式</h3><ul>
+<li>execute()，获取一个 Future.get()，然后拿到单个结果。</li>
+<li>queue()，返回一个 Future。</li>
+<li>observe()，立即订阅 Observable，然后启动 8 大执行步骤，返回一个拷贝的 Observable，订阅时立即回调给你结果。</li>
+<li>toObservable()，返回一个原始的 Observable，必须手动订阅才会去执行 8 大步骤。</li>
+</ul>
+<h2 id="基于-request-cache-请求缓存技术优化批量商品数据查询接口"><a href="#基于-request-cache-请求缓存技术优化批量商品数据查询接口" class="headerlink" title="基于 request cache 请求缓存技术优化批量商品数据查询接口"></a>基于 request cache 请求缓存技术优化批量商品数据查询接口</h2><p>Hystrix command 执行时 8 大步骤第三步，就是检查 Request cache 是否有缓存。</p>
+<p>首先，有一个概念，叫做 Request Context 请求上下文，一般来说，在一个 web 应用中，如果我们用到了 Hystrix，我们会在一个 filter 里面，对每一个请求都施加一个请求上下文。就是说，每一次请求，就是一次请求上下文。然后在这次请求上下文中，我们会去执行 N 多代码，调用 N 多依赖服务，有的依赖服务可能还会调用好几次。</p>
+<p>在一次请求上下文中，如果有多个 command，参数都是一样的，调用的接口也是一样的，而结果可以认为也是一样的。那么这个时候，我们可以让第一个 command 执行返回的结果缓存在内存中，然后这个请求上下文后续的其它对这个依赖的调用全部从内存中取出缓存结果就可以了。</p>
+<p>这样的话，好处在于不用在一次请求上下文中反复多次执行一样的 command，<strong>避免重复执行网络请求，提升整个请求的性能</strong>。</p>
+<p>举个栗子。比如说我们在一次请求上下文中，请求获取 productId 为 1 的数据，第一次缓存中没有，那么会从商品服务中获取数据，返回最新数据结果，同时将数据缓存在内存中。后续同一次请求上下文中，如果还有获取 productId 为 1 的数据的请求，直接从缓存中取就好了。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-request-cache.png" alt="hystrix-request-cache"></p>
+<p>HystrixCommand 和 HystrixObservableCommand 都可以指定一个缓存 key，然后 Hystrix 会自动进行缓存，接着在同一个 request context 内，再次访问的话，就会直接取用缓存。</p>
+<p>下面，我们结合一个具体的<strong>业务场景</strong>，来看一下如何使用 request cache 请求缓存技术。当然，以下代码只作为一个基本的 Demo 而已。</p>
+<p>现在，假设我们要做一个<strong>批量查询商品数据</strong>的接口，在这个里面，我们是用 HystrixCommand 一次性批量查询多个商品 id 的数据。但是这里有个问题，如果说 Nginx 在本地缓存失效了，重新获取一批缓存，传递过来的 productIds 都没有进行去重，比如 <code>productIds=1,1,1,2,2</code>，那么可能说，商品 id 出现了重复，如果按照我们之前的业务逻辑，可能就会重复对 productId=1 的商品查询三次，productId=2 的商品查询两次。</p>
+<p>我们对批量查询商品数据的接口，可以用 request cache 做一个优化，就是说一次请求，就是一次 request context，对相同的商品查询只执行一次，其余重复的都走 request cache。</p>
+<h3 id="实现-Hystrix-请求上下文过滤器并注册"><a href="#实现-Hystrix-请求上下文过滤器并注册" class="headerlink" title="实现 Hystrix 请求上下文过滤器并注册"></a>实现 Hystrix 请求上下文过滤器并注册</h3><p>定义 HystrixRequestContextFilter 类，实现 Filter 接口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Hystrix 请求上下文过滤器</span><br><span class="line"> *&#x2F;</span><br><span class="line">public class HystrixRequestContextFilter implements Filter &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void init(FilterConfig filterConfig) throws ServletException &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) &#123;</span><br><span class="line">        HystrixRequestContext context &#x3D; HystrixRequestContext.initializeContext();</span><br><span class="line">        try &#123;</span><br><span class="line">            filterChain.doFilter(servletRequest, servletResponse);</span><br><span class="line">        &#125; catch (IOException | ServletException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            context.shutdown();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void destroy() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后将该 filter 对象注册到 SpringBoot Application 中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">public class EshopApplication &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(EshopApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    public FilterRegistrationBean filterRegistrationBean() &#123;</span><br><span class="line">        FilterRegistrationBean filterRegistrationBean &#x3D; new FilterRegistrationBean(new HystrixRequestContextFilter());</span><br><span class="line">        filterRegistrationBean.addUrlPatterns(&quot;&#x2F;*&quot;);</span><br><span class="line">        return filterRegistrationBean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="command-重写-getCacheKey-方法"><a href="#command-重写-getCacheKey-方法" class="headerlink" title="command 重写 getCacheKey() 方法"></a>command 重写 getCacheKey() 方法</h3><p>在 GetProductInfoCommand 中，重写 getCacheKey() 方法，这样的话，每一次请求的结果，都会放在 Hystrix 请求上下文中。下一次同一个 productId 的数据请求，直接取缓存，无须再调用 run() 方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">public class GetProductInfoCommand extends HystrixCommand&lt;ProductInfo&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    private static final HystrixCommandKey KEY &#x3D; HystrixCommandKey.Factory.asKey(&quot;GetProductInfoCommand&quot;);</span><br><span class="line"></span><br><span class="line">    public GetProductInfoCommand(Long productId) &#123;</span><br><span class="line">        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;ProductInfoService&quot;))</span><br><span class="line">                .andCommandKey(KEY));</span><br><span class="line">        this.productId &#x3D; productId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo run() &#123;</span><br><span class="line">        String url &#x3D; &quot;http:&#x2F;&#x2F;localhost:8081&#x2F;getProductInfo?productId&#x3D;&quot; + productId;</span><br><span class="line">        String response &#x3D; HttpClientUtils.sendGetRequest(url);</span><br><span class="line">        System.out.println(&quot;调用接口查询商品数据，productId&#x3D;&quot; + productId);</span><br><span class="line">        return JSONObject.parseObject(response, ProductInfo.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 每次请求的结果，都会放在Hystrix绑定的请求上下文上</span><br><span class="line">     *</span><br><span class="line">     * @return cacheKey 缓存key</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Override</span><br><span class="line">    public String getCacheKey() &#123;</span><br><span class="line">        return &quot;product_info_&quot; + productId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 将某个商品id的缓存清空</span><br><span class="line">     *</span><br><span class="line">     * @param productId 商品id</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public static void flushCache(Long productId) &#123;</span><br><span class="line">        HystrixRequestCache.getInstance(KEY,</span><br><span class="line">                HystrixConcurrencyStrategyDefault.getInstance()).clear(&quot;product_info_&quot; + productId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里写了一个 flushCache() 方法，用于我们开发手动删除缓存。</p>
+<h3 id="controller-调用-command-查询商品信息"><a href="#controller-调用-command-查询商品信息" class="headerlink" title="controller 调用 command 查询商品信息"></a>controller 调用 command 查询商品信息</h3><p>在一次 web 请求上下文中，传入商品 id 列表，查询多条商品数据信息。对于每个 productId，都创建一个 command。</p>
+<p>如果 id 列表没有去重，那么重复的 id，第二次查询的时候就会直接走缓存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@Controller</span><br><span class="line">public class CacheController &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 一次性批量查询多条商品数据的请求</span><br><span class="line">     *</span><br><span class="line">     * @param productIds 以,分隔的商品id列表</span><br><span class="line">     * @return 响应状态</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @RequestMapping(&quot;&#x2F;getProductInfos&quot;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public String getProductInfos(String productIds) &#123;</span><br><span class="line">        for (String productId : productIds.split(&quot;,&quot;)) &#123;</span><br><span class="line">            &#x2F;&#x2F; 对每个productId，都创建一个command</span><br><span class="line">            GetProductInfoCommand getProductInfoCommand &#x3D; new GetProductInfoCommand(Long.valueOf(productId));</span><br><span class="line">            ProductInfo productInfo &#x3D; getProductInfoCommand.execute();</span><br><span class="line">            System.out.println(&quot;是否是从缓存中取的结果：&quot; + getProductInfoCommand.isResponseFromCache());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="发起请求"><a href="#发起请求" class="headerlink" title="发起请求"></a>发起请求</h3><p>调用接口，查询多个商品的信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8080&#x2F;getProductInfos?productIds&#x3D;1,1,1,2,2,5</span><br></pre></td></tr></table></figure>
+
+<p>在控制台，我们可以看到以下结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">调用接口查询商品数据，productId&#x3D;1</span><br><span class="line">是否是从缓存中取的结果：false</span><br><span class="line">是否是从缓存中取的结果：true</span><br><span class="line">是否是从缓存中取的结果：true</span><br><span class="line">调用接口查询商品数据，productId&#x3D;2</span><br><span class="line">是否是从缓存中取的结果：false</span><br><span class="line">是否是从缓存中取的结果：true</span><br><span class="line">调用接口查询商品数据，productId&#x3D;5</span><br><span class="line">是否是从缓存中取的结果：false</span><br></pre></td></tr></table></figure>
+
+<p>第一次查询 productId=1 的数据，会调用接口进行查询，不是从缓存中取结果。而随后再出现查询 productId=1 的请求，就直接取缓存了，这样的话，效率明显高很多。</p>
+<h3 id="删除缓存"><a href="#删除缓存" class="headerlink" title="删除缓存"></a>删除缓存</h3><p>我们写一个 UpdateProductInfoCommand，在更新商品信息之后，手动调用之前写的 flushCache()，手动将缓存删除。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class UpdateProductInfoCommand extends HystrixCommand&lt;Boolean&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    public UpdateProductInfoCommand(Long productId) &#123;</span><br><span class="line">        super(HystrixCommandGroupKey.Factory.asKey(&quot;UpdateProductInfoGroup&quot;));</span><br><span class="line">        this.productId &#x3D; productId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected Boolean run() throws Exception &#123;</span><br><span class="line">        &#x2F;&#x2F; 这里执行一次商品信息的更新</span><br><span class="line">        &#x2F;&#x2F; ...</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 然后清空缓存</span><br><span class="line">        GetProductInfoCommand.flushCache(productId);</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，以后查询该商品的请求，第一次就会走接口调用去查询最新的商品信息。</p>
+<h2 id="基于本地缓存的-fallback-降级机制"><a href="#基于本地缓存的-fallback-降级机制" class="headerlink" title="基于本地缓存的 fallback 降级机制"></a>基于本地缓存的 fallback 降级机制</h2><p>Hystrix 出现以下四种情况，都会去调用 fallback 降级机制：</p>
+<ul>
+<li>断路器处于打开的状态。</li>
+<li>资源池已满（线程池+队列 / 信号量）。</li>
+<li>Hystrix 调用各种接口，或者访问外部依赖，比如 MySQL、Redis、Zookeeper、Kafka 等等，出现了任何异常的情况。</li>
+<li>访问外部依赖的时候，访问时间过长，报了 TimeoutException 异常。</li>
+</ul>
+<h3 id="两种最经典的降级机制"><a href="#两种最经典的降级机制" class="headerlink" title="两种最经典的降级机制"></a>两种最经典的降级机制</h3><ul>
+<li>纯内存数据<br>在降级逻辑中，你可以在内存中维护一个 ehcache，作为一个纯内存的基于 LRU 自动清理的缓存，让数据放在缓存内。如果说外部依赖有异常，fallback 这里直接尝试从 ehcache 中获取数据。</li>
+<li>默认值<br>fallback 降级逻辑中，也可以直接返回一个默认值。</li>
+</ul>
+<p>在 <code>HystrixCommand</code>，降级逻辑的书写，是通过实现 getFallback() 接口；而在 <code>HystrixObservableCommand</code> 中，则是实现 resumeWithFallback() 方法。</p>
+<p>现在，我们用一个简单的栗子，来演示 fallback 降级是怎么做的。</p>
+<p>比如，有这么个<strong>场景</strong>。我们现在有个包含 brandId 的商品数据，假设正常的逻辑是这样：拿到一个商品数据，根据 brandId 去调用品牌服务的接口，获取品牌的最新名称 brandName。</p>
+<p>假如说，品牌服务接口挂掉了，那么我们可以尝试从本地内存中，获取一份稍过期的数据，先凑合着用。</p>
+<h3 id="步骤一：本地缓存获取数据"><a href="#步骤一：本地缓存获取数据" class="headerlink" title="步骤一：本地缓存获取数据"></a>步骤一：本地缓存获取数据</h3><p>本地获取品牌名称的代码大致如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * 品牌名称本地缓存</span><br><span class="line"> *</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">public class BrandCache &#123;</span><br><span class="line"></span><br><span class="line">    private static Map&lt;Long, String&gt; brandMap &#x3D; new HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        brandMap.put(1L, &quot;Nike&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * brandId 获取 brandName</span><br><span class="line">     *</span><br><span class="line">     * @param brandId 品牌id</span><br><span class="line">     * @return 品牌名</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public static String getBrandName(Long brandId) &#123;</span><br><span class="line">        return brandMap.get(brandId);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="步骤二：实现-GetBrandNameCommand"><a href="#步骤二：实现-GetBrandNameCommand" class="headerlink" title="步骤二：实现 GetBrandNameCommand"></a>步骤二：实现 GetBrandNameCommand</h3><p>在 GetBrandNameCommand 中，run() 方法的正常逻辑是去调用品牌服务的接口获取到品牌名称，如果调用失败，报错了，那么就会去调用 fallback 降级机制。</p>
+<p>这里，我们直接<strong>模拟接口调用报错</strong>，给它抛出个异常。</p>
+<p>而在 getFallback() 方法中，就是我们的<strong>降级逻辑</strong>，我们直接从本地的缓存中，<strong>获取到品牌名称</strong>的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * 获取品牌名称的command</span><br><span class="line"> *</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">public class GetBrandNameCommand extends HystrixCommand&lt;String&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long brandId;</span><br><span class="line"></span><br><span class="line">    public GetBrandNameCommand(Long brandId) &#123;</span><br><span class="line">        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;BrandService&quot;))</span><br><span class="line">                .andCommandKey(HystrixCommandKey.Factory.asKey(&quot;GetBrandNameCommand&quot;))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        &#x2F;&#x2F; 设置降级机制最大并发请求数</span><br><span class="line">                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(15)));</span><br><span class="line">        this.brandId &#x3D; brandId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected String run() throws Exception &#123;</span><br><span class="line">        &#x2F;&#x2F; 这里正常的逻辑应该是去调用一个品牌服务的接口获取名称</span><br><span class="line">        &#x2F;&#x2F; 如果调用失败，报错了，那么就会去调用fallback降级机制</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 这里我们直接模拟调用报错，抛出异常</span><br><span class="line">        throw new Exception();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected String getFallback() &#123;</span><br><span class="line">        return BrandCache.getBrandName(brandId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>FallbackIsolationSemaphoreMaxConcurrentRequests</code> 用于设置 fallback 最大允许的并发请求量，默认值是 10，是通过 semaphore 信号量的机制去限流的。如果超出了这个最大值，那么直接 reject。</p>
+<h3 id="步骤三：CacheController-调用接口"><a href="#步骤三：CacheController-调用接口" class="headerlink" title="步骤三：CacheController 调用接口"></a>步骤三：CacheController 调用接口</h3><p>在 CacheController 中，我们通过 productInfo 获取 brandId，然后创建 GetBrandNameCommand 并执行，去尝试获取 brandName。这里执行会报错，因为我们在 run() 方法中直接抛出异常，Hystrix 就会去调用 getFallback() 方法走降级逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@Controller</span><br><span class="line">public class CacheController &#123;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(&quot;&#x2F;getProductInfo&quot;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public String getProductInfo(Long productId) &#123;</span><br><span class="line">        HystrixCommand&lt;ProductInfo&gt; getProductInfoCommand &#x3D; new GetProductInfoCommand(productId);</span><br><span class="line"></span><br><span class="line">        ProductInfo productInfo &#x3D; getProductInfoCommand.execute();</span><br><span class="line">        Long brandId &#x3D; productInfo.getBrandId();</span><br><span class="line"></span><br><span class="line">        HystrixCommand&lt;String&gt; getBrandNameCommand &#x3D; new GetBrandNameCommand(brandId);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 执行会抛异常报错，然后走降级</span><br><span class="line">        String brandName &#x3D; getBrandNameCommand.execute();</span><br><span class="line">        productInfo.setBrandName(brandName);</span><br><span class="line"></span><br><span class="line">        System.out.println(productInfo);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于降级逻辑的演示，基本上就结束了。</p>
+<h2 id="深入-Hystrix-断路器执行原理"><a href="#深入-Hystrix-断路器执行原理" class="headerlink" title="深入 Hystrix 断路器执行原理"></a>深入 Hystrix 断路器执行原理</h2><h3 id="RequestVolumeThreshold"><a href="#RequestVolumeThreshold" class="headerlink" title="RequestVolumeThreshold"></a>RequestVolumeThreshold</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    .withCircuitBreakerRequestVolumeThreshold(int)</span><br></pre></td></tr></table></figure>
+
+<p>表示在滑动窗口中，至少有多少个请求，才可能触发断路。</p>
+<p>Hystrix 经过断路器的流量超过了一定的阈值，才有可能触发断路。比如说，要求在 10s 内经过断路器的流量必须达到 20 个，而实际经过断路器的流量才 10 个，那么根本不会去判断要不要断路。</p>
+<h3 id="ErrorThresholdPercentage"><a href="#ErrorThresholdPercentage" class="headerlink" title="ErrorThresholdPercentage"></a>ErrorThresholdPercentage</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    .withCircuitBreakerErrorThresholdPercentage(int)</span><br></pre></td></tr></table></figure>
+
+<p>表示异常比例达到多少，才会触发断路，默认值是 50(%)。</p>
+<p>如果断路器统计到的异常调用的占比超过了一定的阈值，比如说在 10s 内，经过断路器的流量达到了 30 个，同时其中异常访问的数量也达到了一定的比例，比如 60% 的请求都是异常（报错 / 超时 / reject），就会开启断路。</p>
+<h3 id="SleepWindowInMilliseconds"><a href="#SleepWindowInMilliseconds" class="headerlink" title="SleepWindowInMilliseconds"></a>SleepWindowInMilliseconds</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    .withCircuitBreakerSleepWindowInMilliseconds(int)</span><br></pre></td></tr></table></figure>
+
+<p>断路开启，也就是由 close 转换到 open 状态（close -&gt; open）。那么之后在 <code>SleepWindowInMilliseconds</code> 时间内，所有经过该断路器的请求全部都会被断路，不调用后端服务，直接走 fallback 降级机制。</p>
+<p>而在该参数时间过后，断路器会变为 <code>half-open</code> 半开闭状态，尝试让一条请求经过断路器，看能不能正常调用。如果调用成功了，那么就自动恢复，断路器转为 close 状态。</p>
+<h3 id="Enabled"><a href="#Enabled" class="headerlink" title="Enabled"></a>Enabled</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    .withCircuitBreakerEnabled(boolean)</span><br></pre></td></tr></table></figure>
+
+<p>控制是否允许断路器工作，包括跟踪依赖服务调用的健康状况，以及对异常情况过多时是否允许触发断路。默认值是 <code>true</code>。</p>
+<h3 id="ForceOpen"><a href="#ForceOpen" class="headerlink" title="ForceOpen"></a>ForceOpen</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    .withCircuitBreakerForceOpen(boolean)</span><br></pre></td></tr></table></figure>
+
+<p>如果设置为 true 的话，直接强迫打开断路器，相当于是手动断路了，手动降级，默认值是 <code>false</code>。</p>
+<h3 id="ForceClosed"><a href="#ForceClosed" class="headerlink" title="ForceClosed"></a>ForceClosed</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    .withCircuitBreakerForceClosed(boolean)</span><br></pre></td></tr></table></figure>
+
+<p>如果设置为 true，直接强迫关闭断路器，相当于手动停止断路了，手动升级，默认值是 <code>false</code>。</p>
+<h2 id="实例-Demo"><a href="#实例-Demo" class="headerlink" title="实例 Demo"></a>实例 Demo</h2><h3 id="HystrixCommand-配置参数"><a href="#HystrixCommand-配置参数" class="headerlink" title="HystrixCommand 配置参数"></a>HystrixCommand 配置参数</h3><p>在 GetProductInfoCommand 中配置 Setter 断路器相关参数。</p>
+<ul>
+<li>滑动窗口中，最少 20 个请求，才可能触发断路。</li>
+<li>异常比例达到 40% 时，才触发断路。</li>
+<li>断路后 3000ms 内，所有请求都被 reject，直接走 fallback 降级，不会调用 run() 方法。3000ms 过后，变为 half-open 状态。</li>
+</ul>
+<p>run() 方法中，我们判断一下 productId 是否为 -1，是的话，直接抛出异常。这么写，我们之后测试的时候就可以传入 productId=-1，<strong>模拟服务执行异常</strong>了。</p>
+<p>在降级逻辑中，我们直接给它返回降级商品就好了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public class GetProductInfoCommand extends HystrixCommand&lt;ProductInfo&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    private static final HystrixCommandKey KEY &#x3D; HystrixCommandKey.Factory.asKey(&quot;GetProductInfoCommand&quot;);</span><br><span class="line"></span><br><span class="line">    public GetProductInfoCommand(Long productId) &#123;</span><br><span class="line">        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;ProductInfoService&quot;))</span><br><span class="line">                .andCommandKey(KEY)</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        &#x2F;&#x2F; 是否允许断路器工作</span><br><span class="line">                        .withCircuitBreakerEnabled(true)</span><br><span class="line">                        &#x2F;&#x2F; 滑动窗口中，最少有多少个请求，才可能触发断路</span><br><span class="line">                        .withCircuitBreakerRequestVolumeThreshold(20)</span><br><span class="line">                        &#x2F;&#x2F; 异常比例达到多少，才触发断路，默认50%</span><br><span class="line">                        .withCircuitBreakerErrorThresholdPercentage(40)</span><br><span class="line">                        &#x2F;&#x2F; 断路后多少时间内直接reject请求，之后进入half-open状态，默认5000ms</span><br><span class="line">                        .withCircuitBreakerSleepWindowInMilliseconds(3000)));</span><br><span class="line">        this.productId &#x3D; productId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo run() throws Exception &#123;</span><br><span class="line">        System.out.println(&quot;调用接口查询商品数据，productId&#x3D;&quot; + productId);</span><br><span class="line"></span><br><span class="line">        if (productId &#x3D;&#x3D; -1L) &#123;</span><br><span class="line">            throw new Exception();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        String url &#x3D; &quot;http:&#x2F;&#x2F;localhost:8081&#x2F;getProductInfo?productId&#x3D;&quot; + productId;</span><br><span class="line">        String response &#x3D; HttpClientUtils.sendGetRequest(url);</span><br><span class="line">        return JSONObject.parseObject(response, ProductInfo.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo getFallback() &#123;</span><br><span class="line">        ProductInfo productInfo &#x3D; new ProductInfo();</span><br><span class="line">        productInfo.setName(&quot;降级商品&quot;);</span><br><span class="line">        return productInfo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="断路测试类"><a href="#断路测试类" class="headerlink" title="断路测试类"></a>断路测试类</h3><p>我们在测试类中，前 30 次请求，传入 productId=-1，然后休眠 3s，之后 70 次请求，传入 productId=1。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootTest</span><br><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">public class CircuitBreakerTest &#123;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    public void testCircuitBreaker() &#123;</span><br><span class="line">        String baseURL &#x3D; &quot;http:&#x2F;&#x2F;localhost:8080&#x2F;getProductInfo?productId&#x3D;&quot;;</span><br><span class="line"></span><br><span class="line">        for (int i &#x3D; 0; i &lt; 30; ++i) &#123;</span><br><span class="line">            &#x2F;&#x2F; 传入-1，会抛出异常，然后走降级逻辑</span><br><span class="line">            HttpClientUtils.sendGetRequest(baseURL + &quot;-1&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        TimeUtils.sleep(3);</span><br><span class="line">        System.out.println(&quot;After sleeping...&quot;);</span><br><span class="line"></span><br><span class="line">        for (int i &#x3D; 31; i &lt; 100; ++i) &#123;</span><br><span class="line">            &#x2F;&#x2F; 传入1，走服务正常调用</span><br><span class="line">            HttpClientUtils.sendGetRequest(baseURL + &quot;1&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h3><p>测试结果，我们可以明显看出系统断路与恢复的整个过程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">调用接口查询商品数据，productId&#x3D;-1</span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">&#x2F;&#x2F; ...</span><br><span class="line">&#x2F;&#x2F; 这里重复打印了 20 次上面的结果</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">&#x2F;&#x2F; ...</span><br><span class="line">&#x2F;&#x2F; 这里重复打印了 8 次上面的结果</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 休眠 3s 后</span><br><span class="line">调用接口查询商品数据，productId&#x3D;1</span><br><span class="line">ProductInfo(id&#x3D;1, name&#x3D;iphone7手机, price&#x3D;5599.0, pictureList&#x3D;a.jpg,b.jpg, specification&#x3D;iphone7的规格, service&#x3D;iphone7的售后服务, color&#x3D;红色,白色,黑色, size&#x3D;5.5, shopId&#x3D;1, modifiedTime&#x3D;2017-01-01 12:00:00, cityId&#x3D;1, cityName&#x3D;null, brandId&#x3D;1, brandName&#x3D;null)</span><br><span class="line">&#x2F;&#x2F; ...</span><br><span class="line">&#x2F;&#x2F; 这里重复打印了 69 次上面的结果</span><br></pre></td></tr></table></figure>
+
+<p>前 30 次请求，我们传入的 productId 为 -1，所以服务执行过程中会抛出异常。我们设置了最少 20 次请求通过断路器并且异常比例超出 40% 就触发断路。因此执行了 21 次接口调用，每次都抛异常并且走降级，21 次过后，断路器就被打开了。</p>
+<p>之后的 9 次请求，都不会执行 run() 方法，也就不会打印以下信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">调用接口查询商品数据，productId&#x3D;-1</span><br></pre></td></tr></table></figure>
+
+<p>而是直接走降级逻辑，调用 getFallback() 执行。</p>
+<p>休眠了 3s 后，我们在之后的 70 次请求中，都传入 productId 为 1。由于我们前面设置了 3000ms 过后断路器变为 <code>half-open</code> 状态。因此 Hystrix 会尝试执行请求，发现成功了，那么断路器关闭，之后的所有请求也都能正常调用了。</p>
+<h2 id="深入-Hystrix-线程池隔离与接口限流"><a href="#深入-Hystrix-线程池隔离与接口限流" class="headerlink" title="深入 Hystrix 线程池隔离与接口限流"></a>深入 Hystrix 线程池隔离与接口限流</h2><p>前面讲了 Hystrix 的 request cache 请求缓存、fallback 优雅降级、circuit breaker 断路器快速熔断，这一讲，我们来详细说说 Hystrix 的线程池隔离与接口限流。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/hystrix-process.png" alt="hystrix-process"></p>
+<p>Hystrix 通过判断线程池或者信号量是否已满，超出容量的请求，直接 Reject 走降级，从而达到限流的作用。</p>
+<p>限流是限制对后端的服务的访问量，比如说你对 MySQL、Redis、Zookeeper 以及其它各种后端中间件的资源的访问的限制，其实是为了避免过大的流量直接打死后端的服务。</p>
+<h3 id="线程池隔离技术的设计"><a href="#线程池隔离技术的设计" class="headerlink" title="线程池隔离技术的设计"></a>线程池隔离技术的设计</h3><p>Hystrix 采用了 Bulkhead Partition 舱壁隔离技术，来将外部依赖进行资源隔离，进而避免任何外部依赖的故障导致本服务崩溃。</p>
+<p><strong>舱壁隔离</strong>，是说将船体内部空间区隔划分成若干个隔舱，一旦某几个隔舱发生破损进水，水流不会在其间相互流动，如此一来船舶在受损时，依然能具有足够的浮力和稳定性，进而减低立即沉船的危险。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/bulkhead-partition.jpg" alt="bulkhead-partition"></p>
+<p>Hystrix 对每个外部依赖用一个单独的线程池，这样的话，如果对那个外部依赖调用延迟很严重，最多就是耗尽那个依赖自己的线程池而已，不会影响其他的依赖调用。</p>
+<h3 id="Hystrix-应用线程池机制的场景"><a href="#Hystrix-应用线程池机制的场景" class="headerlink" title="Hystrix 应用线程池机制的场景"></a>Hystrix 应用线程池机制的场景</h3><ul>
+<li>每个服务都会调用几十个后端依赖服务，那些后端依赖服务通常是由很多不同的团队开发的。</li>
+<li>每个后端依赖服务都会提供它自己的 client 调用库，比如说用 thrift 的话，就会提供对应的 thrift 依赖。</li>
+<li>client 调用库随时会变更。</li>
+<li>client 调用库随时可能会增加新的网络请求的逻辑。</li>
+<li>client 调用库可能会包含诸如自动重试、数据解析、内存中缓存等逻辑。</li>
+<li>client 调用库一般都对调用者来说是个黑盒，包括实现细节、网络访问、默认配置等等。</li>
+<li>在真实的生产环境中，经常会出现调用者，突然间惊讶的发现，client 调用库发生了某些变化。</li>
+<li>即使 client 调用库没有改变，依赖服务本身可能有会发生逻辑上的变化。</li>
+<li>有些依赖的 client 调用库可能还会拉取其他的依赖库，而且可能那些依赖库配置的不正确。</li>
+<li>大多数网络请求都是同步调用的。</li>
+<li>调用失败和延迟，也有可能会发生在 client 调用库本身的代码中，不一定就是发生在网络请求中。</li>
+</ul>
+<p>简单来说，就是你必须默认 client 调用库很不靠谱，而且随时可能发生各种变化，所以就要用强制隔离的方式来确保任何服务的故障不会影响当前服务。</p>
+<h3 id="线程池机制的优点"><a href="#线程池机制的优点" class="headerlink" title="线程池机制的优点"></a>线程池机制的优点</h3><ul>
+<li>任何一个依赖服务都可以被隔离在自己的线程池内，即使自己的线程池资源填满了，也不会影响任何其他的服务调用。</li>
+<li>服务可以随时引入一个新的依赖服务，因为即使这个新的依赖服务有问题，也不会影响其他任何服务的调用。</li>
+<li>当一个故障的依赖服务重新变好的时候，可以通过清理掉线程池，瞬间恢复该服务的调用，而如果是 tomcat 线程池被占满，再恢复就很麻烦。</li>
+<li>如果一个 client 调用库配置有问题，线程池的健康状况随时会报告，比如成功/失败/拒绝/超时的次数统计，然后可以近实时热修改依赖服务的调用配置，而不用停机。</li>
+<li>基于线程池的异步本质，可以在同步的调用之上，构建一层异步调用层。</li>
+</ul>
+<p>简单来说，最大的好处，就是资源隔离，确保说任何一个依赖服务故障，不会拖垮当前的这个服务。</p>
+<h3 id="线程池机制的缺点"><a href="#线程池机制的缺点" class="headerlink" title="线程池机制的缺点"></a>线程池机制的缺点</h3><ul>
+<li>线程池机制最大的缺点就是增加了 CPU 的开销。<br>除了 tomcat 本身的调用线程之外，还有 Hystrix 自己管理的线程池。</li>
+<li>每个 command 的执行都依托一个独立的线程，会进行排队，调度，还有上下文切换。</li>
+<li>Hystrix 官方自己做了一个多线程异步带来的额外开销统计，通过对比多线程异步调用+同步调用得出，Netflix API 每天通过 Hystrix 执行 10 亿次调用，每个服务实例有 40 个以上的线程池，每个线程池有 10 个左右的线程。）最后发现说，用 Hystrix 的额外开销，就是给请求带来了 3ms 左右的延时，最多延时在 10ms 以内，相比于可用性和稳定性的提升，这是可以接受的。</li>
+</ul>
+<p>我们可以用 Hystrix semaphore 技术来实现对某个依赖服务的并发访问量的限制，而不是通过线程池/队列的大小来限制流量。</p>
+<p>semaphore 技术可以用来限流和削峰，但是不能用来对调研延迟的服务进行 timeout 和隔离。</p>
+<p><code>execution.isolation.strategy</code> 设置为 <code>SEMAPHORE</code>，那么 Hystrix 就会用 semaphore 机制来替代线程池机制，来对依赖服务的访问进行限流。如果通过 semaphore 调用的时候，底层的网络调用延迟很严重，那么是无法 timeout 的，只能一直 block 住。一旦请求数量超过了 semaphore 限定的数量之后，就会立即开启限流。</p>
+<h3 id="接口限流-Demo"><a href="#接口限流-Demo" class="headerlink" title="接口限流 Demo"></a>接口限流 Demo</h3><p>假设一个线程池大小为 8，等待队列的大小为 10。timeout 时长我们设置长一些，20s。</p>
+<p>在 command 内部，写死代码，做一个 sleep，比如 sleep 3s。</p>
+<ul>
+<li>withCoreSize：设置线程池大小。</li>
+<li>withMaxQueueSize：设置等待队列大小。</li>
+<li>withQueueSizeRejectionThreshold：这个与 withMaxQueueSize 配合使用，等待队列的大小，取得是这两个参数的较小值。</li>
+</ul>
+<p>如果只设置了线程池大小，另外两个 queue 相关参数没有设置的话，等待队列是处于关闭的状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">public class GetProductInfoCommand extends HystrixCommand&lt;ProductInfo&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    private static final HystrixCommandKey KEY &#x3D; HystrixCommandKey.Factory.asKey(&quot;GetProductInfoCommand&quot;);</span><br><span class="line"></span><br><span class="line">    public GetProductInfoCommand(Long productId) &#123;</span><br><span class="line">        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;ProductInfoService&quot;))</span><br><span class="line">                .andCommandKey(KEY)</span><br><span class="line">                &#x2F;&#x2F; 线程池相关配置信息</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        &#x2F;&#x2F; 设置线程池大小为8</span><br><span class="line">                        .withCoreSize(8)</span><br><span class="line">                        &#x2F;&#x2F; 设置等待队列大小为10</span><br><span class="line">                        .withMaxQueueSize(10)</span><br><span class="line">                        .withQueueSizeRejectionThreshold(12))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerEnabled(true)</span><br><span class="line">                        .withCircuitBreakerRequestVolumeThreshold(20)</span><br><span class="line">                        .withCircuitBreakerErrorThresholdPercentage(40)</span><br><span class="line">                        .withCircuitBreakerSleepWindowInMilliseconds(3000)</span><br><span class="line">                        &#x2F;&#x2F; 设置超时时间</span><br><span class="line">                        .withExecutionTimeoutInMilliseconds(20000)</span><br><span class="line">                        &#x2F;&#x2F; 设置fallback最大请求并发数</span><br><span class="line">                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(30)));</span><br><span class="line">        this.productId &#x3D; productId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo run() throws Exception &#123;</span><br><span class="line">        System.out.println(&quot;调用接口查询商品数据，productId&#x3D;&quot; + productId);</span><br><span class="line"></span><br><span class="line">        if (productId &#x3D;&#x3D; -1L) &#123;</span><br><span class="line">            throw new Exception();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 请求过来，会在这里hang住3秒钟</span><br><span class="line">        if (productId &#x3D;&#x3D; -2L) &#123;</span><br><span class="line">            TimeUtils.sleep(3);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        String url &#x3D; &quot;http:&#x2F;&#x2F;localhost:8081&#x2F;getProductInfo?productId&#x3D;&quot; + productId;</span><br><span class="line">        String response &#x3D; HttpClientUtils.sendGetRequest(url);</span><br><span class="line">        System.out.println(response);</span><br><span class="line">        return JSONObject.parseObject(response, ProductInfo.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo getFallback() &#123;</span><br><span class="line">        ProductInfo productInfo &#x3D; new ProductInfo();</span><br><span class="line">        productInfo.setName(&quot;降级商品&quot;);</span><br><span class="line">        return productInfo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们模拟 25 个请求。前 8 个请求，调用接口时会直接被 hang 住 3s，那么后面的 10 个请求会先进入等待队列中等待前面的请求执行完毕。最后的 7 个请求过来，会直接被 reject，调用 fallback 降级逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootTest</span><br><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">public class RejectTest &#123;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    public void testReject() &#123;</span><br><span class="line">        for (int i &#x3D; 0; i &lt; 25; ++i) &#123;</span><br><span class="line">            new Thread(() -&gt; HttpClientUtils.sendGetRequest(&quot;http:&#x2F;&#x2F;localhost:8080&#x2F;getProductInfo?productId&#x3D;-2&quot;)).start();</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F; 防止主线程提前结束执行</span><br><span class="line">        TimeUtils.sleep(50);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从执行结果中，我们可以明显看出一共打印出了 7 个降级商品。这也就是请求数超过线程池+队列的数量而直接被 reject 的结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">调用接口查询商品数据，productId&#x3D;-2</span><br><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">&#123;&quot;id&quot;: -2, &quot;name&quot;: &quot;iphone7手机&quot;, &quot;price&quot;: 5599, &quot;pictureList&quot;:&quot;a.jpg,b.jpg&quot;, &quot;specification&quot;: &quot;iphone7的规格&quot;, &quot;service&quot;: &quot;iphone7的售后服务&quot;, &quot;color&quot;: &quot;红色,白色,黑色&quot;, &quot;size&quot;: &quot;5.5&quot;, &quot;shopId&quot;: 1, &quot;modifiedTime&quot;: &quot;2017-01-01 12:00:00&quot;, &quot;cityId&quot;: 1, &quot;brandId&quot;: 1&#125;</span><br><span class="line">&#x2F;&#x2F; 后面都是一些正常的商品信息，就不贴出来了</span><br><span class="line">&#x2F;&#x2F;...</span><br></pre></td></tr></table></figure>
+
+<h2 id="基于-timeout-机制为服务接口调用超时提供安全保护"><a href="#基于-timeout-机制为服务接口调用超时提供安全保护" class="headerlink" title="基于 timeout 机制为服务接口调用超时提供安全保护"></a>基于 timeout 机制为服务接口调用超时提供安全保护</h2><p>一般来说，在调用依赖服务的接口的时候，比较常见的一个问题就是<strong>超时</strong>。超时是在一个复杂的分布式系统中，导致系统不稳定，或者系统抖动。出现大量超时，线程资源会被 hang 死，从而导致吞吐量大幅度下降，甚至服务崩溃。</p>
+<p>你去调用各种各样的依赖服务，特别是在大公司，你甚至都不认识开发一个服务的人，你都不知道那个人的技术水平怎么样，对那个人根本不了解。</p>
+<p>Peter Steiner 说过，”<a href="https://en.wikipedia.org/wiki/On_the_Internet,_nobody_knows_you' target=" _blank" rel="noopener" re_a_dog">On the Internet, nobody knows you’re a dog</a>“，也就是说在互联网的另外一头，你都不知道甚至坐着一条狗。</p>
+<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/220px-Internet_dog.jpg" alt="220px-Internet_dog.jpg"></p>
+<p>像特别复杂的分布式系统，特别是在大公司里，多个团队、大型协作，你可能都不知道服务是谁的，很可能说开发服务的那个哥儿们甚至是一个实习生。依赖服务的接口性能可能很不稳定，有时候 2ms，有时候 200ms，甚至 2s，都有可能。</p>
+<p>如果你不对各种依赖服务接口的调用做超时控制，来给你的服务提供安全保护措施，那么很可能你的服务就被各种垃圾的依赖服务的性能给拖死了。大量的接口调用很慢，大量的线程被卡死。如果你做了资源的隔离，那么也就是线程池的线程被卡死，但其实我们可以做超时控制，没必要让它们全卡死。</p>
+<h3 id="TimeoutMilliseconds"><a href="#TimeoutMilliseconds" class="headerlink" title="TimeoutMilliseconds"></a>TimeoutMilliseconds</h3><p>在 Hystrix 中，我们可以手动设置 timeout 时长，如果一个 command 运行时间超过了设定的时长，那么就被认为是 timeout，然后 Hystrix command 标识为 timeout，同时执行 fallback 降级逻辑。</p>
+<p><code>TimeoutMilliseconds</code> 默认值是 1000，也就是 1000ms。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    ..withExecutionTimeoutInMilliseconds(int)</span><br></pre></td></tr></table></figure>
+
+<h3 id="TimeoutEnabled"><a href="#TimeoutEnabled" class="headerlink" title="TimeoutEnabled"></a>TimeoutEnabled</h3><p>这个参数用于控制是否要打开 timeout 机制，默认值是 true。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandProperties.Setter()</span><br><span class="line">    .withExecutionTimeoutEnabled(boolean)</span><br></pre></td></tr></table></figure>
+
+<h2 id="实例-Demo-1"><a href="#实例-Demo-1" class="headerlink" title="实例 Demo"></a>实例 Demo</h2><p>我们在 command 中，将超时时间设置为 500ms，然后在 run() 方法中，设置休眠时间 1s，这样一个请求过来，直接休眠 1s，结果就会因为超时而执行降级逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">public class GetProductInfoCommand extends HystrixCommand&lt;ProductInfo&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    private static final HystrixCommandKey KEY &#x3D; HystrixCommandKey.Factory.asKey(&quot;GetProductInfoCommand&quot;);</span><br><span class="line"></span><br><span class="line">    public GetProductInfoCommand(Long productId) &#123;</span><br><span class="line">        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(&quot;ProductInfoService&quot;))</span><br><span class="line">                .andCommandKey(KEY)</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withCoreSize(8)</span><br><span class="line">                        .withMaxQueueSize(10)</span><br><span class="line">                        .withQueueSizeRejectionThreshold(8))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerEnabled(true)</span><br><span class="line">                        .withCircuitBreakerRequestVolumeThreshold(20)</span><br><span class="line">                        .withCircuitBreakerErrorThresholdPercentage(40)</span><br><span class="line">                        .withCircuitBreakerSleepWindowInMilliseconds(3000)</span><br><span class="line">                        &#x2F;&#x2F; 设置是否打开超时，默认是true</span><br><span class="line">                        .withExecutionTimeoutEnabled(true)</span><br><span class="line">                        &#x2F;&#x2F; 设置超时时间，默认1000(ms)</span><br><span class="line">                        .withExecutionTimeoutInMilliseconds(500)</span><br><span class="line">                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(30)));</span><br><span class="line">        this.productId &#x3D; productId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo run() throws Exception &#123;</span><br><span class="line">        System.out.println(&quot;调用接口查询商品数据，productId&#x3D;&quot; + productId);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 休眠1s</span><br><span class="line">        TimeUtils.sleep(1);</span><br><span class="line"></span><br><span class="line">        String url &#x3D; &quot;http:&#x2F;&#x2F;localhost:8081&#x2F;getProductInfo?productId&#x3D;&quot; + productId;</span><br><span class="line">        String response &#x3D; HttpClientUtils.sendGetRequest(url);</span><br><span class="line">        System.out.println(response);</span><br><span class="line">        return JSONObject.parseObject(response, ProductInfo.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected ProductInfo getFallback() &#123;</span><br><span class="line">        ProductInfo productInfo &#x3D; new ProductInfo();</span><br><span class="line">        productInfo.setName(&quot;降级商品&quot;);</span><br><span class="line">        return productInfo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在测试类中，我们直接发起请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootTest</span><br><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">public class TimeoutTest &#123;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    public void testTimeout() &#123;</span><br><span class="line">        HttpClientUtils.sendGetRequest(&quot;http:&#x2F;&#x2F;localhost:8080&#x2F;getProductInfo?productId&#x3D;1&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果中可以看到，打印出了降级商品相关信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ProductInfo(id&#x3D;null, name&#x3D;降级商品, price&#x3D;null, pictureList&#x3D;null, specification&#x3D;null, service&#x3D;null, color&#x3D;null, size&#x3D;null, shopId&#x3D;null, modifiedTime&#x3D;null, cityId&#x3D;null, cityName&#x3D;null, brandId&#x3D;null, brandName&#x3D;null)</span><br><span class="line">&#123;&quot;id&quot;: 1, &quot;name&quot;: &quot;iphone7手机&quot;, &quot;price&quot;: 5599, &quot;pictureList&quot;:&quot;a.jpg,b.jpg&quot;, &quot;specification&quot;: &quot;iphone7的规格&quot;, &quot;service&quot;: &quot;iphone7的售后服务&quot;, &quot;color&quot;: &quot;红色,白色,黑色&quot;, &quot;size&quot;: &quot;5.5&quot;, &quot;shopId&quot;: 1, &quot;modifiedTime&quot;: &quot;2017-01-01 12:00:00&quot;, &quot;cityId&quot;: 1, &quot;brandId&quot;: 1&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/30/dubbo%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="next" title="dubbo的负载均衡">
+                <i class="fa fa-chevron-left"></i> dubbo的负载均衡
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="prev" title="redis读书笔记">
+                redis读书笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">244</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#用-Hystrix-构建高可用服务架构"><span class="nav-number">1.</span> <span class="nav-text">用 Hystrix 构建高可用服务架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">Hystrix 是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-的历史"><span class="nav-number">1.2.</span> <span class="nav-text">Hystrix 的历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-的设计原则"><span class="nav-number">1.3.</span> <span class="nav-text">Hystrix 的设计原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-更加细节的设计原则"><span class="nav-number">1.4.</span> <span class="nav-text">Hystrix 更加细节的设计原则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于-Hystrix-线程池技术实现资源隔离"><span class="nav-number">2.</span> <span class="nav-text">基于 Hystrix 线程池技术实现资源隔离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-HystrixCommand-获取单条数据"><span class="nav-number">2.1.</span> <span class="nav-text">利用 HystrixCommand 获取单条数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-HystrixObservableCommand-批量获取数据"><span class="nav-number">2.2.</span> <span class="nav-text">利用 HystrixObservableCommand 批量获取数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于-Hystrix-信号量机制实现资源隔离"><span class="nav-number">3.</span> <span class="nav-text">基于 Hystrix 信号量机制实现资源隔离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#信号量机制"><span class="nav-number">3.1.</span> <span class="nav-text">信号量机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程池与信号量区别"><span class="nav-number">3.2.</span> <span class="nav-text">线程池与信号量区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号量简单-Demo"><span class="nav-number">3.3.</span> <span class="nav-text">信号量简单 Demo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix-隔离策略细粒度控制"><span class="nav-number">4.</span> <span class="nav-text">Hystrix 隔离策略细粒度控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#execution-isolation-strategy"><span class="nav-number">4.1.</span> <span class="nav-text">execution.isolation.strategy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#command-key-amp-command-group"><span class="nav-number">4.2.</span> <span class="nav-text">command key &amp; command group</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#command-thread-pool"><span class="nav-number">4.3.</span> <span class="nav-text">command thread pool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#command-key-amp-command-group-amp-command-thread-pool"><span class="nav-number">4.4.</span> <span class="nav-text">command key &amp; command group &amp; command thread pool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#coreSize"><span class="nav-number">4.5.</span> <span class="nav-text">coreSize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#queueSizeRejectionThreshold"><span class="nav-number">4.6.</span> <span class="nav-text">queueSizeRejectionThreshold</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#execution-isolation-semaphore-maxConcurrentRequests"><span class="nav-number">4.7.</span> <span class="nav-text">execution.isolation.semaphore.maxConcurrentRequests</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入-Hystrix-执行时内部原理"><span class="nav-number">5.</span> <span class="nav-text">深入 Hystrix 执行时内部原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤一：创建-command"><span class="nav-number">5.1.</span> <span class="nav-text">步骤一：创建 command</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤二：调用-command-执行方法"><span class="nav-number">5.2.</span> <span class="nav-text">步骤二：调用 command 执行方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤三：检查是否开启缓存"><span class="nav-number">5.3.</span> <span class="nav-text">步骤三：检查是否开启缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤四：检查是否开启了断路器"><span class="nav-number">5.4.</span> <span class="nav-text">步骤四：检查是否开启了断路器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤五：检查线程池-队列-信号量是否已满"><span class="nav-number">5.5.</span> <span class="nav-text">步骤五：检查线程池&#x2F;队列&#x2F;信号量是否已满</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤六：执行-command"><span class="nav-number">5.6.</span> <span class="nav-text">步骤六：执行 command</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤七：断路健康检查"><span class="nav-number">5.7.</span> <span class="nav-text">步骤七：断路健康检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤八：调用-fallback-降级机制"><span class="nav-number">5.8.</span> <span class="nav-text">步骤八：调用 fallback 降级机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不同的执行方式"><span class="nav-number">5.9.</span> <span class="nav-text">不同的执行方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于-request-cache-请求缓存技术优化批量商品数据查询接口"><span class="nav-number">6.</span> <span class="nav-text">基于 request cache 请求缓存技术优化批量商品数据查询接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-Hystrix-请求上下文过滤器并注册"><span class="nav-number">6.1.</span> <span class="nav-text">实现 Hystrix 请求上下文过滤器并注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#command-重写-getCacheKey-方法"><span class="nav-number">6.2.</span> <span class="nav-text">command 重写 getCacheKey() 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#controller-调用-command-查询商品信息"><span class="nav-number">6.3.</span> <span class="nav-text">controller 调用 command 查询商品信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发起请求"><span class="nav-number">6.4.</span> <span class="nav-text">发起请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除缓存"><span class="nav-number">6.5.</span> <span class="nav-text">删除缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于本地缓存的-fallback-降级机制"><span class="nav-number">7.</span> <span class="nav-text">基于本地缓存的 fallback 降级机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#两种最经典的降级机制"><span class="nav-number">7.1.</span> <span class="nav-text">两种最经典的降级机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤一：本地缓存获取数据"><span class="nav-number">7.2.</span> <span class="nav-text">步骤一：本地缓存获取数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤二：实现-GetBrandNameCommand"><span class="nav-number">7.3.</span> <span class="nav-text">步骤二：实现 GetBrandNameCommand</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤三：CacheController-调用接口"><span class="nav-number">7.4.</span> <span class="nav-text">步骤三：CacheController 调用接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入-Hystrix-断路器执行原理"><span class="nav-number">8.</span> <span class="nav-text">深入 Hystrix 断路器执行原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestVolumeThreshold"><span class="nav-number">8.1.</span> <span class="nav-text">RequestVolumeThreshold</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ErrorThresholdPercentage"><span class="nav-number">8.2.</span> <span class="nav-text">ErrorThresholdPercentage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SleepWindowInMilliseconds"><span class="nav-number">8.3.</span> <span class="nav-text">SleepWindowInMilliseconds</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Enabled"><span class="nav-number">8.4.</span> <span class="nav-text">Enabled</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForceOpen"><span class="nav-number">8.5.</span> <span class="nav-text">ForceOpen</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForceClosed"><span class="nav-number">8.6.</span> <span class="nav-text">ForceClosed</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例-Demo"><span class="nav-number">9.</span> <span class="nav-text">实例 Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HystrixCommand-配置参数"><span class="nav-number">9.1.</span> <span class="nav-text">HystrixCommand 配置参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#断路测试类"><span class="nav-number">9.2.</span> <span class="nav-text">断路测试类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试结果"><span class="nav-number">9.3.</span> <span class="nav-text">测试结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入-Hystrix-线程池隔离与接口限流"><span class="nav-number">10.</span> <span class="nav-text">深入 Hystrix 线程池隔离与接口限流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线程池隔离技术的设计"><span class="nav-number">10.1.</span> <span class="nav-text">线程池隔离技术的设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-应用线程池机制的场景"><span class="nav-number">10.2.</span> <span class="nav-text">Hystrix 应用线程池机制的场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程池机制的优点"><span class="nav-number">10.3.</span> <span class="nav-text">线程池机制的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程池机制的缺点"><span class="nav-number">10.4.</span> <span class="nav-text">线程池机制的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口限流-Demo"><span class="nav-number">10.5.</span> <span class="nav-text">接口限流 Demo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于-timeout-机制为服务接口调用超时提供安全保护"><span class="nav-number">11.</span> <span class="nav-text">基于 timeout 机制为服务接口调用超时提供安全保护</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TimeoutMilliseconds"><span class="nav-number">11.1.</span> <span class="nav-text">TimeoutMilliseconds</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TimeoutEnabled"><span class="nav-number">11.2.</span> <span class="nav-text">TimeoutEnabled</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例-Demo-1"><span class="nav-number">12.</span> <span class="nav-text">实例 Demo</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共450.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

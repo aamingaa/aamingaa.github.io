@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 压缩列表压缩列表在表头有三个字段 zlbytes、zltail 和 zllen，分别表示列表长度、列表尾的偏移量和列表中的 entry 个数；压缩列表在表尾还有一个 zlend，表示列表结束。  在压缩列表中，如果我们要查找定位第一个元素和最后一个元素，可以通过表头三个字段的长度直接定位，复杂度是 O(1)。而查找其他元素时，就没有这么高效了，只能逐个查找，此时的复杂度就是 O(N)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis读书笔记">
+<meta property="og:url" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 压缩列表压缩列表在表头有三个字段 zlbytes、zltail 和 zllen，分别表示列表长度、列表尾的偏移量和列表中的 entry 个数；压缩列表在表尾还有一个 zlend，表示列表结束。  在压缩列表中，如果我们要查找定位第一个元素和最后一个元素，可以通过表头三个字段的长度直接定位，复杂度是 O(1)。而查找其他元素时，就没有这么高效了，只能逐个查找，此时的复杂度就是 O(N)">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206202418097.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206230520050.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206225823359.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206210546576.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206210735965.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206211051372.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206211255512.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206211447998.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206213323733.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206214738843.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206231532817.png">
+<meta property="article:published_time" content="2021-02-06T12:20:28.000Z">
+<meta property="article:modified_time" content="2021-02-07T11:55:19.006Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206202418097.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/02/06/redis读书笔记/"/>
+
+
+
+
+
+  <title>redis读书笔记 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">redis读书笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-06T20:20:28+08:00">
+                2021-02-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="压缩列表"><a href="#压缩列表" class="headerlink" title="压缩列表"></a>压缩列表</h3><p>压缩列表在表头有三个字段 zlbytes、zltail 和 zllen，分别表示列表长度、列表尾的<br>偏移量和列表中的 entry 个数；压缩列表在表尾还有一个 zlend，表示列表结束。</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206202418097.png" alt="image-20210206202418097"></p>
+<p>在压缩列表中，如果我们要查找定位第一个元素和最后一个元素，可以通过表头三个字段<br>的长度直接定位，复杂度是 O(1)。而查找其他元素时，就没有这么高效了，只能逐个查<br>找，此时的复杂度就是 O(N) 了。</p>
+<p>压缩列表之所以能节省内存，就在于它是用一系列连续的 entry 保存数据。每个 entry 的<br>元数据包括下面几部分。</p>
+<p>prev_len，表示前一个 entry 的长度。prev_len 有两种取值情况：1 字节或 5 字节。<br>取值 1 字节时，表示上一个 entry 的长度小于 254 字节。虽然 1 字节的值能表示的数<br>值范围是 0 到 255，但是压缩列表中 zlend 的取值默认是 255，因此，就默认用 255<br>表示整个压缩列表的结束，其他表示长度的地方就不能再用 255 这个值了。所以，当上<br>一个 entry 长度小于 254 字节时，prev_len 取值为 1 字节，否则，就取值为 5 字节。<br>len：表示自身长度，4 字节；<br>encoding：表示编码方式，1 字节；<br>content：保存实际数据。</p>
+<p>这些 entry 会挨个儿放置在内存中，不需要再用额外的指针进行连接，这样就可以节省指<br>针所占用的空间。<br>我们以保存图片存储对象 ID 为例，来分析一下压缩列表是如何节省内存空间的。<br>每个 entry 保存一个图片存储对象 ID（8 字节），此时，每个 entry 的 prev_len 只需要<br>1 个字节就行，因为每个 entry 的前一个 entry 长度都只有 8 字节，小于 254 字节。这样<br>prev_len，表示前一个 entry 的长度。prev_len 有两种取值情况：1 字节或 5 字节。<br>取值 1 字节时，表示上一个 entry 的长度小于 254 字节。虽然 1 字节的值能表示的数<br>值范围是 0 到 255，但是压缩列表中 zlend 的取值默认是 255，因此，就默认用 255<br>表示整个压缩列表的结束，其他表示长度的地方就不能再用 255 这个值了。所以，当上<br>一个 entry 长度小于 254 字节时，prev_len 取值为 1 字节，否则，就取值为 5 字节。<br>len：表示自身长度，4 字节；<br>encoding：表示编码方式，1 字节；<br>content：保存实际数据。</p>
+<p>相比String</p>
+<p>一个 RedisObject 包含了 8 字节的元数据和一个 8 字节指针    <img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206230520050.png" alt="image-20210206230520050"></p>
+<p>Redis 会使用一个全局哈希表保存所有键值对，哈希表的每一项是<br>一个 dictEntry 的结构体，用来指向一个键值对。dictEntry 结构中有三个 8 字节的指针，<br>分别指向 key、value 以及下一个 dictEntry，三个指针共 24 字节，如下图所示：</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206225823359.png" alt="image-20210206225823359"></p>
+<p>但是，这三个指针只有 24 字节，为什么会占用了 32 字节呢？这就要提到 Redis 使用的内<br>存分配库 jemalloc 了。<br>jemalloc 在分配内存时，会根据我们申请的字节数 N，找一个比 N 大，但是最接近 N 的<br>2 的幂次数作为分配的空间，这样可以减少频繁分配的次数。</p>
+<h3 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h3><p>Linux 中的 IO 多路复用机制是指一个线程处理多个 IO 流，就是我们经常听到的<br>select/epoll 机制。简单来说，在 Redis 只运行单线程的情况下，该机制允许内核中，同<br>时存在多个监听套接字和已连接套接字。内核会一直监听这些套接字上的连接请求或数据<br>请求。一旦有请求到达，就会交给 Redis 线程处理，这就实现了一个 Redis 线程处理多个<br>IO 流的效果。</p>
+<p>Redis 单线程对该事件队列不断进行处理。这样一来，<br>Redis 无需一直轮询是否有请求实际发生，这就可以避免造成 CPU 资源浪费。同时，<br>Redis 在对事件队列中的事件进行处理时，会调用相应的处理函数，这就实现了基于事件<br>的回调。因为 Redis 一直在对事件队列进行处理，所以能及时响应客户端请求，提升<br>Redis 的响应性能。</p>
+<p>我再以连接请求和读数据请求为例，具体解释一下。</p>
+<p>这两个请求分别对应 Accept 事件和 Read 事件，Redis 分别对这两个事件注册 accept 和<br>get 回调函数。当 Linux 内核监听到有连接请求或读数据请求时，就会触发 Accept 事件<br>和 Read 事件，此时，内核就会回调 Redis 相应的 accept 和 get 函数进行处理。</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206210546576.png" alt="image-20210206210546576"></p>
+<h3 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h3><p>AOF 日志</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206210735965.png" alt="image-20210206210735965"></p>
+<p>但是，为了避免额外的检查开销，Redis 在向 AOF 里面记录日志的时候，并不会先去对这<br>些命令进行语法检查。所以，如果先记日志再执行命令的话，日志中就有可能记录了错误<br>的命令，Redis 在使用日志恢复数据时，就可能会出错。<br>而写后日志这种方式，就是先让系统执行命令，只有命令能执行成功，才会被记录到日志<br>中，否则，系统就会直接向客户端报错。所以，Redis 使用写后日志这一方式的一大好处<br>是，可以避免出现记录错误命令的情况。<br>除此之外，AOF 还有一个好处：它是在命令执行后才记录日志，所以不会阻塞当前的写操<br>作。</p>
+<p>不过，AOF 也有两个潜在的风险。<br>首先，如果刚执行完一个命令，还没有来得及记日志就宕机了，那么这个命令和相应的数<br>据就有丢失的风险。如果此时 Redis 是用作缓存，还可以从后端数据库重新读入数据进行<br>恢复，但是，如果 Redis 是直接用作数据库的话，此时，因为命令没有记入日志，所以就<br>无法用日志进行恢复了。<br>其次，AOF 虽然避免了对当前命令的阻塞，但可能会给下一个操作带来阻塞风险。这是因<br>为，AOF 日志也是在主线程中执行的，如果在把日志文件写入磁盘时，磁盘写压力大，就<br>会导致写盘很慢，进而导致后续的操作也无法执行了。</p>
+<p>这两个风险都是和 AOF 写回磁盘的时机相关的。</p>
+<h4 id="三种写回策略"><a href="#三种写回策略" class="headerlink" title="三种写回策略"></a>三种写回策略</h4><p>其实，对于这个问题，AOF 机制给我们提供了三个选择，也就是 AOF 配置项<br>appendfsync 的三个可选值。<br>针对避免主线程阻塞和减少数据丢失问题，这三种写回策略都无法做到两全其美。我们来<br>分析下其中的原因。<br>Always，同步写回：每个写命令执行完，立马同步地将日志写回磁盘；<br>Everysec，每秒写回：每个写命令执行完，只是先把日志写到 AOF 文件的内存缓冲<br>区，每隔一秒把缓冲区中的内容写入磁盘；<br>No，操作系统控制的写回：每个写命令执行完，只是先把日志写到 AOF 文件的内存缓<br>冲区，由操作系统决定何时将缓冲区内容写回磁盘。</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206211051372.png" alt="image-20210206211051372"></p>
+<p>到这里，我们就可以根据系统对高性能和高可靠性的要求，来选择使用哪种写回策略了。<br>总结一下就是：想要获得高性能，就选择 No 策略；如果想要得到高可靠性保证，就选择<br>Always 策略；如果允许数据有一点丢失，又希望性能别受太大影响的话，那么就选择<br>Everysec 策略。<br>但是，按照系统的性能需求选定了写回策略，并不是“高枕无忧”了。毕竟，AOF 是以文<br>件的形式在记录接收到的所有写命令。随着接收的写命令越来越多，AOF 文件会越来越<br>大。这也就意味着，我们一定要小心 AOF 文件过大带来的性能问题。<br>这里的“性能问题”，主要在于以下三个方面：一是，文件系统本身对文件大小有限制，<br>无法保存过大的文件；二是，如果文件太大，之后再往里面追加命令记录的话，效率也会<br>变低；三是，如果发生宕机，AOF 中记录的命令要一个个被重新执行，用于故障恢复，如<br>果日志文件太大，整个恢复过程就会非常缓慢，这就会影响到 Redis 的正常使用。<br>所以，我们就要采取一定的控制手段，这个时候，AOF 重写机制就登场了。</p>
+<h4 id="日志文件太大了怎么办？"><a href="#日志文件太大了怎么办？" class="headerlink" title="日志文件太大了怎么办？"></a>日志文件太大了怎么办？</h4><p>简单来说，AOF 重写机制就是在重写时，Redis 根据数据库的现状创建一个新的 AOF 文<br>件，也就是说，读取数据库中的所有键值对，然后对每一个键值对用一条命令记录它的写<br>入。比如说，当读取了键值对“testkey”: “testvalue”之后，重写机制会记录 set<br>testkey testvalue 这条命令。这样，当需要恢复时，可以重新执行该命令，实<br>现“testkey”: “testvalue”的写入。</p>
+<p>为什么重写机制可以把日志文件变小呢? 实际上，重写机制具有“多变一”功能。所谓<br>的“多变一”，也就是说，旧日志文件中的多条命令，在重写后的新日志中变成了一条命<br>令。<br>我们知道，AOF 文件是以追加的方式，逐一记录接收到的写命令的。当一个键值对被多条<br>写命令反复修改时，AOF 文件会记录相应的多条命令。但是，在重写的时候，是根据这个<br>键值对当前的最新状态，为它生成对应的写入命令。这样一来，一个键值对在重写日志中<br>只用一条命令就行了，而且，在日志恢复时，只用执行这条命令，就可以直接完成这个键<br>值对的写入了。<br>下面这张图就是一个例子：</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206211255512.png" alt="image-20210206211255512"></p>
+<p>不过，虽然 AOF 重写后，日志文件会缩小，但是，要把整个数据库的最新数据的操作日志<br>都写回磁盘，仍然是一个非常耗时的过程。这时，我们就要继续关注另一个问题了：重写<br>会不会阻塞主线程？</p>
+<h4 id="AOF-重写会阻塞吗"><a href="#AOF-重写会阻塞吗" class="headerlink" title="AOF 重写会阻塞吗?"></a>AOF 重写会阻塞吗?</h4><p>和 AOF 日志由主线程写回不同，重写过程是由后台线程 bgrewriteaof 来完成的，这也是<br>为了避免阻塞主线程，导致数据库性能下降。<br>我把重写的过程总结为“一个拷贝，两处日志”。</p>
+<p>“一个拷贝”就是指，每次执行重写时，主线程 fork 出后台的 bgrewriteaof 子进程。此<br>时，fork 会把主线程的内存拷贝一份给 bgrewriteaof 子进程，这里面就包含了数据库的<br>最新数据。然后，bgrewriteaof 子进程就可以在不影响主线程的情况下，逐一把拷贝的数<br>据写成操作，记入重写日志。<br>“两处日志”又是什么呢？<br>因为主线程未阻塞，仍然可以处理新来的操作。此时，如果有写操作，第一处日志就是指<br>正在使用的 AOF 日志，Redis 会把这个操作写到它的缓冲区。这样一来，即使宕机了，这<br>个 AOF 日志的操作仍然是齐全的，可以用于恢复。<br>而第二处日志，就是指新的 AOF 重写日志。这个操作也会被写到重写日志的缓冲区。这<br>样，重写日志也不会丢失最新的操作。等到拷贝数据的所有操作记录重写完成后，重写日<br>志记录的这些最新操作也会写入新的 AOF 文件，以保证数据库最新状态的记录。此时，我<br>们就可以用新的 AOF 文件替代旧文件了。</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206211447998.png" alt="image-20210206211447998"></p>
+<p>总结来说，每次 AOF 重写时，Redis 会先执行一个内存拷贝，用于重写；然后，使用两个<br>日志保证在重写过程中，新写入的数据不会丢失。而且，因为 Redis 采用额外的线程进行<br>数据重写，所以，这个过程并不会阻塞主线程。</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206213323733.png" alt="image-20210206213323733"></p>
+<h4 id="fork子进程"><a href="#fork子进程" class="headerlink" title="fork子进程"></a>fork子进程</h4><p>fork子进程时，子进程是会拷贝父进程的页表，即虚<br>实映射关系，而不会拷贝物理内存。子进程复制了父进程页表，也能共享访问父进程的内存数据<br>了，此时，类似于有了父进程的所有内存数据。</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p>快照时数据能修改吗?<br>Redis 就会借助操作系统提<br>供的写时复制技术（Copy-On-Write, COW），在执行快照的同时，正常处理写操作。<br>简单来说，bgsave 子进程是由主线程 fork 生成的，可以共享主线程的所有内存数据。<br>bgsave 子进程运行后，开始读取主线程的内存数据，并把它们写入 RDB 文件。<br>此时，如果主线程对这些数据也都是读操作（例如图中的键值对 A），那么，主线程和<br>bgsave 子进程相互不影响。但是，如果主线程要修改一块数据（例如图中的键值对 C），<br>那么，这块数据就会被复制一份，生成该数据的副本。然后，bgsave 子进程会把这个副本<br>数据写入 RDB 文件，而在这个过程中，主线程仍然可以直接修改原来的数据。</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206214738843.png" alt="image-20210206214738843"></p>
+<h4 id="可以每秒做一次快照吗？"><a href="#可以每秒做一次快照吗？" class="headerlink" title="可以每秒做一次快照吗？"></a>可以每秒做一次快照吗？</h4><p>把内存中的所有数据都记录到磁盘中。最好不要，全量快照的基础上做一次增量快照</p>
+<p>Redis 4.0 中提出了一个混合使用 AOF 日志和内存快着。简单来说，内存快照以一<br>定的频率执行，在两次快照之间，使用 AOF 日志记录这期间的所有命令操作。<br>这样一来，快照不用很频繁地执行，这就避免了频繁 fork 对主线程的影响。而且，AOF<br>日志也只用记录两次快照间的操作，也就是说，不需要记录所有操作了，因此，就不会出<br>现文件过大的情况了，也可以避免重写开销。<br>如下图所示，T1 和 T2 时刻的修改，用 AOF 日志记录，等到第二次做全量快照时，就可<br>以清空 AOF 日志，因为此时的修改都已经记录到快照中了，恢复时就不再用日志了。</p>
+<h3 id="Redis做消息队列"><a href="#Redis做消息队列" class="headerlink" title="Redis做消息队列"></a>Redis做消息队列</h3><p>消息队列在存取消息时，必须要满足三个需求，分别是消息保序、处理重复的消息<br>和保证消息可靠性。</p>
+<p>保序：</p>
+<p>BRPOP 命令也称为阻塞式读取，客户端<br>在没有读到队列数据时，自动阻塞，直到有新的数据写入队列，再开始读取新数据。</p>
+<p>处理重复：</p>
+<p>消息的全局唯一 ID 号就需要生产<br>者程序在发送消息前自行生成。生成之后，我们在用 LPUSH 命令把消息插入 List 时，需<br>要在消息中包含这个全局唯一 ID。</p>
+<p>LPUSH mq “101030001:stock:5”</p>
+<p>保证消息可靠性：</p>
+<p>当消费者程序从 List 中读取一条消息后，List 就不会再留存这条消息了。所以，如果消费<br>者程序在处理消息的过程出现了故障或宕机，就会导致消息没有处理完成，那么，消费者<br>程序再次启动后，就没法再次从 List 中读取消息了。<br>为了留存消息，List 类型提供了 BRPOPLPUSH 命令，这个命令的作用是让消费者程序从<br>一个 List 中读取消息，同时，Redis 会把这个消息再插入到另一个 List（可以叫作备份<br>List）留存。这样一来，如果消费者程序读了消息但没能正常处理，等它重启后，就可以从<br>备份 List 中重新读取消息并进行处理了。</p>
+<p><img src="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210206231532817.png" alt="image-20210206231532817"></p>
+<p>消息堆积：</p>
+<p>采用streams</p>
+<p>Redis 从 5.0 版本开始提供的 Streams 数据类型了。</p>
+<p>这个时候，我们希望启动多个消费者程序组成一个消费组，一起分担处理 List 中的消息。<br>但是，List 类型并不支持消费组的实现。那么，还有没有更合适的解决方案呢</p>
+<p>XADD：插入消息，保证有序，可以自动生成全局唯一 ID；<br>XREAD：用于读取消息，可以按 ID 读取数据；<br>XREADGROUP：按消费组形式读取消息；<br>XPENDING 和 XACK：XPENDING 命令可以用来查询每个消费组内所有消费者已读取<br>但尚未确认的消息，而 XACK 命令用于向消息队列确认消息处理已完成。</p>
+<h3 id="GEO"><a href="#GEO" class="headerlink" title="GEO"></a>GEO</h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/30/hystrix%E6%B1%87%E6%80%BB/" rel="next" title="hystrix汇总">
+                <i class="fa fa-chevron-left"></i> hystrix汇总
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="prev" title="GEO数据结构">
+                GEO数据结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">244</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩列表"><span class="nav-number">1.</span> <span class="nav-text">压缩列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多路复用"><span class="nav-number">2.</span> <span class="nav-text">多路复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOF"><span class="nav-number">3.</span> <span class="nav-text">AOF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三种写回策略"><span class="nav-number">3.1.</span> <span class="nav-text">三种写回策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#日志文件太大了怎么办？"><span class="nav-number">3.2.</span> <span class="nav-text">日志文件太大了怎么办？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF-重写会阻塞吗"><span class="nav-number">3.3.</span> <span class="nav-text">AOF 重写会阻塞吗?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fork子进程"><span class="nav-number">3.4.</span> <span class="nav-text">fork子进程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDB"><span class="nav-number">4.</span> <span class="nav-text">RDB</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#可以每秒做一次快照吗？"><span class="nav-number">4.1.</span> <span class="nav-text">可以每秒做一次快照吗？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis做消息队列"><span class="nav-number">5.</span> <span class="nav-text">Redis做消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO"><span class="nav-number">6.</span> <span class="nav-text">GEO</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共450.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="大数据," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 3.1 虚拟机环境准备  克隆虚拟机         修改克隆虚拟机的静态IP 修改主机名 关闭防火墙 创建atguigu用户 配置atguigu用户具有root权限（详见《尚硅谷大数据技术之Linux》）7．在&#x2F;opt目录下创建文件夹（1）在&#x2F;opt目录下创建module、software文件夹[atguigu@hadoop101 opt]$ sudo mkdir module[at">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop的启动">
+<meta property="og:url" content="http://aamingaa.github.io/2021/01/13/Hadoop%E7%9A%84%E5%90%AF%E5%8A%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 3.1 虚拟机环境准备  克隆虚拟机         修改克隆虚拟机的静态IP 修改主机名 关闭防火墙 创建atguigu用户 配置atguigu用户具有root权限（详见《尚硅谷大数据技术之Linux》）7．在&#x2F;opt目录下创建文件夹（1）在&#x2F;opt目录下创建module、software文件夹[atguigu@hadoop101 opt]$ sudo mkdir module[at">
+<meta property="article:published_time" content="2021-01-13T14:55:42.000Z">
+<meta property="article:modified_time" content="2021-01-14T13:59:40.627Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="大数据">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/01/13/Hadoop的启动/"/>
+
+
+
+
+
+  <title>Hadoop的启动 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/13/Hadoop%E7%9A%84%E5%90%AF%E5%8A%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hadoop的启动</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-13T22:55:42+08:00">
+                2021-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">Hadoop</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  34
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<p>3.1 虚拟机环境准备</p>
+<ol>
+<li>克隆虚拟机        </li>
+<li>修改克隆虚拟机的静态IP</li>
+<li>修改主机名</li>
+<li>关闭防火墙</li>
+<li>创建atguigu用户</li>
+<li>配置atguigu用户具有root权限（详见《尚硅谷大数据技术之Linux》）<br>7．在/opt目录下创建文件夹<br>（1）在/opt目录下创建module、software文件夹<br>[atguigu@hadoop101 opt]$ sudo mkdir module<br>[atguigu@hadoop101 opt]$ sudo mkdir software<br>（2）修改module、software文件夹的所有者cd<br>[atguigu@hadoop101 opt]$ sudo chown atguigu:atguigu module/ software/<br>[atguigu@hadoop101 opt]$ ll<br>总用量 8<br>drwxr-xr-x. 2 atguigu atguigu 4096 1月  17 14:37 module<br>drwxr-xr-x. 2 atguigu atguigu 4096 1月  17 14:38 software</li>
+<li>2 安装JDK</li>
+<li>卸载现有JDK<br>（1）查询是否安装Java软件：<br>[atguigu@hadoop101 opt]$ rpm -qa | grep java<br>（2）如果安装的版本低于1.7，卸载该JDK：<br>[atguigu@hadoop101 opt]$ sudo rpm -e 软件包<br>（3）查看JDK安装路径：<br>[atguigu@hadoop101 ~]$ which java</li>
+<li>用SecureCRT工具将JDK导入到opt目录下面的software文件夹下面，如图2-28所示</li>
+</ol>
+<p>图2-28  导入JDK<br>“alt+p”进入sftp模式，如图2-29所示</p>
+<p>图2-29 进入sftp模式<br>选择jdk1.8拖入，如图2-30，2-31所示</p>
+<p>图2-30 拖入jdk1.8</p>
+<p>图2-31 拖入jdk1.8完成<br>3.    在Linux系统下的opt目录中查看软件包是否导入成功<br>[atguigu@hadoop101 opt]$ cd software/<br>[atguigu@hadoop101 software]$ ls<br>hadoop-2.7.2.tar.gz  jdk-8u144-linux-x64.tar.gz<br>4.    解压JDK到/opt/module目录下<br>[atguigu@hadoop101 software]$ tar -zxvf jdk-8u144-linux-x64.tar.gz -C /opt/module/<br>5.    配置JDK环境变量<br>    （1）先获取JDK路径<br>[atguigu@hadoop101 jdk1.8.0_144]$ pwd<br>/opt/module/jdk1.8.0_144<br>    （2）打开/etc/profile文件<br>[atguigu@hadoop101 software]$ sudo vi /etc/profile<br>在profile文件末尾添加JDK路径<br>#JAVA_HOME<br>export JAVA_HOME=/opt/module/jdk1.8.0_144<br>export PATH=$PATH:$JAVA_HOME/bin<br>    （3）保存后退出<br>:wq<br>    （4）让修改后的文件生效<br>[atguigu@hadoop101 jdk1.8.0_144]$ source /etc/profile<br>6.    测试JDK是否安装成功<br>[atguigu@hadoop101 jdk1.8.0_144]# java -version<br>java version “1.8.0_144”<br>      注意：重启（如果java -version可以用就不用重启）<br>[atguigu@hadoop101 jdk1.8.0_144]$ sync<br>[atguigu@hadoop101 jdk1.8.0_144]$ sudo reboot<br>3.3 安装Hadoop<br>0.  Hadoop下载地址：<br><a href="https://archive.apache.org/dist/hadoop/common/hadoop-2.7.2/" target="_blank" rel="noopener">https://archive.apache.org/dist/hadoop/common/hadoop-2.7.2/</a></p>
+<ol>
+<li>用SecureCRT工具将hadoop-2.7.2.tar.gz导入到opt目录下面的software文件夹下面<br>切换到sftp连接页面，选择Linux下编译的hadoop jar包拖入，如图2-32所示</li>
+</ol>
+<p>图2-32 拖入hadoop的tar包</p>
+<p>图2-33 拖入Hadoop的tar包成功<br>2.    进入到Hadoop安装包路径下<br>[atguigu@hadoop101 ~]$ cd /opt/software/<br>3.    解压安装文件到/opt/module下面<br>[atguigu@hadoop101 software]$ tar -zxvf hadoop-2.7.2.tar.gz -C /opt/module/<br>4.    查看是否解压成功<br>[atguigu@hadoop101 software]$ ls /opt/module/<br>hadoop-2.7.2<br>5.    将Hadoop添加到环境变量<br>    （1）获取Hadoop安装路径<br>[atguigu@hadoop101 hadoop-2.7.2]$ pwd<br>/opt/module/hadoop-2.7.2<br>    （2）打开/etc/profile文件<br>[atguigu@hadoop101 hadoop-2.7.2]$ sudo vi /etc/profile<br>在profile文件末尾添加JDK路径：（shitf+g）<br>##HADOOP_HOME<br>export HADOOP_HOME=/opt/module/hadoop-2.7.2<br>export PATH=$PATH:$HADOOP_HOME/bin<br>export PATH=$PATH:$HADOOP_HOME/sbin<br>（3）保存后退出<br>:wq<br>    （4）让修改后的文件生效<br>[atguigu@ hadoop101 hadoop-2.7.2]$ source /etc/profile<br>6.    测试是否安装成功<br>[atguigu@hadoop101 hadoop-2.7.2]$ hadoop version<br>Hadoop 2.7.2<br>7.    重启(如果Hadoop命令不能用再重启)<br>[atguigu@ hadoop101 hadoop-2.7.2]$ sync<br>[atguigu@ hadoop101 hadoop-2.7.2]$ sudo reboot<br>3.4 Hadoop目录结构<br>1、查看Hadoop目录结构<br>[atguigu@hadoop101 hadoop-2.7.2]$ ll<br>总用量 52<br>drwxr-xr-x. 2 atguigu atguigu  4096 5月  22 2017 bin<br>drwxr-xr-x. 3 atguigu atguigu  4096 5月  22 2017 etc<br>drwxr-xr-x. 2 atguigu atguigu  4096 5月  22 2017 include<br>drwxr-xr-x. 3 atguigu atguigu  4096 5月  22 2017 lib<br>drwxr-xr-x. 2 atguigu atguigu  4096 5月  22 2017 libexec<br>-rw-r–r–. 1 atguigu atguigu 15429 5月  22 2017 LICENSE.txt<br>-rw-r–r–. 1 atguigu atguigu   101 5月  22 2017 NOTICE.txt<br>-rw-r–r–. 1 atguigu atguigu  1366 5月  22 2017 README.txt<br>drwxr-xr-x. 2 atguigu atguigu  4096 5月  22 2017 sbin<br>drwxr-xr-x. 4 atguigu atguigu  4096 5月  22 2017 share<br>2、重要目录<br>（1）bin目录：存放对Hadoop相关服务（HDFS,YARN）进行操作的脚本<br>（2）etc目录：Hadoop的配置文件目录，存放Hadoop的配置文件<br>（3）lib目录：存放Hadoop的本地库（对数据进行压缩解压缩功能）<br>（4）sbin目录：存放启动或停止Hadoop相关服务的脚本<br>（5）share目录：存放Hadoop的依赖jar包、文档、和官方案例<br>第4章 Hadoop运行模式<br>Hadoop运行模式包括：本地模式、伪分布式模式以及完全分布式模式。<br>Hadoop官方网站：<a href="http://hadoop.apache.org/" target="_blank" rel="noopener">http://hadoop.apache.org/</a><br>4.1 本地运行模式<br>4.1.1 官方Grep案例</p>
+<ol>
+<li>创建在hadoop-2.7.2文件下面创建一个input文件夹<br>[atguigu@hadoop101 hadoop-2.7.2]$ mkdir input</li>
+<li>将Hadoop的xml配置文件复制到input<br>[atguigu@hadoop101 hadoop-2.7.2]$ cp etc/hadoop/*.xml input</li>
+<li>执行share目录下的MapReduce程序<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hadoop jar<br>share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep input output ‘dfs[a-z.]+’</li>
+<li>查看输出结果<br>[atguigu@hadoop101 hadoop-2.7.2]$ cat output/*</li>
+<li>1.2 官方WordCount案例</li>
+<li>创建在hadoop-2.7.2文件下面创建一个wcinput文件夹<br>[atguigu@hadoop101 hadoop-2.7.2]$ mkdir wcinput</li>
+<li>在wcinput文件下创建一个wc.input文件<br>[atguigu@hadoop101 hadoop-2.7.2]$ cd wcinput<br>[atguigu@hadoop101 wcinput]$ touch wc.input</li>
+<li>编辑wc.input文件<br>[atguigu@hadoop101 wcinput]$ vi wc.input<br>在文件中输入如下内容<br>hadoop yarn<br>hadoop mapreduce<br>atguigu<br>atguigu<br>保存退出：：wq</li>
+<li>回到Hadoop目录/opt/module/hadoop-2.7.2</li>
+<li>执行程序<br>[atguigu@hadoop101 hadoop-2.7.2]$ hadoop jar<br>share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount wcinput wcoutput</li>
+<li>查看结果<br>[atguigu@hadoop101 hadoop-2.7.2]$ cat wcoutput/part-r-00000<br>atguigu 2<br>hadoop  2<br>mapreduce       1<br>yarn    1</li>
+<li>2 伪分布式运行模式</li>
+<li>2.1 启动HDFS并运行MapReduce程序</li>
+<li>分析<br>（1）配置集群<br>（2）启动、测试集群增、删、查<br>（3）执行WordCount案例</li>
+<li>执行步骤<br>（1）配置集群<br>  （a）配置：hadoop-env.sh<br>Linux系统中获取JDK的安装路径：<br>[atguigu@ hadoop101 ~]# echo $JAVA_HOME<br>/opt/module/jdk1.8.0_144<br>修改JAVA_HOME 路径：<br>export JAVA_HOME=/opt/module/jdk1.8.0_144<br>（b）配置：core-site.xml<!-- 指定HDFS中NameNode的地址 -->
+<property>
+<name>fs.defaultFS</name>
+<value>hdfs://hadoop101:9000</value>
+</property>
+
+</li>
+</ol>
+<!-- 指定Hadoop运行时产生文件的存储目录 -->
+<property>
+    <name>hadoop.tmp.dir</name>
+    <value>/opt/module/hadoop-2.7.2/data/tmp</value>
+</property>
+（c）配置：hdfs-site.xml
+<!-- 指定HDFS副本的数量 -->
+<property>
+    <name>dfs.replication</name>
+    <value>1</value>
+</property>
+（2）启动集群
+（a）格式化NameNode（第一次启动时格式化，以后就不要总格式化）
+[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs namenode -format
+        （b）启动NameNode
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/hadoop-daemon.sh start namenode
+        （c）启动DataNode
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/hadoop-daemon.sh start datanode
+（3）查看集群
+        （a）查看是否启动成功
+[atguigu@hadoop101 hadoop-2.7.2]$ jps
+13586 NameNode
+13668 DataNode
+13786 Jps
+注意：jps是JDK中的命令，不是Linux命令。不安装JDK不能使用jps
+        （b）web端查看HDFS文件系统
+http://hadoop101:50070/dfshealth.html#tab-overview
+注意：如果不能查看，看如下帖子处理
+http://www.cnblogs.com/zlslch/p/6604189.html
+
+<p><a href="https://blog.csdn.net/stpeace/article/details/79426471?utm_source=blogxgwz7" target="_blank" rel="noopener">https://blog.csdn.net/stpeace/article/details/79426471?utm_source=blogxgwz7</a></p>
+<p><a href="https://blog.csdn.net/stpeace/article/details/79426471" target="_blank" rel="noopener">https://blog.csdn.net/stpeace/article/details/79426471</a>        </p>
+<p>（c）查看产生的Log日志<br>          说明：在企业中遇到Bug时，经常根据日志提示信息去分析问题、解决Bug。<br>当前目录：/opt/module/hadoop-2.7.2/logs<br>[atguigu@hadoop101 logs]$ ls<br>hadoop-atguigu-datanode-hadoop.atguigu.com.log<br>hadoop-atguigu-datanode-hadoop.atguigu.com.out<br>hadoop-atguigu-namenode-hadoop.atguigu.com.log<br>hadoop-atguigu-namenode-hadoop.atguigu.com.out<br>SecurityAuth-root.audit<br>[atguigu@hadoop101 logs]# cat hadoop-atguigu-datanode-hadoop101.log<br>（d）思考：为什么不能一直格式化NameNode，格式化NameNode，要注意什么？<br>[atguigu@hadoop101 hadoop-2.7.2]$ cd data/tmp/dfs/name/current/<br>[atguigu@hadoop101 current]$ cat VERSION<br>clusterID=CID-f0330a58-36fa-4a2a-a65f-2688269b5837</p>
+<p>[atguigu@hadoop101 hadoop-2.7.2]$ cd data/tmp/dfs/data/current/<br>clusterID=CID-f0330a58-36fa-4a2a-a65f-2688269b5837</p>
+<p>注意：格式化NameNode，会产生新的集群id,导致NameNode和DataNode的集群id不一致，集群找不到已往数据。所以，格式NameNode时，一定要先删除data数据和log日志，然后再格式化NameNode。<br>（4）操作集群<br>        （a）在HDFS文件系统上创建一个input文件夹<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs dfs -mkdir -p /user/atguigu/input<br>        （b）将测试文件内容上传到文件系统上<br>[atguigu@hadoop101 hadoop-2.7.2]$bin/hdfs dfs -put wcinput/wc.input<br>  /user/atguigu/input/<br>        （c）查看上传的文件是否正确<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs dfs -ls  /user/atguigu/input/<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs dfs -cat  /user/atguigu/ input/wc.input<br>        （d）运行MapReduce程序<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hadoop jar<br>share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount /user/atguigu/input/ /user/atguigu/output<br>        （e）查看输出结果<br>命令行查看：<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs dfs -cat /user/atguigu/output/*<br>浏览器查看，如图2-34所示</p>
+<p>图2-34 查看output文件<br>        （f）将测试文件内容下载到本地<br>[atguigu@hadoop101 hadoop-2.7.2]$ hdfs dfs -get /user/atguigu/output/part-r-00000 ./wcoutput/<br>（g）删除输出结果<br>[atguigu@hadoop101 hadoop-2.7.2]$ hdfs dfs -rm -r /user/atguigu/output<br>4.2.2 启动YARN并运行MapReduce程序</p>
+<ol>
+<li>分析<br>（1）配置集群在YARN上运行MR<br>（2）启动、测试集群增、删、查<br>（3）在YARN上执行WordCount案例</li>
+<li>执行步骤<br>（1）配置集群<br>  （a）配置yarn-env.sh<br>配置一下JAVA_HOME<br>export JAVA_HOME=/opt/module/jdk1.8.0_144<br>（b）配置yarn-site.xml<!-- Reducer获取数据的方式 -->
+<property>
+   <name>yarn.nodemanager.aux-services</name>
+   <value>mapreduce_shuffle</value>
+</property>
+
+</li>
+</ol>
+<!-- 指定YARN的ResourceManager的地址 -->
+<property>
+<name>yarn.resourcemanager.hostname</name>
+<value>hadoop101</value>
+</property>
+        （c）配置：mapred-env.sh
+配置一下JAVA_HOME
+export JAVA_HOME=/opt/module/jdk1.8.0_144
+        （d）配置： (对mapred-site.xml.template重新命名为) mapred-site.xml
+[atguigu@hadoop101 hadoop]$ mv mapred-site.xml.template mapred-site.xml
+[atguigu@hadoop101 hadoop]$ vi mapred-site.xml
+
+<!-- 指定MR运行在YARN上 -->
+<property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+</property>
+（2）启动集群
+（a）启动前必须保证NameNode和DataNode已经启动
+（b）启动ResourceManager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/yarn-daemon.sh start resourcemanager
+（c）启动NodeManager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/yarn-daemon.sh start nodemanager
+    （3）集群操作
+（a）YARN的浏览器页面查看，如图2-35所示
+http://hadoop101:8088/cluster
+
+<p>图2-35 YARN的浏览器页面<br>        （b）删除文件系统上的output文件<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs dfs -rm -R /user/atguigu/output<br>        （c）执行MapReduce程序<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hadoop jar<br> share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount /user/atguigu/input  /user/atguigu/output<br>        （d）查看运行结果，如图2-36所示<br>[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs dfs -cat /user/atguigu/output/*</p>
+<p>图2-36 查看运行结果<br>4.2.3 配置历史服务器<br>为了查看程序的历史运行情况，需要配置一下历史服务器。具体配置步骤如下：</p>
+<ol>
+<li>配置mapred-site.xml<br>[atguigu@hadoop101 hadoop]$ vi mapred-site.xml<br>在该文件里面增加如下配置。<!-- 历史服务器端地址 -->
+<property>
+<name>mapreduce.jobhistory.address</name>
+<value>hadoop101:10020</value>
+</property>
+<!-- 历史服务器web端地址 -->
+<property>
+<name>mapreduce.jobhistory.webapp.address</name>
+<value>hadoop101:19888</value>
+</property></li>
+<li>启动历史服务器<br>[atguigu@hadoop101 hadoop-2.7.2]$ sbin/mr-jobhistory-daemon.sh start historyserver</li>
+<li>查看历史服务器是否启动<br>[atguigu@hadoop101 hadoop-2.7.2]$ jps</li>
+<li>查看JobHistory<br><a href="http://hadoop101:19888/jobhistory" target="_blank" rel="noopener">http://hadoop101:19888/jobhistory</a></li>
+<li>2.4 配置日志的聚集<br>日志聚集概念：应用运行完成以后，将程序运行日志信息上传到HDFS系统上。<br>日志聚集功能好处：可以方便的查看到程序运行详情，方便开发调试。<br>注意：开启日志聚集功能，需要重新启动NodeManager 、ResourceManager和HistoryManager。<br>开启日志聚集功能具体步骤如下：</li>
+<li>配置yarn-site.xml<br>[atguigu@hadoop101 hadoop]$ vi yarn-site.xml<br>在该文件里面增加如下配置。<!-- 日志聚集功能使能 -->
+<property>
+<name>yarn.log-aggregation-enable</name>
+<value>true</value>
+</property>
+
+</li>
+</ol>
+<!-- 日志保留时间设置7天 -->
+<property>
+<name>yarn.log-aggregation.retain-seconds</name>
+<value>604800</value>
+</property>
+2.    关闭NodeManager 、ResourceManager和HistoryManager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/yarn-daemon.sh stop resourcemanager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/yarn-daemon.sh stop nodemanager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/mr-jobhistory-daemon.sh stop historyserver
+3.    启动NodeManager 、ResourceManager和HistoryManager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/yarn-daemon.sh start resourcemanager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/yarn-daemon.sh start nodemanager
+[atguigu@hadoop101 hadoop-2.7.2]$ sbin/mr-jobhistory-daemon.sh start historyserver
+4.    删除HDFS上已经存在的输出文件
+[atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs dfs -rm -R /user/atguigu/output
+5.    执行WordCount程序
+[atguigu@hadoop101 hadoop-2.7.2]$ hadoop jar
+ share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount /user/atguigu/input /user/atguigu/output
+6.    查看日志，如图2-37，2-38，2-39所示
+http://hadoop101:19888/jobhistory
+
+<p>图2-37  Job History</p>
+<p>图2-38 job运行情况</p>
+<p>图2-39 查看日志<br>4.2.5 配置文件说明<br>Hadoop配置文件分两类：默认配置文件和自定义配置文件，只有用户想修改某一默认配置值时，才需要修改自定义配置文件，更改相应属性值。<br>（1）默认配置文件：<br>表2-1<br>要获取的默认文件    文件存放在Hadoop的jar包中的位置<br>[core-default.xml]    hadoop-common-2.7.2.jar/ core-default.xml<br>[hdfs-default.xml]    hadoop-hdfs-2.7.2.jar/ hdfs-default.xml<br>[yarn-default.xml]    hadoop-yarn-common-2.7.2.jar/ yarn-default.xml<br>[mapred-default.xml]    hadoop-mapreduce-client-core-2.7.2.jar/ mapred-default.xml<br>    （2）自定义配置文件：<br>    core-site.xml、hdfs-site.xml、yarn-site.xml、mapred-site.xml四个配置文件存放在$HADOOP_HOME/etc/hadoop这个路径上，用户可以根据项目需求重新进行修改配置。<br>4.3 完全分布式运行模式（开发重点）<br>分析：<br>    1）准备3台客户机（关闭防火墙、静态ip、主机名称）<br>    2）安装JDK<br>    3）配置环境变量<br>    4）安装Hadoop<br>    5）配置环境变量<br>6）配置集群<br>7）单点启动<br>    8）配置ssh<br>    9）群起并测试集群<br>4.3.1 虚拟机准备<br>详见3.1章。<br>4.3.2 编写集群分发脚本xsync</p>
+<ol>
+<li>scp（secure copy）安全拷贝<br>（1）scp定义：<br>scp可以实现服务器与服务器之间的数据拷贝。（from server1 to server2）<br>（2）基本语法<br>scp    -r          $pdir/$fname              $user@hadoop$host:$pdir/$fname<br>命令   递归       要拷贝的文件路径/名称    目的用户@主机:目的路径/名称<br>（3）案例实操<br>（a）在hadoop101上，将hadoop101中/opt/module目录下的软件拷贝到hadoop102上。<br>[atguigu@hadoop101 /]$ scp -r /opt/module  root@hadoop102:/opt/module<br>（b）在hadoop103上，将hadoop101服务器上的/opt/module目录下的软件拷贝到hadoop103上。<br>[atguigu@hadoop103 opt]$sudo scp -r atguigu@hadoop101:/opt/module root@hadoop103:/opt/module<br>（c）在hadoop103上操作将hadoop101中/opt/module目录下的软件拷贝到hadoop104上。<br>[atguigu@hadoop103 opt]$ scp -r atguigu@hadoop101:/opt/module root@hadoop104:/opt/module<br>注意：拷贝过来的/opt/module目录，别忘了在hadoop102、hadoop103、hadoop104上修改所有文件的，所有者和所有者组。sudo chown atguigu:atguigu -R /opt/module<br>（d）将hadoop101中/etc/profile文件拷贝到hadoop102的/etc/profile上。<br>[atguigu@hadoop101 ~]$ sudo scp /etc/profile root@hadoop102:/etc/profile<br>（e）将hadoop101中/etc/profile文件拷贝到hadoop103的/etc/profile上。<br>[atguigu@hadoop101 ~]$ sudo scp /etc/profile root@hadoop103:/etc/profile<br>（f）将hadoop101中/etc/profile文件拷贝到hadoop104的/etc/profile上。<br>[atguigu@hadoop101 ~]$ sudo scp /etc/profile root@hadoop104:/etc/profile<br>注意：拷贝过来的配置文件别忘了source一下/etc/profile，。</li>
+<li>rsync 远程同步工具<br>rsync主要用于备份和镜像。具有速度快、避免复制相同内容和支持符号链接的优点。<br>rsync和scp区别：用rsync做文件的复制要比scp的速度快，rsync只对差异文件做更新。scp是把所有文件都复制过去。<br>（1）基本语法<br>rsync    -rvl       $pdir/$fname              $user@hadoop$host:$pdir/$fname<br>命令   选项参数   要拷贝的文件路径/名称    目的用户@主机:目的路径/名称<br>选项参数说明<br>表2-2<br>选项    功能</li>
+</ol>
+<p>-r    递归<br>-v    显示复制过程<br>-l    拷贝符号连接<br>（2）案例实操<br>        （a）把hadoop101机器上的/opt/software目录同步到hadoop102服务器的root用户下的/opt/目录<br>[atguigu@hadoop101 opt]$ rsync -rvl /opt/software/ root@hadoop102:/opt/software<br>3.    xsync集群分发脚本<br>（1）需求：循环复制文件到所有节点的相同目录下<br>    （2）需求分析：<br>（a）rsync命令原始拷贝：<br>rsync  -rvl     /opt/module           root@hadoop103:/opt/<br>        （b）期望脚本：<br>xsync要同步的文件名称<br>        （c）说明：在/home/atguigu/bin这个目录下存放的脚本，atguigu用户可以在系统任何地方直接执行。<br>（3）脚本实现<br>（a）在/home/atguigu目录下创建bin目录，并在bin目录下xsync创建文件，文件内容如下：<br>[atguigu@hadoop102 ~]$ mkdir bin<br>[atguigu@hadoop102 ~]$ cd bin/<br>[atguigu@hadoop102 bin]$ touch xsync<br>[atguigu@hadoop102 bin]$ vi xsync<br>在该文件中编写如下代码<br>#!/bin/bash<br>#1 获取输入参数个数，如果没有参数，直接退出<br>pcount=$#<br>if((pcount==0)); then<br>echo no args;<br>exit;<br>fi</p>
+<p>#2 获取文件名称<br>p1=$1<br>fname=<code>basename $p1</code><br>echo fname=$fname</p>
+<p>#3 获取上级目录到绝对路径<br>pdir=<code>cd -P $(dirname $p1); pwd</code><br>echo pdir=$pdir</p>
+<p>#4 获取当前用户名称<br>user=<code>whoami</code></p>
+<p>#5 循环<br>for((host=103; host&lt;105; host++)); do<br>        echo ——————- hadoop$host ————–<br>        rsync -rvl $pdir/$fname $user@hadoop$host:$pdir<br>done<br>（b）修改脚本 xsync 具有执行权限<br>[atguigu@hadoop102 bin]$ chmod 777 xsync<br>（c）调用脚本形式：xsync 文件名称<br>[atguigu@hadoop102 bin]$ xsync /home/atguigu/bin<br>注意：如果将xsync放到/home/atguigu/bin目录下仍然不能实现全局使用，可以将xsync移动到/usr/local/bin目录下。<br>4.3.3 集群配置</p>
+<ol>
+<li>集群部署规划<br>表2-3<br>hadoop102     hadoop103    hadoop104<br>HDFS<br>NameNode<br>DataNode<br>DataNode    SecondaryNameNode<br>DataNode<br>YARN<br>NodeManager    ResourceManager<br>NodeManager<br>NodeManager</li>
+<li>配置集群<br>（1）核心配置文件<br>配置core-site.xml<br>[atguigu@hadoop102 hadoop]$ vi core-site.xml<br>在该文件中编写如下配置<!-- 指定HDFS中NameNode的地址 -->
+<property>
+  <name>fs.defaultFS</name>
+<value>hdfs://hadoop102:9000</value>
+</property>
+
+</li>
+</ol>
+<!-- 指定Hadoop运行时产生文件的存储目录 -->
+<property>
+        <name>hadoop.tmp.dir</name>
+        <value>/opt/module/hadoop-2.7.2/data/tmp</value>
+</property>
+    （2）HDFS配置文件
+配置hadoop-env.sh
+[atguigu@hadoop102 hadoop]$ vi hadoop-env.sh
+export JAVA_HOME=/opt/module/jdk1.8.0_144
+配置hdfs-site.xml
+[atguigu@hadoop102 hadoop]$ vi hdfs-site.xml
+在该文件中编写如下配置
+<property>
+        <name>dfs.replication</name>
+        <value>3</value>
+</property>
+
+<!-- 指定Hadoop辅助名称节点主机配置 -->
+<property>
+      <name>dfs.namenode.secondary.http-address</name>
+      <value>hadoop104:50090</value>
+</property>
+（3）YARN配置文件
+配置yarn-env.sh
+[atguigu@hadoop102 hadoop]$ vi yarn-env.sh
+export JAVA_HOME=/opt/module/jdk1.8.0_144
+配置yarn-site.xml
+[atguigu@hadoop102 hadoop]$ vi yarn-site.xml
+在该文件中增加如下配置
+<!-- Reducer获取数据的方式 -->
+<property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+</property>
+
+<!-- 指定YARN的ResourceManager的地址 -->
+<property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>hadoop103</value>
+</property>
+（4）MapReduce配置文件
+配置mapred-env.sh
+[atguigu@hadoop102 hadoop]$ vi mapred-env.sh
+export JAVA_HOME=/opt/module/jdk1.8.0_144
+配置mapred-site.xml
+[atguigu@hadoop102 hadoop]$ cp mapred-site.xml.template mapred-site.xml
+
+<p>[atguigu@hadoop102 hadoop]$ vi mapred-site.xml<br>在该文件中增加如下配置</p>
+<!-- 指定MR运行在Yarn上 -->
+<property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+</property>
+3．在集群上分发配置好的Hadoop配置文件
+[atguigu@hadoop102 hadoop]$ xsync /opt/module/hadoop-2.7.2/
+4．查看文件分发情况
+[atguigu@hadoop103 hadoop]$ cat /opt/module/hadoop-2.7.2/etc/hadoop/core-site.xml
+4.3.4 集群单点启动
+（1）如果集群是第一次启动，需要格式化NameNode
+[atguigu@hadoop102 hadoop-2.7.2]$ hadoop namenode -format
+（2）在hadoop102上启动NameNode
+[atguigu@hadoop102 hadoop-2.7.2]$ hadoop-daemon.sh start namenode
+[atguigu@hadoop102 hadoop-2.7.2]$ jps
+3461 NameNode
+（3）在hadoop102、hadoop103以及hadoop104上分别启动DataNode
+[atguigu@hadoop102 hadoop-2.7.2]$ hadoop-daemon.sh start datanode
+[atguigu@hadoop102 hadoop-2.7.2]$ jps
+3461 NameNode
+3608 Jps
+3561 DataNode
+[atguigu@hadoop103 hadoop-2.7.2]$ hadoop-daemon.sh start datanode
+[atguigu@hadoop103 hadoop-2.7.2]$ jps
+3190 DataNode
+3279 Jps
+[atguigu@hadoop104 hadoop-2.7.2]$ hadoop-daemon.sh start datanode
+[atguigu@hadoop104 hadoop-2.7.2]$ jps
+3237 Jps
+3163 DataNode
+（4）思考：每次都一个一个节点启动，如果节点数增加到1000个怎么办？
+    早上来了开始一个一个节点启动，到晚上下班刚好完成，下班？ 
+4.3.5 SSH无密登录配置
+1.    配置ssh
+（1）基本语法
+ssh另一台电脑的ip地址
+（2）ssh连接时出现Host key verification failed的解决方法
+[atguigu@hadoop102 opt] $ ssh 192.168.1.103
+The authenticity of host '192.168.1.103 (192.168.1.103)' can't be established.
+RSA key fingerprint is cf:1e:de:d7:d0:4c:2d:98:60:b4:fd:ae:b1:2d:ad:06.
+Are you sure you want to continue connecting (yes/no)? 
+Host key verification failed.
+（3）解决方案如下：直接输入yes
+2.    无密钥配置
+（1）免密登录原理，如图2-40所示
+ 图2-40  免密登陆原理
+（2）生成公钥和私钥：
+[atguigu@hadoop102 .ssh]$ ssh-keygen -t rsa
+然后敲（三个回车），就会生成两个文件id_rsa（私钥）、id_rsa.pub（公钥）
+（3）将公钥拷贝到要免密登录的目标机器上
+[atguigu@hadoop102 .ssh]$ ssh-copy-id hadoop102
+[atguigu@hadoop102 .ssh]$ ssh-copy-id hadoop103
+[atguigu@hadoop102 .ssh]$ ssh-copy-id hadoop104
+注意：
+还需要在hadoop102上采用root账号，配置一下无密登录到hadoop102、hadoop103、hadoop104；
+还需要在hadoop103上采用atguigu账号配置一下无密登录到hadoop102、hadoop103、hadoop104服务器上。
+3.    .ssh文件夹下（~/.ssh）的文件功能解释
+表2-4
+known_hosts    记录ssh访问过计算机的公钥(public key)
+id_rsa    生成的私钥
+id_rsa.pub    生成的公钥
+authorized_keys    存放授权过得无密登录服务器公钥
+4.3.6 群起集群
+1.    配置slaves
+/opt/module/hadoop-2.7.2/etc/hadoop/slaves
+[atguigu@hadoop102 hadoop]$ vi slaves
+在该文件中增加如下内容：
+hadoop102
+hadoop103
+hadoop104
+注意：该文件中添加的内容结尾不允许有空格，文件中不允许有空行。
+同步所有节点配置文件
+[atguigu@hadoop102 hadoop]$ xsync slaves
+2.    启动集群
+    （1）如果集群是第一次启动，需要格式化NameNode（注意格式化之前，一定要先停止上次启动的所有namenode和datanode进程，然后再删除data和log数据）
+[atguigu@hadoop102 hadoop-2.7.2]$ bin/hdfs namenode -format
+（2）启动HDFS
+[atguigu@hadoop102 hadoop-2.7.2]$ sbin/start-dfs.sh
+[atguigu@hadoop102 hadoop-2.7.2]$ jps
+4166 NameNode
+4482 Jps
+4263 DataNode
+[atguigu@hadoop103 hadoop-2.7.2]$ jps
+3218 DataNode
+3288 Jps
+
+<p>[atguigu@hadoop104 hadoop-2.7.2]$ jps<br>3221 DataNode<br>3283 SecondaryNameNode<br>3364 Jps<br>（3）启动YARN<br>[atguigu@hadoop103 hadoop-2.7.2]$ sbin/start-yarn.sh<br>注意：NameNode和ResourceManger如果不是同一台机器，不能在NameNode上启动 YARN，应该在ResouceManager所在的机器上启动YARN。<br>（4）Web端查看SecondaryNameNode<br>（a）浏览器中输入：<a href="http://hadoop104:50090/status.html" target="_blank" rel="noopener">http://hadoop104:50090/status.html</a><br>        （b）查看SecondaryNameNode信息，如图2-41所示。</p>
+<p>图2-41 SecondaryNameNode的Web端<br>3.    集群基本测试<br>（1）上传文件到集群<br>      上传小文件<br>[atguigu@hadoop102 hadoop-2.7.2]$ hdfs dfs -mkdir -p /user/atguigu/input<br>[atguigu@hadoop102 hadoop-2.7.2]$ hdfs dfs -put wcinput/wc.input /user/atguigu/input<br>      上传大文件<br>[atguigu@hadoop102 hadoop-2.7.2]$ bin/hadoop fs -put<br> /opt/software/hadoop-2.7.2.tar.gz  /user/atguigu/input<br>（2）上传文件后查看文件存放在什么位置<br>（a）查看HDFS文件存储路径<br>[atguigu@hadoop102 subdir0]$ pwd<br>/opt/module/hadoop-2.7.2/data/tmp/dfs/data/current/BP-938951106-192.168.10.107-1495462844069/current/finalized/subdir0/subdir0<br>（b）查看HDFS在磁盘存储文件内容<br>[atguigu@hadoop102 subdir0]$ cat blk_1073741825<br>hadoop yarn<br>hadoop mapreduce<br>atguigu<br>atguigu<br>（3）拼接<br>-rw-rw-r–. 1 atguigu atguigu 134217728 5月  23 16:01 blk_1073741836<br>-rw-rw-r–. 1 atguigu atguigu   1048583 5月  23 16:01 blk_1073741836_1012.meta<br>-rw-rw-r–. 1 atguigu atguigu  63439959 5月  23 16:01 blk_1073741837<br>-rw-rw-r–. 1 atguigu atguigu    495635 5月  23 16:01 blk_1073741837_1013.meta<br>[atguigu@hadoop102 subdir0]$ cat blk_1073741836&gt;&gt;tmp.file<br>[atguigu@hadoop102 subdir0]$ cat blk_1073741837&gt;&gt;tmp.file<br>[atguigu@hadoop102 subdir0]$ tar -zxvf tmp.file<br>（4）下载<br>[atguigu@hadoop102 hadoop-2.7.2]$ bin/hadoop fs -get<br> /user/atguigu/input/hadoop-2.7.2.tar.gz ./<br>4.3.7 集群启动/停止方式总结</p>
+<ol>
+<li>各个服务组件逐一启动/停止<br>（1）分别启动/停止HDFS组件<br>  hadoop-daemon.sh  start / stop  namenode / datanode / secondarynamenode<br>（2）启动/停止YARN<br>  yarn-daemon.sh  start / stop  resourcemanager / nodemanager</li>
+<li>各个模块分开启动/停止（配置ssh是前提）常用<br>（1）整体启动/停止HDFS<br>  start-dfs.sh   /  stop-dfs.sh<br>（2）整体启动/停止YARN<br>  start-yarn.sh  /  stop-yarn.sh</li>
+<li>3.8 集群时间同步<br>时间同步的方式：找一个机器，作为时间服务器，所有的机器与这台集群时间进行定时的同步，比如，每隔十分钟，同步一次时间。</li>
+</ol>
+<p>配置时间同步具体实操：</p>
+<ol>
+<li>时间服务器配置（必须root用户）<br>（1）检查ntp是否安装<br>[root@hadoop102 桌面]# rpm -qa|grep ntp<br>ntp-4.2.6p5-10.el6.centos.x86_64<br>fontpackages-filesystem-1.41-1.1.el6.noarch<br>ntpdate-4.2.6p5-10.el6.centos.x86_64<br>（2）修改ntp配置文件<br>[root@hadoop102 桌面]# vi /etc/ntp.conf<br>修改内容如下<br>a）修改1（授权192.168.1.0-192.168.1.255网段上的所有机器可以从这台机器上查询和同步时间）<br>#restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap为<br>restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap<br>  b）修改2（集群在局域网中，不使用其他互联网上的时间）<br>server 0.centos.pool.ntp.org iburst<br>server 1.centos.pool.ntp.org iburst<br>server 2.centos.pool.ntp.org iburst<br>server 3.centos.pool.ntp.org iburst为<br>#server 0.centos.pool.ntp.org iburst<br>#server 1.centos.pool.ntp.org iburst<br>#server 2.centos.pool.ntp.org iburst<br>#server 3.centos.pool.ntp.org iburst<br>c）添加3（当该节点丢失网络连接，依然可以采用本地时间作为时间服务器为集群中的其他节点提供时间同步）<br>server 127.127.1.0<br>fudge 127.127.1.0 stratum 10<br>（3）修改/etc/sysconfig/ntpd 文件<br>[root@hadoop102 桌面]# vim /etc/sysconfig/ntpd<br>增加内容如下（让硬件时间与系统时间一起同步）<br>SYNC_HWCLOCK=yes<br>（4）重新启动ntpd服务<br>[root@hadoop102 桌面]# service ntpd status<br>ntpd 已停<br>[root@hadoop102 桌面]# service ntpd start<br>正在启动 ntpd：                                            [确定]<br>（5）设置ntpd服务开机启动<br>[root@hadoop102 桌面]# chkconfig ntpd on</li>
+<li>其他机器配置（必须root用户）<br>（1）在其他机器配置10分钟与时间服务器同步一次<br>[root@hadoop103桌面]# crontab -e<br>编写定时任务如下：</li>
+</ol>
+<p>*/10 * * * * /usr/sbin/ntpdate hadoop102<br>（2）修改任意机器时间<br>[root@hadoop103桌面]# date -s “2017-9-11 11:11:11”<br>（3）十分钟后查看机器是否与时间服务器同步<br>[root@hadoop103桌面]# date<br>说明：测试的时候可以将10分钟调整为1分钟，节省时间。<br>第5章 Hadoop编译源码（面试重点）<br>5.1 前期准备工作</p>
+<ol>
+<li>CentOS联网<br>配置CentOS能连接外网。Linux虚拟机ping <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> 是畅通的<br>注意：采用root角色编译，减少文件夹权限出现问题</li>
+<li>jar包准备(hadoop源码、JDK8、maven、ant 、protobuf)<br>（1）hadoop-2.7.2-src.tar.gz<br>（2）jdk-8u144-linux-x64.tar.gz<br>（3）apache-ant-1.9.9-bin.tar.gz（build工具，打包用的）<br>（4）apache-maven-3.0.5-bin.tar.gz<br>（5）protobuf-2.5.0.tar.gz（序列化的框架）</li>
+<li>2 jar包安装<br>注意：所有操作必须在root用户下完成</li>
+<li>JDK解压、配置环境变量 JAVA_HOME和PATH，验证java-version(如下都需要验证是否配置成功)<br>[root@hadoop101 software] # tar -zxf jdk-8u144-linux-x64.tar.gz -C /opt/module/</li>
+</ol>
+<p>[root@hadoop101 software]# vi /etc/profile<br>#JAVA_HOME：<br>export JAVA_HOME=/opt/module/jdk1.8.0_144<br>export PATH=$PATH:$JAVA_HOME/bin</p>
+<p>[root@hadoop101 software]#source /etc/profile<br>验证命令：java -version</p>
+<ol start="2">
+<li>Maven解压、配置  MAVEN_HOME和PATH<br>[root@hadoop101 software]# tar -zxvf apache-maven-3.0.5-bin.tar.gz -C /opt/module/</li>
+</ol>
+<p>[root@hadoop101 apache-maven-3.0.5]# vi conf/settings.xml</p>
+<mirrors>
+    <!-- mirror
+     | Specifies a repository mirror site to use instead of a given repository. The repository that
+     | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
+     | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
+     |
+<mirror>
+       <id>mirrorId</id>
+       <mirrorOf>repositoryId</mirrorOf>
+       <name>Human Readable Name for this Mirror.</name>
+       <url>http://my.repository.com/repo/path</url>
+      </mirror>
+     -->
+        <mirror>
+                <id>nexus-aliyun</id>
+                <mirrorOf>central</mirrorOf>
+                <name>Nexus aliyun</name>
+                <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+        </mirror>
+</mirrors>
+
+<p>[root@hadoop101 apache-maven-3.0.5]# vi /etc/profile<br>#MAVEN_HOME<br>export MAVEN_HOME=/opt/module/apache-maven-3.0.5<br>export PATH=$PATH:$MAVEN_HOME/bin</p>
+<p>[root@hadoop101 software]#source /etc/profile<br>验证命令：mvn -version<br>3.    ant解压、配置  ANT _HOME和PATH<br>[root@hadoop101 software]# tar -zxvf apache-ant-1.9.9-bin.tar.gz -C /opt/module/</p>
+<p>[root@hadoop101 apache-ant-1.9.9]# vi /etc/profile<br>#ANT_HOME<br>export ANT_HOME=/opt/module/apache-ant-1.9.9<br>export PATH=$PATH:$ANT_HOME/bin</p>
+<p>[root@hadoop101 software]#source /etc/profile<br>验证命令：ant -version<br>4.    安装  glibc-headers 和  g++  命令如下<br>[root@hadoop101 apache-ant-1.9.9]# yum install glibc-headers<br>[root@hadoop101 apache-ant-1.9.9]# yum install gcc-c++<br>5.    安装make和cmake<br>[root@hadoop101 apache-ant-1.9.9]# yum install make<br>[root@hadoop101 apache-ant-1.9.9]# yum install cmake<br>6.    解压protobuf ，进入到解压后protobuf主目录，/opt/module/protobuf-2.5.0，然后相继执行命令<br>[root@hadoop101 software]# tar -zxvf protobuf-2.5.0.tar.gz -C /opt/module/<br>[root@hadoop101 opt]# cd /opt/module/protobuf-2.5.0/</p>
+<p>[root@hadoop101 protobuf-2.5.0]#./configure<br>[root@hadoop101 protobuf-2.5.0]# make<br>[root@hadoop101 protobuf-2.5.0]# make check<br>[root@hadoop101 protobuf-2.5.0]# make install<br>[root@hadoop101 protobuf-2.5.0]# ldconfig </p>
+<p>[root@hadoop101 hadoop-dist]# vi /etc/profile<br>#LD_LIBRARY_PATH<br>export LD_LIBRARY_PATH=/opt/module/protobuf-2.5.0<br>export PATH=$PATH:$LD_LIBRARY_PATH</p>
+<p>[root@hadoop101 software]#source /etc/profile<br>验证命令：protoc –version<br>7.    安装openssl库<br>[root@hadoop101 software]#yum install openssl-devel<br>8.    安装 ncurses-devel库<br>[root@hadoop101 software]#yum install ncurses-devel<br>到此，编译工具安装基本完成。<br>5.3 编译源码</p>
+<ol>
+<li>解压源码到/opt/目录<br>[root@hadoop101 software]# tar -zxvf hadoop-2.7.2-src.tar.gz -C /opt/</li>
+<li>进入到hadoop源码主目录<br>[root@hadoop101 hadoop-2.7.2-src]# pwd<br>/opt/hadoop-2.7.2-src</li>
+<li>通过maven执行编译命令<br>[root@hadoop101 hadoop-2.7.2-src]#mvn package -Pdist,native -DskipTests -Dtar<br>等待时间30分钟左右，最终成功是全部SUCCESS，如图2-42所示。</li>
+</ol>
+<p>图2-42 编译源码<br>4.    成功的64位hadoop包在/opt/hadoop-2.7.2-src/hadoop-dist/target下<br>[root@hadoop101 target]# pwd<br>/opt/hadoop-2.7.2-src/hadoop-dist/target<br>5. 编译源码过程中常见的问题及解决方案<br>（1）MAVEN install时候JVM内存溢出<br>处理方式：在环境配置文件和maven的执行文件均可调整MAVEN_OPT的heap大小。（详情查阅MAVEN 编译 JVM调优问题，如：<a href="http://outofmemory.cn/code-snippet/12652/maven-outofmemoryerror-method）" target="_blank" rel="noopener">http://outofmemory.cn/code-snippet/12652/maven-outofmemoryerror-method）</a><br>（2）编译期间maven报错。可能网络阻塞问题导致依赖库下载不完整导致，多次执行命令（一次通过比较难）：<br>[root@hadoop101 hadoop-2.7.2-src]#mvn package -Pdist,nativeN -DskipTests -Dtar<br>（3）报ant、protobuf等错误，插件下载未完整或者插件版本问题，最开始链接有较多特殊情况，同时推荐<br>2.7.0版本的问题汇总帖子 <a href="http://www.tuicool.com/articles/IBn63qf" target="_blank" rel="noopener">http://www.tuicool.com/articles/IBn63qf</a><br>第6章 常见错误及解决方案<br>1）防火墙没关闭、或者没有启动YARN<br>INFO client.RMProxy: Connecting to ResourceManager at hadoop108/192.168.10.108:8032<br>2）主机名称配置错误<br>3）IP地址配置错误<br>4）ssh没有配置好<br>5）root用户和atguigu两个用户启动集群不统一<br>6）配置文件修改不细心<br>7）未编译源码<br>Unable to load native-hadoop library for your platform… using builtin-java classes where applicable<br>17/05/22 15:38:58 INFO client.RMProxy: Connecting to ResourceManager at hadoop108/192.168.10.108:8032<br>8）不识别主机名称<br>java.net.UnknownHostException: hadoop102: hadoop102<br>        at java.net.InetAddress.getLocalHost(InetAddress.java:1475)<br>        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:146)<br>        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1290)<br>        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1287)<br>        at java.security.AccessController.doPrivileged(Native Method)<br>at javax.security.auth.Subject.doAs(Subject.java:415)<br>解决办法：<br>（1）在/etc/hosts文件中添加192.168.1.102 hadoop102<br>    （2）主机名称不要起hadoop  hadoop000等特殊名称<br>9）DataNode和NameNode进程同时只能工作一个。</p>
+<p>10）执行命令不生效，粘贴word中命令时，遇到-和长–没区分开。导致命令失效<br>解决办法：尽量不要粘贴word中代码。<br>11）jps发现进程已经没有，但是重新启动集群，提示进程已经开启。原因是在linux的根目录下/tmp目录中存在启动的进程临时文件，将集群相关进程删除掉，再重新启动集群。<br>12）jps不生效。<br>原因：全局变量hadoop java没有生效。解决办法：需要source /etc/profile文件。<br>13）8088端口连接不上<br>[atguigu@hadoop102 桌面]$ cat /etc/hosts<br>注释掉如下代码<br>#127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>#::1         hadoop102</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/13/%E4%B8%80%E4%BA%9B%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84%E9%9D%A2%E7%BB%8F/" rel="next" title="一些大数据的面经">
+                <i class="fa fa-chevron-left"></i> 一些大数据的面经
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/01/19/rpc%E7%9A%84%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E8%A7%A3%E7%AD%94/" rel="prev" title="rpc的相关问题以及解答">
+                rpc的相关问题以及解答 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">244</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共450.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

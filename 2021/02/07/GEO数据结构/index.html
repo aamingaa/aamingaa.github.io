@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 简介这时问题来了，Sorted Set 元素的权重分数是一个浮点数（float 类型），而一组经纬度包含的是经度和纬度两个值，是没法直接保存为一个浮点数的，那具体该怎么进行保存呢？这就要用到 GEO 类型中的 GeoHash 编码了。 GeoHash 的编码方法为了能高效地对经纬度进行比较，Redis 采用了业界广泛使用的 GeoHash 编码方法，这个方法的基本原理就是“二分区间，区">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GEO数据结构">
+<meta property="og:url" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 简介这时问题来了，Sorted Set 元素的权重分数是一个浮点数（float 类型），而一组经纬度包含的是经度和纬度两个值，是没法直接保存为一个浮点数的，那具体该怎么进行保存呢？这就要用到 GEO 类型中的 GeoHash 编码了。 GeoHash 的编码方法为了能高效地对经纬度进行比较，Redis 采用了业界广泛使用的 GeoHash 编码方法，这个方法的基本原理就是“二分区间，区">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195146607.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195537897.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195618112.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195713105.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195728668.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195744382.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512150809541.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512150937504.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512151135790.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512151606261.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512151844124.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512152006447.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512152052500.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512153319651.png">
+<meta property="article:published_time" content="2021-02-07T11:50:29.000Z">
+<meta property="article:modified_time" content="2021-02-07T11:58:30.937Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195146607.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/02/07/GEO数据结构/"/>
+
+
+
+
+
+  <title>GEO数据结构 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">GEO数据结构</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-07T19:50:29+08:00">
+                2021-02-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>这时问题来了，Sorted Set 元素的权重分数是一个浮点数（float 类型），而一组经纬度包<br>含的是经度和纬度两个值，是没法直接保存为一个浮点数的，那具体该怎么进行保存呢？<br>这就要用到 GEO 类型中的 GeoHash 编码了。</p>
+<p>GeoHash 的编码方法<br>为了能高效地对经纬度进行比较，Redis 采用了业界广泛使用的 GeoHash 编码方法，这<br>个方法的基本原理就是“二分区间，区间编码”。<br>当我们要对一组经纬度进行 GeoHash 编码时，我们要先对经度和纬度分别编码，然后再<br>把经纬度各自的编码组合成一个最终编码。<br>首先，我们来看下经度和纬度的单独编码过程。<br>对于一个地理位置信息来说，它的经度范围是[-180,180]。GeoHash 编码会把一个经度值<br>编码成一个 N 位的二进制值，我们来对经度范围[-180,180]做 N 次的二分区操作，其中 N<br>可以自定义。</p>
+<p>位编码。当做完 N 次的二分区后，经度值就<br>可以用一个 N bit 的数来表示了。<br>举个例子，假设我们要编码的经度值是 116.37，我们用 5 位编码值（也就是 N=5，做 5<br>次分区）。<br>我们先做第一次二分区操作，把经度区间[-180,180]分成了左分区[-180,0) 和右分区<br>[0,180]，此时，经度值 116.37 是属于右分区[0,180]，所以，我们用 1 表示第一次二分区<br>后的编码值。<br>接下来，我们做第二次二分区：把经度值 116.37 所属的[0,180]区间，分成[0,90) 和[90,<br>180]。此时，经度值 116.37 还是属于右分区[90,180]，所以，第二次分区后的编码值仍然<br>为 1。等到第三次对[90,180]进行二分区，经度值 116.37 落在了分区后的左分区[90, 135)<br>中，所以，第三次分区后的编码值就是 0。<br>按照这种方法，做完 5 次分区后，我们把经度值 116.37 定位在[112.5, 123.75]这个区<br>间，并且得到了经度值的 5 位编码值，即 11010。这个编码过程如下表所示：</p>
+<p><img src="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195146607.png" alt="image-20210207195146607"></p>
+<p>对纬度的编码方式，和对经度的一样，只是纬度的范围是[-90，90]，下面这张表显示了对<br>纬度值 39.86 的编码过程。</p>
+<p><img src="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195537897.png" alt="image-20210207195537897"></p>
+<p>当一组经纬度值都编完码后，我们再把它们的各自编码值组合在一起，组合的规则是：最<br>终编码值的偶数位上依次是经度的编码值，奇数位上依次是纬度的编码值，其中，偶数位<br>从 0 开始，奇数位从 1 开始。<br>我们刚刚计算的经纬度（116.37，39.86）的各自编码值是 11010 和 10111，组合之后，<br>第 0 位是经度的第 0 位 1，第 1 位是纬度的第 0 位 1，第 2 位是经度的第 1 位 1，第 3<br>位是纬度的第 1 位 0，以此类推，就能得到最终编码值 1110011101，如下图所示：</p>
+<p><img src="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195618112.png" alt="image-20210207195618112"></p>
+<p>用了 GeoHash 编码后，原来无法用一个权重分数表示的一组经纬度（116.37，39.86）就<br>可以用 1110011101 这一个值来表示，就可以保存为 Sorted Set 的权重分数了。<br>当然，使用 GeoHash 编码后，我们相当于把整个地理空间划分成了一个个方格，每个方<br>格对应了 GeoHash 中的一个分区。</p>
+<p>举个例子。我们把经度区间[-180,180]做一次二分区，把纬度区间[-90,90]做一次二分区，<br>就会得到 4 个分区。我们来看下它们的经度和纬度范围以及对应的 GeoHash 组合编码</p>
+<p><img src="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195713105.png" alt="image-20210207195713105"></p>
+<p>这 4 个分区对应了 4 个方格，每个方格覆盖了一定范围内的经纬度值，分区越多，每个方<br>格能覆盖到的地理空间就越小，也就越精准。我们把所有方格的编码值映射到一维空间<br>时，相邻方格的 GeoHash 编码值基本也是接近的，如下图所示：</p>
+<p><img src="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195728668.png" alt="image-20210207195728668"></p>
+<p>所以，我们使用 Sorted Set 范围查询得到的相近编码值，在实际的地理空间上，也是相邻<br>的方格，这就可以实现 LBS 应用“搜索附近的人或物”的功能了。<br>分区一：[-180,0) 和[-90,0)，编码 00；<br>分区二：[-180,0) 和[0,90]，编码 01；<br>分区三：[0,180]和[-90,0)，编码 10；<br>分区四：[0,180]和[0,90]，编码 11。</p>
+<p>不过，我要提醒你一句，有的编码值虽然在大小上接近，但实际对应的方格却距离比较<br>远。例如，我们用 4 位来做 GeoHash 编码，把经度区间[-180,180]和纬度区间[-90,90]各<br>分成了 4 个分区，一共 16 个分区，对应了 16 个方格。编码值为 0111 和 1000 的两个方<br>格就离得比较远，如下图所示：</p>
+<p><img src="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210207195744382.png" alt="image-20210207195744382"></p>
+<p>所以，为了避免查询不准确问题，我们可以同时查询给定经纬度所在的方格周围的 4 个或<br>8 个方格。<br>好了，到这里，我们就知道了，GEO 类型是把经纬度所在的区间编码作为 Sorted Set 中<br>元素的权重分数，把和经纬度相关的车辆 ID 作为 Sorted Set 中元素本身的值保存下来，<br>这样相邻经纬度的查询就可以通过编码值的大小范围查询来实现了。接下来，我们再来聊<br>聊具体如何操作 GEO 类型。</p>
+<h1 id="一、CEO概述"><a href="#一、CEO概述" class="headerlink" title="一、CEO概述"></a>一、CEO概述</h1><ul>
+<li><strong>Redis3.2版本提供了GEO（地理信息定位）功能，</strong>支持存储地理位置信 息用来实现诸如附近位置、摇一摇这类依赖于地理位置信息的功能，对于需 要实现这些功能的开发者来说是一大福音</li>
+<li>GEO功能是Redis的另一位作者Matt Stancliff借鉴NoSQL数据库Ardb实现的，Ardb的作者来自中国，它提供了优秀的GEO功能</li>
+</ul>
+<h1 id="二、增加地理位置信息（geoadd）"><a href="#二、增加地理位置信息（geoadd）" class="headerlink" title="二、增加地理位置信息（geoadd）"></a>二、增加地理位置信息（geoadd）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geoadd key longitude latitude member [longitude latitude member ...]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>参数如下：</strong><ul>
+<li>longitude：地址位置的经度</li>
+<li>latitude：地址位置的纬度</li>
+<li>member：成员</li>
+</ul>
+</li>
+<li><strong>相关注意事项：</strong><ul>
+<li>geoadd一次可以添加多个地理位置信息</li>
+<li>geoadd添加成功返回1</li>
+<li>如果member已经存在，那么该命令返回0，此时代表更新member的值</li>
+</ul>
+</li>
+<li><strong>例如：</strong>下面添加5个城市的经纬度</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200512150809541.png" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200512150937504.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
+<h1 id="三、获取地理信息位置（geopos）"><a href="#三、获取地理信息位置（geopos）" class="headerlink" title="三、获取地理信息位置（geopos）"></a>三、获取地理信息位置（geopos）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geodist key member1 member2 [unit]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>该命令用来获取两个地址位置的距离</li>
+<li><strong>unit参数代表返货结果的单位，包含以下4种：</strong><ul>
+<li>m（meters）代表米</li>
+<li>km（kilometers）代表公里</li>
+<li>mi（miles）代表英里</li>
+<li>ft（feet）代表尺</li>
+</ul>
+</li>
+<li><strong>例如：</strong>下面计算天津到北京的距离，以公里为单位</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200512151135790.png" alt="img"></p>
+<h1 id="四、获取指定位置范围内的地理信息位置集合（georadius、georadiusbymember）"><a href="#四、获取指定位置范围内的地理信息位置集合（georadius、georadiusbymember）" class="headerlink" title="四、获取指定位置范围内的地理信息位置集合（georadius、georadiusbymember）"></a>四、获取指定位置范围内的地理信息位置集合（georadius、georadiusbymember）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">georadius key longitude latitude radiusm|km|ft|mi [withcoord] [withdist] </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    [withhash] [COUNT count] [asc|desc] [store key] [storedist key]</span><br><span class="line">georadiusbymember key member radiusm|km|ft|mi [withcoord] [withdist] </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    [withhash] [COUNT count] [asc|desc] [store key] [storedist key]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>两个命令作用相同，<strong>都是以一个地理位置为中心算出指定半径内的其他地理信息位置</strong></li>
+<li><strong>不同的是：</strong><ul>
+<li>georadius命令的中心位置<strong>给出了具体的经纬度</strong></li>
+<li>georadiusbymember<strong>只需给出成员即可</strong></li>
+</ul>
+</li>
+<li><strong>其中radiusm|km|ft|mi是必需参数，指定了半径（带单位），其他可选参数意义如下：</strong><ul>
+<li>withcoord：返回结果中包含经纬度</li>
+<li>withdist：返回结果中包含离中心节点位置的距离</li>
+<li>withhash：返回结果中包含geohash，有关geohash后面介绍</li>
+<li>COUNT count：指定返回结果的数量</li>
+<li>asc|desc：返回结果按照离中心节点的距离做升序或者降序</li>
+<li>store key：将返回结果的地理位置信息保存到指定键</li>
+<li>storedist key：将返回结果离中心节点的距离保存到指定键。</li>
+</ul>
+</li>
+<li><strong>例如：</strong>下面计算5个城市中，距离北京150公里以内的城市</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200512151606261.png" alt="img"></p>
+<h1 id="五、获取geohash"><a href="#五、获取geohash" class="headerlink" title="五、获取geohash"></a>五、获取geohash</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geohash key member [member ...]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Redis使用geohash(<a href="https://en.wikipedia.org/wiki/Geohash)**将二维经纬度转换为一维字符串" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Geohash)**将二维经纬度转换为一维字符串</a>**</li>
+<li><strong>例如：</strong>下面操作会返回beijing的geohash值</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200512151844124.png" alt="img"></p>
+<ul>
+<li><strong>geohash有如下特点：</strong><ul>
+<li><strong>GEO的数据类型为zset（</strong>见下图），Redis将所有地理位置信息的geohash存放在zset中</li>
+<li><strong>字符串越长，表示的位置更精确，</strong>下图给出了字符串长度对应的精度，例如geohash长度为9时，精度在2米左右</li>
+<li><strong>两个字符串越相似，它们之间的距离越近，</strong>Redis利用字符串前缀匹配算法实现相关的命令</li>
+<li><strong>geohash编码和经纬度是可以相互转换的</strong></li>
+</ul>
+</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200512152006447.png" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200512152052500.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
+<ul>
+<li>Redis正是使用有序集合并结合geohash的特性实现了GEO的若干命令</li>
+</ul>
+<h1 id="六、删除地理位置信息（zrem）"><a href="#六、删除地理位置信息（zrem）" class="headerlink" title="六、删除地理位置信息（zrem）"></a>六、删除地理位置信息（zrem）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrem key member</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>GEO没有提供删除成员的命令</strong>，但是因为GEO的底层实现是zset，所以可以借用zrem命令实现对地理位置信息的删除</li>
+<li>例如，下面将cities:locations中的所有地理位置信息删除</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200512153319651.png" alt="img"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="next" title="redis读书笔记">
+                <i class="fa fa-chevron-left"></i> redis读书笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/08/Arrays-sort%E4%BD%BF%E7%94%A8%E7%9A%84%E4%BB%80%E4%B9%88%E6%8E%92%E5%BA%8F/" rel="prev" title="Arrays.sort使用的什么排序?">
+                Arrays.sort使用的什么排序? <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">244</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一、CEO概述"><span class="nav-number"></span> <span class="nav-text">一、CEO概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、增加地理位置信息（geoadd）"><span class="nav-number"></span> <span class="nav-text">二、增加地理位置信息（geoadd）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、获取地理信息位置（geopos）"><span class="nav-number"></span> <span class="nav-text">三、获取地理信息位置（geopos）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、获取指定位置范围内的地理信息位置集合（georadius、georadiusbymember）"><span class="nav-number"></span> <span class="nav-text">四、获取指定位置范围内的地理信息位置集合（georadius、georadiusbymember）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、获取geohash"><span class="nav-number"></span> <span class="nav-text">五、获取geohash</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、删除地理位置信息（zrem）"><span class="nav-number"></span> <span class="nav-text">六、删除地理位置信息（zrem）</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共450.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

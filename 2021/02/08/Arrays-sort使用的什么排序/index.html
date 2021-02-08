@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC]  双轴快排(DualPivotQuicksort)，顾名思义有两个轴元素pivot1，pivot2，且pivot ≤pivot2，将序列分成三段：x &lt; pivot1、pivot1 ≤ x ≤ pivot2、x &gt;pivot2，然后分别对三段进行递归。这个算法通常会比传统的快排效率更高，也因此被作为Arrays.java中给基本类型的数据排序的具体实现。  下面我们以JDK">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Arrays.sort使用的什么排序?">
+<meta property="og:url" content="http://aamingaa.github.io/2021/02/08/Arrays-sort%E4%BD%BF%E7%94%A8%E7%9A%84%E4%BB%80%E4%B9%88%E6%8E%92%E5%BA%8F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC]  双轴快排(DualPivotQuicksort)，顾名思义有两个轴元素pivot1，pivot2，且pivot ≤pivot2，将序列分成三段：x &lt; pivot1、pivot1 ≤ x ≤ pivot2、x &gt;pivot2，然后分别对三段进行递归。这个算法通常会比传统的快排效率更高，也因此被作为Arrays.java中给基本类型的数据排序的具体实现。  下面我们以JDK">
+<meta property="og:image" content="https://oscimg.oschina.net/oscnet/aed97ea2fa038313c6d32b3f69c1bf22bdf.png">
+<meta property="article:published_time" content="2021-02-08T01:11:08.000Z">
+<meta property="article:modified_time" content="2021-02-08T03:24:11.111Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://oscimg.oschina.net/oscnet/aed97ea2fa038313c6d32b3f69c1bf22bdf.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/02/08/Arrays-sort使用的什么排序/"/>
+
+
+
+
+
+  <title>Arrays.sort使用的什么排序? | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/08/Arrays-sort%E4%BD%BF%E7%94%A8%E7%9A%84%E4%BB%80%E4%B9%88%E6%8E%92%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Arrays.sort使用的什么排序?</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-08T09:11:08+08:00">
+                2021-02-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<ul>
+<li><strong>双轴快排</strong>(DualPivotQuicksort)，顾名思义有<strong>两个轴元素</strong>pivot1，pivot2，且pivot ≤<br>pivot2，<strong>将序列分成三段</strong>：x &lt; pivot1、pivot1 ≤ x ≤ pivot2、x &gt;pivot2，然后分别对三段进行递归。这个算法通常会比传统的快排效率更高，也因此被作为Arrays.java中给基本类型的数据排序的具体实现。</li>
+</ul>
+<p>下面我们以JDK1.8中Arrays对int型数组的排序为例来介绍其中使用的双轴快排：</p>
+<p>1.判断数组的长度是否大于286，大于则使用归并排序(merge sort)，否则执行2。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Use Quicksort on small arrays</span><br><span class="line">   if (right - left &lt; QUICKSORT_THRESHOLD) &#123;</span><br><span class="line">           sort(a, left, right, true);</span><br><span class="line">           return;</span><br><span class="line">   &#125;</span><br><span class="line">   &#x2F;&#x2F; Merge sort</span><br><span class="line">   ......</span><br></pre></td></tr></table></figure>
+
+<p>2.判断数组长度是否小于47，小于则直接采用插入排序(insertion sort)，否则执行3。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Use insertion sort on tiny arrays</span><br><span class="line">   if (length &lt; INSERTION_SORT_THRESHOLD) &#123;</span><br><span class="line">   &#x2F;&#x2F; Insertion sort</span><br><span class="line">   ......</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.用公式length/8+length/64+1近似计算出数组长度的1/7。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Inexpensive approximation of length &#x2F; 7</span><br><span class="line">   int seventh &#x3D; (length &gt;&gt; 3) + (length &gt;&gt; 6) + 1;</span><br></pre></td></tr></table></figure>
+
+<p>4.取5个根据经验得出的等距点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line">    * Sort five evenly spaced elements around (and including) the</span><br><span class="line">    * center element in the range. These elements will be used for</span><br><span class="line">    * pivot selection as described below. The choice for spacing</span><br><span class="line">    * these elements was empirically determined to work well on</span><br><span class="line">    * a wide variety of inputs.</span><br><span class="line">    *&#x2F;</span><br><span class="line">   int e3 &#x3D; (left + right) &gt;&gt;&gt; 1; &#x2F;&#x2F; The midpoint</span><br><span class="line">   int e2 &#x3D; e3 - seventh;</span><br><span class="line">   int e1 &#x3D; e2 - seventh;</span><br><span class="line">   int e4 &#x3D; e3 + seventh;</span><br><span class="line">   int e5 &#x3D; e4 + seventh;</span><br></pre></td></tr></table></figure>
+
+<p>5.将这5个元素进行插入排序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Sort these elements using insertion sort</span><br><span class="line">    if (a[e2] &lt; a[e1]) &#123; int t &#x3D; a[e2]; a[e2] &#x3D; a[e1]; a[e1] &#x3D; t; &#125;</span><br><span class="line">    if (a[e3] &lt; a[e2]) &#123; int t &#x3D; a[e3]; a[e3] &#x3D; a[e2]; a[e2] &#x3D; t;</span><br><span class="line">    if (t &lt; a[e1]) &#123; a[e2] &#x3D; a[e1]; a[e1] &#x3D; t; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if (a[e4] &lt; a[e3]) &#123; int t &#x3D; a[e4]; a[e4] &#x3D; a[e3]; a[e3] &#x3D; t;</span><br><span class="line">        if (t &lt; a[e2]) &#123; a[e3] &#x3D; a[e2]; a[e2] &#x3D; t;</span><br><span class="line">            if (t &lt; a[e1]) &#123; a[e2] &#x3D; a[e1]; a[e1] &#x3D; t; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if (a[e5] &lt; a[e4]) &#123; int t &#x3D; a[e5]; a[e5] &#x3D; a[e4]; a[e4] &#x3D; t;</span><br><span class="line">        if (t &lt; a[e3]) &#123; a[e4] &#x3D; a[e3]; a[e3] &#x3D; t;</span><br><span class="line">            if (t &lt; a[e2]) &#123; a[e3] &#x3D; a[e2]; a[e2] &#x3D; t;</span><br><span class="line">                if (t &lt; a[e1]) &#123; a[e2] &#x3D; a[e1]; a[e1] &#x3D; t; &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>6.选取a[e2]，a[e4]分别作为pivot1，pivot2。由于步骤5进行了排序，所以必有pivot1 &lt;=pivot2。定义两个指针less和great，less从最左边开始向右遍历，一直找到第一个不小于pivot1的元素，great从右边开始向左遍历，一直找到第一个不大于pivot2的元素。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line">        * Use the second and fourth of the five sorted elements as pivots.</span><br><span class="line">        * These values are inexpensive approximations of the first and</span><br><span class="line">        * second terciles of the array. Note that pivot1 &lt;&#x3D; pivot2.</span><br><span class="line">        *&#x2F;</span><br><span class="line">       int pivot1 &#x3D; a[e2];</span><br><span class="line">       int pivot2 &#x3D; a[e4];</span><br><span class="line">       &#x2F;*</span><br><span class="line">        * The first and the last elements to be sorted are moved to the</span><br><span class="line">        * locations formerly occupied by the pivots. When partitioning</span><br><span class="line">        * is complete, the pivots are swapped back into their final</span><br><span class="line">        * positions, and excluded from subsequent sorting.</span><br><span class="line">        *&#x2F;</span><br><span class="line">       a[e2] &#x3D; a[left];</span><br><span class="line">       a[e4] &#x3D; a[right];</span><br><span class="line">       &#x2F;*</span><br><span class="line">        * Skip elements, which are less or greater than pivot values.</span><br><span class="line">        *&#x2F;</span><br><span class="line">       while (a[++less] &lt; pivot1);</span><br><span class="line">       while (a[--great] &gt; pivot2);</span><br></pre></td></tr></table></figure>
+
+<p>7.接着定义指针k从less-1开始向右遍历至</p>
+<p>great，把小于pivot1的元素移动到less左边，大于pivot2的元素移动到great右边。这里要注意，我们已知great处的元素小于pivot2，但是它于pivot1的大小关系，还需要进行判断，如果比pivot1还小，需要移动到到less左边，否则只需要交换到k处。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> * Partitioning:</span><br><span class="line"> *</span><br><span class="line"> *   left part           center part                   right part</span><br><span class="line"> * +--------------------------------------------------------------+</span><br><span class="line"> * |  &lt; pivot1  |  pivot1 &lt;&#x3D; &amp;&amp; &lt;&#x3D; pivot2  |    ?    |  &gt; pivot2  |</span><br><span class="line"> * +--------------------------------------------------------------+</span><br><span class="line"> *               ^                          ^       ^</span><br><span class="line"> *               |                          |       |</span><br><span class="line"> *              less                        k     great</span><br><span class="line"> *</span><br><span class="line"> * Invariants:</span><br><span class="line"> *</span><br><span class="line"> *              all in (left, less)   &lt; pivot1</span><br><span class="line"> *    pivot1 &lt;&#x3D; all in [less, k)     &lt;&#x3D; pivot2</span><br><span class="line"> *              all in (great, right) &gt; pivot2</span><br><span class="line"> *</span><br><span class="line"> * Pointer k is the first index of ?-part.</span><br><span class="line"> *&#x2F;</span><br><span class="line">        outer:</span><br><span class="line">        for (int k &#x3D; less - 1; ++k &lt;&#x3D; great; ) &#123;</span><br><span class="line">            int ak &#x3D; a[k];</span><br><span class="line">            if (ak &lt; pivot1) &#123; &#x2F;&#x2F; Move a[k] to left part</span><br><span class="line">                a[k] &#x3D; a[less];</span><br><span class="line">                &#x2F;*</span><br><span class="line">                 * Here and below we use &quot;a[i] &#x3D; b; i++;&quot; instead</span><br><span class="line">                 * of &quot;a[i++] &#x3D; b;&quot; due to performance issue.</span><br><span class="line">                 *&#x2F;</span><br><span class="line">                a[less] &#x3D; ak;</span><br><span class="line">                ++less;</span><br><span class="line">            &#125; else if (ak &gt; pivot2) &#123; &#x2F;&#x2F; Move a[k] to right part</span><br><span class="line">                while (a[great] &gt; pivot2) &#123;</span><br><span class="line">                    if (great-- &#x3D;&#x3D; k) &#123;</span><br><span class="line">                        break outer;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                if (a[great] &lt; pivot1) &#123; &#x2F;&#x2F; a[great] &lt;&#x3D; pivot2</span><br><span class="line">                    a[k] &#x3D; a[less];</span><br><span class="line">                    a[less] &#x3D; a[great];</span><br><span class="line">                    ++less;</span><br><span class="line">                &#125; else &#123; &#x2F;&#x2F; pivot1 &lt;&#x3D; a[great] &lt;&#x3D; pivot2</span><br><span class="line">                    a[k] &#x3D; a[great];</span><br><span class="line">                &#125;</span><br><span class="line">                &#x2F;*</span><br><span class="line">                 * Here and below we use &quot;a[i] &#x3D; b; i--;&quot; instead</span><br><span class="line">                 * of &quot;a[i--] &#x3D; b;&quot; due to performance issue.</span><br><span class="line">                 *&#x2F;</span><br><span class="line">                a[great] &#x3D; ak;</span><br><span class="line">                --great;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>8.将less-1处的元素移动到队头，great+1处的元素移动到队尾，并把pivot1和pivot2分别放到less-1和great+1处。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Swap pivots into their final positions</span><br><span class="line">        a[left]  &#x3D; a[less  - 1]; a[less  - 1] &#x3D; pivot1;</span><br><span class="line">        a[right] &#x3D; a[great + 1]; a[great + 1] &#x3D; pivot2;</span><br></pre></td></tr></table></figure>
+
+<p>9.至此，less左边的元素都小于pivot1，great右边的元素都大于pivot2，分别对两部分进行同样的递归排序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Sort left and right parts recursively, excluding known pivots</span><br><span class="line">        sort(a, left, less - 2, leftmost);</span><br><span class="line">        sort(a, great + 2, right, false);</span><br></pre></td></tr></table></figure>
+
+<p>10.对于中间的部分，如果大于4/7的数组长度，很可能是因为重复元素的存在，所以把less向右移动到第一个不等于pivot1的地方，把great向左移动到第一个不等于pivot2的地方，然后再对less和great之间的部分进行递归排序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line">         * If center part is too large (comprises &gt; 4&#x2F;7 of the array),</span><br><span class="line">         * swap internal pivot values to ends.</span><br><span class="line">         *&#x2F;</span><br><span class="line">        if (less &lt; e1 &amp;&amp; e5 &lt; great) &#123;</span><br><span class="line">            &#x2F;*</span><br><span class="line">             * Skip elements, which are equal to pivot values.</span><br><span class="line">             *&#x2F;</span><br><span class="line">            while (a[less] &#x3D;&#x3D; pivot1) &#123;</span><br><span class="line">                ++less;</span><br><span class="line">            &#125;</span><br><span class="line">            while (a[great] &#x3D;&#x3D; pivot2) &#123;</span><br><span class="line">                --great;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ......</span><br><span class="line">        &#x2F;&#x2F; Sort center part recursively</span><br><span class="line">        sort(a, less, great, false);</span><br></pre></td></tr></table></figure>
+
+<p>另外参考了其他博文，算法思路如下：<br>算法步骤<br>1.对于很小的数组（长度小于47），会使用插入排序。<br>2.选择两个点P1,P2作为轴心，比如我们可以使用第一个元素和最后一个元素。<br>3.P1必须比P2要小，否则将这两个元素交换，现在将整个数组分为四部分：<br>（1）第一部分：比P1小的元素。<br>（2）第二部分：比P1大但是比P2小的元素。<br>（3）第三部分：比P2大的元素。<br>（4）第四部分：尚未比较的部分。<br>在开始比较前，除了轴点，其余元素几乎都在第四部分，直到比较完之后第四部分没有元素。<br>4.从第四部分选出一个元素a[K]，与两个轴心比较，然后放到第一二三部分中的一个。<br>5.移动L，K，G指向。<br>6.重复 4 5 步，直到第四部分没有元素。<br>7.将P1与第一部分的最后一个元素交换。将P2与第三部分的第一个元素交换。<br>8.递归的将第一二三部分排序。</p>
+<p><strong>总结：</strong>Arrays.sort对升序数组、降序数组和重复数组的排序效率有了很大的提升，这里面有几个重大的优化。<br><strong>1.对于小数组来说，插入排序效率更高，每次递归到小于47的大小时，用插入排序代替快排，明显提升了性能。<br>2.双轴快排使用两个pivot，每轮把数组分成3段，在没有明显增加比较次数的情况下巧妙地减少了递归次数。<br>3.pivot的选择上增加了随机性，却没有带来随机数的开销。<br>4.对重复数据进行了优化处理，避免了不必要交换和递归。</strong></p>
+<p><img src="https://oscimg.oschina.net/oscnet/aed97ea2fa038313c6d32b3f69c1bf22bdf.png" alt="img"></p>
+<p> 　O(nlogn)只代表增长量级，同一个量级前面的常数也可以不一样，不同数量下面的实际运算时间也可以不一样。</p>
+<p>　　数量非常小的情况下（就像上面说到的，少于47的），插入排序等可能会比快速排序更快。 所以数组少于47的会进入插入排序。  </p>
+<p>　　快排数据越无序越快（加入随机化后基本不会退化），平均常数最小，不需要额外空间，不稳定排序。</p>
+<p>　　归排速度稳定，常数比快排略大，需要额外空间，稳定排序。</p>
+<p>　　所以大于或等于47或少于286会进入快排，而在大于或等于286后，会有个小动作：“// Check if the array is nearly sorted”。这里第一个作用是先梳理一下数据方便后续的归并排序，第二个作用就是即便大于286，但在降序组太多的时候（被判断为没有结构的数据，The array is not highly structured,use Quicksort instead of merge sort.），要转回快速排序。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="next" title="GEO数据结构">
+                <i class="fa fa-chevron-left"></i> GEO数据结构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/08/BBR%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84/" rel="prev" title="BBR是怎么实现的">
+                BBR是怎么实现的 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">244</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共450.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
