@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] @SpringBootApplication@SpringBootApplication看作是 @Configuration、@EnableAutoConfiguration、@ComponentScan 注解的集合。  @EnableAutoConfiguration：启用 SpringBoot 的自动配置机制(@Configuration配置都加载到当前SpringBoot创建并使">
 <meta property="article:published_time" content="2020-12-13T07:13:43.000Z">
-<meta property="article:modified_time" content="2020-12-13T08:16:09.035Z">
+<meta property="article:modified_time" content="2021-03-11T14:53:59.754Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  296
+                  302
                 </span>
               
 
@@ -428,6 +428,8 @@
 <li>如果方法参数不对的话就会抛出<code>MethodArgumentNotValidException</code>，我们来处理这个异常。</li>
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@ControllerAdvice</span><br><span class="line">@ResponseBody</span><br><span class="line">public class GlobalExceptionHandler &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 请求参数异常处理</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @ExceptionHandler(MethodArgumentNotValidException.class)</span><br><span class="line">    public ResponseEntity&lt;?&gt; handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) &#123;</span><br><span class="line">       ......</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自动装配原理"><a href="#自动装配原理" class="headerlink" title="自动装配原理"></a>自动装配原理</h3>
       
     </div>
     
@@ -547,7 +549,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">244</span>
+                  <span class="site-state-item-count">257</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -559,7 +561,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -606,7 +608,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringBootApplication"><span class="nav-number">1.</span> <span class="nav-text">@SpringBootApplication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestBody"><span class="nav-number">2.</span> <span class="nav-text">@RequestBody</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConfigurationProperties"><span class="nav-number">3.</span> <span class="nav-text">@ConfigurationProperties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局处理-Controller-层异常"><span class="nav-number">4.</span> <span class="nav-text">全局处理 Controller 层异常</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringBootApplication"><span class="nav-number">1.</span> <span class="nav-text">@SpringBootApplication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestBody"><span class="nav-number">2.</span> <span class="nav-text">@RequestBody</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConfigurationProperties"><span class="nav-number">3.</span> <span class="nav-text">@ConfigurationProperties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局处理-Controller-层异常"><span class="nav-number">4.</span> <span class="nav-text">全局处理 Controller 层异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动装配原理"><span class="nav-number">5.</span> <span class="nav-text">自动装配原理</span></a></li></ol></div>
             
 
           </div>
@@ -656,7 +658,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共450.6k字</span>
+  <span class="post-count">博客全站共506.2k字</span>
 </div>
 
         

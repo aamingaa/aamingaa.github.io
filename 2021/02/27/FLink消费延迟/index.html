@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Flink具备高吞吐、低延迟、纯流式架构、支持对乱序事件的处理、有状态、高度灵活的窗口定制、失败恢复、故障转移、水平扩展、批处理、流处理统一的API等大数据处理优势。基于大数据的应用场景中，从数据生产，到数据收集、数据处理、数据应用，贯穿整个大数据生命周期全栈的每个环节，Flink 均可应用其中。作为新一代开源大数据计算引擎，Flink 不仅满足海量数据对实时性的需求，且能够全链路打通端到端的数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FLink消费延迟">
+<meta property="og:url" content="http://aamingaa.github.io/2021/02/27/FLink%E6%B6%88%E8%B4%B9%E5%BB%B6%E8%BF%9F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Flink具备高吞吐、低延迟、纯流式架构、支持对乱序事件的处理、有状态、高度灵活的窗口定制、失败恢复、故障转移、水平扩展、批处理、流处理统一的API等大数据处理优势。基于大数据的应用场景中，从数据生产，到数据收集、数据处理、数据应用，贯穿整个大数据生命周期全栈的每个环节，Flink 均可应用其中。作为新一代开源大数据计算引擎，Flink 不仅满足海量数据对实时性的需求，且能够全链路打通端到端的数据">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092432.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092433.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092434.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092436.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092437.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092438.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092440.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092441.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092443.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092444.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092445.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092447.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092448.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092449.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092451.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092452.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092453.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092454.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092456.png">
+<meta property="article:published_time" content="2021-02-27T08:35:45.000Z">
+<meta property="article:modified_time" content="2021-02-27T08:37:48.403Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092432.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/02/27/FLink消费延迟/"/>
+
+
+
+
+
+  <title>FLink消费延迟 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/27/FLink%E6%B6%88%E8%B4%B9%E5%BB%B6%E8%BF%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">FLink消费延迟</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-27T16:35:45+08:00">
+                2021-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flink/" itemprop="url" rel="index">
+                    <span itemprop="name">Flink</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Flink具备高吞吐、低延迟、纯流式架构、支持对乱序事件的处理、有状态、高度灵活的窗口定制、失败恢复、故障转移、水平扩展、批处理、流处理统一的API等大数据处理优势。基于大数据的应用场景中，从数据生产，到数据收集、数据处理、数据应用，贯穿整个大数据生命周期全栈的每个环节，Flink 均可应用其中。作为新一代开源大数据计算引擎，Flink 不仅满足海量数据对实时性的需求，且能够全链路打通端到端的数据价值挖掘。</p>
+<p>基于开源组件的架构如果能实现性能最优化，那就是高潮迭起，掌声不断，如果架构性能不能最优化，那就是爷爷赶牛车，急死孙子。</p>
+<p>笔者所在项目的日志综管平台架构使用了Flink组件，遇到了实时计算延迟的性能问题，下面笔者将和团队一起解决该性能问题的过程分享如下。</p>
+<p>一、问题描述：</p>
+<h2 id><a href="#" class="headerlink" title></a></h2><h2 id="基于flink大数据处理能力使日志综管平台具备了业务链端到端可视化、日志检索分析秒级化、业务异常检测自动化、数据库指标拓扑实时化。给自己的项目吹个牛逼，笔者遇到的头疼问题如下："><a href="#基于flink大数据处理能力使日志综管平台具备了业务链端到端可视化、日志检索分析秒级化、业务异常检测自动化、数据库指标拓扑实时化。给自己的项目吹个牛逼，笔者遇到的头疼问题如下：" class="headerlink" title="基于flink大数据处理能力使日志综管平台具备了业务链端到端可视化、日志检索分析秒级化、业务异常检测自动化、数据库指标拓扑实时化。给自己的项目吹个牛逼，笔者遇到的头疼问题如下："></a><strong>基于flink大数据处理能力使日志综管平台具备了业务链端到端可视化、日志检索分析秒级化、业务异常检测自动化、数据库指标拓扑实时化。给自己的项目吹个牛逼，笔者遇到的头疼问题如下：</strong></h2><h2 id="每天早上6-8点时间段Flink计算业务链相关指标会延迟，处理数据量由正常每分钟200w-下降到1w以下，通过增加服务器资源，加大并发数等常规手段均未能解决。"><a href="#每天早上6-8点时间段Flink计算业务链相关指标会延迟，处理数据量由正常每分钟200w-下降到1w以下，通过增加服务器资源，加大并发数等常规手段均未能解决。" class="headerlink" title="每天早上6-8点时间段Flink计算业务链相关指标会延迟，处理数据量由正常每分钟200w+下降到1w以下，通过增加服务器资源，加大并发数等常规手段均未能解决。"></a><strong>每天早上6-8点时间段Flink计算业务链相关指标会延迟，处理数据量由正常每分钟200w+下降到1w以下，通过增加服务器资源，加大并发数等常规手段均未能解决。</strong></h2><p>二、环境架构</p>
+<table>
+<thead>
+<tr>
+<th>运行模式</th>
+<th>Flink on yarn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fink</td>
+<td>1.7.2</td>
+</tr>
+<tr>
+<td>Hadoop</td>
+<td>2.8.5</td>
+</tr>
+<tr>
+<td>计算节点数</td>
+<td>9台虚拟机(单台cpu：12核内存：64GB  硬盘:550G)</td>
+</tr>
+<tr>
+<td>kafka</td>
+<td>2.1</td>
+</tr>
+<tr>
+<td>业务高峰期处理数据量(每分钟)</td>
+<td>860w</td>
+</tr>
+<tr>
+<td>生成指标</td>
+<td>30个</td>
+</tr>
+<tr>
+<td>跑的任务数</td>
+<td>8个</td>
+</tr>
+</tbody></table>
+<p>三、Flink业务链任务流程图</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092432.png" alt="img"></p>
+<p>四、问题现象</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092433.png" alt="img">如图所示，flink处理的业务链数据量从某一时间点突然出现断崖式下降，数据处理积压越来严重，flink 任务背压较高，同时指标出现延时生成现象（正常处理延时1分以内）。</p>
+<p>五、分析过程</p>
+<h3 id="1-kafka-soruce分析"><a href="#1-kafka-soruce分析" class="headerlink" title="1. kafka soruce分析"></a>1. kafka soruce分析</h3><p>首先通过查看flink业务链处理日志，发现疑似线索。日志显示任务连接上游kafka报Disconnection连接异常现象。当指标延时时，此错误信息报频率较高，但指标不延时偶尔也会报错，是否这就是导致问题的罪魁祸首？根据这一线索，继续刨根问底：</p>
+<p>分析及措施:</p>
+<ul>
+<li>上游kafka采用kerberos认证机制，每隔24小时需要重新认证（调用专有客户端进行认证），flink 9台计算节点上部署自动认证脚本，每隔10分钟程序自动认证，Disconnection连接异常现象出现频率减少，但指标延时情况还在存在。</li>
+</ul>
+<ul>
+<li>调整flink 连接kafka消费topic参数</li>
+</ul>
+<p>default.api.timeout.ms</p>
+<p>session.timeout.ms</p>
+<p>request.timeout.ms</p>
+<p>fetch.max.wait.ms</p>
+<p>fetch.min.bytes</p>
+<p>调整连接参数后Disconnection连接异常现象未出现，但指标延时现象依然存在。</p>
+<ul>
+<li>通过监测上游kafka topic 消费分组Lag值，发现是下游消费滞后造成数据积压现象。</li>
+</ul>
+<p><strong>分析结论:通过以上监测与优化措施，指标生成延迟问题仍未解决，排除由Kafka引起指标延时的可能性。</strong></p>
+<h3 id="2-checkpoint分析"><a href="#2-checkpoint分析" class="headerlink" title="2. checkpoint分析"></a>2. checkpoint分析</h3><p>通过上述优化整改，Flink与kafka连接异常问题解决，但延迟的问题还是存在，革命尚未成功，吾辈仍需继续深入分析。经比对多天日志，发现每次任务重启前都有checkpoint失败，ClosedByInterruptException异常现象</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092434.png" alt="img"></p>
+<p>分析及措施:</p>
+<ul>
+<li>因为业务链业务量巨大（高峰期每分钟需处理的数据量达800万左右），在有限flink计算节点上(9台虚拟机)，按照要求需要满足几十个指标在1分钟内不出现延时生成。当任务重启后如果从历史检查点恢复处理消费数据，数据量积压概率较高，无法保障指标生成不延时。所以，重启处理机制更改为每次任务重启后从当前时间点消费kafka 数据，而非从检查点开始。</li>
+</ul>
+<ul>
+<li>关闭checkpoint后，无对应异常日志，但指标生成延迟问题依然存在。</li>
+</ul>
+<p><strong>分析结论:虽然对该可疑目标进行了tunning，但延迟依旧存在，进一步排除了checkpoint失败导致指标延时的可能性</strong>。</p>
+<h3 id="3-flink-运行状态分析"><a href="#3-flink-运行状态分析" class="headerlink" title="3. flink 运行状态分析"></a>3. flink 运行状态分析</h3><p>排除以上两种情况后，继续对flink组件本身的运行状态做全面综合深入分析。</p>
+<p>分析及措施：</p>
+<ul>
+<li>加大并发数处理：业务链kafka  topic 是100 partition，正常下游Flink需要开100 个并发与partition个数一一对应起来，如此配置性能才能最优。但当前flink集群资源有限（flink集群机器上跑了其它96个并发任务），无法开启100 个并发（经测试最大可开启72 个并发）。按可用最大并发配置后，计算节点cpu 负载30%以下，但指标仍出现延时，看来扩大并发数解决不了延时问题。</li>
+</ul>
+<ul>
+<li>线程运行状况</li>
+</ul>
+<p>通过分析程序运行状态，发现shsncSpanEventStream pre -&gt; Timestamps/Watermarks 这段逻辑有线程锁现象:</p>
+<p>“AsyncIO-Emitter-Thread (trans stream -&gt; Process -&gt; shsncSpanEventStream pre -&gt; Timestamps/Watermarks (28/72))” #181 daemon prio=5 os_prio=0 tid=0x00007f4da3cf8000 nid=0x1324c waiting for monitor entry [0x00007f4d8bdeb000]</p>
+<p>java.lang.Thread.State: BLOCKED (on object monitor)at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:125)</p>
+<p>- waiting to lock &lt;0x0000000610a5b028&gt; (a java.lang.Object)at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)</p>
+<p>at java.lang.Thread.run(Thread.java:748)</p>
+<ul>
+<li>背压运行状况</li>
+</ul>
+<p>从任务背压图上看，处理延时是堵在入口解析及下游水位处理环节点逻辑上：</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092436.png" alt="img"></p>
+<p>优化措施:</p>
+<ul>
+<li><p>flink共享waterMaker机制，在数据源进行waterMaker注册，减少逻辑处理N倍；</p>
+</li>
+<li><p>对应用吐过来业务数据SPAN和SPANEVENT进行分流处理，提高程序处理速度；</p>
+</li>
+<li><p>增加过滤数据逻辑，过滤掉无需做指标计算的数据，减少程序数据处理量。</p>
+</li>
+<li><p>业务链flink任务入redis/es拆分出来做单独算子进行入库。</p>
+</li>
+<li><p>任务并发数，调整为50个并发数，消费kafka topic(topic 100 partition)</p>
+</li>
+</ul>
+<p>实施以上优化措施后，问题依旧，延时并没有得到缓解和解决。由于在上一步为了排除checkpoint原因，关闭了checkpoint，关闭check后虽然没有解决延时问题，但是由于关闭了checkpoint程序不会因为checkpoint失败而停止，因此得以观察延时情况下程序gc和堆栈具体使用情况。</p>
+<h3 id="4-gc和堆栈分析"><a href="#4-gc和堆栈分析" class="headerlink" title="4. gc和堆栈分析"></a>4. gc和堆栈分析</h3><ul>
+<li>gc分析:指标延迟时，通过jstat 监测发现flink 计算节点不断做FGC，虽然FGC已经达到每1秒一次（FGC时JVM会暂停，导致程序卡顿延时），但是老年代并没有任何回收（一直是99.98），因此可以判断出现了内存泄漏,究竟是哪个位置出现了内存泄漏呢？</li>
+</ul>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092437.png" alt="img"></p>
+<ul>
+<li>jmap分析: 通过jmap查看堆使用排行,惊讶的发现排在第一是Atomiclong类，占堆内存达到恐怖的2.7G,而我们的代码并没有显示使用Atomiclong类，排第二的是[C，表示字符串，字符串在程序中用的很多，排第二属正常，第三还是Atomiclong类，这个Atomiclong类究竟是哪个对象引用的呢？第四是genericonobjectpool，这个也不正常，程序中连接池对象竟然有372198个，哪里用得了这么多，还有一个jedisFactory类，一个工厂类竟然也有37万个实例，也是有问题的。</li>
+</ul>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092438.png" alt="img"></p>
+<p>mat分析：</p>
+<p>通过简单的jmap命令，发现很多不正常的类占据着堆内存的前几名，这些类究竟有什么关系，谁才是罪魁祸首？只好使出我们的终极MAT分析大法。</p>
+<p>通过分析导出生成的dump, 整个dump文件有6.7G,使用32G内存的机器经过10多分钟的处理，才得到以下分析结果。</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092440.png" alt="img"></p>
+<p>分析报告显示ScheduledThreadPoolExecutor对象持有4.3GB堆内存未释放，堆饼图中占有97%</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092441.png" alt="img"></p>
+<p>点进去查看树图,发现ScheduledThreadPoolExecutor对象持有4.3GB堆内存全部是GenericObjectPool对象（4.3G，接近1百万个对象）</p>
+<p>再点击GenericObjectPool展开后发现：</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092443.png" alt="img"></p>
+<p>之前通过jmap分析排行在前的AtomicLong(排第一，占2.7G)和redisFactory类都是躲藏在GenericObjectPool对象中的。分析至此，本人的第六撸感告诉我，离事情的真相越来越近了。与redis连接相关的GenericObjectPool对象就是问题的真凶，内存泄漏的对象。</p>
+<p>六、整改措施</p>
+<h3 id="1-去掉连接池"><a href="#1-去掉连接池" class="headerlink" title="1.去掉连接池"></a>1.去掉连接池</h3><p>看到GenericObjectPool连接池对象不释放，首先想到的是连redis的连接池去掉。将flink任务与redis交互的代码去掉GenericObjectPool连接池，采用直接获取redisCluseter对象方式：</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092444.png" alt="img"></p>
+<p>(上图是初始代码，JedisCluter保存在GenericObjectPool连接池中)</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092445.png" alt="img"></p>
+<p>(去掉GenericObjectPool连接池后只获取JedisCluster对象)</p>
+<p><strong>结果：问题未缓解，未解决，还得继续。</strong></p>
+<h3 id="2-连接池加锁"><a href="#2-连接池加锁" class="headerlink" title="2.连接池加锁"></a>2.连接池加锁</h3><p>由于去掉和redis的连接池未解决问题，依然生成大量GenericObjectPool对象不释放，一个推测是并发原因导致单例没有生效，生成了很多个JedisCluster对象，而JedisCluster对象包含了连接池。尝试synchronized加锁：</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092447.png" alt="img"></p>
+<p><strong>结果：问题仍未缓解，仍未解决，还得继续。</strong></p>
+<h3 id="3-改redisCluseter对象为单独变量"><a href="#3-改redisCluseter对象为单独变量" class="headerlink" title="3. 改redisCluseter对象为单独变量"></a>3. 改redisCluseter对象为单独变量</h3><p>上两步都没有进展，从头开始分析代码，代码分析过程中发现flink十多个任务都是使用统一的redis初始化方法且只生成单个redis连接实例。十多个flink任务, 每个flink任务中又有许多地方需要用到redis连接，redis单例在这里就会成为瓶颈（数据处理不过来，进而积压）。于是变单例的redisCluseter对象为单独变量，每个用到redis连接的类都生成redisCluseter变量，然后再与redis交互，以此使redis随Flink的连接数并发派生。</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092448.png" alt="img"></p>
+<p><strong>整改结果：问题得到阶段性解决，之前运行一天就出现堆和gc问题，整改后稳定运行三天后又出现同样问题。</strong></p>
+<h3 id="4-去掉异步方法"><a href="#4-去掉异步方法" class="headerlink" title="4. 去掉异步方法"></a>4. 去掉异步方法</h3><p>虽然只稳定运行三天，但对笔者和整个团队来说，也还是很开心的，说明我们的方向大概率是对的。但问题复现，作为四有好青年的IT民工，咱得发扬不怕苦，不怕累的精神继续分析排查。这次排查过程中发现众多的GenericObjectPool是由ScheduledThreadPoolExector引用的，ScheduledThreadPoolExector是一个异步类，再排查flink中的异步方法。找到AsyncDataStream.unorderedWait()是异步写入redis方法，将其修改为改造后的官方flink-redis连接包，去除异步。</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092449.png" alt="img"></p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092451.png" alt="img"></p>
+<p><strong>结果：问题解决，堆和gc一直正常</strong></p>
+<h3 id="5-调整GC回收策略"><a href="#5-调整GC回收策略" class="headerlink" title="5. 调整GC回收策略"></a>5. 调整GC回收策略</h3><h3 id="为进一步提高垃圾回收效率，我们优化了GC回收策略：-XX-UseG1GC-XX-MaxGCPauseMillis-300"><a href="#为进一步提高垃圾回收效率，我们优化了GC回收策略：-XX-UseG1GC-XX-MaxGCPauseMillis-300" class="headerlink" title="为进一步提高垃圾回收效率，我们优化了GC回收策略： -XX:+UseG1GC -XX:MaxGCPauseMillis=300"></a>为进一步提高垃圾回收效率，我们优化了GC回收策略： -XX:+UseG1GC -XX:MaxGCPauseMillis=300</h3><h3 id="-1"><a href="#-1" class="headerlink" title></a></h3><h3 id="持续观察任务运行一周，实时指标计算正常，无延迟现象，至此该性能问题水落石出，真相大白。下面是正常后的相关属性展示："><a href="#持续观察任务运行一周，实时指标计算正常，无延迟现象，至此该性能问题水落石出，真相大白。下面是正常后的相关属性展示：" class="headerlink" title="持续观察任务运行一周，实时指标计算正常，无延迟现象，至此该性能问题水落石出，真相大白。下面是正常后的相关属性展示："></a><strong>持续观察任务运行一周，实时指标计算正常，无延迟现象，至此该性能问题水落石出，真相大白。</strong>下面是正常后的相关属性展示：</h3><ul>
+<li>业务链指标生成正常:</li>
+</ul>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092452.png" alt="img"></p>
+<ul>
+<li>指标数据量正常:</li>
+</ul>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092453.png" alt="img"></p>
+<ul>
+<li>未发现有线程锁现象：</li>
+</ul>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092454.png" alt="img"></p>
+<ul>
+<li>Gc 正常：</li>
+</ul>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092456.png" alt="img"></p>
+<p><a href="https://www.modb.pro/db/27748" target="_blank" rel="noopener">https://www.modb.pro/db/27748</a></p>
+<p>七、结案陈词</p>
+<p>1．通过此次问题一波三折的解决过程，笔者总结在排查分析处理相关开源组件的性能问题时，要充分利用jdk自带的stat/jmap/jstack等内存分析工具及相关开源性能监测工具（如arthas）对进程运行状态进行深入分析，找出性能瓶颈，如死锁，fgc频繁等。</p>
+<p>2.通过hadoop web管理界面，自带背压监测图及metrics监测指标图可以查看任务运行现状。条件充许情况下，建议利用Prometheus工具对metrics进行实时监测。</p>
+<p>3．结合日志，分阶段分析任务逻辑存在的性能瓶颈，然后通过一系列的优化措施（拆分/合并/过滤/异步）提高任务处理性能。</p>
+<p>开源组件架构的最优化使用是基于海量业务场景不断迭代进化而来，这个过程对自己对团队都是一种历练和精进。在问题得到最终解决，性能得到大幅提升，业务流畅运行后，有种发自内心的会当凌绝顶，一览众山小的成就感。最后感谢那些通宵排查问题的夜晚和我一起并肩作战的兄弟们</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/10/SpringBean%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" rel="next" title="SpringBean生命周期">
+                <i class="fa fa-chevron-left"></i> SpringBean生命周期
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/03/05/%E7%AE%97%E6%B3%95%E9%A2%98%E6%80%BB%E7%BB%93/" rel="prev" title="算法题总结">
+                算法题总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">257</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于flink大数据处理能力使日志综管平台具备了业务链端到端可视化、日志检索分析秒级化、业务异常检测自动化、数据库指标拓扑实时化。给自己的项目吹个牛逼，笔者遇到的头疼问题如下："><span class="nav-number">2.</span> <span class="nav-text">基于flink大数据处理能力使日志综管平台具备了业务链端到端可视化、日志检索分析秒级化、业务异常检测自动化、数据库指标拓扑实时化。给自己的项目吹个牛逼，笔者遇到的头疼问题如下：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#每天早上6-8点时间段Flink计算业务链相关指标会延迟，处理数据量由正常每分钟200w-下降到1w以下，通过增加服务器资源，加大并发数等常规手段均未能解决。"><span class="nav-number">3.</span> <span class="nav-text">每天早上6-8点时间段Flink计算业务链相关指标会延迟，处理数据量由正常每分钟200w+下降到1w以下，通过增加服务器资源，加大并发数等常规手段均未能解决。</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-kafka-soruce分析"><span class="nav-number">3.1.</span> <span class="nav-text">1. kafka soruce分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-checkpoint分析"><span class="nav-number">3.2.</span> <span class="nav-text">2. checkpoint分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-flink-运行状态分析"><span class="nav-number">3.3.</span> <span class="nav-text">3. flink 运行状态分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-gc和堆栈分析"><span class="nav-number">3.4.</span> <span class="nav-text">4. gc和堆栈分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-去掉连接池"><span class="nav-number">3.5.</span> <span class="nav-text">1.去掉连接池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-连接池加锁"><span class="nav-number">3.6.</span> <span class="nav-text">2.连接池加锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-改redisCluseter对象为单独变量"><span class="nav-number">3.7.</span> <span class="nav-text">3. 改redisCluseter对象为单独变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-去掉异步方法"><span class="nav-number">3.8.</span> <span class="nav-text">4. 去掉异步方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-调整GC回收策略"><span class="nav-number">3.9.</span> <span class="nav-text">5. 调整GC回收策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为进一步提高垃圾回收效率，我们优化了GC回收策略：-XX-UseG1GC-XX-MaxGCPauseMillis-300"><span class="nav-number">3.10.</span> <span class="nav-text">为进一步提高垃圾回收效率，我们优化了GC回收策略： -XX:+UseG1GC -XX:MaxGCPauseMillis&#x3D;300</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#-1"><span class="nav-number">3.11.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持续观察任务运行一周，实时指标计算正常，无延迟现象，至此该性能问题水落石出，真相大白。下面是正常后的相关属性展示："><span class="nav-number">3.12.</span> <span class="nav-text">持续观察任务运行一周，实时指标计算正常，无延迟现象，至此该性能问题水落石出，真相大白。下面是正常后的相关属性展示：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共506.2k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

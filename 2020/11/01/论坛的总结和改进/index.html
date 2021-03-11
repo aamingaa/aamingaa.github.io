@@ -87,7 +87,7 @@
 <meta property="og:description" content="[TOC]  数据库用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 id（索引）、评论实体 id（索引）、评论类型（帖子&#x2F;回复）、被评论目标 id、评论内容、评论状态（有效&#x2F;无效">
 <meta property="og:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
 <meta property="article:published_time" content="2020-11-01T02:28:23.000Z">
-<meta property="article:modified_time" content="2020-12-22T01:37:40.269Z">
+<meta property="article:modified_time" content="2021-02-09T08:54:05.459Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6.5k
+                  7.3k
                 </span>
               
 
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  29
+                  33
                 </span>
               
             </div>
@@ -941,7 +941,126 @@ if (operations.size() == 0) {
         order by type desc, score desc, create_time desc
     &lt;/if&gt;
     limit #{offset}, #{limit}
-&lt;/select&gt;</code></pre><p>```</p>
+&lt;/select&gt;</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### Spring Security的用法</span><br><span class="line"></span><br><span class="line">配置</span><br></pre></td></tr></table></figure>
+<p>  @Override<br>    public void configure(WebSecurity web) throws Exception {<br>        web.ignoring().antMatchers(“/resources/**”);<br>    }</p>
+<pre><code>@Override
+protected void configure(HttpSecurity http) throws Exception {
+    // 授权
+    http.authorizeRequests()
+            .antMatchers(
+                    &quot;/user/setting&quot;,
+                    &quot;/user/upload&quot;,
+                    &quot;/discuss/add&quot;,
+                    &quot;/comment/add/**&quot;,
+                    &quot;/letter/**&quot;,
+                    &quot;/notice/**&quot;,
+                    &quot;/like&quot;,
+                    &quot;/follow&quot;,
+                    &quot;/unfollow&quot;
+            )
+            .hasAnyAuthority(
+                    AUTHORITY_USER,
+                    AUTHORITY_ADMIN,
+                    AUTHORITY_MODERATOR
+            )
+            .antMatchers(
+                    &quot;/discuss/top&quot;,
+                    &quot;/discuss/wonderful&quot;
+            )
+            .hasAnyAuthority(
+                    AUTHORITY_MODERATOR
+            )
+            .antMatchers(
+                    &quot;/discuss/delete&quot;,
+                    &quot;/data/**&quot;
+            )
+            .hasAnyAuthority(
+                    AUTHORITY_ADMIN
+            )
+            .anyRequest().permitAll()
+            .and().csrf().disable();
+
+    // 权限不够时的处理
+    http.exceptionHandling()
+            .authenticationEntryPoint(new AuthenticationEntryPoint() {
+                // 没有登录
+                @Override
+                public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+                    String xRequestedWith = request.getHeader(&quot;x-requested-with&quot;);
+                    if (&quot;XMLHttpRequest&quot;.equals(xRequestedWith)) {
+                        response.setContentType(&quot;application/plain;charset=utf-8&quot;);
+                        PrintWriter writer = response.getWriter();
+                        writer.write(CommunityUtil.getJSONString(403, &quot;你还没有登录哦!&quot;));
+                    } else {
+                        response.sendRedirect(request.getContextPath() + &quot;/login&quot;);
+                    }
+                }
+            })
+            .accessDeniedHandler(new AccessDeniedHandler() {
+                // 权限不足
+                @Override
+                public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
+                    String xRequestedWith = request.getHeader(&quot;x-requested-with&quot;);
+                    if (&quot;XMLHttpRequest&quot;.equals(xRequestedWith)) {
+                        response.setContentType(&quot;application/plain;charset=utf-8&quot;);
+                        PrintWriter writer = response.getWriter();
+                        writer.write(CommunityUtil.getJSONString(403, &quot;你没有访问此功能的权限!&quot;));
+                    } else {
+                        response.sendRedirect(request.getContextPath() + &quot;/denied&quot;);
+                    }
+                }
+            });
+
+    // Security底层默认会拦截/logout请求,进行退出处理.
+    // 覆盖它默认的逻辑,才能执行我们自己的退出代码.
+    http.logout().logoutUrl(&quot;/securitylogout&quot;);</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">UserService</span><br></pre></td></tr></table></figure>
+<p>  public Collection&lt;? extends GrantedAuthority&gt; getAuthorities(int userId) {<br>        User user = this.findUserById(userId);</p>
+<pre><code>    List&lt;GrantedAuthority&gt; list = new ArrayList&lt;&gt;();
+    list.add(new GrantedAuthority() {
+
+        @Override
+        public String getAuthority() {
+            switch (user.getType()) {
+                case 1:
+                    return AUTHORITY_ADMIN;
+                case 2:
+                    return AUTHORITY_MODERATOR;
+                default:
+                    return AUTHORITY_USER;
+            }
+        }
+    });
+    return list;
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LoginTicket</span><br><span class="line"></span><br><span class="line">存入SecurityContext,以便于Security进行授权</span><br></pre></td></tr></table></figure>
+<p>  @Override<br>    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {<br>        // 从cookie中获取凭证<br>        String ticket = CookieUtil.getValue(request, “ticket”);</p>
+<pre><code>    if (ticket != null) {
+        // 查询凭证
+        LoginTicket loginTicket = userService.findLoginTicket(ticket);
+        // 检查凭证是否有效
+        if (loginTicket != null &amp;&amp; loginTicket.getStatus() == 0 &amp;&amp; loginTicket.getExpired().after(new Date())) {
+            // 根据凭证查询用户
+            User user = userService.findUserById(loginTicket.getUserId());
+            // 在本次请求中持有用户
+            hostHolder.setUser(user);
+            // 构建用户认证的结果,并存入SecurityContext,以便于Security进行授权.
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    user, user.getPassword(), userService.getAuthorities(user.getId()));
+            SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
+        }
+    }
+
+    return true;
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">继承ElasticsearchRepository&lt;DiscussPost, Integer&gt;，第一个参数，要存储的数据的实体类型，第二个参数是ID</span><br></pre></td></tr></table></figure>
+<p>@Repository<br>public interface DiscussPostRepository extends ElasticsearchRepository&lt;DiscussPost, Integer&gt; {</p>
+<p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### ElasticSearch</span><br><span class="line"></span><br><span class="line"># 一、Field datatype(字段数据类型)</span><br><span class="line"></span><br><span class="line">## 1.1string类型</span><br><span class="line"></span><br><span class="line">ELasticsearch 5.X之后的字段类型不再支持string，由text或keyword取代。 如果仍使用string，会给出警告。</span><br><span class="line"></span><br><span class="line">测试：</span><br></pre></td></tr></table></figure>
+<p>PUT my_index<br>{<br>  “mappings”: {<br>    “my_type”: {<br>      “properties”: {<br>        “title”: {<br>          “type”:  “string”<br>        }<br>      }<br>    }<br>  }<br>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">结果：</span><br></pre></td></tr></table></figure>
+<p>#! Deprecation: The [string] field is deprecated, please use [text] or [keyword] instead on [title]<br>{<br>  “acknowledged”: true,<br>  “shards_acknowledged”: true<br>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## 1.2 text类型</span><br><span class="line"></span><br><span class="line">text取代了string，当一个字段是要被全文搜索的，比如Email内容、产品描述，应该使用text类型。设置text类型以后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个一个词项。text类型的字段不用于排序，很少用于聚合（termsAggregation除外）。</span><br><span class="line"></span><br><span class="line">把full_name字段设为text类型的Mapping如下：</span><br></pre></td></tr></table></figure>
+<p>PUT my_index<br>{<br>  “mappings”: {<br>    “my_type”: {<br>      “properties”: {<br>        “full_name”: {<br>          “type”:  “text”<br>        }<br>      }<br>    }<br>  }<br>}</p>
+<p>```</p>
+<h2 id="1-3-keyword类型"><a href="#1-3-keyword类型" class="headerlink" title="1.3 keyword类型"></a>1.3 keyword类型</h2><p>keyword类型适用于索引结构化的字段，比如email地址、主机名、状态码和标签。如果字段需要进行过滤(比如查找已发布博客中status属性为published的文章)、排序、聚合。keyword类型的字段只能通过精确值搜索到。</p>
 <h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>编译期和运行时注解的区别</p>
 <p>怎么样去实现一个编译型的注解</p>
 <p>注解是如何注入的（不是声明，是底层原理！）通用的逻辑注入的原理，是这样完成的</p>
@@ -1067,7 +1186,7 @@ if (operations.size() == 0) {
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">244</span>
+                  <span class="site-state-item-count">257</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1079,7 +1198,7 @@ if (operations.size() == 0) {
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1126,7 +1245,7 @@ if (operations.size() == 0) {
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">1.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册"><span class="nav-number">2.</span> <span class="nav-text">注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">3.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">1.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册"><span class="nav-number">2.</span> <span class="nav-text">注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">3.</span> <span class="nav-text">登录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-keyword类型"><span class="nav-number"></span> <span class="nav-text">1.3 keyword类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">1.</span> <span class="nav-text">其他</span></a></li></ol></div>
             
 
           </div>
@@ -1176,7 +1295,7 @@ if (operations.size() == 0) {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共450.6k字</span>
+  <span class="post-count">博客全站共506.2k字</span>
 </div>
 
         
