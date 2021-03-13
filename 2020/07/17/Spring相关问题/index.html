@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] Spring IoCQ1：IoC 是什么？ioc，控制反转。平时传统方式中，当我们需要使用对象的时候，我们就必须自己手动地去创建，比如直接new一个对象。这样当我们在项目中需要使用大量对象时，就显得特别繁琐。 创建对象的控制权进行转移到IOC容器   通过ioc就可以解决这些问题，我们不用再自己去手动new对象了，我们只需要设置好配置信息，ioc容器就可以帮我们自动创建对象，并且进行依">
 <meta property="og:image" content="https://images2017.cnblogs.com/blog/584866/201710/584866-20171019103913927-1865904529.png">
-<meta property="og:image" content="http://aamingaa.github.io/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201205160024907.png">
+<meta property="og:image" content="http://aamingaa.github.io/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210310001003747.png">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11798292-651b056425ce045f.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/637/format/webp">
 <meta property="og:image" content="https://img-blog.csdn.net/20180604094219689?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Nfcm95aQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190817182633273.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzIyMTcy,size_16,color_FFFFFF,t_70">
@@ -97,7 +97,7 @@
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy82ZnVUM2VtV0k1SWticlg5YUl2QlpYRmZ6NW1SeFFCaWJyd05DbXNYaWFpYWNXRERBSDV1Smp6eTZYWmlhQ3lYY0pGeWxpYkpNNndCMXNhUmRBNFRsSE9aSzdRLzY0MA?x-oss-process=image/format,png">
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1747640/202002/1747640-20200223111251043-1340779869.png">
 <meta property="article:published_time" content="2020-07-17T04:57:59.000Z">
-<meta property="article:modified_time" content="2021-03-11T13:25:18.221Z">
+<meta property="article:modified_time" content="2021-03-13T13:11:48.121Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://images2017.cnblogs.com/blog/584866/201710/584866-20171019103913927-1865904529.png">
@@ -385,7 +385,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  10.1k
+                  10.2k
                 </span>
               
 
@@ -522,7 +522,7 @@
 <li>使用Bean</li>
 <li>当Bean不再需要时，会经过清理阶段，如果Bean实现了DisposableBean接口，会调用其实现的destroy方法</li>
 </ul>
-<p><img src="/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201205160024907.png" alt="image-20201205160024907"></p>
+<p><img src="/2020/07/17/Spring%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210310001003747.png" alt="image-20210310001003747"></p>
 <p>经过这一系列初始化操作后 Bean 达到可用状态，接下来就可以使用 Bean 了，当使用完成后会调用 destroy 方法进行销毁，此时也可以指定自定义的销毁方法，最终 Bean 被销毁且从容器中移除。</p>
 <p>XML 方式通过配置 bean 标签中的 init-Method 和 destory-Method 指定自定义初始化和销毁方法。 </p>
 <p>注解方式通过 <code>@PreConstruct</code> 和 <code>@PostConstruct</code> 注解指定自定义初始化和销毁方法。</p>
@@ -695,6 +695,8 @@
 <p>对象导航查询多到一默认使用立即加载的形式， 关联对象是一个对象，因此使用立即加载。</p>
 <p>如果要改变加载方式，在实体类注解配置加上 fetch 属性即可，LAZY 表示延迟加载，EAGER 表示立即加载。</p>
 <h3 id="外置的Tomcat和SpringBoot的tomcat有什么区别"><a href="#外置的Tomcat和SpringBoot的tomcat有什么区别" class="headerlink" title="外置的Tomcat和SpringBoot的tomcat有什么区别"></a>外置的Tomcat和SpringBoot的tomcat有什么区别</h3><p>1.tomcat禁用AJP？我启动了个springboot项目，发现并没有开启AJP，同时用的是nio模式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ajp13是一个二进制的TCP传输协议，相比HTTP这种纯文本的协议来说，效率和性能更高，也做了很多优化。显然，浏览器并不能直接支持AJP13协议，只支持HTTP协议。</span><br></pre></td></tr></table></figure>
+
 <p><img src="https://img.jbzj.com/file_images/article/202010/20201010093105.jpg" alt="img"></p>
 <p>2.内置的tomcat可以用main跑项目，而如果要用外置的tomcat就需要把项目打成war包，然后拷贝到webapp下进行运行</p>
 <h3 id="SpringBoot-怎么调起Tomcat"><a href="#SpringBoot-怎么调起Tomcat" class="headerlink" title="SpringBoot 怎么调起Tomcat?"></a>SpringBoot 怎么调起Tomcat?</h3><p>SpringBoot 的启动是通过 new SpringApplication()实例来启动的，启动过程主要做如下几件事情：&gt; 1. 配置属性 &gt; 2. 获取监听器，发布应用开始启动事件 &gt; 3. 初始化输入参数 &gt; 4. 配置环境，输出 banner &gt; 5. 创建上下文 &gt; 6. 预处理上下文 &gt; 7. 刷新上下文 &gt; 8. 再刷新上下文 &gt; 9. 发布应用已经启动事件 &gt; 10. 发布应用启动完成事件</p>
@@ -862,7 +864,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">257</span>
+                  <span class="site-state-item-count">263</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -874,7 +876,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -971,7 +973,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共506.2k字</span>
+  <span class="post-count">博客全站共511.4k字</span>
 </div>
 
         

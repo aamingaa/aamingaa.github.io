@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="同步事件和异步事件　　同步事件:在一个线程里,按顺序执行业务,做完一件事再去做下一件事.    异步事件:在一个线程里,做一个事的同事,可以另起一个新的线程执行另一件事,这样两件事可以同时执行. 　　用一个例子来解释同步事件和异步事件的使用场景,有时候一段完整的代码逻辑,可能分为几部分,拿最常见的注册来说,假设完整流程是,1.点击注册-&gt;2.检验信息并存库-&gt;3.发送邮件通知-&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring的事件机制">
+<meta property="og:url" content="http://aamingaa.github.io/2021/03/12/Spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="同步事件和异步事件　　同步事件:在一个线程里,按顺序执行业务,做完一件事再去做下一件事.    异步事件:在一个线程里,做一个事的同事,可以另起一个新的线程执行另一件事,这样两件事可以同时执行. 　　用一个例子来解释同步事件和异步事件的使用场景,有时候一段完整的代码逻辑,可能分为几部分,拿最常见的注册来说,假设完整流程是,1.点击注册-&gt;2.检验信息并存库-&gt;3.发送邮件通知-&gt;">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="article:published_time" content="2021-03-12T05:16:07.000Z">
+<meta property="article:modified_time" content="2021-03-12T05:16:51.908Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://common.cnblogs.com/images/copycode.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/03/12/Spring的事件机制/"/>
+
+
+
+
+
+  <title>Spring的事件机制 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/03/12/Spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring的事件机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-12T13:16:07+08:00">
+                2021-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index">
+                    <span itemprop="name">框架</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="同步事件和异步事件"><a href="#同步事件和异步事件" class="headerlink" title="同步事件和异步事件"></a>同步事件和异步事件</h2><p>　　同步事件:在一个线程里,按顺序执行业务,做完一件事再去做下一件事.</p>
+<p>   异步事件:在一个线程里,做一个事的同事,可以另起一个新的线程执行另一件事,这样两件事可以同时执行.</p>
+<p>　　用一个例子来解释同步事件和异步事件的使用场景,有时候一段完整的代码逻辑,可能分为几部分,拿最常见的注册来说,假设完整流程是,1.点击注册-&gt;2.检验信息并存库-&gt;3.发送邮件通知-&gt;4.返回给用户.代码这么写是正确,但不是最好的,缺点如下:</p>
+<p>​     1.逻辑复杂,业务耦合,我们把校验数据并存库和发送邮件写到一个大的业务方法里了,发邮件我们可以看做一个相对独立的业务方法</p>
+<p>　　　　2.效率低,假设2和3分别需要1秒的时候,那么用户在点击注册2秒后才能看到相应</p>
+<p>　　同步事件可以解决上面第一个问题,我们把发邮件的方法独立出来,放到事件里执行,这样注册的这个方法就可以只做2操作,完成之后发布一个事件去执行3,可以很好的解决业务耦合的问题.</p>
+<p>　 异步事件可以完美解决以上两个问题,注册方法执行2操作,执行之后发布一个异步事件,另起一个线程执行3操作,注册方法所在的线程可直接返回给用户,这样不仅实现了业务解耦还提高了效率,用户点击注册,1秒后就能看到响应.</p>
+<h2 id="Spring的事件机制"><a href="#Spring的事件机制" class="headerlink" title="Spring的事件机制"></a>Spring的事件机制</h2><p>　　spring事件发送监听涉及3个部分</p>
+<blockquote>
+<h4 id="ApplicationEvent：表示事件本身，自定义事件需要继承该类-可以用来传递数据-比如上述操作-我们需要将用户的邮箱地址传给事件监听器"><a href="#ApplicationEvent：表示事件本身，自定义事件需要继承该类-可以用来传递数据-比如上述操作-我们需要将用户的邮箱地址传给事件监听器" class="headerlink" title="　　ApplicationEvent：表示事件本身，自定义事件需要继承该类,可以用来传递数据,比如上述操作,我们需要将用户的邮箱地址传给事件监听器."></a>　　ApplicationEvent：表示事件本身，自定义事件需要继承该类,可以用来传递数据,比如上述操作,我们需要将用户的邮箱地址传给事件监听器.</h4><h4 id="ApplicationEventPublisherAware：事件发送器-通过实现这个接口-来触发事件"><a href="#ApplicationEventPublisherAware：事件发送器-通过实现这个接口-来触发事件" class="headerlink" title="　　ApplicationEventPublisherAware：事件发送器,通过实现这个接口,来触发事件."></a>　　ApplicationEventPublisherAware：事件发送器,通过实现这个接口,来触发事件.</h4><h4 id="ApplicationListener：事件监听器接口-事件的业务逻辑封装在监听器里面"><a href="#ApplicationListener：事件监听器接口-事件的业务逻辑封装在监听器里面" class="headerlink" title="　　ApplicationListener：事件监听器接口,事件的业务逻辑封装在监听器里面."></a>　　ApplicationListener：事件监听器接口,事件的业务逻辑封装在监听器里面.</h4></blockquote>
+<p>　　接下来使用spring的异步事件机制来模拟上面的注册流程.有配置文件和注解两种方式.</p>
+<h2 id="配置文件的方式"><a href="#配置文件的方式" class="headerlink" title="配置文件的方式:"></a>配置文件的方式:</h2><h3 id="新建TestEvent"><a href="#新建TestEvent" class="headerlink" title="　　新建TestEvent:"></a>　　新建TestEvent:</h3><p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> 1 public class TestEvent extends ApplicationEvent &#123;</span><br><span class="line"> 2 </span><br><span class="line"> 3     private TestParam source;</span><br><span class="line"> 4 </span><br><span class="line"> 5     public TestEvent(TestParam source) &#123;</span><br><span class="line"> 6         super(source);</span><br><span class="line"> 7         this.source &#x3D; source;</span><br><span class="line"> 8     &#125;</span><br><span class="line"> 9 &#125;</span><br><span class="line">10 </span><br><span class="line">11 @Data</span><br><span class="line">12 public class TestParam &#123;</span><br><span class="line">13     private String email;</span><br><span class="line">14 &#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<h3 id="新建TestListener"><a href="#新建TestListener" class="headerlink" title="新建TestListener:"></a>新建TestListener:</h3><p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> 1 @Component</span><br><span class="line"> 2 public class TestListener implements ApplicationListener&lt;TestEvent&gt; &#123;</span><br><span class="line"> 3 </span><br><span class="line"> 4     @Override</span><br><span class="line"> 5     public void onApplicationEvent(TestEvent testEvent) &#123;</span><br><span class="line"> 6 </span><br><span class="line"> 7         TestParam param &#x3D; (TestParam) testEvent.getSource();</span><br><span class="line"> 8         System.out.println(&quot;.......开始.......&quot;);</span><br><span class="line"> 9         System.out.println(&quot;发送邮件:&quot;+param.getEmail());</span><br><span class="line">10         System.out.println(&quot;.......结束.....&quot;);</span><br><span class="line">11     &#125;</span><br><span class="line">12 &#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<h3 id="新建EventPublisher"><a href="#新建EventPublisher" class="headerlink" title="新建EventPublisher:"></a>新建EventPublisher:</h3><p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class TestPublish implements ApplicationEventPublisherAware &#123;</span><br><span class="line"></span><br><span class="line">    private static ApplicationEventPublisher applicationEventPublisher;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) &#123;</span><br><span class="line">        TestPublish.applicationEventPublisher &#x3D; applicationEventPublisher;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void  publishEvent(ApplicationEvent communityArticleEvent) &#123;</span><br><span class="line">        applicationEventPublisher.publishEvent(communityArticleEvent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<h3 id="spring-context-xml中添加"><a href="#spring-context-xml中添加" class="headerlink" title="spring-context.xml中添加:"></a>spring-context.xml中添加:</h3><p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> 1  &lt;bean id&#x3D;&quot;applicationEventAsyncMulticaster&quot; class&#x3D;&quot;org.springframework.context.event.SimpleApplicationEventMulticaster&quot;&gt;</span><br><span class="line"> 2         &lt;property name&#x3D;&quot;taskExecutor&quot;&gt;</span><br><span class="line"> 3             &lt;bean class&#x3D;&quot;org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor&quot;&gt;</span><br><span class="line"> 4                 &lt;property name&#x3D;&quot;corePoolSize&quot; value&#x3D;&quot;5&quot;&#x2F;&gt;</span><br><span class="line"> 5                 &lt;property name&#x3D;&quot;keepAliveSeconds&quot; value&#x3D;&quot;3000&quot;&#x2F;&gt;</span><br><span class="line"> 6                 &lt;property name&#x3D;&quot;maxPoolSize&quot; value&#x3D;&quot;50&quot;&#x2F;&gt;</span><br><span class="line"> 7                 &lt;property name&#x3D;&quot;queueCapacity&quot; value&#x3D;&quot;200&quot;&#x2F;&gt;</span><br><span class="line"> 8             &lt;&#x2F;bean&gt;</span><br><span class="line"> 9         &lt;&#x2F;property&gt;</span><br><span class="line">10     &lt;&#x2F;bean&gt;</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<p>注意:如果加&lt;propery name=”taskExecutor”,则使用异步方式执行,否则为同步方式</p>
+<h2 id="使用注解方式"><a href="#使用注解方式" class="headerlink" title="使用注解方式"></a>使用注解方式</h2><p>　　使用@Async需要在配置文件添加一下支持,线程池也是需要配置一下的</p>
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 开启@AspectJ AOP代理 --&gt;</span><br><span class="line">   &lt;aop:aspectj-autoproxy proxy-target-class&#x3D;&quot;true&quot;&#x2F;&gt;</span><br><span class="line"></span><br><span class="line">   &lt;!-- 任务执行器 --&gt;</span><br><span class="line">   &lt;task:executor id&#x3D;&quot;executor&quot; pool-size&#x3D;&quot;10&quot;&#x2F;&gt;</span><br><span class="line"></span><br><span class="line">   &lt;!--开启注解调度支持 @Async --&gt;</span><br><span class="line">   &lt;task:annotation-driven executor&#x3D;&quot;executor&quot; proxy-target-class&#x3D;&quot;true&quot;&#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<p>　　TestListener中在方法中添加@Async</p>
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> 1 @Component</span><br><span class="line"> 2 public class TestListener implements ApplicationListener&lt;TestEvent&gt; &#123;</span><br><span class="line"> 3 </span><br><span class="line"> 4     @Async</span><br><span class="line"> 5     @Override</span><br><span class="line"> 6     public void onApplicationEvent(TestEvent testEvent) &#123;</span><br><span class="line"> 7 </span><br><span class="line"> 8         TestParam param &#x3D; (TestParam) testEvent.getSource();</span><br><span class="line"> 9         System.out.println(&quot;.......开始.......&quot;);</span><br><span class="line">10         System.out.println(&quot;发送邮件:&quot;+param.getEmail());</span><br><span class="line">11         System.out.println(&quot;.......结束.....&quot;);</span><br><span class="line">12     &#125;</span><br><span class="line">13 &#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<p>　Listener其实还可以做得更彻底一点,使用注解@EventListener可代替实现ApplicationListener,原理是通过扫描这个注解来创建监听器并自动添加到ApplicationContext中.</p>
+<h3 id="新建自定义EventHandler"><a href="#新建自定义EventHandler" class="headerlink" title="新建自定义EventHandler:"></a>新建自定义EventHandler:</h3><p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> 1 @Component</span><br><span class="line"> 2 public class TestEventHandler &#123;</span><br><span class="line"> 3 </span><br><span class="line"> 4     @Async</span><br><span class="line"> 5     @EventListener</span><br><span class="line"> 6     public void handleTestEvent(TestEvent testEvent) &#123;</span><br><span class="line"> 7 </span><br><span class="line"> 8         TestParam param &#x3D; (TestParam) testEvent.getSource();</span><br><span class="line"> 9         System.out.println(&quot;.......开始.......&quot;);</span><br><span class="line">10         System.out.println(&quot;发送邮件:&quot;+param.getEmail());</span><br><span class="line">11         System.out.println(&quot;.......结束.....&quot;);</span><br><span class="line">12     &#125;</span><br><span class="line">13 &#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<p>测试及控制台的打印就不贴了,这里主要记录一下具体的实现方法.</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h2><p>　　使用spring事件机制能很好地帮助我们消除不同业务间的耦合关系,也可以提高执行效率,应该根据业务场景灵活选择.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/12/SPI%E4%B8%8E%E6%89%93%E7%A0%B4%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/" rel="next" title="SPI与打破双亲委派">
+                <i class="fa fa-chevron-left"></i> SPI与打破双亲委派
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/03/12/binlog%E7%9A%84%E6%A0%BC%E5%BC%8F/" rel="prev" title="binlog的格式">
+                binlog的格式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#同步事件和异步事件"><span class="nav-number">1.</span> <span class="nav-text">同步事件和异步事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring的事件机制"><span class="nav-number">2.</span> <span class="nav-text">Spring的事件机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationEvent：表示事件本身，自定义事件需要继承该类-可以用来传递数据-比如上述操作-我们需要将用户的邮箱地址传给事件监听器"><span class="nav-number">2.0.1.</span> <span class="nav-text">　　ApplicationEvent：表示事件本身，自定义事件需要继承该类,可以用来传递数据,比如上述操作,我们需要将用户的邮箱地址传给事件监听器.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationEventPublisherAware：事件发送器-通过实现这个接口-来触发事件"><span class="nav-number">2.0.2.</span> <span class="nav-text">　　ApplicationEventPublisherAware：事件发送器,通过实现这个接口,来触发事件.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationListener：事件监听器接口-事件的业务逻辑封装在监听器里面"><span class="nav-number">2.0.3.</span> <span class="nav-text">　　ApplicationListener：事件监听器接口,事件的业务逻辑封装在监听器里面.</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置文件的方式"><span class="nav-number">3.</span> <span class="nav-text">配置文件的方式:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建TestEvent"><span class="nav-number">3.1.</span> <span class="nav-text">　　新建TestEvent:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新建TestListener"><span class="nav-number">3.2.</span> <span class="nav-text">新建TestListener:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新建EventPublisher"><span class="nav-number">3.3.</span> <span class="nav-text">新建EventPublisher:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spring-context-xml中添加"><span class="nav-number">3.4.</span> <span class="nav-text">spring-context.xml中添加:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用注解方式"><span class="nav-number">4.</span> <span class="nav-text">使用注解方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建自定义EventHandler"><span class="nav-number">4.1.</span> <span class="nav-text">新建自定义EventHandler:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共511.4k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
