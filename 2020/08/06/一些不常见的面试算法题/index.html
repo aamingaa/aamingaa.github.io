@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="平衡二叉搜索树插入算法  对于给定的数据，找出比这个数大的最小回文数（正反读都一样的数），如 12310 -&gt; 12321 1234567891011121314151617181920212223242526272829303132333435leetcode 564public class hello &amp;#123;&#x2F;&#x2F;100 999    public static">
 <meta property="article:published_time" content="2020-08-06T12:20:25.000Z">
-<meta property="article:modified_time" content="2020-12-15T12:27:44.433Z">
+<meta property="article:modified_time" content="2021-04-11T09:21:44.421Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  5.4k
+                  5.7k
                 </span>
               
 
@@ -389,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  26
+                  28
                 </span>
               
             </div>
@@ -424,6 +424,10 @@
 <li><p>输出交错后的链表(比如链表a-b-c-d-e,交错后输出为a-e-b-d-c)</p>
 </li>
 <li><p>请对3个有序数组进行归并排序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;Hello World!&quot;);</span><br><span class="line">&#x2F;&#x2F;        int[][] arr &#x3D; &#123;&#123;1,4,5&#125;,&#123;1,3,4&#125;&#125;;</span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; arr &#x3D; new ArrayList&lt;&gt;();</span><br><span class="line">        arr.add(Arrays.asList(1,4,5));</span><br><span class="line">        arr.add(Arrays.asList(1,3,4));</span><br><span class="line">        arr.add(Arrays.asList(1,8,9,10));</span><br><span class="line">        System.out.println(arr);</span><br><span class="line"></span><br><span class="line">        List&lt;Integer&gt; res &#x3D; merge(arr);</span><br><span class="line"></span><br><span class="line">        System.out.println(res);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">     private static List&lt;Integer&gt; merge(List&lt;List&lt;Integer&gt;&gt; arr) &#123;</span><br><span class="line">        List&lt;Integer&gt; res &#x3D; new ArrayList&lt;&gt;();</span><br><span class="line">        if(arr.size() &#x3D;&#x3D; 0) return res;</span><br><span class="line">        if(arr.size() &#x3D;&#x3D; 1) return arr.get(0);</span><br><span class="line">        if(arr.size() &#x3D;&#x3D; 2) return helper(arr.get(0),arr.get(1));</span><br><span class="line">        int left &#x3D; 0, right &#x3D; arr.size() - 1;</span><br><span class="line">        int mid &#x3D; left + (right - left) &#x2F; 2;</span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; tmp1 &#x3D; new ArrayList&lt;&gt;();</span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; tmp2 &#x3D; new ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        for(int i &#x3D; 0; i &lt; mid ; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            tmp1.add(arr.get(i));</span><br><span class="line">        &#125;</span><br><span class="line">         for(int i &#x3D; mid ; i &lt;&#x3D; right; i++)</span><br><span class="line">         &#123;</span><br><span class="line">             tmp2.add(arr.get(i));</span><br><span class="line">         &#125;</span><br><span class="line">         return helper(merge(tmp1),merge(tmp2));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static List&lt;Integer&gt; helper(List&lt;Integer&gt; merge, List&lt;Integer&gt; merge1) &#123;</span><br><span class="line">         int i &#x3D; 0, j &#x3D; 0;</span><br><span class="line">         List&lt;Integer&gt; res &#x3D; new ArrayList&lt;&gt;();</span><br><span class="line">         while(i &lt; merge.size() &amp;&amp; j &lt; merge1.size())</span><br><span class="line">         &#123;</span><br><span class="line">            if(merge.get(i) &lt; merge1.get(j))</span><br><span class="line">            &#123;</span><br><span class="line">                res.add(merge.get(i++));</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                res.add(merge1.get(j++));</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;</span><br><span class="line">        while(i &lt; merge.size())</span><br><span class="line">        &#123;</span><br><span class="line">                res.add(merge.get(i++));</span><br><span class="line">        &#125;</span><br><span class="line">        while(j &lt; merge1.size())</span><br><span class="line">        &#123;</span><br><span class="line">            res.add(merge1.get(j++));</span><br><span class="line">        &#125;</span><br><span class="line">        return res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
 </li>
 </ol>
 <ol start="7">
@@ -935,9 +939,9 @@ private void help(int[] preorder,int ps,int pd,int[] inorder,int is,int id,int p
    // return root;
 }</code></pre>}</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">59.交换两个对象</span><br><span class="line"></span><br><span class="line">交换俩个对象swap（Object obj1， Object obj2）&#123;&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>
 
-<pre><code></code></pre>
+</code></pre>
       
     </div>
     
@@ -1048,7 +1052,7 @@ private void help(int[] preorder,int ps,int pd,int[] inorder,int is,int id,int p
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1060,7 +1064,7 @@ private void help(int[] preorder,int ps,int pd,int[] inorder,int is,int id,int p
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1141,7 +1145,7 @@ private void help(int[] preorder,int ps,int pd,int[] inorder,int is,int id,int p
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

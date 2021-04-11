@@ -79,16 +79,16 @@
 
 
 
-<meta name="description" content="[TOC] QUIC协议https:&#x2F;&#x2F;www.mobibrw.com&#x2F;2020&#x2F;23190 HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧">
+<meta name="description" content="[TOC] QUIC协议https:&#x2F;&#x2F;www.mobibrw.com&#x2F;2020&#x2F;23190 HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 TCP协议在收到数据包之后，这部分数据可能是乱序到达的，但是TCP必须将所有数据收集排序整合后给上层使用，如果其中某个包丢失了，就必须等待重传，从而出现某个丢包数据阻塞整个连接的数据使用 于是google的 QUIC协议从TCP切换">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Http3.0的特点?">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/17/Http3-0%E7%9A%84%E7%89%B9%E7%82%B9/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] QUIC协议https:&#x2F;&#x2F;www.mobibrw.com&#x2F;2020&#x2F;23190 HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧">
+<meta property="og:description" content="[TOC] QUIC协议https:&#x2F;&#x2F;www.mobibrw.com&#x2F;2020&#x2F;23190 HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的 TCP协议在收到数据包之后，这部分数据可能是乱序到达的，但是TCP必须将所有数据收集排序整合后给上层使用，如果其中某个包丢失了，就必须等待重传，从而出现某个丢包数据阻塞整个连接的数据使用 于是google的 QUIC协议从TCP切换">
 <meta property="og:image" content="http://www.chenjinxinlove.com/cdn/offsetbbb.png">
 <meta property="og:image" content="http://www.chenjinxinlove.com/cdn/offsetoss.jpg">
 <meta property="article:published_time" content="2020-11-17T01:12:18.000Z">
-<meta property="article:modified_time" content="2020-11-18T14:57:58.733Z">
+<meta property="article:modified_time" content="2021-03-30T11:27:52.036Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://www.chenjinxinlove.com/cdn/offsetbbb.png">
@@ -376,7 +376,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.1k
+                  632
                 </span>
               
 
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  2
                 </span>
               
             </div>
@@ -416,30 +416,24 @@
         <p>[TOC]</p>
 <h2 id="QUIC协议"><a href="#QUIC协议" class="headerlink" title="QUIC协议"></a>QUIC协议</h2><p><a href="https://www.mobibrw.com/2020/23190" target="_blank" rel="noopener">https://www.mobibrw.com/2020/23190</a></p>
 <p>HTTP2.0 也是基于TCP协议的，tcp协议在处理包时是有严格顺序的</p>
-<p>当其中一个数据包遇到问题，TCP连接需要等待找个包完成重传之后才能继续进行，虽然HTTP2.0通过多个stream，使得逻辑上一个tcp连接上的并行内容，进行多路数据的传输，然而这中间没有关联的数据，一前一后，前面stream2的帧没有收到，后面stream1的帧也会因此堵塞</p>
+<p>TCP协议在收到数据包之后，这部分数据可能是乱序到达的，但是TCP必须将所有数据收集排序整合后给上层使用，如果其中某个包丢失了，就必须等待重传，从而出现某个丢包数据阻塞整个连接的数据使用</p>
 <p>于是google的 QUIC协议从TCP切换到UDP</p>
 <ul>
-<li>机制一：自定义连接机制<br>一条tcp连接是由四元组标识的，分别是源ip、源端口、目的端口，一旦一个元素发生变化时，就会断开重连，重新连接。在次进行三次握手，导致一定的延时</li>
+<li><p>机制一：自定义连接机制。一旦一个元素发生变化时，就需要断开重连，重新连接。UDP以一个64位的随机数作为ID来标识。避免了四元组。</p>
+</li>
+<li><p>机制二：自定义传输机制。<br>tcp为了保证可靠性，通过使用序号和应答机制，来解决顺序问题和丢包问题。QUIC也有个序列号，是递增的，任何宇哥序列号的包只发送一次，下次就要加1，那样就计算可以准确了.QUIC既然是面向连接的，也就像TCP一样，是一个数据流，发送的数据在这个数据流里面有个偏移量offset.按照offset拼接，还是能够拼成一个流。</p>
+</li>
 </ul>
-<p>在TCP是没有办法的，但是基于UDP，就可以在QUIC自己的逻辑里面维护连接的机制，不再以四元组标识，而是以一个64<br>位的随机数作为ID来标识，而且UDP是无连接的，所以当ip或者端口变化的时候，只要ID不变，就不需要重新建立连接</p>
-<ul>
-<li>机制二：自定义重传机制<br>tcp为了保证可靠性，通过使用序号和应答机制，来解决顺序问题和丢包问题</li>
-</ul>
-<p>任何一个序号的包发过去，都要在一定的时间内得到应答，否则一旦超时，就会重发这个序号的包，通过自适应重传算法（通过采样往返时间RTT不断调整）</p>
-<p>但是，在TCP里面超时的采样存在不准确的问题。例如发送一个包，序号100，发现没有返回，于是在发送一个100，过一阵返回ACK101.客户端收到了，但是往返的时间是多少，没法计算。是ACK到达的时候减去第一还是第二。</p>
-<p>QUIC也有个序列号，是递增的，任何宇哥序列号的包只发送一次，下次就要加1，那样就计算可以准确了</p>
-<p>但是有一个问题，就是怎么知道包100和包101发送的是同样的内容呢？quic定义了一个offset概念。QUIC既然是面向连接的，也就像TCP一样，是一个数据流，发送的数据在这个数据流里面有个偏移量offset，可以通过offset查看数据发送到了那里，这样只有这个offset的包没有来，就要重发。如果来了，按照offset拼接，还是能够拼成一个流。</p>
 <p><img src="http://www.chenjinxinlove.com/cdn/offsetbbb.png" alt="image"></p>
 <ul>
 <li>机制三： 无阻塞的多路复用</li>
 </ul>
-<p>有了自定义的连接和重传机制，就可以解决上面HTTP2.0的多路复用问题</p>
+<p>有了自定义的连接和重传机制，就可以解决上面HTTP2.0的多路复用问题。</p>
 <p>同HTTP2.0一样，同一条 QUIC连接上可以创建多个stream，来发送多个HTTP请求，但是，QUIC是基于UDP的，一个连接上的多个stream之间没有依赖。这样，假如stream2丢了一个UDP包，后面跟着stream3的一个UDP包，虽然stream2的那个包需要重新传，但是stream3的包无需等待，就可以发给用户。</p>
 <ul>
 <li>机制四：自定义流量控制</li>
 </ul>
-<p>TCP的流量控制是通过滑动窗口协议。QUIC的流量控制也是通过window_update，来告诉对端它可以接受的字节数。但是QUIC的窗口是适应自己的多路复用机制的，不但在一个连接上控制窗口，还在一个连接中的每个steam控制窗口。</p>
-<p>在TCP协议中，接收端的窗口的起始点是下一个要接收并且ACK的包，即便后来的包都到了，放在缓存里面，窗口也不能右移，因为TCP的ACK机制是基于序列号的累计应答，一旦ACK了一个序列号，就说明前面的都到了，所以是要前面的没到，后面的到了也不能ACK,就会导致后面的到了，也有可能超时重传，浪费带宽</p>
+<p>TCP的流量控制是通过滑动窗口协议。接收窗口只会对窗口内最后一个按序到达的字节进行确认。前面的没到，后面的到了也不能ACK,就会导致后面的到了，也有可能超时重传，浪费带宽。</p>
 <p>QUIC的ACK是基于offset的，每个offset的包来了，进了缓存，就可以应答，应答后就不会重发，中间的空档会等待到来或者重发，而窗口的起始位置为当前收到的最大offset，从这个offset到当前的stream所能容纳的最大缓存，是真正的窗口的大小，显然，那样更加准确。<br><img src="http://www.chenjinxinlove.com/cdn/offsetoss.jpg" alt="image"></p>
 
       
@@ -561,7 +555,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -573,7 +567,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -670,7 +664,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

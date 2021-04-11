@@ -97,7 +97,7 @@
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy82ZnVUM2VtV0k1SWticlg5YUl2QlpYRmZ6NW1SeFFCaWJyd05DbXNYaWFpYWNXRERBSDV1Smp6eTZYWmlhQ3lYY0pGeWxpYkpNNndCMXNhUmRBNFRsSE9aSzdRLzY0MA?x-oss-process=image/format,png">
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1747640/202002/1747640-20200223111251043-1340779869.png">
 <meta property="article:published_time" content="2020-07-17T04:57:59.000Z">
-<meta property="article:modified_time" content="2021-03-13T13:11:48.121Z">
+<meta property="article:modified_time" content="2021-03-21T13:31:36.234Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://images2017.cnblogs.com/blog/584866/201710/584866-20171019103913927-1865904529.png">
@@ -561,7 +561,7 @@
 
 <p>调用refresh</p>
 <h4 id="Q15-Spring如何解决循环依赖（三级缓存）（必考）"><a href="#Q15-Spring如何解决循环依赖（三级缓存）（必考）" class="headerlink" title="Q15: Spring如何解决循环依赖（三级缓存）（必考）"></a>Q15: Spring如何解决循环依赖（三级缓存）（必考）</h4><h4 id="Q17-Spring的-Transactional如何实现的（必考）"><a href="#Q17-Spring的-Transactional如何实现的（必考）" class="headerlink" title="Q17: Spring的@Transactional如何实现的（必考）"></a>Q17: Spring的@Transactional如何实现的（必考）</h4><h4 id="Q18-Spring的事务传播级别"><a href="#Q18-Spring的事务传播级别" class="headerlink" title="Q18: Spring的事务传播级别"></a>Q18: Spring的事务传播级别</h4><h4 id="Q19-拦截器，监听器和过滤器区别"><a href="#Q19-拦截器，监听器和过滤器区别" class="headerlink" title="Q19: 拦截器，监听器和过滤器区别"></a>Q19: 拦截器，监听器和过滤器区别</h4><p>拦截器依赖于SpringMVC框架。在实现上基于Java的反射机制，属于面向切面编程（AOP）面向切面编程的一种运用。</p>
-<p>过滤器实际上就是对web资源进行拦截，做一些处理后再交给下一个过滤器或servlet处理<br>通常都是用来拦截request进行处理的，也可以对返回的response进行拦截处理</p>
+<p>过滤器实际上就是对web资源进行拦截，做一些处理后再交给下一个过滤器或servlet处理通常都是用来拦截request进行处理的，也可以对返回的response进行拦截处理</p>
 <p>多个Filter按照字母进行排序</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">package filter;</span><br><span class="line"></span><br><span class="line">import javax.servlet.*;</span><br><span class="line">import javax.servlet.annotation.WebFilter;</span><br><span class="line">import javax.servlet.annotation.WebInitParam;</span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">@WebFilter(filterName &#x3D; &quot;CharsetFilter&quot;,</span><br><span class="line">        urlPatterns &#x3D; &quot;&#x2F;*&quot;,&#x2F;*通配符（*）表示对所有的web资源进行拦截*&#x2F;</span><br><span class="line">        initParams &#x3D; &#123;</span><br><span class="line">                @WebInitParam(name &#x3D; &quot;charset&quot;, value &#x3D; &quot;utf-8&quot;)&#x2F;*这里可以放一些初始化的参数*&#x2F;</span><br><span class="line">        &#125;)</span><br><span class="line">public class CharsetFilter implements Filter &#123;</span><br><span class="line">    private String filterName;</span><br><span class="line">    private String charset;</span><br><span class="line"></span><br><span class="line">    public void destroy() &#123;</span><br><span class="line">        &#x2F;*销毁时调用*&#x2F;</span><br><span class="line"></span><br><span class="line">        System.out.println(filterName + &quot;销毁&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException &#123;</span><br><span class="line">        &#x2F;*过滤方法 主要是对request和response进行一些处理，然后交给下一个过滤器或Servlet处理*&#x2F;</span><br><span class="line">		System.out.println(filterName + &quot;doFilter()&quot;);</span><br><span class="line">        req.setCharacterEncoding(charset);</span><br><span class="line">        resp.setCharacterEncoding(charset);</span><br><span class="line">        chain.doFilter(req, resp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void init(FilterConfig config) throws ServletException &#123;</span><br><span class="line"></span><br><span class="line">        &#x2F;*初始化方法  接收一个FilterConfig类型的参数 该参数是对Filter的一些配置*&#x2F;</span><br><span class="line"></span><br><span class="line">        filterName &#x3D; config.getFilterName();</span><br><span class="line">        charset &#x3D; config.getInitParameter(&quot;charset&quot;);</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;过滤器名称：&quot; + filterName);</span><br><span class="line">        System.out.println(&quot;字符集编码：&quot; + charset);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -699,7 +699,8 @@
 
 <p><img src="https://img.jbzj.com/file_images/article/202010/20201010093105.jpg" alt="img"></p>
 <p>2.内置的tomcat可以用main跑项目，而如果要用外置的tomcat就需要把项目打成war包，然后拷贝到webapp下进行运行</p>
-<h3 id="SpringBoot-怎么调起Tomcat"><a href="#SpringBoot-怎么调起Tomcat" class="headerlink" title="SpringBoot 怎么调起Tomcat?"></a>SpringBoot 怎么调起Tomcat?</h3><p>SpringBoot 的启动是通过 new SpringApplication()实例来启动的，启动过程主要做如下几件事情：&gt; 1. 配置属性 &gt; 2. 获取监听器，发布应用开始启动事件 &gt; 3. 初始化输入参数 &gt; 4. 配置环境，输出 banner &gt; 5. 创建上下文 &gt; 6. 预处理上下文 &gt; 7. 刷新上下文 &gt; 8. 再刷新上下文 &gt; 9. 发布应用已经启动事件 &gt; 10. 发布应用启动完成事件</p>
+<h3 id="SpringBoot-怎么调起Tomcat"><a href="#SpringBoot-怎么调起Tomcat" class="headerlink" title="SpringBoot 怎么调起Tomcat?"></a>SpringBoot 怎么调起Tomcat?</h3><p><a href="https://blog.csdn.net/qq_32101993/article/details/99700910" target="_blank" rel="noopener">https://blog.csdn.net/qq_32101993/article/details/99700910</a></p>
+<p>SpringBoot 的启动是通过 new SpringApplication()实例来启动的，启动过程主要做如下几件事情：&gt; 1. 配置属性 &gt; 2. 获取监听器，发布应用开始启动事件 &gt; 3. 初始化输入参数 &gt; 4. 配置环境，输出 banner &gt; 5. 创建上下文 &gt; 6. 预处理上下文 &gt; 7. 刷新上下文 &gt; 8. 再刷新上下文 &gt; 9. 发布应用已经启动事件 &gt; 10. 发布应用启动完成事件</p>
 <p>而启动 Tomcat 就是在第 7 步中“刷新上下文”；Tomcat 的启动主要是初始化 2 个核心组件，连接器(Connector)和容器（Container），一个 Tomcat 实例就是一个 Server，一个 Server 包含多个 Service，也就是多个应用程序，每个 Service 包含多个连接器（Connetor）和一个容器（Container),而容器下又有多个子容器，按照父子关系分别为：Engine,Host,Context,Wrapper，其中除了 Engine 外，其余的容器都是可以有多个。</p>
 <p>Tomcat 主要包含了 2 个核心组件，连接器(Connector)和容器(Container),用图表示如下：</p>
 <p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy82ZnVUM2VtV0k1SWticlg5YUl2QlpYRmZ6NW1SeFFCaWI1S0Z3UXo2b3k3OENpYVFKYVhRTXRMOEV6dXRvTTdrUHg4c2ljeVU0TGlhWmliZ0NmUGdWTkgzU0ZnLzY0MA?x-oss-process=image/format,png" alt="img"></p>
@@ -864,7 +865,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -876,7 +877,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -973,7 +974,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

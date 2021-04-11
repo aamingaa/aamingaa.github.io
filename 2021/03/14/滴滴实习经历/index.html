@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 1.简单介绍一下Flink吧简单来说，Flink 是一个分布式的流处理框架，它能够对有界和无界的数据流进行高效的处理。Flink 的核心是流处理，当然它也能支持批处理，Flink 将批处理看成是流处理的一种特殊情况，即数据流是有明确界限的。这和 Spark Streaming 的思想是完全相反的，Spark Streaming 的核心是批处理，它将流处理看成是批处理的一种特殊情况， 即">
+<meta property="og:type" content="article">
+<meta property="og:title" content="滴滴实习经历">
+<meta property="og:url" content="http://aamingaa.github.io/2021/03/14/%E6%BB%B4%E6%BB%B4%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 1.简单介绍一下Flink吧简单来说，Flink 是一个分布式的流处理框架，它能够对有界和无界的数据流进行高效的处理。Flink 的核心是流处理，当然它也能支持批处理，Flink 将批处理看成是流处理的一种特殊情况，即数据流是有明确界限的。这和 Spark Streaming 的思想是完全相反的，Spark Streaming 的核心是批处理，它将流处理看成是批处理的一种特殊情况， 即">
+<meta property="og:image" content="https://img-blog.csdn.net/20160721153249897">
+<meta property="og:image" content="https://img2020.cnblogs.com/blog/1275415/202011/1275415-20201129163131313-1423873675.png">
+<meta property="og:image" content="https://oscimg.oschina.net/oscnet/b826ca729f5bb5db5484f8ade8273710fcd.jpg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020041718532982.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1OTM5NDE3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092438.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092440.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092441.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092443.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092447.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092448.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092449.png">
+<meta property="og:image" content="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092451.png">
+<meta property="article:published_time" content="2021-03-14T08:07:37.000Z">
+<meta property="article:modified_time" content="2021-03-20T02:41:14.441Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20160721153249897">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/03/14/滴滴实习经历/"/>
+
+
+
+
+
+  <title>滴滴实习经历 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/03/14/%E6%BB%B4%E6%BB%B4%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">滴滴实习经历</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-14T16:07:37+08:00">
+                2021-03-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h2 id="1-简单介绍一下Flink吧"><a href="#1-简单介绍一下Flink吧" class="headerlink" title="1.简单介绍一下Flink吧"></a>1.简单介绍一下Flink吧</h2><p>简单来说，Flink 是一个分布式的流处理框架，它能够对有界和无界的数据流进行高效的处理。Flink 的核心是流处理，当然它也能支持批处理，Flink 将批处理看成是流处理的一种特殊情况，即数据流是有明确界限的。这和 Spark Streaming 的思想是完全相反的，Spark Streaming 的核心是批处理，它将流处理看成是批处理的一种特殊情况， 即把数据流进行极小粒度的拆分，拆分为多个微批处理。</p>
+<h2 id="2-数据倾斜的问题？"><a href="#2-数据倾斜的问题？" class="headerlink" title="2.数据倾斜的问题？"></a>2.数据倾斜的问题？</h2><p>我们的checkpoint失败，我们有失败告警机制，会发短信告知你。checkpoint机制是用于失败恢复依赖于 检查点机制 + 可部分重发的数据源。检查点机制机制：checkpoint定期触发，产生快照，快照中记录了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">当前检查点开始时数据源（例如Kafka）中消息的offset。</span><br><span class="line">记录了所有有状态的operator当前的状态信息（例如sum中的数值）。</span><br></pre></td></tr></table></figure>
+
+<p>当Flink程序一旦意外崩溃时，重新运行程序时可以有选择地从这些快照进行恢复，从而修正因为故障带来的程序数据异常。</p>
+<p>快照的核心概念之一是barrier。 这些barrier被注入数据流并与记录一起作为数据流的一部分向下流动。barrier将数据流中的记录隔离成一系列的记录集合，并将一些集合中的数据加入到当前的快照中，而另一些数据加入到下一个快照中。每个barrier都带有快照的ID，并且barrier之前的记录都进入了该快照。</p>
+<p><img src="https://img-blog.csdn.net/20160721153249897" alt="img"></p>
+<p>快照n的barriers被插入的位置（记之为Sn）是快照所包含的数据在数据源中最大位置。</p>
+<p>1.思考使用增量 Checkpoint</p>
+<p>现在 Flink 中 Checkpoint 有两种模式，全量 Checkpoint 和 增量 Checkpoint，其中全量 Checkpoint 会把当前的 state 全部备份一次到持久化存储，而增量 Checkpoint，则只备份上一次 Checkpoint 中不存在的 state，因此增量 Checkpoint 每次上传的内容会相对更好，在速度上会有更大的优势。</p>
+<p>2.Barrier 对齐慢</p>
+<p>从前面我们知道 Checkpoint 在 task 端分为 barrier 对齐（收齐所有上游发送过来的 barrier），然后开始同步阶段，再做异步阶段。如果 barrier 一直对不齐的话，就不会开始做 snapshot。</p>
+<p>3.同步异步状态出问题</p>
+<p><strong>1.同步阶段</strong>：task执行状态快照，并写入外部存储系统（根据状态后端的选择不同有所区别）<br>执行快照的过程：<br>a.对state做深拷贝。<br>b.将写操作封装在异步的FutureTask中<br>FutureTask的作用包括：1）打开输入流2）写入状态的元数据信息3）写入状态4）关闭输入流<br><strong>2.异步阶段</strong>：<br>1）执行同步阶段创建的FutureTask<br>2）向Checkpoint Coordinator发送ACK响应</p>
+<p>4.数据倾斜的问题</p>
+<p><img src="https://img2020.cnblogs.com/blog/1275415/202011/1275415-20201129163131313-1423873675.png" alt="img"></p>
+<p>source并发度与分区数相一致</p>
+<p>加上随机的前后缀</p>
+<p>keyBy + 斜杠 输出端加入split</p>
+<p>3.反压。</p>
+<p><img src="https://oscimg.oschina.net/oscnet/b826ca729f5bb5db5484f8ade8273710fcd.jpg" alt="img"></p>
+<p>4.反压的解决：Netty 水位值机制</p>
+<p>Task 1 在输出端有一个相关联的 LocalBufferPool（称缓冲池1），Task 2 在输入端也有一个相关联的 LocalBufferPool（称缓冲池2）。如果缓冲池1中有空闲可用的 buffer 来序列化记录 “A”，我们就序列化并发送该 buffer。</p>
+<p>这种固定大小缓冲池就像阻塞队列一样，保证了 Flink 有一套健壮的反压机制，使得 Task 生产数据的速度不会快于消费的速度。我们上面描述的这个方案可以从两个 Task 之间的数据传输自然地扩展到更复杂的 pipeline 中，保证反压机制可以扩散到整个 pipeline。</p>
+<p>下方的代码是初始化 NettyServer 时配置的水位值参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认高水位值为2个buffer大小, 当接收端消费速度跟不上，发送端会立即感知到</span></span><br><span class="line">bootstrap.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, config.getMemorySegmentSize() + <span class="number">1</span>);</span><br><span class="line">bootstrap.childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, <span class="number">2</span> * config.getMemorySegmentSize());</span><br><span class="line"><span class="number">123</span></span><br></pre></td></tr></table></figure>
+
+<p>当输出缓冲中的字节数超过了高水位值, 则 Channel.isWritable() 会返回false。当输出缓存中的字节数又掉到了低水位值以下, 则 Channel.isWritable() 会重新返回true。Flink 中发送数据的核心代码在 <strong>PartitionRequestQueue</strong> 中，该类是 server channel pipeline 的最后一层。</p>
+<h2 id="3-改进checkpoint"><a href="#3-改进checkpoint" class="headerlink" title="3.改进checkpoint"></a>3.改进checkpoint</h2><p><a href="https://blog.csdn.net/qq_35939417/article/details/105586436" target="_blank" rel="noopener">https://blog.csdn.net/qq_35939417/article/details/105586436</a></p>
+<p><strong>现象</strong>：每次重启Flink Task，都会往elasticsearch发送已经计算过的数据。比如本来elasticsearch有3条记录，在不往Kafka生产新消息的情况下，重新启动Flink Task之后有6条，再重启是9条，说明数据重复。</p>
+<p><img src="https://img-blog.csdnimg.cn/2020041718532982.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1OTM5NDE3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>上面意思是说，当启用Flink的Checkpointing机制后，默认的offset提交策略是：Flink Kafka消费者会在每次设置检查点完成后提交Kafka的offset。此时配置Kafka消费者的enable.auto.commit是无效的，亲测一直都是false。可以通过setCommitOffsetsOnCheckpoints(false)取消提交Offset与设置检查点之间的关联。</p>
+<p>然后我看代码，之前的某位大神把设置检查点的时间间隔设置成了三小时，意思就是说消费者是每三小时提交一次offset，这就不奇怪为什么重启会有大量数据重复了。之前我就怀疑这个参数配置有问题，果然是个坑。最后改成5秒设置一次检查点，数据重复的问题就解决了。</p>
+<h2 id="4-怎么用UDAF"><a href="#4-怎么用UDAF" class="headerlink" title="4.怎么用UDAF"></a>4.怎么用UDAF</h2><p>1亿 20多位  20B     2GB</p>
+<p>假如这 1亿个整数的数据范围是 0 到 100 亿，那么就需要申请 100 亿个 bit 约等于 1200MB </p>
+<p>布隆过滤器 true false</p>
+<p>redis进行存储是放得下的</p>
+<p>自定义UDAF</p>
+<p>city_id, use_id</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line">    * 自定义UDAF</span><br><span class="line">    *&#x2F;</span><br><span class="line">   public static class UDAFSum extends AggregateFunction&lt;Long, UDAFSum.SumAccumulator&gt;&#123;</span><br><span class="line"></span><br><span class="line">       &#x2F;**</span><br><span class="line">        * 定义一个Accumulator，存放聚合的中间结果</span><br><span class="line">        *&#x2F;</span><br><span class="line">       public static class SumAccumulator&#123;</span><br><span class="line">           public long sumPrice;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       &#x2F;**</span><br><span class="line">        * 初始化Accumulator</span><br><span class="line">        * @return</span><br><span class="line">        *&#x2F;</span><br><span class="line">       @Override</span><br><span class="line">       public SumAccumulator createAccumulator() &#123;</span><br><span class="line">           SumAccumulator sumAccumulator &#x3D; new SumAccumulator();</span><br><span class="line">           sumAccumulator.sumPrice&#x3D;0;</span><br><span class="line">           return sumAccumulator;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       &#x2F;**</span><br><span class="line">        * 定义如何根据输入更新Accumulator</span><br><span class="line">        * @param accumulator  Accumulator</span><br><span class="line">        * @param productPrice 输入</span><br><span class="line">        *&#x2F;</span><br><span class="line">       public void accumulate(SumAccumulator accumulator,int productPrice)&#123;</span><br><span class="line">           accumulator.sumPrice +&#x3D; productPrice;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       &#x2F;**</span><br><span class="line">        * 返回聚合的最终结果</span><br><span class="line">        * @param accumulator Accumulator</span><br><span class="line">        * @return</span><br><span class="line">        *&#x2F;</span><br><span class="line">       @Override</span><br><span class="line">       public Long getValue(SumAccumulator accumulator) &#123;</span><br><span class="line">           return accumulator.sumPrice;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-Redis的问题"><a href="#5-Redis的问题" class="headerlink" title="5.Redis的问题"></a>5.Redis的问题</h2><p>检查日志 有重启过，关闭checkpoint</p>
+<ul>
+<li>jmap分析: 通过jmap查看堆使用排行,惊讶的发现排在第一是Atomiclong类，占堆内存达到恐怖的2.7G,而我们的代码并没有显示使用Atomiclong类，排第二的是[C，表示字符串，字符串在程序中用的很多，排第二属正常，第三还是Atomiclong类，这个Atomiclong类究竟是哪个对象引用的呢？第四是genericonobjectpool，这个也不正常，程序中连接池对象竟然有372198个，哪里用得了这么多，还有一个jedisFactory类，一个工厂类竟然也有37万个实例，也是有问题的。</li>
+</ul>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092438.png" alt="img"></p>
+<p>mat分析：</p>
+<p>通过简单的jmap命令，发现很多不正常的类占据着堆内存的前几名，这些类究竟有什么关系，谁才是罪魁祸首？只好使出我们的终极MAT分析大法。</p>
+<p>通过分析导出生成的dump, 整个dump文件有6.7G,使用32G内存的机器经过10多分钟的处理，才得到以下分析结果。</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092440.png" alt="img"></p>
+<p>分析报告显示ScheduledThreadPoolExecutor对象持有4.3GB堆内存未释放，堆饼图中占有97%</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092441.png" alt="img"></p>
+<p>点进去查看树图,发现ScheduledThreadPoolExecutor对象持有4.3GB堆内存全部是GenericObjectPool对象（4.3G，接近1百万个对象）</p>
+<p>再点击GenericObjectPool展开后发现：</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092443.png" alt="img"></p>
+<p>之前通过jmap分析排行在前的AtomicLong(排第一，占2.7G)和redisFactory类都是躲藏在GenericObjectPool对象中的。分析至此，本人的第六撸感告诉我，离事情的真相越来越近了。与redis连接相关的GenericObjectPool对象就是问题的真凶，内存泄漏的对象。</p>
+<h3 id="1-连接池加锁"><a href="#1-连接池加锁" class="headerlink" title="1. 连接池加锁"></a>1. 连接池加锁</h3><p>由于去掉和redis的连接池未解决问题，依然生成大量GenericObjectPool对象不释放，一个推测是并发原因导致单例没有生效，生成了很多个JedisCluster对象，而JedisCluster对象包含了连接池。尝试synchronized加锁：</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092447.png" alt="img"></p>
+<p><strong>结果：问题仍未缓解，仍未解决，还得继续。</strong></p>
+<h3 id="2-改redisCluseter对象为单独变量"><a href="#2-改redisCluseter对象为单独变量" class="headerlink" title="2. 改redisCluseter对象为单独变量"></a>2. 改redisCluseter对象为单独变量</h3><p>上两步都没有进展，从头开始分析代码，代码分析过程中发现flink十多个任务都是使用统一的redis初始化方法且只生成单个redis连接实例。十多个flink任务, 每个flink任务中又有许多地方需要用到redis连接，redis单例在这里就会成为瓶颈（数据处理不过来，进而积压）。于是变单例的redisCluseter对象为单独变量，每个用到redis连接的类都生成redisCluseter变量，然后再与redis交互，以此使redis随Flink的连接数并发派生。</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092448.png" alt="img"></p>
+<p><strong>整改结果：问题得到阶段性解决，之前运行一天就出现堆和gc问题，整改后稳定运行三天后又出现同样问题。</strong></p>
+<h3 id="4-去掉异步方法"><a href="#4-去掉异步方法" class="headerlink" title="4. 去掉异步方法"></a>4. 去掉异步方法</h3><p>虽然只稳定运行三天，但对笔者和整个团队来说，也还是很开心的，说明我们的方向大概率是对的。但问题复现，作为四有好青年的IT民工，咱得发扬不怕苦，不怕累的精神继续分析排查。这次排查过程中发现众多的GenericObjectPool是由ScheduledThreadPoolExector引用的，ScheduledThreadPoolExector是一个异步类，再排查flink中的异步方法。找到AsyncDataStream.unorderedWait()是异步写入redis方法，将其修改为改造后的官方flink-redis连接包，去除异步。</p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092449.png" alt="img"></p>
+<p><img src="https://obs-emcsapp-public.obs.cn-north-4.myhwclouds.com/wechatSpider/modb_20200715_092451.png" alt="img"></p>
+<p><strong>结果：问题解决，堆和gc一直正常</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/14/checkpoint%E6%9C%BA%E5%88%B6/" rel="next" title="checkpoint机制">
+                <i class="fa fa-chevron-left"></i> checkpoint机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/03/15/%E6%89%8B%E5%86%99%E5%81%8F%E9%97%A8%E7%AE%97%E6%B3%95%E9%A2%98/" rel="prev" title="手写偏门算法题">
+                手写偏门算法题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">284</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-简单介绍一下Flink吧"><span class="nav-number">1.</span> <span class="nav-text">1.简单介绍一下Flink吧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-数据倾斜的问题？"><span class="nav-number">2.</span> <span class="nav-text">2.数据倾斜的问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-改进checkpoint"><span class="nav-number">3.</span> <span class="nav-text">3.改进checkpoint</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-怎么用UDAF"><span class="nav-number">4.</span> <span class="nav-text">4.怎么用UDAF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Redis的问题"><span class="nav-number">5.</span> <span class="nav-text">5.Redis的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-连接池加锁"><span class="nav-number">5.1.</span> <span class="nav-text">1. 连接池加锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-改redisCluseter对象为单独变量"><span class="nav-number">5.2.</span> <span class="nav-text">2. 改redisCluseter对象为单独变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-去掉异步方法"><span class="nav-number">5.3.</span> <span class="nav-text">4. 去掉异步方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共566.1k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

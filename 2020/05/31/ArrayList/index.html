@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] [TOC] 扩容需要使用 grow() 方法进行扩容，新容量的大小为 oldCapacity + (oldCapacity &gt;&gt; 1) ，也就是旧容量的 1.5 倍。扩容操作需要调用 Arrays.copyOf() 把原数组整个复制到新数组中，这个操作代价很高，因此最好在创建ArrayList 对象时就指定大概的容量大小，减少扩容操作的次数。 1234567891011pr">
 <meta property="article:published_time" content="2020-05-31T02:22:12.000Z">
-<meta property="article:modified_time" content="2020-11-12T06:59:04.564Z">
+<meta property="article:modified_time" content="2021-03-16T00:28:16.888Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="容器">
 <meta name="twitter:card" content="summary">
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.8k
+                  4.1k
                 </span>
               
 
@@ -390,7 +390,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  15
+                  16
                 </span>
               
             </div>
@@ -416,6 +416,11 @@
 <h2 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h2><p>需要使用 grow() 方法进行扩容，新容量的大小为 oldCapacity + (oldCapacity &gt;&gt; 1) ，也就是旧容量的 1.5 倍。<br>扩容操作需要调用 Arrays.copyOf() 把原数组整个复制到新数组中，这个操作代价很高，因此最好在创建<br>ArrayList 对象时就指定大概的容量大小，减少扩容操作的次数。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private void grow(int minCapacity) &#123;</span><br><span class="line">      &#x2F;&#x2F; overflow-conscious code</span><br><span class="line">      int oldCapacity &#x3D; elementData.length;</span><br><span class="line">      int newCapacity &#x3D; oldCapacity + (oldCapacity &gt;&gt; 1);</span><br><span class="line">      if (newCapacity - minCapacity &lt; 0)</span><br><span class="line">          newCapacity &#x3D; minCapacity;</span><br><span class="line">      if (newCapacity - MAX_ARRAY_SIZE &gt; 0)</span><br><span class="line">          newCapacity &#x3D; hugeCapacity(minCapacity);</span><br><span class="line">      &#x2F;&#x2F; minCapacity is usually close to size, so this is a win:</span><br><span class="line">      elementData &#x3D; Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
+<h3 id="线程不安全"><a href="#线程不安全" class="headerlink" title="线程不安全"></a>线程不安全</h3><p>一个线程的值覆盖另一个线程添加的值<br>另外第二步 elementData[size++] = e 设置值的操作同样会导致线程不安全。从这儿可以看出，这步操作也不是一个原子操作，它由如下两步操作构成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">elementData[size] &#x3D; e;</span><br><span class="line">size &#x3D; size + 1;</span><br></pre></td></tr></table></figure>
+
+<p>在单线程执行这两条代码时没有任何问题，但是当多线程环境下执行时，可能就会发生一个线程的值覆盖另一个线程添加的值，具体逻辑如下：</p>
+<p>列表大小为0，即size=0<br>线程A开始添加一个元素，值为A。此时它执行第一条操作，将A放在了elementData下标为0的位置上。<br>接着线程B刚好也要开始添加一个值为B的元素，且走到了第一步操作。此时线程B获取到size的值依然为0，于是它将B也放在了elementData下标为0的位置上。<br>线程A开始将size的值增加为1<br>线程B开始将size的值增加为2</p>
 <h2 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h2><p>需要调用 System.arraycopy() 将 index+1 后面的元素都复制到 index 位置上，该操作的时间复杂度为 O(N)，可以看<br>出 ArrayList 删除元素的代价是非常高的。</p>
 <h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><p>ArrayList 基于数组实现，并且具有动态扩容特性，因此保存元素的数组不一定都会被使用，那么就没必要全部进行<br>序列化。<br>保存元素的数组 elementData 使用 transient 修饰，该关键字声明数组默认不会被序列化。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transient Object[] elementData; &#x2F;&#x2F; non-private to simplify nested class access</span><br></pre></td></tr></table></figure>
@@ -641,7 +646,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -653,7 +658,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -700,7 +705,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#扩容"><span class="nav-number">1.</span> <span class="nav-text">扩容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除元素"><span class="nav-number">2.</span> <span class="nav-text">删除元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化"><span class="nav-number">3.</span> <span class="nav-text">序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#与Vector比较"><span class="nav-number">4.</span> <span class="nav-text">与Vector比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#替代方案"><span class="nav-number">5.</span> <span class="nav-text">替代方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronizedList"><span class="nav-number">5.1.</span> <span class="nav-text">synchronizedList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWriteArrayList"><span class="nav-number">5.2.</span> <span class="nav-text">CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读写分离"><span class="nav-number">5.2.1.</span> <span class="nav-text">读写分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#适用场景"><span class="nav-number">5.2.2.</span> <span class="nav-text">适用场景</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedList"><span class="nav-number">6.</span> <span class="nav-text">LinkedList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#与-ArrayList-的比较"><span class="nav-number">6.1.</span> <span class="nav-text">与 ArrayList 的比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-先从-ArrayList-的构造函数说起"><span class="nav-number">6.2.</span> <span class="nav-text">3.1. 先从 ArrayList 的构造函数说起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一步一步分析-ArrayList-扩容机制"><span class="nav-number">6.3.</span> <span class="nav-text">一步一步分析 ArrayList 扩容机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#先来看-add-方法"><span class="nav-number">6.3.1.</span> <span class="nav-text">先来看 add 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#再来看看-ensureCapacityInternal-方法"><span class="nav-number">6.3.2.</span> <span class="nav-text">再来看看 ensureCapacityInternal() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ensureExplicitCapacity-方法"><span class="nav-number">6.3.3.</span> <span class="nav-text">ensureExplicitCapacity() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#grow-方法"><span class="nav-number">6.3.4.</span> <span class="nav-text">grow() 方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-System-arraycopy-和-Arrays-copyOf-方法"><span class="nav-number">6.4.</span> <span class="nav-text">3.3. System.arraycopy() 和 Arrays.copyOf()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-System-arraycopy-方法"><span class="nav-number">6.4.1.</span> <span class="nav-text">3.3.1. System.arraycopy() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-Arrays-copyOf-方法"><span class="nav-number">6.4.2.</span> <span class="nav-text">3.3.2. Arrays.copyOf()方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-3-两者联系和区别"><span class="nav-number">6.4.3.</span> <span class="nav-text">3.3.3. 两者联系和区别</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#扩容"><span class="nav-number">1.</span> <span class="nav-text">扩容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线程不安全"><span class="nav-number">1.1.</span> <span class="nav-text">线程不安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除元素"><span class="nav-number">2.</span> <span class="nav-text">删除元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化"><span class="nav-number">3.</span> <span class="nav-text">序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#与Vector比较"><span class="nav-number">4.</span> <span class="nav-text">与Vector比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#替代方案"><span class="nav-number">5.</span> <span class="nav-text">替代方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronizedList"><span class="nav-number">5.1.</span> <span class="nav-text">synchronizedList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWriteArrayList"><span class="nav-number">5.2.</span> <span class="nav-text">CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读写分离"><span class="nav-number">5.2.1.</span> <span class="nav-text">读写分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#适用场景"><span class="nav-number">5.2.2.</span> <span class="nav-text">适用场景</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedList"><span class="nav-number">6.</span> <span class="nav-text">LinkedList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#与-ArrayList-的比较"><span class="nav-number">6.1.</span> <span class="nav-text">与 ArrayList 的比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-先从-ArrayList-的构造函数说起"><span class="nav-number">6.2.</span> <span class="nav-text">3.1. 先从 ArrayList 的构造函数说起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一步一步分析-ArrayList-扩容机制"><span class="nav-number">6.3.</span> <span class="nav-text">一步一步分析 ArrayList 扩容机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#先来看-add-方法"><span class="nav-number">6.3.1.</span> <span class="nav-text">先来看 add 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#再来看看-ensureCapacityInternal-方法"><span class="nav-number">6.3.2.</span> <span class="nav-text">再来看看 ensureCapacityInternal() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ensureExplicitCapacity-方法"><span class="nav-number">6.3.3.</span> <span class="nav-text">ensureExplicitCapacity() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#grow-方法"><span class="nav-number">6.3.4.</span> <span class="nav-text">grow() 方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-System-arraycopy-和-Arrays-copyOf-方法"><span class="nav-number">6.4.</span> <span class="nav-text">3.3. System.arraycopy() 和 Arrays.copyOf()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-System-arraycopy-方法"><span class="nav-number">6.4.1.</span> <span class="nav-text">3.3.1. System.arraycopy() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-Arrays-copyOf-方法"><span class="nav-number">6.4.2.</span> <span class="nav-text">3.3.2. Arrays.copyOf()方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-3-两者联系和区别"><span class="nav-number">6.4.3.</span> <span class="nav-text">3.3.3. 两者联系和区别</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -750,7 +755,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 秒杀系统设计的注意点 高性能。秒杀涉及高读和高写的支持，如何支撑高并发，如何抵抗高IOPS？核心优化理念其实是类似的：高读就尽量”少读”或”读少”，高写就数据拆分。本文将从动静分离、热点优化以及服务端性能优化 3 个方面展开 一致性。秒杀的核心关注是商品库存，有限的商品在同一时间被多个请求同时扣减，而且要保证准确性，显而易见是一个难题。如何做到既不多又不少？本文将从业界通用的几种减库存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="秒杀系统">
+<meta property="og:url" content="http://aamingaa.github.io/2021/03/27/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 秒杀系统设计的注意点 高性能。秒杀涉及高读和高写的支持，如何支撑高并发，如何抵抗高IOPS？核心优化理念其实是类似的：高读就尽量”少读”或”读少”，高写就数据拆分。本文将从动静分离、热点优化以及服务端性能优化 3 个方面展开 一致性。秒杀的核心关注是商品库存，有限的商品在同一时间被多个请求同时扣减，而且要保证准确性，显而易见是一个难题。如何做到既不多又不少？本文将从业界通用的几种减库存">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/eQPyBffYbufRIXm7d2gbBdAfOoKHMiaLm4yibgic9qcBak70AbibRZ8Tqr47uOjNlZq12bEBS2p8s3iaa1pUFiaQvnrg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="http://aamingaa.github.io/2021/03/27/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210327094954882.png">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MOwlO0INfQrfowULp3xliaU43T7YCHWW9mMlbCf8DJibI9EmfsoCvudjFxSn48nWUFEAI8SY5zCichZAKdQNlaK2g/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MOwlO0INfQrfowULp3xliaU43T7YCHWW9SiaQEGuyP4EJXiczK0a0KgoPmibjjH2BodSGNOb6e00ksOIFOVjibTo2gw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MOwlO0INfQrfowULp3xliaU43T7YCHWW9aCUqf9PSibScwFBxf1pWAAgvgALlTD6K3FPAbMw88MyF9OXqMfyJPpw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="article:published_time" content="2021-03-27T00:23:54.000Z">
+<meta property="article:modified_time" content="2021-03-27T05:29:54.779Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_png/eQPyBffYbufRIXm7d2gbBdAfOoKHMiaLm4yibgic9qcBak70AbibRZ8Tqr47uOjNlZq12bEBS2p8s3iaa1pUFiaQvnrg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/03/27/秒杀系统/"/>
+
+
+
+
+
+  <title>秒杀系统 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/03/27/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">秒杀系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-27T08:23:54+08:00">
+                2021-03-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index">
+                    <span itemprop="name">系统设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h2 id="秒杀系统设计的注意点"><a href="#秒杀系统设计的注意点" class="headerlink" title="秒杀系统设计的注意点"></a>秒杀系统设计的注意点</h2><ul>
+<li><strong>高性能。</strong>秒杀涉及高读和高写的支持，如何支撑高并发，如何抵抗高IOPS？核心优化理念其实是类似的：高读就尽量”少读”或”读少”，高写就数据拆分。本文将从动静分离、热点优化以及服务端性能优化 3 个方面展开</li>
+<li><strong>一致性。</strong>秒杀的核心关注是商品库存，有限的商品在同一时间被多个请求同时扣减，而且要保证准确性，显而易见是一个难题。如何做到既不多又不少？本文将从业界通用的几种减库存方案切入，讨论一致性设计的核心逻辑</li>
+<li><strong>高可用。</strong>大型分布式系统在实际运行过程中面对的工况是非常复杂的，业务流量的突增、依赖服务的不稳定、应用自身的瓶颈、物理资源的损坏等方方面面都会对系统的运行带来大大小小的的冲击。</li>
+</ul>
+<h2 id="高性能"><a href="#高性能" class="headerlink" title="高性能"></a>高性能</h2><h3 id="1-动静分离"><a href="#1-动静分离" class="headerlink" title="1 动静分离"></a><strong>1 动静分离</strong></h3><p>大家可能会注意到，秒杀过程中你是不需要刷新整个页面的，只有时间在不停跳动。这是因为一般都会对大流量的秒杀系统做系统的静态化改造，即数据意义上的动静分离。动静分离三步走：1、数据拆分；2、静态缓存；3、数据整合。</p>
+<h4 id="1-1-数据拆分"><a href="#1-1-数据拆分" class="headerlink" title="1.1 数据拆分"></a><strong>1.1 数据拆分</strong></h4><p>动静分离的首要目的是将动态页面改造成适合缓存的静态页面。因此第一步就是分离出动态数据，主要从以下 2 个方面进行：</p>
+<blockquote>
+<ul>
+<li><strong>用户。</strong>用户身份信息包括登录状态以及登录画像等，相关要素可以单独拆分出来，通过动态请求进行获取；与之相关的广平推荐，如用户偏好、地域偏好等，同样可以通过异步方式进行加载</li>
+<li><strong>时间。</strong>秒杀时间是由服务端统一管控的，可以通过动态请求进行获取</li>
+</ul>
+</blockquote>
+<h4 id="1-2-静态缓存"><a href="#1-2-静态缓存" class="headerlink" title="1.2 静态缓存"></a><strong>1.2 静态缓存</strong></h4><p>因此通常将静态数据缓存在 CDN</p>
+<p>因此，将数据放到全国所有的 CDN 节点是不太现实的，失效问题、命中率问题都会面临比较大的挑战。更为可行的做法是选择若干 CDN 节点进行静态化改造，节点的选取通常需要满足以下几个条件：</p>
+<blockquote>
+<ul>
+<li>临近访问量集中的地区</li>
+<li>距离主站较远的地区</li>
+<li>节点与主站间网络质量良好的地区</li>
+</ul>
+</blockquote>
+<p>基于以上因素，选择 CDN 的二级缓存比较合适，因为二级缓存数量偏少，容量也更大，访问量相对集中，这样就可以较好解决缓存的失效问题以及命中率问题，是当前比较理想的一种 CDN 化方案。部署方式如下图所示：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/eQPyBffYbufRIXm7d2gbBdAfOoKHMiaLm4yibgic9qcBak70AbibRZ8Tqr47uOjNlZq12bEBS2p8s3iaa1pUFiaQvnrg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>​    MySQL<strong>主从复制，读写分离</strong></p>
+<p>主要有动态地址生成和接口放刷，双重MD5加密密码。</p>
+<h3 id="2-热点优化"><a href="#2-热点优化" class="headerlink" title="2 热点优化"></a><strong>2 热点优化</strong></h3><p>热点分为热点操作和热点数据，以下分开进行讨论。</p>
+<h4 id="2-1-热点操作"><a href="#2-1-热点操作" class="headerlink" title="2.1 热点操作"></a><strong>2.1 热点操作</strong></h4><p>零点刷新、零点下单、零点添加购物车等都属于热点操作。热点操作是用户的行为，不好改变，但可以做一些限制保护，比如用户频繁刷新页面时进行提示阻断。</p>
+<h4 id="2-2-热点数据"><a href="#2-2-热点数据" class="headerlink" title="2.2 热点数据"></a><strong>2.2 热点数据</strong></h4><p>热点数据的处理三步走，一是热点识别，二是热点隔离，三是热点优化。</p>
+<p><strong>2.2.1 热点识别</strong></p>
+<p>热点数据分为静态热点和动态热点，具体如下：</p>
+<blockquote>
+<ul>
+<li><strong>静态热点：</strong>能够提前预测的热点数据。大促前夕，可以根据大促的行业特点、活动商家等纬度信息分析出热点商品，或者通过卖家报名的方式提前筛选；另外，还可以通过技术手段提前预测，例如对买家每天访问的商品进行大数据计算，然后统计出 TOP N 的商品，即可视为热点商品</li>
+<li><strong>动态热点：</strong>无法提前预测的热点数据。</li>
+</ul>
+</blockquote>
+<p>因此秒杀系统需要实现热点数据的动态发现能力，一个常见的实现思路是：</p>
+<blockquote>
+<ul>
+<li>异步采集交易链路各个环节的热点 Key 信息</li>
+<li>聚合分析热点数据，达到一定规则的热点数据，通过订阅分发推送到链路系统，各系统根据自身需求决定如何处理热点数据，或限流或缓存，从而实现热点保护</li>
+</ul>
+</blockquote>
+<p><strong>2.2.2 热点隔离</strong></p>
+<p>热点数据识别出来之后，第一原则就是将热点数据隔离出来，不要让 1% 影响到另外的 99%，可以基于以下几个层次实现热点隔离：</p>
+<blockquote>
+<ul>
+<li><strong>业务隔离。</strong>秒杀作为一种营销活动，卖家需要单独报名，从技术上来说，系统可以提前对已知热点做缓存预热</li>
+<li><strong>系统隔离。</strong>系统隔离是运行时隔离，通过分组部署和另外 99% 进行分离，另外秒杀也可以申请单独的域名，入口层就让请求落到不同的集群中</li>
+<li><strong>数据隔离。</strong>秒杀数据作为热点数据，可以启用单独的缓存集群或者DB服务组，从而更好的实现横向或纵向能力扩展</li>
+</ul>
+</blockquote>
+<p>当然，实现隔离还有很多种办法。比如，可以按照用户来区分，为不同的用户分配不同的 Cookie，入口层路由到不同的服务接口中；再比如，域名保持一致，但后端调用不同的服务接口；又或者在数据层给数据打标进行区分等等，这些措施的目的都是把已经识别的热点请求和普通请求区分开来。</p>
+<p><strong>2.2.3 热点优化</strong></p>
+<p>热点数据隔离之后，也就方便对这 1% 的请求做针对性的优化，方式无外乎两种：</p>
+<blockquote>
+<ul>
+<li><p>缓存：热点缓存是最为有效的办法。如果热点数据做了动静分离，那么可以长期缓存静态数据</p>
+</li>
+<li><p>限流：流量限制更多是一种保护机制。需要注意的是，各服务要时刻关注请求是否触发限流并及时进行review</p>
+<p><strong>1、读限流：</strong>对读请求做限流保护，将超出系统承载能力的请求过滤掉<br><strong>2、读缓存：</strong>对读请求做数据缓存，将重复的请求过滤掉<br><strong>3、写限流：</strong>对写请求做限流保护，将超出系统承载能力的请求过滤掉<br><strong>4、写校验：</strong>对写请求做一致性校验，只保留最终的有效数据</p>
+</li>
+<li><p>降级：</p>
+</li>
+<li><p>削峰</p>
+</li>
+<li><p>业务层面：弹出各种优惠券 跳转到其他页面，进行一个分流的过程</p>
+</li>
+</ul>
+</blockquote>
+<p><strong>2.2.4 小结</strong></p>
+<p>数据的热点优化与动静分离是不一样的，热点优化是基于二八原则对数据进行了纵向拆分，以便进行针对性地处理。热点识别和隔离不仅对“秒杀”这个场景有意义，对其他的高性能分布式系统也非常有参考价值。</p>
+<h3 id="3-系统优化"><a href="#3-系统优化" class="headerlink" title="3 系统优化"></a><strong>3 系统优化</strong></h3><p><img src="/2021/03/27/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210327094954882.png" alt="image-20210327094954882"></p>
+<p><strong>②LVS （Linux Virtual Server）</strong></p>
+<p>它是一种集群（Cluster）技术，采用 IP 负载均衡技术和基于内容请求分发技术。</p>
+<p>调度器具有很好的吞吐率，将请求均衡地转移到不同的服务器上执行，且调度器自动屏蔽掉服务器的故障，从而将一组服务器构成一个高性能的、高可用的虚拟服务器。</p>
+<p><strong>③Nginx</strong></p>
+<p>想必大家都很熟悉了，是一款非常高性能的 HTTP 代理/反向代理服务器，服务开发中也经常使用它来做负载均衡。</p>
+<p><strong>Nginx 实现负载均衡的方式主要有三种：</strong></p>
+<ul>
+<li><strong>轮询</strong></li>
+<li><strong>加权轮询</strong></li>
+<li><strong>IP Hash 轮询</strong></li>
+</ul>
+<h3 id="4-总结一下"><a href="#4-总结一下" class="headerlink" title="4 总结一下"></a><strong>4 总结一下</strong></h3><p>性能优化需要一个基准值，所以系统还需要做好应用基线，比如性能基线（何时性能突然下降）、成本基线（去年大促用了多少机器）、链路基线（核心流程发生了哪些变化），通过基线持续关注系统性能，促使系统在代码层面持续提升编码质量、业务层面及时下掉不合理调用、架构层面不断优化改进。</p>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a><strong>一致性</strong></h2><p>秒杀系统中，库存是个关键数据，卖不出去是个问题，超卖更是个问题。秒杀场景下的一致性问题，主要就是库存扣减的准确性问题。</p>
+<h3 id="2-减库存的问题"><a href="#2-减库存的问题" class="headerlink" title="2 减库存的问题"></a><strong>2 减库存的问题</strong></h3><p>防止超卖：</p>
+<p>​    1、利用数据库自带排他锁，当减库存的时候，进位where判断，只有库存余量大于0的时候才进行进库存; update goods set num = num - 1 WHERE id = 1001 and num &gt; 0; 2、也可以可用乐观锁CAS版本号机制。select version from goods WHERE id= 1001；update goods set num = num - 1, version = version + 1 WHERE id= 1001 AND num &gt; 0 AND version = @version(上面查到的version);</p>
+<h4 id="避免了对数据库频繁的-IO-操作"><a href="#避免了对数据库频繁的-IO-操作" class="headerlink" title="避免了对数据库频繁的 IO 操作"></a>避免了对数据库频繁的 IO 操作</h4><p>这就是预扣库存。先扣除了库存，保证不超卖，然后异步生成用户订单，这样响应给用户的速度就会快很多；</p>
+<p>那么怎么保证不少卖呢？用户拿到了订单，不支付怎么办？</p>
+<p>我们都知道现在订单都有有效期，比如说用户五分钟内不支付，订单就失效了，订单一旦失效，就会加入新的库存，这也是现在很多网上零售企业保证商品不少卖采用的方案。</p>
+<p>订单的生成是异步的，一般都会放到 MQ、Kafka 这样的即时消费队列中处理，订单量比较少的情况下，生成订单非常快，用户几乎不用排队。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MOwlO0INfQrfowULp3xliaU43T7YCHWW9mMlbCf8DJibI9EmfsoCvudjFxSn48nWUFEAI8SY5zCichZAKdQNlaK2g/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>改进</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MOwlO0INfQrfowULp3xliaU43T7YCHWW9SiaQEGuyP4EJXiczK0a0KgoPmibjjH2BodSGNOb6e00ksOIFOVjibTo2gw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>要解决这个问题，我们需要对总订单量做统一的管理，这就是接下来的容错方案。服务器不仅要在本地减库存，另外要远程统一减库存。</p>
+<p>有了远程统一减库存的操作，我们就可以根据机器负载情况，为每台机器分配一些多余的“Buffer 库存”用来防止机器中有机器宕机的情况。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MOwlO0INfQrfowULp3xliaU43T7YCHWW9aCUqf9PSibScwFBxf1pWAAgvgALlTD6K3FPAbMw88MyF9OXqMfyJPpw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>   <strong>防止重复消费</strong>：数据库加唯一索引：防止用户重复购买.秒杀订单表新增订单，使用唯一索引，由用户ID和商品ID组成</p>
+<p>​    <strong>消息的消费结果如何返回给消息发送方</strong>：客户端轮询订单生成结果。</p>
+<p>​    <strong>消息丢失：</strong>秒杀系统中，本来就是万中选一的，丢失无所谓。如果是重要的信息，我们可以从三个角度来避免。如果是发送者丢失，开启confirm机制，如果队列丢失，开始queue持久化和消息持久化。如果是消费者丢失，关闭自动ACK,当我们消费完之后，调用API给queue发送确认信息。</p>
+<h3 id="3-实际如何减库存"><a href="#3-实际如何减库存" class="headerlink" title="3 实际如何减库存"></a><strong>3 实际如何减库存</strong></h3><p><strong>避免超卖：</strong>库存超卖的情况实际分为两种。对于普通商品，秒杀只是一种大促手段，即使库存超卖，商家也可以通过补货来解决；而对于一些商品，秒杀作为一种营销手段，完全不允许库存为负，也就是在数据一致性上，需要保证大并发请求时数据库中的库存字段值不能为负，一般有多种方案：</p>
+<p>一是在通过事务来判断，即保证减后库存不能为负，否则就回滚；</p>
+<p>二是直接设置数据库字段类型为无符号整数，这样一旦库存为负就会在执行 SQL 时报错；</p>
+<p>三是使用 CAS业务手段保证商品卖的出去，技术手段保证商品不会超卖，库存问题从来就不是简单的技术难题，解决问题的视角是多种多样的。</p>
+<h3 id="4-一致性性能的优化"><a href="#4-一致性性能的优化" class="headerlink" title="4 一致性性能的优化"></a><strong>4 一致性性能的优化</strong></h3><p>库存是个关键数据，更是个热点数据。对系统来说，热点的实际影响就是 “高读” 和 “高写”，也是秒杀场景下最为核心的一个技术难题。</p>
+<h4 id="4-1-高并发读"><a href="#4-1-高并发读" class="headerlink" title="4.1 高并发读"></a><strong>4.1 高并发读</strong></h4><p>不同层次尽可能过滤掉无效请求，只在“漏斗” 最末端进行有效处理，从而缩短系统瓶颈的影响路径。</p>
+<h4 id="4-2-高并发写"><a href="#4-2-高并发写" class="headerlink" title="4.2 高并发写"></a><strong>4.2 高并发写</strong></h4><p>高并发写的优化方式，<strong>一种是更换DB选型，一种是优化DB性能</strong>，以下分别进行讨论。</p>
+<p><strong>4.2.2 优化DB性能</strong></p>
+<p>库存数据落地到数据库实现其实是一行存储（MySQL），因此会有大量线程来竞争 InnoDB 行锁。但并发越高，等待线程就会越多，TPS 下降，RT 上升，吞吐量会受到严重影响——注意，这里假设数据库已基于上文【性能优化】完成数据隔离，以便于讨论聚焦 。</p>
+<p>解决并发锁的问题，有两种办法：</p>
+<p><strong><em>1、应用层排队。</em></strong></p>
+<p>通过缓存加入集群分布式锁，从而控制集群对数据库同一行记录进行操作的并发度，同时也能控制单个商品占用数据库连接的数量，防止热点商品占用过多的数据库连接</p>
+<p><strong><em>2、数据层排队。</em></strong></p>
+<p>应用层排队是有损性能的，数据层排队是最为理想的。业界中，阿里的数据库团队开发了针对InnoDB 层上的补丁程序（patch），可以基于DB层对单行记录做并发排队，从而实现秒杀场景下的定制优化——<strong>注意，排队和锁竞争是有区别的，如果熟悉 MySQL 的话，就会知道 InnoDB 内部的死锁检测，以及 MySQL Server 和 InnoDB 的切换都是比较消耗性能的。</strong></p>
+<p>另外阿里的数据库团队还做了很多其他方面的优化，</p>
+<p>如 <code>COMMIT_ON_SUCCESS</code> 和 <code>ROLLBACK_ON_FAIL</code>的补丁程序，通过在 SQL 里加入提示（hint），实现事务不需要等待实时提交，而是在数据执行完最后一条 SQL 后，直接根据 <code>TARGET_AFFECT_ROW</code>的结果进行提交或回滚，减少网络等待的时间（毫秒级）</p>
+<h4 id="4-3-小结"><a href="#4-3-小结" class="headerlink" title="4.3 小结"></a><strong>4.3 小结</strong></h4><p>高读和高写的两种处理方式大相径庭。读请求的优化空间要大一些，而写请求的瓶颈一般都在存储层，优化思路的本质还是基于 CAP 理论做平衡。</p>
+<h2 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a><strong>高可用</strong></h2><p>集群 Web集群 读写分离 Redis集群，Nginx、LVS分流都给用上</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/25/%E6%95%8F%E6%84%9F%E8%AF%8D%E8%BF%87%E6%BB%A4/" rel="next" title="敏感词过滤">
+                <i class="fa fa-chevron-left"></i> 敏感词过滤
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/03/29/%E7%9F%AD%E9%93%BE%E6%8E%A5%E7%94%A8302/" rel="prev" title="短链接用302">
+                短链接用302 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">284</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#秒杀系统设计的注意点"><span class="nav-number">1.</span> <span class="nav-text">秒杀系统设计的注意点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高性能"><span class="nav-number">2.</span> <span class="nav-text">高性能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-动静分离"><span class="nav-number">2.1.</span> <span class="nav-text">1 动静分离</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-数据拆分"><span class="nav-number">2.1.1.</span> <span class="nav-text">1.1 数据拆分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-静态缓存"><span class="nav-number">2.1.2.</span> <span class="nav-text">1.2 静态缓存</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-热点优化"><span class="nav-number">2.2.</span> <span class="nav-text">2 热点优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-热点操作"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 热点操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-热点数据"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 热点数据</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-系统优化"><span class="nav-number">2.3.</span> <span class="nav-text">3 系统优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-总结一下"><span class="nav-number">2.4.</span> <span class="nav-text">4 总结一下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一致性"><span class="nav-number">3.</span> <span class="nav-text">一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-减库存的问题"><span class="nav-number">3.1.</span> <span class="nav-text">2 减库存的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#避免了对数据库频繁的-IO-操作"><span class="nav-number">3.1.1.</span> <span class="nav-text">避免了对数据库频繁的 IO 操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实际如何减库存"><span class="nav-number">3.2.</span> <span class="nav-text">3 实际如何减库存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-一致性性能的优化"><span class="nav-number">3.3.</span> <span class="nav-text">4 一致性性能的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-高并发读"><span class="nav-number">3.3.1.</span> <span class="nav-text">4.1 高并发读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-高并发写"><span class="nav-number">3.3.2.</span> <span class="nav-text">4.2 高并发写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-小结"><span class="nav-number">3.3.3.</span> <span class="nav-text">4.3 小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高可用"><span class="nav-number">4.</span> <span class="nav-text">高可用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共566.1k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

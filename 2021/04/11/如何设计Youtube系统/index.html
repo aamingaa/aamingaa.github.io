@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 需求和目标功能要求： 用户应该能够上传视频。 用户应该能够共享和查看视频。 用户可以根据视频标题执行搜索。 我们的服务应该能够记录视频的统计数据，例如喜欢&#x2F;不喜欢，观看总数等。 用户应该能够添加和查看视频评论。 非功能性要求： 系统应该高度可靠，任何上传的视频都不应丢失。 该系统应该是高度可用的。 一致性可能会受到影响（为了可用性），如果用户暂时没有看到视频，那应该没问题。 用户在观看">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何设计Youtube系统">
+<meta property="og:url" content="http://aamingaa.github.io/2021/04/11/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1Youtube%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 需求和目标功能要求： 用户应该能够上传视频。 用户应该能够共享和查看视频。 用户可以根据视频标题执行搜索。 我们的服务应该能够记录视频的统计数据，例如喜欢&#x2F;不喜欢，观看总数等。 用户应该能够添加和查看视频评论。 非功能性要求： 系统应该高度可靠，任何上传的视频都不应丢失。 该系统应该是高度可用的。 一致性可能会受到影响（为了可用性），如果用户暂时没有看到视频，那应该没问题。 用户在观看">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-842fff22d80ce096.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/999/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-7fef9a3ec70a5cad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/377/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-8af5f7355e206638.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/241/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-4321d199eb223529.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/849/format/webp">
+<meta property="article:published_time" content="2021-04-11T09:09:51.000Z">
+<meta property="article:modified_time" content="2021-04-11T09:12:17.584Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10803273-842fff22d80ce096.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/999/format/webp">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/04/11/如何设计Youtube系统/"/>
+
+
+
+
+
+  <title>如何设计Youtube系统 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/04/11/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1Youtube%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何设计Youtube系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-11T17:09:51+08:00">
+                2021-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index">
+                    <span itemprop="name">系统设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.9k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h2 id="需求和目标"><a href="#需求和目标" class="headerlink" title="需求和目标"></a>需求和目标</h2><p>功能要求：</p>
+<p>用户应该能够上传视频。</p>
+<p>用户应该能够共享和查看视频。</p>
+<p>用户可以根据视频标题执行搜索。</p>
+<p>我们的服务应该能够记录视频的统计数据，例如喜欢/不喜欢，观看总数等。</p>
+<p>用户应该能够添加和查看视频评论。</p>
+<p>非功能性要求：</p>
+<p>系统应该高度可靠，任何上传的视频都不应丢失。</p>
+<p>该系统应该是高度可用的。 一致性可能会受到影响（为了可用性），如果用户暂时没有看到视频，那应该没问题。</p>
+<p>用户在观看视频时应具有实时体验，不应感到任何滞后。</p>
+<p>不在范围内：视频推荐，最受欢迎的视频，频道和订阅，以后观看，收藏等。</p>
+<h2 id="容量估计和限制"><a href="#容量估计和限制" class="headerlink" title="容量估计和限制"></a>容量估计和限制</h2><p>我们假设我们有15亿用户，其中8亿是每日活跃用户。平均而言，如果用户每天观看五个视频，则每秒的总视频观看数为：</p>
+<p>800M * 5/86400秒=&gt; 46K视频/秒</p>
+<p>我们假设我们的上传：观看比率是1：200，即，对于每个视频上传，我们观看了200个视频，每秒上传230个视频。</p>
+<p>46K / 200 =&gt; 230视频/秒</p>
+<p>存储估算：让我们假设每分钟500小时的视频上传到Youtube。平均而言，一分钟的视频需要50MB的存储空间（视频需要以多种格式存储），一分钟内上传的视频所需的总存储空间为：</p>
+<p>500小时* 60分钟* 50MB =&gt; 1500 GB /分钟（25 GB /秒）</p>
+<p>估计这些数字，忽略视频压缩和复制，这将改变我们的估计。</p>
+<p>带宽估算：每分钟上传500小时的视频，假设每个视频上传的带宽为10MB /分钟，我们每分钟就会获得300GB的上传量。</p>
+<p>500小时* 60分钟* 10MB =&gt; 300GB /分钟（5GB /秒）</p>
+<p>假设上传：视图比率为1：200，我们需要1TB / s的传出带宽。</p>
+<h2 id="系统API"><a href="#系统API" class="headerlink" title="系统API"></a>系统API</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">uploadVideo</span>(<span class="selector-tag">api_dev_key</span>, <span class="selector-tag">video_title</span>, <span class="selector-tag">vide_description</span>, <span class="selector-tag">tags</span><span class="selector-attr">[]</span>, <span class="selector-tag">category_id</span>, <span class="selector-tag">default_language</span>, </span><br><span class="line">                        <span class="selector-tag">recording_details</span>, <span class="selector-tag">video_contents</span>)</span><br></pre></td></tr></table></figure>
+
+<p>参数：<br> api_dev_key（string）：已注册帐户的API开发人员密钥。 除其他外，这将用于根据用户分配的配额限制用户。<br> video_title（string）：视频的标题。<br> vide_description（string）：视频的可选描述。<br> tags（string []）：视频的可选标签。<br> category_id（string）：视频的类别，例如电影，歌曲，人物等。<br> default_language（string）：例如英语，普通话，印地语等。<br> recording_details（string）：录制视频的位置。<br> video_contents（stream）：要上传的视频。</p>
+<p>返回:(字符串）<br> 成功上传将返回HTTP 202（请求已接受），并且一旦视频编码完成，则通过电子邮件通知用户访问视频的链接。 我们还可以公开可查询的API，以便用户了解其上传视频的当前状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchVideo(api_dev_key, search_query, user_location, maximum_videos_to_return, page_token)</span><br></pre></td></tr></table></figure>
+
+<p>参数：<br> api_dev_key（string）：我们服务的注册帐户的API开发人员密钥。<br> search_query（string）：包含搜索词的字符串。<br> user_location（string）：执行搜索的用户的可选位置。<br> maximum_videos_to_return（number）：一个请求中返回的最大结果数。<br> page_token（string）：此标记将指定应返回的结果集中的页面。</p>
+<p>返回：（JSON）<br> 包含与搜索查询匹配的视频资源列表的信息的JSON。 每个视频资源都有一个视频标题，一个缩略图，一个视频创建日期以及它有多少视图。</p>
+<h2 id="高层设计"><a href="#高层设计" class="headerlink" title="高层设计"></a>高层设计</h2><p>1.处理队列：每个上传的视频都将被推送到处理队列，稍后将进行排队以进行编码，缩略图生成和存储。</p>
+<p>2.编码器：将每个上传的视频编码为多种格式。</p>
+<p>3.缩略图生成器：我们需要为每个视频添加一些缩略图。</p>
+<p>4.视频和缩略图存储：我们需要将视频和缩略图文件存储在某些分布式文件存储中。</p>
+<p>5.用户数据库：我们需要一些数据库来存储用户的信息，例如姓名，电子邮件，地址等。</p>
+<p>6.视频元数据存储：元数据数据库将存储有关视频的所有信息，如标题，系统中的文件路径，上传用户，总观看次数，喜欢，不喜欢等。此外，它还将用于存储所有视频评论。</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/10803273-842fff22d80ce096.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/999/format/webp" alt="img"></p>
+<p>image.png</p>
+<h2 id="数据库SCHEMA"><a href="#数据库SCHEMA" class="headerlink" title="数据库SCHEMA"></a>数据库SCHEMA</h2><p>视频表</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/10803273-7fef9a3ec70a5cad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/377/format/webp" alt="img"></p>
+<p>image.png</p>
+<p>评论表</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/10803273-8af5f7355e206638.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/241/format/webp" alt="img"></p>
+<p>image.png</p>
+<p>用户表<br> UserID, Name, email, address, age, registration details</p>
+<h2 id="细节设计"><a href="#细节设计" class="headerlink" title="细节设计"></a>细节设计</h2><p>该服务阅读量很大，因此我们将专注于构建一个可以快速检索视频的系统。我们可以预期我们的读取：写入比率为200：1，这意味着对于每个视频上传，有200个视频视图。</p>
+<p>视频存储在哪里？视频可以存储在分布式文件存储系统中，如HDFS或GlusterFS。</p>
+<p>我们应该如何有效地管理读取流量？我们应该将读取流量与写入隔离开来。由于我们将拥有每个视频的多个副本，因此我们可以在不同的服务器上分配读取流量。对于元数据，我们可以使用主从配置。这样的配置可能导致数据的某些陈旧性，例如，当添加新视频时，其元数据将首先插入到主设备中，然后在从设备上重播之前，我们的从设备将无法看到它，因此会将过时的结果返回给用户。这种陈旧性在我们的系统中可能是可以接受的，因为它会非常短暂，并且用户将能够在几毫秒后看到新视频。</p>
+<p>缩略图存放在哪里？将有比视频更多的缩略图。如果我们假设每个视频都有五个缩略图，我们需要一个非常高效的存储系统，可以提供巨大的读取流量。在决定将哪个存储系统用于缩略图之前，将有两个考虑因素：</p>
+<p>缩略图是小文件，每个最大5KB。<br> 与视频相比，读取缩略图的流量将是巨大的。用户将一次观看一个视频，但他们可能正在查看包含20个其他视频缩略图的页面。<br> 让我们评估将所有缩略图存储在磁盘上。鉴于我们有大量的文件;要读取这些文件，我们必须对磁盘上的不同位置执行大量搜索。这是非常低效的并且将导致更高的延迟。</p>
+<p>Bigtable在这里是一个合理的选择，因为它将多个文件组合成一个块以存储在磁盘上，并且非常有效地读取少量数据。这两项都是我们服务的两大要求。将热缩略图保留在缓存中也有助于改善延迟，并且鉴于缩略图文件很小，我们可以轻松地将大量此类文件缓存在内存中。</p>
+<p>视频上传：由于视频可能很大，如果在上传时连接断开，我们应该支持从同一点恢复。</p>
+<p>视频编码：新上传的视频存储在服务器上，新的任务被添加到处理队列中，以将视频编码为多种格式。一旦完成所有编码;上传者会收到通知，视频可供观看/分享。</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/10803273-4321d199eb223529.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/849/format/webp" alt="img"></p>
+<p>image.png</p>
+<h2 id="元数据分区"><a href="#元数据分区" class="headerlink" title="元数据分区"></a>元数据分区</h2><p>由于我们每天都有大量的新视频，而且我们的读取负载也非常高，我们需要将数据分发到多台机器上，以便我们可以高效地执行读/写操作。我们有很多选项来分析我们的数据。让我们逐个分析这些数据的不同策略：</p>
+<p>基于UserID的分片：我们可以尝试在一台服务器上存储特定用户的所有数据。在存储时，我们可以将UserID传递给我们的哈希函数，该函数将用户映射到数据库服务器，我们将存储该用户视频的所有元数据。在查询用户的视频时，我们可以要求我们的哈希函数找到保存用户数据的服务器，然后从那里读取它。要按标题搜索视频，我们必须查询所有服务器，每个服务器都会返回一组视频。然后，集中式服务器将这些结果聚合并排序，然后再将它们返回给用户。</p>
+<p>这种方法有几个问题：</p>
+<p>如果用户变得流行怎么办？持有该用户的服务器上可能存在大量查询，从而产生性能瓶颈。这将影响我们服务的整体表现。<br> 随着时间的推移，与其他用户相比，一些用户最终可能会存储大量视频。保持不断增长的用户数据的均匀分布是非常困难的。<br> 要从这些情况中恢复，我们必须重新分配/重新分配我们的数据或使用一致性散列来平衡服务器之间的负载。</p>
+<p>基于VideoID的分片：我们的散列函数会将每个VideoID映射到随机服务器，我们将存储该视频的元数据。要查找用户的视频，我们将查询所有服务器，每个服务器将返回一组视频。集中式服务器将在将这些结果返回给用户之前对其进行聚合和排名。这种方法解决了我们的热门用户问题，但将其转移到热门视频。</p>
+<p>我们可以通过引入缓存来在数据库服务器前存储热门视频来进一步提高性能。</p>
+<h2 id="视频去重"><a href="#视频去重" class="headerlink" title="视频去重"></a>视频去重</h2><p>由于用户数量庞大，上传大量视频数据，我们的服务将不得不处理广泛的视频复制。重复视频的宽高比或编码通常不同，可以包含叠加或其他边框，也可以是较长的原始视频的摘录。重复视频的激增会对许多层面产生影响：</p>
+<p>数据存储：我们可能通过保留同一视频的多个副本来浪费存储空间。</p>
+<p>缓存：重复的视频会占用可用于唯一内容的空间，从而导致缓存效率降低。</p>
+<p>网络使用：增加必须通过网络发送到网络内缓存系统的数据量。</p>
+<p>能耗：更高的存储容量，低效的缓存和网络使用将导致能源浪费。</p>
+<p>对于最终用户，这些低效率将以重复搜索结果，更长的视频启动时间和中断的流式传输的形式实现。</p>
+<p>对于我们的服务，当用户上传视频时，重复数据删除最有意义;与后期处理相比，以便稍后查找重复的视频。内联重复数据删除将为我们节省大量资源，可用于编码，传输和存储视频的副本。一旦任何用户开始上传视频，我们的服务就可以运行视频匹配算法（例如，块匹配，相位相关等）以查找重复。如果我们已经上传了视频的副本，我们可以停止上传并使用现有副本，也可以使用新上传的视频（如果质量更高）。如果新上传的视频是现有视频的子部分，反之亦然，我们可以智能地将视频划分为更小的块，以便我们只上传那些丢失的部分。</p>
+<p>作者：西部小笼包<br>链接：<a href="https://www.jianshu.com/p/bac48e9570a0" target="_blank" rel="noopener">https://www.jianshu.com/p/bac48e9570a0</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/04/11/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1Twitter%E3%80%81%E5%BE%AE%E5%8D%9A/" rel="next" title="如何设计Twitter、微博">
+                <i class="fa fa-chevron-left"></i> 如何设计Twitter、微博
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/04/11/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%90%9C%E7%B4%A2%E7%B3%BB%E7%BB%9F/" rel="prev" title="如何设计一个搜索系统">
+                如何设计一个搜索系统 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">284</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#需求和目标"><span class="nav-number">1.</span> <span class="nav-text">需求和目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#容量估计和限制"><span class="nav-number">2.</span> <span class="nav-text">容量估计和限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统API"><span class="nav-number">3.</span> <span class="nav-text">系统API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高层设计"><span class="nav-number">4.</span> <span class="nav-text">高层设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库SCHEMA"><span class="nav-number">5.</span> <span class="nav-text">数据库SCHEMA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#细节设计"><span class="nav-number">6.</span> <span class="nav-text">细节设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#元数据分区"><span class="nav-number">7.</span> <span class="nav-text">元数据分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视频去重"><span class="nav-number">8.</span> <span class="nav-text">视频去重</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共566.1k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

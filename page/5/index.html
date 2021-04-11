@@ -282,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/09/Flink-Transformation/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/08/%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -301,7 +301,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2021/01/09/Flink-Transformation/" itemprop="url">Flink Transformation</a></h1>
+                <a class="post-title-link" href="/2021/02/08/%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6/" itemprop="url">流量控制</a></h1>
         
 
         <div class="post-meta">
@@ -313,8 +313,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-09T00:48:42+08:00">
-                2021-01-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-08T22:27:41+08:00">
+                2021-02-08
               </time>
             
 
@@ -336,8 +336,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flink/" itemprop="url" rel="index">
-                    <span itemprop="name">Flink</span>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
                   </a>
                 </span>
 
@@ -367,7 +367,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.5k
+                  493
                 </span>
               
 
@@ -383,7 +383,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  11
+                  1
                 </span>
               
             </div>
@@ -406,15 +406,23 @@
       
         
           
-          [TOC]
-一、Transformations 分类Flink 的 Transformations 操作主要用于将一个和多个 DataStream 按需转换成新的 DataStream。它主要分为以下三类：
+          
+TCP的流量控制有两种方式：
+一种是基于速率流量的控制
+一种是基于滑动窗口的流量控制
 
-DataStream Transformations：进行数据流相关转换操作；
-Physi
+
+
+一、基于速率流量的控制
+这种方式比较简单：它是给发送方指定某个速率，同时确保数据永远不能超过这个速率发送
+这种类型的流量控制最\适合流应用程序**，可被用于广播和组播发现
+
+二、基于滑动窗口的流量控制
+详情
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2021/01/09/Flink-Transformation/#more" rel="contents">
+            <a class="btn" href="/2021/02/08/%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -465,7 +473,7 @@ Physi
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/09/%E6%A3%80%E6%9F%A5%E7%82%B9/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/08/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E3%80%81%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80%E3%80%81%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80%E3%80%81%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -484,7 +492,7 @@ Physi
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2021/01/09/%E6%A3%80%E6%9F%A5%E7%82%B9/" itemprop="url">检查点</a></h1>
+                <a class="post-title-link" href="/2021/02/08/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E3%80%81%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80%E3%80%81%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80%E3%80%81%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80/" itemprop="url">虚拟地址、逻辑地址、线性地址、物理地址</a></h1>
         
 
         <div class="post-meta">
@@ -496,8 +504,8 @@ Physi
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-09T00:42:05+08:00">
-                2021-01-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-08T16:23:20+08:00">
+                2021-02-08
               </time>
             
 
@@ -519,8 +527,8 @@ Physi
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flink/" itemprop="url" rel="index">
-                    <span itemprop="name">Flink</span>
+                  <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index">
+                    <span itemprop="name">操作系统</span>
                   </a>
                 </span>
 
@@ -550,7 +558,7 @@ Physi
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  986
+                  987
                 </span>
               
 
@@ -590,11 +598,14 @@ Physi
         
           
           [TOC]
-CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了检查点机制 (CheckPoints)  。通过检查点机制，Flink 定期在数据流上生成 checkpoint barrier ，当某个算子收到 barrier 时，即会基于当前状态生成一份快照，然后再
+
+Linux系统中的物理存储空间和虚拟存储空间的地址范围分别都是从0x00000000到0xFFFFFFFF，共4GB，但物理存储空间与虚拟存储空间布局完全不同
+
+\Linux运行在虚拟存储空间，**并负责把系统中实际存在的远小于4GB的物理内存根据不同需求映射到整个4GB的虚拟存储空间
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2021/01/09/%E6%A3%80%E6%9F%A5%E7%82%B9/#more" rel="contents">
+            <a class="btn" href="/2021/02/08/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E3%80%81%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80%E3%80%81%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80%E3%80%81%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -645,7 +656,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/09/Source%E7%9A%84%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E7%94%A8%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/08/BBR%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -664,7 +675,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2021/01/09/Source%E7%9A%84%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E7%94%A8%E6%B3%95/" itemprop="url">Source的概念以及用法</a></h1>
+                <a class="post-title-link" href="/2021/02/08/BBR%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84/" itemprop="url">BBR是怎么实现的</a></h1>
         
 
         <div class="post-meta">
@@ -676,8 +687,8 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-09T00:26:26+08:00">
-                2021-01-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-08T16:13:16+08:00">
+                2021-02-08
               </time>
             
 
@@ -699,8 +710,8 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flink/" itemprop="url" rel="index">
-                    <span itemprop="name">Flink</span>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
                   </a>
                 </span>
 
@@ -730,7 +741,369 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2k
+                  6.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  22
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          [TOC]
+0x00.前言这是TCP/IP协议栈系列的第三篇文章，之前的一篇面试热点|理解TCP/IP传输层拥塞控制算法讲述了传统的拥塞控制算法基本原理，今天一起来学习下最新Linux内核中增加的拥塞控制算法：TCP BBR算法。
+鉴于TCP拥塞控制算法背后有一套复杂的数学理论和控制策略，因此本文也
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/02/08/BBR%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/08/Arrays-sort%E4%BD%BF%E7%94%A8%E7%9A%84%E4%BB%80%E4%B9%88%E6%8E%92%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/02/08/Arrays-sort%E4%BD%BF%E7%94%A8%E7%9A%84%E4%BB%80%E4%B9%88%E6%8E%92%E5%BA%8F/" itemprop="url">Arrays.sort使用的什么排序?</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-08T09:11:08+08:00">
+                2021-02-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          [TOC]
+
+双轴快排(DualPivotQuicksort)，顾名思义有两个轴元素pivot1，pivot2，且pivot ≤pivot2，将序列分成三段：x &lt; pivot1、pivot1 ≤ x ≤ pivot2、x &gt;pivot2，然后分别对三段进行递归。这个算法通常会比传统的快
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/02/08/Arrays-sort%E4%BD%BF%E7%94%A8%E7%9A%84%E4%BB%80%E4%B9%88%E6%8E%92%E5%BA%8F/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url">GEO数据结构</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-07T19:50:29+08:00">
+                2021-02-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.3k
                 </span>
               
 
@@ -769,13 +1142,13 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
       
         
           
-          [toc]
-一、内置 Data SourceFlink Data Source 用于定义 Flink 程序的数据来源，Flink 官方提供了多种数据获取方法，用于帮助开发者简单快速地构建输入流，具体如下：
-1.1 基于文件构建1. readTextFile(path)：按照 TextInputFor
+          [TOC]
+简介这时问题来了，Sorted Set 元素的权重分数是一个浮点数（float 类型），而一组经纬度包含的是经度和纬度两个值，是没法直接保存为一个浮点数的，那具体该怎么进行保存呢？这就要用到 GEO 类型中的 GeoHash 编码了。
+GeoHash 的编码方法为了能高效地对经纬度进行比
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2021/01/09/Source%E7%9A%84%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E7%94%A8%E6%B3%95/#more" rel="contents">
+            <a class="btn" href="/2021/02/07/GEO%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -826,7 +1199,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/08/Sink%E7%9A%84%E6%A6%82%E5%BF%B5/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -845,7 +1218,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2021/01/08/Sink%E7%9A%84%E6%A6%82%E5%BF%B5/" itemprop="url">Sink的概念</a></h1>
+                <a class="post-title-link" href="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url">redis读书笔记</a></h1>
         
 
         <div class="post-meta">
@@ -857,8 +1230,8 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-08T23:40:26+08:00">
-                2021-01-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-06T20:20:28+08:00">
+                2021-02-06
               </time>
             
 
@@ -880,8 +1253,8 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flink/" itemprop="url" rel="index">
-                    <span itemprop="name">Flink</span>
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
                   </a>
                 </span>
 
@@ -911,7 +1284,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.6k
+                  4.3k
                 </span>
               
 
@@ -927,188 +1300,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          [toc]
-
-一、Data Sinks在使用 Flink 进行数据处理时，数据经 Data Source 流入，然后通过系列 Transformations 的转化，最终可以通过 Sink 将计算结果进行输出，Flink Data Sinks 就是用于定义数据流最终的输出位置。Flink 提供了几个
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2021/01/08/Sink%E7%9A%84%E6%A6%82%E5%BF%B5/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/05/Flink%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avator.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2021/01/05/Flink%E6%A6%82%E5%BF%B5/" itemprop="url">Flink概念</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-05T23:31:08+08:00">
-                2021-01-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flink/" itemprop="url" rel="index">
-                    <span itemprop="name">Flink</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  2.2k
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  8
+                  15
                 </span>
               
             </div>
@@ -1132,12 +1324,13 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
         
           
           [TOC]
+压缩列表压缩列表在表头有三个字段 zlbytes、zltail 和 zllen，分别表示列表长度、列表尾的偏移量和列表中的 entry 个数；压缩列表在表尾还有一个 zlend，表示列表结束。
 
-一、Flink 简介简单来说，Flink 是一个分布式的流处理框架，它能够对有界和无界的数据流进行高效的处理。Flink 的核心是流处理，当然它也能支持批处理，Flink 将批处理看成是流处理的一种特殊情况，即数据流是有明确界限的。这和 Spark Streaming 的思想是完全相反
+在压缩列表中，如果我们要查找定位第一个元素和最后一个元素，可以通过表头三个字段的长度直接定位
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2021/01/05/Flink%E6%A6%82%E5%BF%B5/#more" rel="contents">
+            <a class="btn" href="/2021/02/06/redis%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1188,7 +1381,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/12/25/%E5%AD%97%E8%8A%82/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/30/hystrix%E6%B1%87%E6%80%BB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1207,7 +1400,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/12/25/%E5%AD%97%E8%8A%82/" itemprop="url">字节</a></h1>
+                <a class="post-title-link" href="/2021/01/30/hystrix%E6%B1%87%E6%80%BB/" itemprop="url">hystrix汇总</a></h1>
         
 
         <div class="post-meta">
@@ -1219,8 +1412,8 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-25T10:46:44+08:00">
-                2020-12-25
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-30T00:36:14+08:00">
+                2021-01-30
               </time>
             
 
@@ -1242,8 +1435,8 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9D%A2%E7%BB%8F/" itemprop="url" rel="index">
-                    <span itemprop="name">面经</span>
+                  <a href="/categories/%E6%B1%87%E6%80%BB/" itemprop="url" rel="index">
+                    <span itemprop="name">汇总</span>
                   </a>
                 </span>
 
@@ -1273,7 +1466,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3k
+                  14.3k
                 </span>
               
 
@@ -1289,7 +1482,7 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  10
+                  57
                 </span>
               
             </div>
@@ -1313,19 +1506,13 @@ CheckPoints为了使 Flink 的状态具有良好的容错性，Flink 提供了�
         
           
           [TOC]
-Java基础java中Object类中有哪些方法，他们的作用分别是什么？
-java中的多态的含义？
-java常用的会抛出哪些异常类型？
-代理模式的API
-集合
-HashMap多线程下会有什么问题？
-基本数据类型
-装箱拆箱？（-128到127）
-说说String、StringBuilder
+用 Hystrix 构建高可用服务架构参考 Hystrix Home。
+Hystrix 是什么？在分布式系统中，每个服务都可能会调用很多其他服务，被调用的那些服务就是依赖服务，有的时候某些依赖服务出现故障也是很正常的。
+Hystrix 可以让我们在分布式系统中对服务间的调用进行控制，加入
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/12/25/%E5%AD%97%E8%8A%82/#more" rel="contents">
+            <a class="btn" href="/2021/01/30/hystrix%E6%B1%87%E6%80%BB/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1376,7 +1563,7 @@ HashMap多线程下会有什么问题？
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/12/23/%E4%BA%A4%E6%9B%BF%E6%89%93%E5%8D%B0ABC/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/30/dubbo%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1395,7 +1582,7 @@ HashMap多线程下会有什么问题？
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/12/23/%E4%BA%A4%E6%9B%BF%E6%89%93%E5%8D%B0ABC/" itemprop="url">交替打印ABC</a></h1>
+                <a class="post-title-link" href="/2021/01/30/dubbo%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" itemprop="url">dubbo的负载均衡</a></h1>
         
 
         <div class="post-meta">
@@ -1407,8 +1594,8 @@ HashMap多线程下会有什么问题？
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-23T19:12:05+08:00">
-                2020-12-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-30T00:29:21+08:00">
+                2021-01-30
               </time>
             
 
@@ -1430,8 +1617,8 @@ HashMap多线程下会有什么问题？
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index">
-                    <span itemprop="name">算法面试题</span>
+                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index">
+                    <span itemprop="name">系统设计</span>
                   </a>
                 </span>
 
@@ -1461,7 +1648,7 @@ HashMap多线程下会有什么问题？
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.7k
+                  1.1k
                 </span>
               
 
@@ -1477,7 +1664,7 @@ HashMap多线程下会有什么问题？
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  16
+                  4
                 </span>
               
             </div>
@@ -1500,13 +1687,13 @@ HashMap多线程下会有什么问题？
       
         
           
-          [TOC]
-一、题目描述建立三个线程A、B、C，A线程打印10次字母A，B线程打印10次字母B,C线程打印10次字母C，但是要求三个线程同时运行，并且实现交替打印，即按照ABCABCABC的顺序打印。
-二、Synchronized同步法1、基本思路使用同步块和wait、notify的方法控制三个线程
+          面试题dubbo 负载均衡策略和集群容错策略都有哪些？动态代理策略呢？
+面试官心理分析继续深问吧，这些都是用 dubbo 必须知道的一些东西，你得知道基本原理，知道序列化是什么协议，还得知道具体用 dubbo 的时候，如何负载均衡，如何高可用，如何动态代理。
+说白了，就是看你对 dubbo 熟悉不熟
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/12/23/%E4%BA%A4%E6%9B%BF%E6%89%93%E5%8D%B0ABC/#more" rel="contents">
+            <a class="btn" href="/2021/01/30/dubbo%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1557,7 +1744,7 @@ HashMap多线程下会有什么问题？
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/12/20/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/30/dubbo%E7%9A%84%E5%BA%8F%E5%88%97%E5%8C%96%E5%8D%8F%E8%AE%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1576,7 +1763,7 @@ HashMap多线程下会有什么问题？
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/12/20/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/" itemprop="url">计算机组成</a></h1>
+                <a class="post-title-link" href="/2021/01/30/dubbo%E7%9A%84%E5%BA%8F%E5%88%97%E5%8C%96%E5%8D%8F%E8%AE%AE/" itemprop="url">dubbo的序列化协议</a></h1>
         
 
         <div class="post-meta">
@@ -1588,8 +1775,8 @@ HashMap多线程下会有什么问题？
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-20T20:06:42+08:00">
-                2020-12-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-30T00:28:12+08:00">
+                2021-01-30
               </time>
             
 
@@ -1611,8 +1798,8 @@ HashMap多线程下会有什么问题？
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index">
-                    <span itemprop="name">框架</span>
+                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index">
+                    <span itemprop="name">系统设计</span>
                   </a>
                 </span>
 
@@ -1642,7 +1829,7 @@ HashMap多线程下会有什么问题？
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  315
+                  902
                 </span>
               
 
@@ -1658,7 +1845,7 @@ HashMap多线程下会有什么问题？
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  3
                 </span>
               
             </div>
@@ -1681,15 +1868,12 @@ HashMap多线程下会有什么问题？
       
         
           
-          CPU 32 64位啥意思，内存最小单位，CPU如何寻址
-计算机中的位数指的是CPU一次能处理的最大位数
-内存是由很多个内存单元组成的，每个内存单元占8个bit位（1字节），也就是说内存中有多少个内存单元就意味着可以存储多少个字节，下面是一个只有两个内存单元的内存概念图：
-
-计算机有哪些存储设备，c
+          面试题dubbo 支持哪些通信协议？支持哪些序列化协议？说一下 Hessian 的数据结构？PB 知道吗？为什么 PB 的效率是最高的？
+面试官心理分析上一个问题，说说 dubbo 的基本工作原理，那是你必须知道的，至少要知道 dubbo 分成哪些层，然后平时怎么发起 rpc 请求的，注册、发现、调
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/12/20/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/#more" rel="contents">
+            <a class="btn" href="/2021/01/30/dubbo%E7%9A%84%E5%BA%8F%E5%88%97%E5%8C%96%E5%8D%8F%E8%AE%AE/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1740,7 +1924,7 @@ HashMap多线程下会有什么问题？
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/12/19/%E4%B8%8D%E7%94%A8uuid%E5%BD%93%E4%B8%BB%E9%94%AE/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/01/30/mysql%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1759,7 +1943,7 @@ HashMap多线程下会有什么问题？
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/12/19/%E4%B8%8D%E7%94%A8uuid%E5%BD%93%E4%B8%BB%E9%94%AE/" itemprop="url">不用uuid当主键</a></h1>
+                <a class="post-title-link" href="/2021/01/30/mysql%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/" itemprop="url">mysql读写分离</a></h1>
         
 
         <div class="post-meta">
@@ -1771,8 +1955,8 @@ HashMap多线程下会有什么问题？
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-19T08:21:38+08:00">
-                2020-12-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-30T00:23:14+08:00">
+                2021-01-30
               </time>
             
 
@@ -1825,7 +2009,7 @@ HashMap多线程下会有什么问题？
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  908
+                  1.2k
                 </span>
               
 
@@ -1841,7 +2025,7 @@ HashMap多线程下会有什么问题？
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  4
                 </span>
               
             </div>
@@ -1864,198 +2048,12 @@ HashMap多线程下会有什么问题？
       
         
           
-          [TOC]
-前置知识聚簇索引：将数据存储与索引放到了一块，索引结构的叶子节点保存了行数据
-非聚簇索引：将数据与索引分开存储，索引结构的叶子节点指向了数据对应的位置
-Mysql Btree 索引结构
-
-如果是聚簇索引，那么索引的叶节点保存了索引值以及数据data。
-Page 页：是Innodb存储的最
+          面试题你们有没有做 MySQL 读写分离？如何实现 MySQL 的读写分离？MySQL 主从复制原理的是啥？如何解决 MySQL 主从同步的延时问题？
+面试官心理分析高并发这个阶段，肯定是需要做读写分离的，啥意思？因为实际上大部分的互联网公司，一些网站，或者是 app，其实都是读多写少。所以针对这个
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/12/19/%E4%B8%8D%E7%94%A8uuid%E5%BD%93%E4%B8%BB%E9%94%AE/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/12/17/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avator.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/12/17/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url">Spring中的设计模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-17T21:31:12+08:00">
-                2020-12-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index">
-                    <span itemprop="name">设计模式</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  244
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  1
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          工厂简单工厂在创建一个对象时不向客户暴露内部细节，并提供一个创建对象的通用接口。一个工厂生产多种产品
-工厂每种工厂生产不同的产品
-抽象工厂抽象工厂模式创建的是对象家族，也就是很多对象而不是一个对象，并且这些对象是相关的，也就是说必须一起创建出来。而工厂方法模式只是用于创建一个对象，这和抽象工厂模式有
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/12/17/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+            <a class="btn" href="/2021/01/30/mysql%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -2097,7 +2095,7 @@ Page 页：是Innodb存储的最
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/">&lt;i class&#x3D;&quot;fa fa-angle-left&quot;&gt;&lt;&#x2F;i&gt;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" href="/page/6/">&lt;i class&#x3D;&quot;fa fa-angle-right&quot;&gt;&lt;&#x2F;i&gt;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&lt;i class&#x3D;&quot;fa fa-angle-left&quot;&gt;&lt;&#x2F;i&gt;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/6/">&lt;i class&#x3D;&quot;fa fa-angle-right&quot;&gt;&lt;&#x2F;i&gt;</a>
   </nav>
 
 
@@ -2148,7 +2146,7 @@ Page 页：是Innodb存储的最
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2160,7 +2158,7 @@ Page 页：是Innodb存储的最
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2241,7 +2239,7 @@ Page 页：是Innodb存储的最
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

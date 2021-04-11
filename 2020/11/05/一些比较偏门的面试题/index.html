@@ -79,16 +79,19 @@
 
 
 
-<meta name="description" content="[TOC] Java基础枚举可以new吗 不行 私有构造 unicode与utf-8  Unicode 是「字符集」 UTF-8 是「编码规则」  UTF-16（字符用两个字节或四个字节表示）和 UTF-32（字符用四个字节表示）UTF-8 最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号 UTF-8表示最小单位1字节 GBK编码：是指中国的中文字符，其它它包含了简体">
+<meta name="description" content="[TOC] Java基础大端序小端序1.小端法(Little-Endian)就是低位字节排放在内存的低地址端(即该值的起始地址),高位字节排放在内存的高地址端; 2.大端法(Big-Endian)就是高位字节排放在内存的低地址端(即该值的起始地址),低位字节排放在内存的高地址端;  枚举可以new吗 不行 私有构造 unicode与utf-8  Unicode 是「字符集」 UTF-8 是「编码规">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一些比较偏门的面试题">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/05/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%81%8F%E9%97%A8%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] Java基础枚举可以new吗 不行 私有构造 unicode与utf-8  Unicode 是「字符集」 UTF-8 是「编码规则」  UTF-16（字符用两个字节或四个字节表示）和 UTF-32（字符用四个字节表示）UTF-8 最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号 UTF-8表示最小单位1字节 GBK编码：是指中国的中文字符，其它它包含了简体">
+<meta property="og:description" content="[TOC] Java基础大端序小端序1.小端法(Little-Endian)就是低位字节排放在内存的低地址端(即该值的起始地址),高位字节排放在内存的高地址端; 2.大端法(Big-Endian)就是高位字节排放在内存的低地址端(即该值的起始地址),低位字节排放在内存的高地址端;  枚举可以new吗 不行 私有构造 unicode与utf-8  Unicode 是「字符集」 UTF-8 是「编码规">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2843224-029d06502bd58f0e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/826/format/webp">
+<meta property="og:image" content="http://aamingaa.github.io/2020/11/05/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%81%8F%E9%97%A8%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210324230403589.png">
 <meta property="article:published_time" content="2020-11-05T03:19:28.000Z">
-<meta property="article:modified_time" content="2020-12-20T13:57:05.850Z">
+<meta property="article:modified_time" content="2021-03-28T15:42:30.322Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2843224-029d06502bd58f0e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/826/format/webp">
 
 
 
@@ -373,7 +376,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.8k
+                  7.5k
                 </span>
               
 
@@ -389,7 +392,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  10
+                  26
                 </span>
               
             </div>
@@ -411,7 +414,8 @@
 
       
         <p>[TOC]</p>
-<h3 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h3><p>枚举可以new吗 不行 私有构造</p>
+<h3 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h3><h3 id="大端序小端序"><a href="#大端序小端序" class="headerlink" title="大端序小端序"></a>大端序小端序</h3><p>1.小端法(Little-Endian)就是低位字节排放在内存的低地址端(即该值的起始地址),高位字节排放在内存的高地址端; 2.大端法(Big-Endian)就是高位字节排放在内存的低地址端(即该值的起始地址),低位字节排放在内存的高地址端; </p>
+<p>枚举可以new吗 不行 私有构造</p>
 <p>unicode与utf-8</p>
 <ul>
 <li>Unicode 是「字符集」</li>
@@ -430,7 +434,28 @@
 <p>String，StringBuffer，StringBuilder</p>
 <p>Integer自动拆箱装箱（可能和字面量类型一块考，比如包装类的对象和字面量相加有几次拆箱装箱）什么类是final的（String，Integer等包装类）</p>
 <p>\5. 类加载过程和机制（可能在原理的基础上，结合实际的例子考察，如各种地方加了各种修饰符后new一个子类或者父类输出什么）<br>\6. 对象死亡的条件<br>\7. OOM发生的位置和解决办法</p>
-<h3 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h3><p>10.101.102.103是公网IP还是内网IP，如何区分公网内网？</p>
+<p>Java的线程和操作系统的线程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">而到了JDK1.2及以后，JVM选择了更加稳健且方便使用的操作系统原生的线程模型，通过系统调用，将程序的线程交给了操作系统内核进行调度</span><br><span class="line"></span><br><span class="line">对于Sun JDK来说，它的Windows版与Linux版都是使用一对一的线程模型实现的，一条Java线程就映射到一条轻量级进程之中，因为Windows和Linux系统提供的线程模型就是一对一的。</span><br></pre></td></tr></table></figure>
+
+<p>线程通信的机制</p>
+<ol>
+<li>volatile</li>
+<li>等待/通知机制</li>
+<li>join方式</li>
+<li>threadLocal</li>
+</ol>
+<p>TreeMap的结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">static final class Entry&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; &#123;</span><br><span class="line">        K key;</span><br><span class="line">        V value;</span><br><span class="line">        Entry&lt;K,V&gt; left;</span><br><span class="line">        Entry&lt;K,V&gt; right;</span><br><span class="line">        Entry&lt;K,V&gt; parent;</span><br><span class="line">        boolean color &#x3D; BLACK;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h3><p>MTU 和 MSS 区别</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/2843224-029d06502bd58f0e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/826/format/webp" alt="img"></p>
+<p>MTU： Maximum Transmit Unit，最大传输单元，即物理接口（数据链路层）提供给其上层（通常是IP层）最大一次传输数据的大小；以普遍使用的以太网接口为例，缺省MTU=1500 Byte，这是以太网接口对IP层的约束，如果IP层有&lt;=1500 byte 需要发送，只需要一个IP包就可以完成发送任务；如果IP层有&gt; 1500 byte 数据需要发送，需要分片才能完成发送，这些分片有一个共同点，即IP Header ID相同。</p>
+<p>MSS：Maximum Segment Size ，TCP提交给IP层最大分段大小，不包含TCP Header和 TCP Option，只包含TCP Payload ，MSS是TCP用来限制application层最大的发送字节数。如果底层物理接口MTU= 1500 byte，则 MSS = 1500- 20(IP Header) -20 (TCP Header) = 1460 byte，如果application 有2000 byte发送，需要两个segment才可以完成发送，第一个TCP segment = 1460，第二个TCP segment = 540。</p>
+<p>http协议</p>
+<p><em>http</em>是一个简单的请求-响应协议，它通常运行在TCP之上。它指定了客户端可能发送给服务器什么样的消息以及得到什么样的响应。</p>
+<p>10.101.102.103是公网IP还是内网IP，如何区分公网内网？</p>
 <p>//了解中间人攻击和跨域攻击吗?</p>
 <p>//可以伪造证书吗？</p>
 <p>// BBR 怎么快，怎么实现，和之前的有什么区别?</p>
@@ -439,12 +464,78 @@
 <li><a href="https://www.nowcoder.com/jump/super-jump/word?word=客户端" target="_blank" rel="noopener">客户端</a>向服务器发送一个包，它一直都没有收到服务器返回的 ACK，该怎么处理？</li>
 </ol>
 <p>滑动窗口大小如何确定</p>
+<p>1.延迟应答</p>
+<p>如果接受数据的主机立刻返回ACK应答，这时返回的窗口可能比较小</p>
+<p>接收端处理数据的速度很快，可能很快就处理完缓冲区的数据，接收端稍微迟一会儿作出应答，完全可以给发送端返回一个更大的窗口发送数据。</p>
+<p>窗口越大，网络吞吐量就越大，传输效率就会提高</p>
+<p>为什么非对称加密比对称加密慢？<br>这是因为对称加密主要的运算是位运算，速度非常快，如果使用硬件计算，速度会更快。但是非对称加密计算一般都比较复杂，比如 RSA，它里面涉及到大数乘法、大数模等等运算</p>
+<p>非对称加解密，私钥和公钥到底是谁来加密，谁来解密</p>
+<p>第一种用法：公钥加密，私钥解密。—用于加解密<br>第二种用法：私钥签名，公钥验签。—用于签名</p>
+<p>有点混乱，不要去硬记，总结一下:<br>你只要想：<br>既然是加密，那肯定是不希望别人知道我的消息，所以只有我才能解密，所以可得出公钥负责加密，私钥负责解密；<br>既然是签名，那肯定是不希望有人冒充我发消息，只有我才能发布这个签名，所以可得出私钥负责签名，公钥负责验证。</p>
+<p>短连接和长连接应用场景</p>
+<p>长连接多用于操作频繁，点对点的通讯，而且连接数不能太多情况。每个 TCP 连接都需要三步握手，这需要时间，如果每个操作都是先连接，再操作的话那么处理速度会降低很多， 所以每个操作完后都不断开，下次处理时直接发送数据包就 OK 了，不用建立 TCP 连接。例如： 数据库的连接用长连接， 如果用短连接频繁的通信会造成 socket 错误，而且频繁的 socket创建也是对资源的浪费。</p>
+<p>而像 WEB 网站的 http 服务一般都用短链接，因为长连接对于服务端来说会耗费一定的 资源，而像 WEB 网站这么频繁的成千上万甚至上亿客户端的连接用短连接会更省一些资源， 如果用长连接，而且同时有成千上万的用户，如果每个用户都占用一个连接的话，那可想而知吧。所以并发量大，但每个用户无需频繁操作情况下需用短连接。</p>
+<p>心跳包的机制？</p>
+<p>方法1：应用层自己实现的心跳包<br>方法2：TCP的KeepAlive保活机制 </p>
+<p><strong>心跳检测步骤：</strong><br>  1客户端每隔一个时间间隔发生一个探测包给服务器<br>  2客户端发包时启动一个超时定时器<br>  3服务器端接收到检测包，应该回应一个包<br>  4如果客户机收到服务器的应答包，则说明服务器正常，删除超时定时器<br>  5如果客户端的超时定时器超时，依然没有收到应答包，则说明服务器挂了</p>
+<p>面向数据流和面向报文？</p>
+<p>TCP面向字节流下</p>
+<p>结合TCP的概念，水池就好比接收缓存，倒水就相当于发送数据，接水就相当于读取数据。好比你通过TCP连接给另一端发送数据，你 <strong>只调用了一次write，发送了100个字节，但是对方可以分10次收完，每次10个字节；你也可以调用10次write，每次10个字节，但是对方可以一次就收完。</strong>（假设数据都能到达）但是，你发送的数据量不能大于对方的接收缓存（流量控制），如果你硬是要发送过量数据，则对方的缓存满了就会把多出的数据丢弃。</p>
+<p>UDP面向报文</p>
+<p>UDP和TCP不同，<strong>发送端调用了几次write，接收端必须用相同次数的read读完</strong>。UPD是基于报文的，在接收的时候，每次最多只能读取一个报文，报文和报文是不会合并的，如果缓冲区小于报文长度，则多出的部分会被丢弃。也就说，如果不指定MSG_PEEK标志，每次读取操作将消耗一个报文。</p>
+<p>原因</p>
+<p>其实，这种不同是由TCP和UDP的特性决定的。TCP是面向连接的，也就是说，在连接持续的过程中，socket中收到的数据都是由同一台主机发出的（劫持什么的不考虑），因此，知道保证数据是有序的到达就行了，至于每次读取多少数据自己看着办。</p>
+<p>而UDP是无连接的协议，也就是说，只要知道接收端的IP和端口，且网络是可达的，任何主机都可以向接收端发送数据。这时候，如果一次能读取超过一个报文的数据，则会乱套。比如，主机A向发送了报文P1，主机B发送了报文P2，如果能够读取超过一个报文的数据，那么就会将P1和P2的数据合并在了一起，这样的数据是没有意义的。</p>
+<p>UDP最大包长多少？首部的字段和长度？为什么是1500字节呢？</p>
+<p>１．链路层的最大传输单元MTU在以太网里是１５００个字节；<br>２．IP包如果超过１５００，在链路层就会对包进行分片；<br>３．UDP包分为包头和正文，　包头共有６４位（８字节），分别是１６位源端口，１６位目的端口，１６位UDP包长度和１６位校验和．因此UDP包正文的 最大长度是２^16 - 1=65535字节．</p>
+<p>UDP会分包吗？</p>
+<p>UDP层 不拆分包，但IP层拆分包。若UDP报文长度，超过1472字节，则发送方的 IP层 分包)，会将报文拆分成多个IP报文；接收方的IP层，会将报文进行重组。IP header中有总长度和片偏移。</p>
 <h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><p>线程与协程。（协程不会）</p>
-<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p>说一下快排的最好和最坏的时间复杂度？稳定吗？</p>
+<p>64位地址的内存空间</p>
+<p>64位系统的地址空间不是2^32， 也不是2^64，而一般是2^48。因为并不需要2^64那么大的寻址空间，过大的空间只会导致资源的浪费。</p>
+<p>32位呢？</p>
+<p>2^32</p>
+<p>用户态和内核态的区别？</p>
+<p>shell顾名思义，就是外壳的意思。就好像把内核包裹起来的外壳。它是一种特殊的应用程序，俗称命令行。为了方便用户和系统交互，一般一个shell对应一个终端，呈现给用户交互窗口。</p>
+<p>内核：它是一种<strong>特殊的软件程序</strong>，特殊在哪儿呢？**控制计算机的硬件资源，例如协调CPU资源，分配内存资源。</p>
+<p>用户态就是提供应用程序运行的空间，为了使应用程序访问到内核管理的资源例如CPU，内存，I/O。内核必须提供一组通用的访问接口，这些接口就叫<strong>系统调用。</strong></p>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p><img src="/2020/11/05/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%81%8F%E9%97%A8%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210324230403589.png" alt="image-20210324230403589"></p>
+<p>快排、冒泡、堆排序时间复杂度分布是多少？</p>
+<p>快速排序怎么选择枢轴点，衡量指标是什么</p>
+<p>你说一下递归的优缺点吧，如何优化？如何进行剪枝搜索？</p>
+<p>冒泡和快排各有什么优缺点</p>
+<p>说一下快排的最好和最坏的时间复杂度？稳定吗？</p>
 <p>邻接表和邻接矩阵？</p>
 <p>识别2的n次方</p>
 <p>用int值表示ip如何做（刚好32位bit一对一映射），写个伪代码做transfer</p>
-<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>模糊查询like语句该怎么写?<br>第1种：在Java代码中添加sql通配符。</p>
+<p>跳表的优点是什么？为什么不用红黑树？</p>
+<p>跳表范围查询容易写。</p>
+<p>为什么用红黑树而不用跳表？</p>
+<p>epoll里面没有范围查询的需求。epoll就只是红黑树建树 查询什么的</p>
+<p>一亿个数怎么找最大的10万个，时间复杂度多少<br>10000个数，小顶堆思路 找前100个和找前1000个 的时间复杂度有什么区别？</p>
+<p>有一个大文件，记录了每个人一个月每次开车的起始经纬度，问怎么找到每个人的住所的位置</p>
+<p>快速排序的时间复杂度是多少？最好情况和最坏情况出现在什么地方？为什么选取最后一个元素作为key值？</p>
+<p>对大量数据取前10大（讲了长度为10的堆排序、桶、基数以及时间fu复杂度），感觉不该说桶和基数的，计算读10遍复杂度也更低。但我觉得堆排序是最完美了，但是面试官并不满意，也可能我太慌了，没说清楚。<br>nlgn的算法有什么相同点？表示不大清楚堆排序和其他有什么区别，其他俩都是分而治之，而且没有重叠。</p>
+<p>场景题：现在我有2T的文件数据，数据是  IP地址 + 时间 + 访问域名，统计在一定的时间内根据域名分类的IP访问数（IP去重）（说了一下分块读文件，然后根据时间或者域名切分，之后就乱答一通）</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>主键和唯一键</p>
+<p><strong>UNIQUED</strong> 可空，可以在一个表里的一个或多个字段定义；<strong><em>\</em>PRIMARY KEY**</strong> 不可空不可重复，在一个表里可以定义联合主键；</p>
+<p>简单的说，<strong>primary key = unique +  not null</strong> </p>
+<p>定义了 <strong>UNIQUE</strong> 约束的字段中不能包含重复值</p>
+<p>mysql，可以在text类型的字段上加索引吗？</p>
+<p>当然可以，如果直接建立是不可以的，只能在text类型字段上建立带长度的索引，比如这样：alter table test add index idx_text(aaa(10)); 其中，aaa字段类型为text</p>
+<p>分库分表分别解决了什么问题？</p>
+<p>分库：</p>
+<ul>
+<li><p>高并发的环境下，分库才能将数据库部署在不同的机器上</p>
+</li>
+<li><p>单机的连接数受限</p>
+</li>
+<li><p>数据库文件会得很大，数据库备份和恢复需要耗时很长</p>
+</li>
+</ul>
+<p>当单表的数据量达到1000W或100G以后，读写的性能会下降，即使有索引，索引也会变得很大，性能同样会降下</p>
+<p><a href="https://blog.csdn.net/drdongshiye/article/details/100856475" target="_blank" rel="noopener">https://blog.csdn.net/drdongshiye/article/details/100856475</a></p>
+<p>模糊查询like语句该怎么写?<br>第1种：在Java代码中添加sql通配符。</p>
 <p>一个线程在10：00：00（十点0分0秒）访问数据库进行查询操作，10：00：10（10点0分十秒）返回，但是另一个线程在10：00：01对数据库同一个元素进行了修改，问返回的结果是修改前的还是修改后的</p>
 <p><a href="#">复制代码</a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string wildcardname &#x3D; “%smi%”;&#96;&#96;list names &#x3D; mapper.selectlike(wildcardname);&#96; &#96; &#96;&#96;select * from foo where bar like #&#123;value&#125;</span><br></pre></td></tr></table></figure>
@@ -469,11 +560,41 @@
 <p>Mysql聚蔟索引和非聚簇索引的区别（讲了Innodb和Myisyam的区别，文件结构，和两种索引的区别）</p>
 <p>要求建立学生、课程、选课、成绩四张表，要求设计字段及相应的数据类型并建立主键</p>
 <h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>redis的跳表要实现快速查找第k小的元素怎么做</p>
+<p>为什么Redis单线程这么快？</p>
+<p>1、完全基于内存，绝大部分请求是纯粹的内存操作，非常快速。数据存在内存中，类似于HashMap，HashMap的优势就是查找和操作的时间复杂度都是O(1)；</p>
+<p>2、数据结构简单，对数据操作也简单，Redis中的数据结构是专门进行设计的；</p>
+<p>3、采用单线程，避免了不必要的上下文切换和竞争条件，也不存在多进程或者多线程导致的切换而消耗 CPU，不用去考虑各种锁的问题，不存在加锁释放锁操作，没有因为可能出现死锁而导致的性能消耗；</p>
+<p>4、使用多路I/O复用模型，非阻塞IO；</p>
 <h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>CAS怎么实现禁止指令重排？</p>
 <h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>linux 文件系统架构</p>
 <p>inode 有什么信息</p>
 <p>看tw状态的进程load average 是什么，怎么看，怎么分析</p>
 <p>linux底层的零拷贝技术（<strong>经历4次 -》3次 -》2次拷贝的优化历程）</strong></p>
+<p>Linux中-aux是什么意思？ a all u </p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-a</td>
+<td>显示所有进程（包括其他用户的进程）</td>
+</tr>
+<tr>
+<td>-u</td>
+<td>用户以及其他详细信息</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>显示没有控制终端的进程</td>
+</tr>
+</tbody></table>
+<p>Linux中top命令是做什么的？</p>
+<p>经常用来监控linux的系统状况</p>
+<p>swap？</p>
+<p>swap space是磁盘上的一块区域，当系统物理内存吃紧时，Linux会将内存中不常访问的数据保存到swap上，这样系统就有更多的物理内存为各个进程服务</p>
 <h3 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h3><p> tomcat如果有两个<a href>项目</a>，两个<a href>项目</a>里面如果有相同的class，那么tomcat是如何对其进行区别?</p>
 <p>分布式系统如何实现数据一致性</p>
 <h3 id="虚拟机？"><a href="#虚拟机？" class="headerlink" title="虚拟机？"></a>虚拟机？</h3><p>栈区内存会有垃圾回收吗？</p>
@@ -483,6 +604,9 @@
 <p>了解哪些工具（JvisualVM、Jprofiler、Jstack）</p>
 <p>Jmap了解吗（no）</p>
 <p>如果想把JVM内存固定为32M如何操作？（XMS、XMX同时设置）</p>
+<p>怎么解决垃圾回收中的跨代引用问题</p>
+<p>符号引用和直接引用</p>
+<p>符号引用以一组符号来描述所引用的目标。符号引用可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可</p>
 <h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><p>单例模式，懒汉，饿汉，双重校验的优缺点</p>
 <h3 id="Netty"><a href="#Netty" class="headerlink" title="Netty"></a>Netty</h3><ol>
 <li>如何保持长连接（Netty）</li>
@@ -525,6 +649,86 @@
 <p>DES 和 AES 区别?</p>
 <p>rpc 微服务？ 怎么保证数据一致？</p>
 <h3 id="算法-1"><a href="#算法-1" class="headerlink" title="算法"></a>算法</h3><p>看你一面也写了一个topk的算法，那我变一下，依然是这个场景，只不过我现在要统计字符出现的次数，拿两个or多个线程去统计，怎么做？<br>括号匹配<br>括号匹配变式：括号中有一个特殊符号<em>，这个</em>可以替代左括号或者右括号，也可以代表一个空，即什么也不代表，来做做？</p>
+<h3 id="阿里"><a href="#阿里" class="headerlink" title="阿里"></a>阿里</h3><p>分布式锁<br>并发情况下HashMap什么时候会修改失败</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">put 同时覆盖</span><br></pre></td></tr></table></figure>
+
+
+<p>常见的设计模式</p>
+<p>CountDownLatch 和 Barrier 的不同</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CountDownLatch的计数器只能使用一次。而CyclicBarrier的计数器可以使用reset()</span><br><span class="line">方法重置。所以CyclicBarrier能处理更为复杂的业务场景，比如如果计算发生错误，可以重置计数器，并让线程们重新执行一次。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>哪些情况下会回表<br>ORDER BY 避免回表<br>如果 ORDER BY 后面不能加索引呢<br>现在有个表，有个 create_time，如果 ORDER BY create_time 需不需要回表<br>线上业务，ORDER BY 不能加索引，可以改变 SQL 语句，如何保证<br>线上业务大表加索引会有什么问题</p>
+<p>@Autowired 和 @Resource 是如何拿到对应的关系的<br>@Bean 注解是如何实现的</p>
+<p>Redis怎么保证高可用</p>
+<p>JVM</p>
+<ul>
+<li><p>怎么查看gc使用</p>
+<p>springmvc </p>
+</li>
+<li><p>springmvc的请求流程 </p>
+</li>
+<li><p>spring自带的视图解析器（渲染解析器）是什么？ </p>
+</li>
+<li><p>拦截器在请求流程中怎么体现的，拦截器异常，请求还能继续吗？</p>
+</li>
+</ul>
+<p>怎么查看gc使用?</p>
+<p>IOC实例化bean的顺序，是根据xml读取的顺序去实例化的吗？不考虑懒加载。如：a依赖b，b依赖c这时候先初始化谁，spring是怎么知道依赖关系的？</p>
+<p>动态代理在什么时候进行替换被代理对象的？</p>
+<p>#和$符号的底层实现</p>
+<ol>
+<li>spring用注解的话，两个bean的id一样会怎么办</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">5.网页的一个方法只能一分钟有1000个访问，怎么实现？</span><br><span class="line">自己讲了，设一个变量，实现一个倒计时方法 一直while true的进行计时60s重新赋值。然后在网页方法写个判断语句，变量还有的话对变量进行减1。</span><br><span class="line">6.url查重 一个url24h之内只能访问一次，怎么实现？</span><br><span class="line">把url和存活倒计时，封装一个类，来一个请求实例为一个对象，用Set存可以查重。</span><br><span class="line">追问：我需要全部都查一遍吗？</span><br><span class="line">用TreeSet重写comparator进行存活时间的判断，从存活时间最长的开始，边查边从set里删除，到第一个满足24h内停止删除。</span><br></pre></td></tr></table></figure>
+
+<p>滑动窗口</p>
+<p>8.你认为12306火车票的技术和业务的困难到底是什么？</p>
+<p> 自己讲了和淘宝双11的不同 双11只是网络端，12306要考虑手机 pc 人工窗口 自助售票机的保持数据的一致性。</p>
+<p> 为了抗高并发，火车票一般都是确定时间，比如13点准时售票，以确定的时间可以提前准备服务器扩容。</p>
+<p> 而且火车票一般不同的车型都不会一个时间售票，比如高铁13点 普通绿皮12点 ，进行分流。</p>
+<p>熟悉得<a href="https://www.nowcoder.com/jump/super-jump/word?word=排序" target="_blank" rel="noopener">排序</a><a href="https://www.nowcoder.com/jump/super-jump/word?word=算法" target="_blank" rel="noopener">算法</a>，选一个详细讲讲。堆排，归并、快排啥的，详细讲了堆排。</p>
+<p>半连接攻击</p>
+<p>1.hashmap的遍历方式有哪些，哪种性能更好？ <a href="https://xie.infoq.cn/article/3a961fdeb7010d3370d992485#:" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1623343</a></p>
+<p>2.key值重复了会怎么样？</p>
+<p>3.用mybatis时JDBC做的是什么？<br>5.MySQL数据类型 char varchar text char比varchar的优势？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1、 char长度固定， 即每条数据占用等长字节空间；适合用在身份证号码、手机号码等定。</span><br><span class="line"></span><br><span class="line">2、 varchar可变长度，可以设置最大长度；适合用在长度可变的属性。</span><br><span class="line"></span><br><span class="line">3、 text不设置长度， 当不知道属性的最大长度时，适合用text。</span><br><span class="line"></span><br><span class="line">按照查询速度： char最快， varchar次之，text最慢。</span><br></pre></td></tr></table></figure>
+
+<p>10.http请求如何传参？</p>
+<p>11.介绍rest<br>12.http方法有哪些？（get post put delete）</p>
+<p>JPA 和 MyBatis 做对象映射的区别?原理?</p>
+<p>有中间人劫持则么办?</p>
+<ol>
+<li>有一个线程要等待其他线程执行完再执行?</li>
+<li>有一个线程要等待其他线程都就绪再执行?</li>
+</ol>
+<p><a href="https://www.nowcoder.com/jump/super-jump/word?word=海量数据" target="_blank" rel="noopener">海量数据</a>取前 5.</p>
+<ol start="2">
+<li><p>Tomcat 的设计模式了解么?</p>
+</li>
+<li><p>方法区的大小怎么设置?</p>
+</li>
+<li><p>栈大小怎么设置?</p>
+</li>
+<li><p>程序运行的时候,怎么监控内存使用情况?</p>
+</li>
+<li><p>程序运行的时候,怎么看堆栈信息?</p>
+</li>
+</ol>
+<p>什么是”当前读”?</p>
+<ol>
+<li>在生成 RDB 的过程当中,还能继续进行写入么?</li>
+<li>为什么 AOF 是数据先落盘再写日志?而数据库是先写日志再落盘?</li>
+<li>哨兵的选主策略?一个哨兵是怎么知道其他哨兵的存在的?</li>
+</ol>
+<p>怎么解决垃圾回收中的跨代引用问题</p>
+<p>HashMap底层数据结构</p>
+<p>NIO底层实现原理</p>
+<p>注解</p>
+<p>11.介绍rest</p>
+<p>SQL注入？避免措施？</p>
+<p>try catch</p>
+<p>你的<a href="https://www.nowcoder.com/jump/super-jump/word?word=项目" target="_blank" rel="noopener">项目</a>在设计表的时候给哪些字段加索引</p>
 
       
     </div>
@@ -645,7 +849,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -657,7 +861,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -704,7 +908,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java基础"><span class="nav-number">1.</span> <span class="nav-text">Java基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机网络"><span class="nav-number">2.</span> <span class="nav-text">计算机网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统"><span class="nav-number">3.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">4.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">5.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">6.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">7.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">8.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架"><span class="nav-number">9.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机？"><span class="nav-number">10.</span> <span class="nav-text">虚拟机？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">11.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty"><span class="nav-number">12.</span> <span class="nav-text">Netty</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目"><span class="nav-number">13.</span> <span class="nav-text">项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring"><span class="nav-number">14.</span> <span class="nav-text">Spring</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number"></span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法-1"><span class="nav-number">1.</span> <span class="nav-text">算法</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java基础"><span class="nav-number">1.</span> <span class="nav-text">Java基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大端序小端序"><span class="nav-number">2.</span> <span class="nav-text">大端序小端序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机网络"><span class="nav-number">3.</span> <span class="nav-text">计算机网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统"><span class="nav-number">4.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">5.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">6.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">7.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">8.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">9.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架"><span class="nav-number">10.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机？"><span class="nav-number">11.</span> <span class="nav-text">虚拟机？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">12.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty"><span class="nav-number">13.</span> <span class="nav-text">Netty</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目"><span class="nav-number">14.</span> <span class="nav-text">项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring"><span class="nav-number">15.</span> <span class="nav-text">Spring</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number"></span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法-1"><span class="nav-number">1.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#阿里"><span class="nav-number">2.</span> <span class="nav-text">阿里</span></a></li></ol></div>
             
 
           </div>
@@ -754,7 +958,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

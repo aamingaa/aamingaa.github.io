@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="什么是SpringBoot自动配置？ springboot的自动配置，指的是springboot会自动将一些配置类的bean注册进ioc容器，我们可以需要的地方使用@autowired或者@resource等注解来使用它。 “自动”的表现形式就是我们只需要引我们想用功能的包，相关的配置我们完全不用管，springboot会自动注入这些配置bean，我们直接使用这些bean即可。 SpringBoo">
+<meta name="description" content="什么是SpringBoot自动配置？ springboot的自动配置，指的是springboot会自动将一些配置类的bean注册进ioc容器，我们可以需要的地方使用@autowired或者@resource等注解来使用它。 SpringBoot如何实现自动配置？其实说白了SpringBoot的自动配置，实际是依赖@Conditional来实现的。@Conditional是一个条件注解，是Sprin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="springboot自动配置是如何实现的？">
 <meta property="og:url" content="http://aamingaa.github.io/2021/03/11/springboot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="什么是SpringBoot自动配置？ springboot的自动配置，指的是springboot会自动将一些配置类的bean注册进ioc容器，我们可以需要的地方使用@autowired或者@resource等注解来使用它。 “自动”的表现形式就是我们只需要引我们想用功能的包，相关的配置我们完全不用管，springboot会自动注入这些配置bean，我们直接使用这些bean即可。 SpringBoo">
+<meta property="og:description" content="什么是SpringBoot自动配置？ springboot的自动配置，指的是springboot会自动将一些配置类的bean注册进ioc容器，我们可以需要的地方使用@autowired或者@resource等注解来使用它。 SpringBoot如何实现自动配置？其实说白了SpringBoot的自动配置，实际是依赖@Conditional来实现的。@Conditional是一个条件注解，是Sprin">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190328110922438.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190328110946883.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190328111005615.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70">
@@ -92,7 +92,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190328142202629.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190328142235754.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70">
 <meta property="article:published_time" content="2021-03-11T15:08:51.000Z">
-<meta property="article:modified_time" content="2021-03-11T15:12:39.688Z">
+<meta property="article:modified_time" content="2021-03-30T13:13:32.705Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190328110922438.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70">
@@ -380,7 +380,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  788
+                  578
                 </span>
               
 
@@ -396,7 +396,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  2
                 </span>
               
             </div>
@@ -417,7 +417,7 @@
       
 
       
-        <p>什么是SpringBoot自动配置？<br> springboot的自动配置，指的是springboot会自动将一些配置类的bean注册进ioc容器，我们可以需要的地方使用@autowired或者@resource等注解来使用它。<br> “自动”的表现形式就是我们只需要引我们想用功能的包，相关的配置我们完全不用管，springboot会自动注入这些配置bean，我们直接使用这些bean即可。</p>
+        <p>什么是SpringBoot自动配置？<br> springboot的自动配置，指的是springboot会自动将一些配置类的bean注册进ioc容器，我们可以需要的地方使用@autowired或者@resource等注解来使用它。</p>
 <p>SpringBoot如何实现自动配置？<br>其实说白了SpringBoot的自动配置，实际是依赖<strong>@Conditional</strong>来实现的。@Conditional是一个条件注解，是Spring4提供的一个新特性，用于根据特定条件来控制Bean的创建行为。</p>
 <p>看下@Conditional的实现：</p>
 <pre><code>@Target({ElementType.TYPE, ElementType.METHOD})
@@ -445,15 +445,12 @@ public interface Condition {
      */
     boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata);
 }
-从注释中可以得知如果这个方法返回true则会将标注的类注册到容器中。</code></pre><p>方法里面有两个参数，AnnotatedTypeMetadata注解元数据类，可以判断一个类是否为注解，或获取一个注解类的所有属性以及对应的值。<br>ConditionContext则是专门为Condition服务的一个接口，可以从中获取到Spring容器的一些对象信息。</p>
-<p>当一个 Bean 被 Conditional 注解修饰时，Spring容器会对数组中所有 Condition 接口的 matches() 方法进行判断，当其中所有 Condition 接口的matches()方法都为 ture 时，才会创建 Bean 。</p>
-<p>SpringBoot中对@Conditional的引用链如下：<br>1、main方法所在类的@SpringBootApplication注解</p>
+从注释中可以得知如果这个方法返回true则会将标注的类注册到容器中。</code></pre><p>SpringBoot中对@Conditional的引用链如下：<br>1、main方法所在类的@SpringBootApplication注解</p>
 <p><img src="https://img-blog.csdnimg.cn/20190328110922438.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <p>2、点进去之后可以看到SpringBootApplication注解类上有一个@EnableAutoConfiguration</p>
 <p><img src="https://img-blog.csdnimg.cn/20190328110946883.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <p>3、EnableAutoConfiguration注解类上有一个@Import(AutoConfigurationImportSelector.class)</p>
-<p><img src="https://img-blog.csdnimg.cn/20190328111005615.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>在AutoConfigurationImportSelector类中会执行getCandidateConfigurations（AnnotationMetadata metadata,<br>AnnotationAttributes attributes）方法，里面有一行：<br>List configurations = SpringFactoriesLoader.loadFactoryNames(<br>getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader());<br>这里就会扫描具有MEAT-INF/spring.factories文件的jar包，得到所有的配置类：</p>
+<p><img src="https://img-blog.csdnimg.cn/20190328111005615.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这里就会扫描具有MEAT-INF/spring.factories文件的jar包，得到所有的配置类：</p>
 <p><img src="https://img-blog.csdnimg.cn/20190328155711446.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <p>找个spring.factories文件的内容看下：</p>
 <p><img src="https://img-blog.csdnimg.cn/20190328142202629.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2luc29tc2lh,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
@@ -596,7 +593,7 @@ public class RabbitHealthIndicatorAutoConfiguration extends
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -608,7 +605,7 @@ public class RabbitHealthIndicatorAutoConfiguration extends
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -689,7 +686,7 @@ public class RabbitHealthIndicatorAutoConfiguration extends
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

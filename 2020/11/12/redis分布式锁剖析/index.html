@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="如何用Redis实现分布式锁？ 1https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;6844903616667451399  加锁 123String threadId &#x3D; Thread.currentThread().getId()set（key，threadId ，30，NX）  解锁： 12345if（threadId .equals(redis">
+<meta name="description" content="如何用Redis实现分布式锁？ 1https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;6844903616667451399  加锁 12345678910String threadId &#x3D; Thread.currentThread().getId()if(set(key,threadId,30,NX) &#x3D;&#x3D; 1 ) &amp;#123;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis分布式锁剖析">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/12/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%89%96%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="如何用Redis实现分布式锁？ 1https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;6844903616667451399  加锁 123String threadId &#x3D; Thread.currentThread().getId()set（key，threadId ，30，NX）  解锁： 12345if（threadId .equals(redis">
+<meta property="og:description" content="如何用Redis实现分布式锁？ 1https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;6844903616667451399  加锁 12345678910String threadId &#x3D; Thread.currentThread().getId()if(set(key,threadId,30,NX) &#x3D;&#x3D; 1 ) &amp;#123;">
 <meta property="article:published_time" content="2020-11-12T04:17:21.000Z">
-<meta property="article:modified_time" content="2020-12-14T08:19:28.104Z">
+<meta property="article:modified_time" content="2021-03-25T01:59:16.684Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -373,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  386
+                  408
                 </span>
               
 
@@ -414,10 +414,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;juejin.im&#x2F;post&#x2F;6844903616667451399</span><br></pre></td></tr></table></figure>
 
 <p>加锁</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String threadId &#x3D; Thread.currentThread().getId()</span><br><span class="line"></span><br><span class="line">set（key，threadId ，30，NX）</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String threadId &#x3D; Thread.currentThread().getId()</span><br><span class="line"></span><br><span class="line">if(set(key,threadId,30,NX) &#x3D;&#x3D; 1 ) &#123;</span><br><span class="line">    try&#123;</span><br><span class="line">     dosth()</span><br><span class="line">    &#125;finally&#123;</span><br><span class="line">      if(threadId &#x3D;&#x3D; redis.get(key))</span><br><span class="line">      del(key)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>解锁：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if（threadId .equals(redisClient.get(key))）&#123;</span><br><span class="line"></span><br><span class="line">del(key)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if（threadId .equals(redisClient.get(key))）&#123;</span><br><span class="line"></span><br><span class="line"> del(key)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="为什么要线程的ID？"><a href="#为什么要线程的ID？" class="headerlink" title="为什么要线程的ID？"></a>为什么要线程的ID？</h3><p>如果某些原因导致线程B执行的很慢很慢，过了30秒都没执行完，这时候锁过期自动释放，线程B得到了锁。随后，线程A执行完了任务，线程A接着执行del指令来释放锁。但这时候线程B还没执行完，线程A实际上删除的是线程B加的锁。</p>
 <p>怎么避免这种情况呢？可以在del释放锁之前做一个判断，验证当前的锁是不是自己加的锁。至于具体的实现，可以在加锁的时候把当前的线程ID当做value，并在删除之前验证key对应的value是不是自己线程的ID。</p>
@@ -545,7 +545,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -557,7 +557,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -654,7 +654,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

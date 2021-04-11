@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="[TOC]  数据库用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 id（索引）、评论实体 id（索引）、评论类型（帖子&#x2F;回复）、被评论目标 id、评论内容、评论状态（有效&#x2F;无效">
+<meta name="description" content="[TOC]  数据库userID, message , login_ticket ,disscuss_post comment 用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 i">
 <meta property="og:type" content="article">
 <meta property="og:title" content="论坛的总结和改进">
 <meta property="og:url" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC]  数据库用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 id（索引）、评论实体 id（索引）、评论类型（帖子&#x2F;回复）、被评论目标 id、评论内容、评论状态（有效&#x2F;无效">
-<meta property="og:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
+<meta property="og:description" content="[TOC]  数据库userID, message , login_ticket ,disscuss_post comment 用户表，包括 id、用户名、密码、盐值、邮箱、类型（普通&#x2F;管理员&#x2F;版主）、状态（激活&#x2F;未激活）、激活码（随机字符串）、头像 url、注册时间。 登录凭证表，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效&#x2F;无效）、过期时间。 评论表，包括 id、评论用户 i">
+<meta property="og:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210315102121435.png">
 <meta property="article:published_time" content="2020-11-01T02:28:23.000Z">
-<meta property="article:modified_time" content="2021-02-09T08:54:05.459Z">
+<meta property="article:modified_time" content="2021-03-29T04:33:28.175Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png">
+<meta name="twitter:image" content="http://aamingaa.github.io/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210315102121435.png">
 
 
 
@@ -375,7 +375,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  7.3k
+                  8k
                 </span>
               
 
@@ -391,7 +391,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  33
+                  36
                 </span>
               
             </div>
@@ -413,8 +413,9 @@
 
       
         <p>[TOC]</p>
-<p><img src="/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20201115163502330.png" alt="image-20201115163502330"></p>
-<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p><strong>用户表</strong>，包括 id、用户名、密码、盐值、邮箱、类型（普通/管理员/版主）、状态（激活/未激活）、激活码（随机字符串）、头像 url、注册时间。</p>
+<p><img src="/2020/11/01/%E8%AE%BA%E5%9D%9B%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%94%B9%E8%BF%9B/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210315102121435.png" alt="image-20210315102121435"></p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>userID, message , login_ticket ,disscuss_post comment</p>
+<p><strong>用户表</strong>，包括 id、用户名、密码、盐值、邮箱、类型（普通/管理员/版主）、状态（激活/未激活）、激活码（随机字符串）、头像 url、注册时间。</p>
 <p><strong>登录凭证表</strong>，包括 id、用户 id、登陆凭证（随机字符串）、登录状态（有效/无效）、过期时间。</p>
 <p><strong>评论表</strong>，包括 id、评论用户 id（索引）、评论实体 id（索引）、评论类型（帖子/回复）、被评论目标 id、评论内容、评论状态（有效/无效）、评论时间。</p>
 <p><strong>帖子表</strong>，包括 id、发帖用户 id（索引）、标题、帖子内容、类型（普通/置顶）、评论数量、状态（普通/精华/拉黑）、发帖时间。</p>
@@ -468,8 +469,10 @@
 <li><p>利用 StringUtils 判断用户名、密码是否非空，之后判断用户是否存在、用户是否激活、密码是否正确，将错误信息存到 map 集合。(LoginTicketMapper)</p>
 </li>
 <li><p>如果全部合法，为用户生成一个包含过期时间的登录凭证，将凭证存入 redis 和 map 集合。(redis的key以及cookie存储loginTicket.getTicket()，value是loginTicket)</p>
-<p>用户ID，ticket，状态status，expired</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LoginTicket loginTicket &#x3D; new LoginTicket();</span><br><span class="line">loginTicket.setUserId(user.getId());</span><br><span class="line">loginTicket.setTicket(CommunityUtil.generateUUID());</span><br><span class="line">loginTicket.setStatus(0);</span><br><span class="line">loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 验证码的归属</span><br><span class="line">        String kaptchaOwner &#x3D; CommunityUtil.generateUUID();</span><br><span class="line">        Cookie cookie &#x3D; new Cookie(&quot;kaptchaOwner&quot;, kaptchaOwner);</span><br><span class="line">        cookie.setMaxAge(60);</span><br><span class="line">        cookie.setPath(contextPath);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line">        &#x2F;&#x2F; 将验证码存入Redis</span><br><span class="line">        String redisKey &#x3D; RedisKeyUtil.getKaptchaKey(kaptchaOwner);</span><br><span class="line">        redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用户ID，ticket，状态status，expired</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LoginTicket loginTicket &#x3D; new LoginTicket();</span><br><span class="line">  loginTicket.setUserId(user.getId());</span><br><span class="line">  loginTicket.setTicket(CommunityUtil.generateUUID());</span><br><span class="line">  loginTicket.setStatus(0);</span><br><span class="line">  loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));</span><br></pre></td></tr></table></figure>
 </li>
 <li><pre><code>@Insert({
         &quot;insert into login_ticket(user_id,ticket,status,expired) &quot;,
@@ -477,7 +480,24 @@
 })
 @Options(useGeneratedKeys = true, keyProperty = &quot;id&quot;)
 int insertLoginTicket(LoginTicket loginTicket);
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**根据返回的 map 是否包含登陆凭证判断登陆状态**</span><br><span class="line"></span><br><span class="line">- 如果登录成功，将凭证存入 cookie 并重定向至首页。</span><br><span class="line">- 如果登陆失败，将 map 中的错误信息添加到 Model 对象，返回登录页。</span><br><span class="line"></span><br><span class="line">### 会话管理</span><br><span class="line"></span><br><span class="line">### 显示登录信息</span><br><span class="line"></span><br><span class="line">(HttpServletResponse)</span><br><span class="line"></span><br><span class="line">创建 CookieUtil 工具类，通过 name 查询对应 cookie 的 value。</span><br><span class="line"></span><br><span class="line">在 UserService 中新增 &#96;findLoginTicket&#96; 方法，根据 ticket 查询 LoginTicket。(redis的key以及cookie存储loginTicket.getTicket()，value是loginTicket)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+/**
+   * 默认状态的登录凭证的超时时间
+   */
+  int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
+
+  /**
+   * 记住状态的登录凭证超时时间
+   */
+  int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**根据返回的 map 是否包含登陆凭证判断登陆状态**</span><br><span class="line"></span><br><span class="line">- 如果登录成功，将凭证存入 cookie 并重定向至首页。</span><br></pre></td></tr></table></figure>
+Cookie cookie = new Cookie(&quot;ticket&quot;, map.get(&quot;ticket&quot;).toString());
+          cookie.setPath(contextPath);
+          cookie.setMaxAge(expiredSeconds);
+          response.addCookie(cookie);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+并且ticket也加入redis
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 如果登陆失败，将 map 中的错误信息添加到 Model 对象，返回登录页。</span><br><span class="line"></span><br><span class="line">### 登录的改进？</span><br><span class="line"></span><br><span class="line">用户密码是如何保存在数据库中的？如何在用户登录时验证身份信息？如何防止登录请求报文被窃取？</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">**Jwt与token的区别**</span><br><span class="line">1）token对应的内容存放在Redis中</span><br><span class="line">2）Jwt对应的playload数据存放在客户端</span><br><span class="line"></span><br><span class="line">**Jwt优点**</span><br><span class="line">1），减轻服务端压力。</span><br><span class="line">2），查询效率比token高。</span><br><span class="line">3），不容易被客户端篡改数据。</span><br><span class="line">**缺点**</span><br><span class="line">1）如果一旦生成好一个jwt之后，后期是否可以销毁</span><br><span class="line">2）Jwt playload数据多，占据服务器端带宽资源</span><br><span class="line">jwt不是很安全，playload中不能存放敏感的信息，必要须加密</span><br><span class="line">**jwt注销**</span><br><span class="line">无法做真正意义上的注销</span><br><span class="line">1）用户注销时，直接将cookie缓存清除。</span><br><span class="line">2）最好将jwt过期时间定义不要太长。</span><br><span class="line">3）每个用户对应的盐值不一样，用户注销的时候直接将该盐值发生变化。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 会话管理</span><br><span class="line"></span><br><span class="line">### 显示登录信息</span><br><span class="line"></span><br><span class="line">(HttpServletResponse)</span><br><span class="line"></span><br><span class="line">创建 CookieUtil 工具类，通过 name 查询对应 cookie 的 value。</span><br><span class="line"></span><br><span class="line">在 UserService 中新增 &#96;findLoginTicket&#96; 方法，根据 ticket 查询 LoginTicket。(redis的key以及cookie存储loginTicket.getTicket()，value是loginTicket)</span><br></pre></td></tr></table></figure>
           // 检查凭证是否有效
           if (loginTicket != null &amp;&amp; loginTicket.getStatus() == 0 &amp;&amp; loginTicket.getExpired().after(new Date())) {
               // 根据凭证查询用户
@@ -646,7 +666,7 @@ return &quot;/site/discuss-detail&quot;;</code></pre><p>}</p>
 // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
 // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 点赞</span><br><span class="line"></span><br><span class="line">创建 RedisKeyUtil 工具类，通过实体类型和实体 id 生成对应实体获得赞的 key。、</span><br><span class="line"></span><br><span class="line">需要四个字段</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 发帖的改进</span><br><span class="line"></span><br><span class="line">#### 帖子是怎么存数据库的</span><br><span class="line"></span><br><span class="line">用户id，title，content，createTime</span><br><span class="line"></span><br><span class="line">Text字段</span><br><span class="line"></span><br><span class="line">1、 char长度固定， 即每条数据占用等长字节空间；适合用在身份证号码、手机号码等定。</span><br><span class="line"></span><br><span class="line">2、 varchar可变长度，可以设置最大长度；适合用在长度可变的属性。</span><br><span class="line"></span><br><span class="line">3、 text不设置长度， 当不知道属性的最大长度时，适合用text。</span><br><span class="line"></span><br><span class="line">#### 帖子中有图片怎么进行压缩优化？</span><br><span class="line"></span><br><span class="line">网上有免费的图床，但最好自己搭建一个。前端把图片上传到图床，返回URL，再将URL存入数据库。</span><br><span class="line"></span><br><span class="line">Graphics</span><br><span class="line"></span><br><span class="line">### 点赞</span><br><span class="line"></span><br><span class="line">创建 RedisKeyUtil 工具类，通过实体类型和实体 id 生成对应实体获得赞的 key。、</span><br><span class="line"></span><br><span class="line">需要四个字段</span><br></pre></td></tr></table></figure>
 int userId, int entityType, int entityId, int entityUserId
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">点赞&#x2F;取消点赞：</span><br><span class="line"></span><br><span class="line">- 通过 RedisKeyUtil 获得实体点赞的 key，然后通过 RedisTemplate 的 API 操作，调用集合的 &#96;isMember&#96; 方法查询 userId 是否存在于对应集合中，如果存在则移除出点赞的用户集合，如果不存在则添加到点赞的用户集合。</span><br><span class="line">- 通过 RedisTemplate 的 &#96;execute&#96; 方法实现事务，保证被点赞用户点和点赞用户的数据更新一致。通过 &#96;isMember&#96; 方法查询用户的点赞状态，之后通过 &#96;mutli&#96; 方法开启事务。</span><br><span class="line"></span><br><span class="line">点赞数量：通过调用 set 集合的 &#96;size&#96; 方法查询元素个数。</span><br></pre></td></tr></table></figure>
 redisTemplate.opsForSet().size(entityLikeKey);
@@ -695,7 +715,7 @@ public RedisTemplate&lt;String, Object&gt; redisTemplate(RedisConnectionFactory 
 }</code></pre><p>}</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>// 某个实体的赞<br>// like:entity:entityType:entityId -&gt; set(userId)<br>public static String getEntityLikeKey(int entityType, int entityId) {<br>    return PREFIX_ENTITY_LIKE + SPLIT + entityType + SPLIT + entityId;<br>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 关注和粉丝</span><br><span class="line"></span><br><span class="line">在 RedisUnitl 工具类增加两个方法</span><br><span class="line"></span><br><span class="line">- 通过用户 id 和实体类型获得用户关注的实体集合的 key。</span><br><span class="line"></span><br><span class="line">- 通过实体类型和实体 id 获得实体拥有的粉丝集合的 key。</span><br><span class="line"></span><br><span class="line">当用户关注某实体时，</span><br><span class="line"></span><br><span class="line">- 将实体 id 和时间作为 value 和 score 加入用户的关注集合。</span><br><span class="line">- 将用户 id 和时间作为 value 和 score 加入实体的粉丝集合。</span><br><span class="line"></span><br><span class="line">当用户取消关注某实体时，将实体从用户的关注集合移除，用户从实体的粉丝集合移除。</span><br><span class="line"></span><br><span class="line">**关注列表和粉丝列表**</span><br><span class="line"></span><br><span class="line">需要三个变量</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 点赞的改进</span><br><span class="line"></span><br><span class="line">点赞是如何设计的？</span><br><span class="line">如果用户量很多，你会怎么设计点赞？</span><br><span class="line"></span><br><span class="line">点赞作为一个高频率的操作，如果每次操作都读写数据库会增加数据库的压力，所以采用缓存+定时任务来实现。点赞数据是在redis中缓存半小时，同时定时任务是每隔5分钟执行一次，做持久化存储，这里的缓存时间和任务执行时间可根据项目情况而定。</span><br><span class="line"></span><br><span class="line">优化一下，如何减少对数据库的访问？（给了个好一点的方案）</span><br><span class="line"></span><br><span class="line">考虑一下在MQ后面做处理？</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 关注和粉丝</span><br><span class="line"></span><br><span class="line">在 RedisUnitl 工具类增加两个方法</span><br><span class="line"></span><br><span class="line">- 通过用户 id 和实体类型获得用户关注的实体集合的 key。</span><br><span class="line"></span><br><span class="line">- 通过实体类型和实体 id 获得实体拥有的粉丝集合的 key。</span><br><span class="line"></span><br><span class="line">当用户关注某实体时，</span><br><span class="line"></span><br><span class="line">- 将实体 id 和时间作为 value 和 score 加入用户的关注集合。</span><br><span class="line">- 将用户 id 和时间作为 value 和 score 加入实体的粉丝集合。</span><br><span class="line"></span><br><span class="line">当用户取消关注某实体时，将实体从用户的关注集合移除，用户从实体的粉丝集合移除。</span><br><span class="line"></span><br><span class="line">**关注列表和粉丝列表**</span><br><span class="line"></span><br><span class="line">需要三个变量</span><br></pre></td></tr></table></figure>
 <p>int userId, int entityType, int entityId</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">某人的关注，就以userId和关注的类型entityType作为key，以entityID作为value进行设置，传入当前时间作为zset的score</span><br><span class="line"></span><br><span class="line">某个实体的粉丝，就以entityType, entityId作为key，以userID作为value进行设置，传入当前时间作为zset的score</span><br><span class="line"></span><br><span class="line">- 用户的关注列表，通过 zset 的  &#96;reverseRange&#96; 获取 value 即关注用户的 userId，再查询出 user，通过 &#96;score&#96; 获取关注时间。</span><br><span class="line">- 用户的粉丝列表，通过 zset 的  &#96;reverseRange&#96; 获取 value 即粉丝的 userId，再查询出 user，通过 &#96;score&#96; 获取关注时间。</span><br><span class="line">- 列表信息封装在 list 集合中，再将 list 添加到 Model 对象里。</span><br></pre></td></tr></table></figure>
 <p>public void follow(int userId, int entityType, int entityId) {<br>    redisTemplate.execute(new SessionCallback() {<br>        @Override<br>        public Object execute(RedisOperations operations) throws DataAccessException {<br>            String followeeKey = RedisKeyUtil.getFolloweeKey(userId, entityType);<br>            String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);</p>
@@ -750,7 +770,7 @@ for (Integer targetId : targetIds) {
 }
 
 return list;</code></pre><p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### Kafka</span><br><span class="line"></span><br><span class="line">### 发送系统通知</span><br><span class="line"></span><br><span class="line">在 CommunityConstant 接口中新增三个常量，代表三个主题：评论、点赞、关注。</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题、用户 id、实体类型、实体 id、实体用户 id 以及一个 map 集合存放其它信息。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 关注的改进</span><br><span class="line"></span><br><span class="line">论坛中的关注操作是怎么做的？并发量高了后怎么优化？</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### Kafka</span><br><span class="line"></span><br><span class="line">### 发送系统通知</span><br><span class="line"></span><br><span class="line">在 CommunityConstant 接口中新增三个常量，代表三个主题：评论、点赞、关注。</span><br><span class="line"></span><br><span class="line">创建 Event 类，封装事件对象，包括主题、用户 id、实体类型、实体 id、实体用户 id 以及一个 map 集合存放其它信息。</span><br></pre></td></tr></table></figure>
 <p>public class Event {</p>
 <pre><code>private String topic;
 private int userId;
@@ -1186,7 +1206,7 @@ protected void configure(HttpSecurity http) throws Exception {
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1198,7 +1218,7 @@ protected void configure(HttpSecurity http) throws Exception {
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1295,7 +1315,7 @@ protected void configure(HttpSecurity http) throws Exception {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         

@@ -85,6 +85,8 @@
 <meta property="og:url" content="http://aamingaa.github.io/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="[TOC] 网络协议分层国际标准化组织 ISO 提出了 OSI 开放互连的七层计算机网络模型，从上到下分别是应用层、表示层、会话层、运输层、网络层、链路层和物理层。OSI 模型的概念清楚，理论也比较完善，但是既复杂又不实用。还有一种是 TCP&#x2F;IP 体系结构，它分为四层，从上到下分别是应用层、运输层、网际层和网络接口层，不过从实质上将只有三层，因为最下面的网络接口层并没有什么具体内容。因特网的协议">
+<meta property="og:image" content="https://img-blog.csdn.net/20160618105151615">
+<meta property="og:image" content="http://aamingaa.github.io/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210329083541902.png">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021487780_27194088468_4cb0141fc8_b.jpg">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021488550_u16143127921954581760fm26gp0.jpg">
 <meta property="og:image" content="https://www.pianshen.com/images/658/8ae15fcacfbba3b753514e601d0afa6a.png">
@@ -97,10 +99,10 @@
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200806/6638786_1596672375547_34FD922BEF6AB289D1B71C7D84037E42">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20200806/6638786_1596672413212_A3DEEBF7F3F9D50D1D3613B9F2A48D7B">
 <meta property="article:published_time" content="2020-09-29T07:42:56.000Z">
-<meta property="article:modified_time" content="2020-12-09T08:07:02.731Z">
+<meta property="article:modified_time" content="2021-03-29T01:28:14.186Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://uploadfiles.nowcoder.com/files/20200810/176673786_1597021487780_27194088468_4cb0141fc8_b.jpg">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20160618105151615">
 
 
 
@@ -385,7 +387,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  28k
+                  26.8k
                 </span>
               
 
@@ -401,7 +403,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  97
+                  93
                 </span>
               
             </div>
@@ -428,8 +430,14 @@
 <p>应用层的协议定义了<strong>应用进程之间通信和交互的规则</strong>，主要包括了域名系统 DNS、支持万维网的 HTTP 协议、支持电子邮件的 SMTP 协议、文件传输协议 FTP 等。</p>
 <p><strong>域名解析系统 DNS</strong></p>
 <p>DNS 被设计为一个联机分布式数据库系统，并采用客户服务器方式。DNS 使大多数名字都在本地进行解析，仅少量解析需要在互联网上通信，因此 DNS 的效率很高。由于 DNS 是分布式系统，即使单个计算机出现了故障也不会妨碍到整个 DNS 系统的正常运行。</p>
-<p><strong>主机向本地域名服务器的查询一般都采用递归查询</strong>，递归查询指如果主机所询问的本地域名服务器不知道被查询域名的 IP 地址，那么本地域名服务器就以 DNS 客户的身份向其他根域名服务器继续发出查询请求报文。递归查询的结果是要查询的 IP 地址，或者是报错，表示无法查询到所需的 IP 地址。</p>
-<p><strong>本地域名服务器向根域名服务器查询通常采用迭代查询</strong>，迭代查询指当根域名服务器收到本地域名服务器发出的迭代查询请求报文时，要么给出所要查询的 IP 地址，要么告诉它该向哪一个域名服务器进行查询。本地域名服务器也可以采用递归查询，这取决于最初的查询请求报文设置的查询方式。</p>
+<hr>
+<p>主机向本地域名服务器的查询一般都是采用递归查询。本地域名服务器向根域名服务器的查询的迭代查询。</p>
+<p>递归</p>
+<p>在该模式下DNS 服务器接收到客户机请求，必须使用一个准确的查询结果回复客户机。如果DNS 服务器本地没有存储查询DNS 信息，那么该服务器会询问其他服务器，并将返回的查询结果提交给客户机。</p>
+<p>迭代</p>
+<p><img src="https://img-blog.csdn.net/20160618105151615" alt="这里写图片描述"></p>
+<p>DNS 服务器并不直接回复查询结果，而是告诉客户机另一台DNS 服务器地址，客户机再向这台DNS 服务器提交请求，依次循环直到返回查询的结果</p>
+<p><img src="/2020/09/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210329083541902.png" alt="image-20210329083541902"></p>
 <p><strong>文件传送协议 FTP</strong></p>
 <p>FTP 使用 TCP 可靠的运输服务，FTP 使用客户服务器方式，一个 FTP 服务器进程可以同时为多个客户进程提供服务，在进行文件传输时，FTP 的客户和服务器之间要建立两个并行的 TCP 连接：控制连接和数据连接，实际用于传输文件的是数据连接。</p>
 <p><strong>电子邮件系统协议 SMTP/POP3/IMAP</strong></p>
@@ -520,34 +528,11 @@
 <hr>
 <h3 id="可靠传输协议-ARQ"><a href="#可靠传输协议-ARQ" class="headerlink" title="可靠传输协议 ARQ"></a>可靠传输协议 ARQ</h3><p>自动重传请求 ARQ 包括了停止等待协议、回退 N 步协议和选择重传协议，后两种结合了窗口机制，属于连续 ARQ 协议。</p>
 <h4 id="停止等待协议"><a href="#停止等待协议" class="headerlink" title="停止等待协议"></a>停止等待协议</h4><p>停止等待就是每发送完一个分组就停止发送，等待对方的确认，在收到确认之后再发送下一个分组。停止等待协议包括了三种情况：</p>
-<p><strong>1. 无差错情况</strong></p>
-<p>A 发送分组 M<del>1</del>，发送完后就暂停并等待 B 的确认。B 收到了 M<del>1</del> 之后就向 A 发送确认，当 A 收到确认之后就再发送下一个分组 M<del>2</del>。</p>
-<p><strong>2. 出现差错的情况</strong></p>
-<p>当 B 收到 M<del>1</del> 时检测出了差错就丢弃了 M<del>1</del>，其他什么也不做，也可能是 M<del>1</del> 在传输过程中丢失了，B 什么都不知道。在这两种情况下 B 都不会发送任何确认信息，解决方法是：A 只要超过一段时间没有收到确认就认为刚才发送的分组丢失了，因而重传前面发过的分组，这就叫<strong>超时重传</strong>。要实现超时重传，就要在每发送完一个分组时设置一个<strong>超时计时器</strong>，如果在超时计时器到期之间收到了对方的确认就进行撤销。</p>
-<p>有三点需要注意：① A 在发送完一个分组后必须暂时保留已发送分组的副本在超时重传时使用，只有在收到确认后才清除副本。② 分组和确认分组都必须进行编号，这样才能明确是哪一个发送出去的分组进行了确认。③ 超时计时器设置的时间应当比数据在分组传输的平均往返时间稍长一些，如果设置过短会产生不必要的重传，如果设置过长会降低通信效率。</p>
-<p><strong>3. 确认丢失和确认迟到</strong></p>
-<p>B 发送的对 M<del>1</del> 的确认丢失了，A 在设定的超时重传时间内没有收到确认，并不知道是自己发送的问题还是 B 的问题，因此 A 就会超时重传。假设 B 又收到了重传分组 M<del>1</del>，此时 B 会采取两个行动：① 丢弃这个分组，不向上层交付。② 重新向 A 发送确认。</p>
-<p>还有另一种情况就是 B 发送的确认并没有丢失但是迟到了，A 会受到重复的确认，此时 A 会收下并丢弃。通常 A 最终总是可以收到对所有发出的分组的确认，如果 A 不断重传分组但总是收不到确认，就说明通信线路质量太差，不能进行通信。</p>
-<p>停止等待协议的优点是简单，但缺点是信道利用率太低。为了提高传输效率，发送方可以不使用停止等待协议，而是采用流水线传输。流水线传输就是发送方可连续发送多个分组，不必每发送完一个分组就停下来等待对方的确认。这样可以使信道上一直有数据不间断地传送，流水线传输中可能会遇到差错，解决差错的两种基本方法是回退 N 步和选择重传。</p>
 <hr>
-<h4 id="回退-N-步协议"><a href="#回退-N-步协议" class="headerlink" title="回退 N 步协议"></a>回退 N 步协议</h4><p>在回退 N 步即 GBN 协议中，允许发送方发送多个分组而不需要等待确认。在 GBN 中发送方看到的序号可以分为四个范围，已经发送且被确认的的序号、已经发送还未确认的序号、允许发送但还未发送的序号和不允许发送的序号。其中已经发送但还未确认的序号和允许发送但还未发送的序号可以被看作一个长度为 N 的窗口，随着协议的运行该窗口在序号空间向前滑动，因此 GBN 协议也被称为滑动窗口协议。</p>
-<p>GBN 发送方必须响应三种类型的事件：</p>
-<ul>
-<li><p><strong>上层的调用</strong></p>
-<p>当上层调用发送方法时，发送方首先检查发送窗口是否已满，即是否有 N 个已发送但未确认的分组。如果窗口未满，则产生一个分组并将其发送并更新相应变量，如果窗口已满，发送方指需将数据返回给上层，隐式说明该窗口已满。实际实现中，发送方更可能缓存而不是立即发送这些数据，或者使用同步机制允许上层在仅当窗口不满时才调用发送方法。</p>
-</li>
-<li><p><strong>收到一个 ACK</strong></p>
-<p>在 GBN 协议中，对序号为 n 的分组确认采用累积确认的方式，对按序到达的最后一个分组发送确认，表明接收方已经正确接收到序号为 n 的以前且包括 n 在内的所有分组。例如发送了序号为 1~5 的五个分组，除了第三个全部收到了，那么确认序号就是 2。</p>
-</li>
-<li><p><strong>超时事件</strong></p>
-<p>回退 N 步的名字来源于出现丢失和时延过长时发送方的行为，就像在停止等待协议中那样，如果超时，发送方会重传所有已经发送但还未确认过的分组。如果收到一个 ACK，但仍有已发送但未确认的分组，则计时器也会重新启动。</p>
-</li>
-</ul>
+<h4 id="回退-N-步协议"><a href="#回退-N-步协议" class="headerlink" title="回退 N 步协议"></a>回退 N 步协议</h4><p>在回退 N 步即 GBN 协议中，允许发送方发送多个分组而不需要等待确认。</p>
 <p>在 GBN 协议中，接收方丢弃所有失序分组，即使是正确接收的也要丢弃，这样做的理由是接收方必须按序将数据交付给上层。这种做法的优点是接收缓存简单，即接收方不需要缓存任何失序分组。不过丢弃一个正确失序分组的缺点是随后对该分组的重传也许也会错误，而导致更多的重传。</p>
 <hr>
-<h4 id="选择重传协议"><a href="#选择重传协议" class="headerlink" title="选择重传协议"></a>选择重传协议</h4><p>GBN 协议潜在地允许用多个分组填充流水线，因此避免了停止等待协议中的信道利用问题，但是 GBN 本身也存在性能问题，单个分组的差错就能引起 GBN 重传大量分组，许多分组根本没有重传必要。随着信道差错率的增加，流水线会被不必要重传的分组所充斥。</p>
-<p>选择重传即 SR 协议，通过让发送方仅重传那些它怀疑在接收方出错的分组而避免不必要的重传。这种个别的、按需重传，要求接收方逐个确认正确接收的分组，再次用窗口长度 N 来限制流水线中未完成和未被确认的分组数。与 GBN 不同的是，发送方已经收到了窗口中对某些分组的 ACK。</p>
-<p>接收方将确认一个正确接收的分组，不管是否按序。失序分组将被缓存直到所有丢失分组都收到，这时才可以将一批分组按序交付上层。</p>
+<h4 id="选择重传协议"><a href="#选择重传协议" class="headerlink" title="选择重传协议"></a>选择重传协议</h4><p>选择重传即 SR 协议.失序分组将被缓存直到所有丢失分组都收到，这时才可以将一批分组按序交付上层。</p>
 <hr>
 <h3 id="TCP-可靠原理"><a href="#TCP-可靠原理" class="headerlink" title="TCP 可靠原理"></a>TCP 可靠原理</h3><p>TCP 的可靠传输包含很多机制，例如使用<strong>检验和</strong>来检测一个传输分组中的比特错误、使用<strong>定时器</strong>来用于超时重传一个分组、使用<strong>序号</strong>来检测丢失的分组和冗余副本、使用<strong>确认</strong>来告诉发送方确认的分组信息、使用<strong>否定确认</strong>来告诉发送方某个分组未被正确接收。</p>
 <p>TCP 的发送方仅需维持已发送过但未被确认的字节的最小序号和下一个要发送的字节的序号，从这种角度看 TCP 更像一个 GBN 协议。但是 TCP 和 GBN 有一些显著的区别，许多 TCP 实现会将正确接收但失序的报文段缓存起来。当分组 n 丢失时，GBN 会重传 n 之后的所有分组，但是 TCP 至多只会重传分组 n。对 TCP 提出的一种修改意见是选择确认，它允许 TCP 接收方有选择地确认失序报文段，而不是累积地确认最后一个正确接收的有序报文段，从这个角度看 TCP 又像 SR 协议。<strong>因此 TCP 的差错恢复机制是一种 GBN 和 SR  的结合体</strong>。</p>
@@ -790,7 +775,17 @@
 <p><strong>⑥ TCP 断开连接</strong></p>
 <p>通过 TCP 的四次挥手断开连接，如果是 HTTP1.1 则会将连接保持一小段时间。</p>
 <hr>
-<h3 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h3><p><strong>HTTP 存在的问题</strong></p>
+<h3 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h3><ul>
+<li>浏览器向服务器发起一个请求，服务器返回一个SSL证书</li>
+<li>首先浏览器读取证书中的证书所有者、有效期等进行一一校验</li>
+<li>浏览器开始查找操作系统中内置的受信任的证书发布机构CA，与服务器发来的证书中的颁发者CA<br>对比，用于校验证书是否为合法机构办法</li>
+<li>如果找不到，浏览器就会报错，说明服务器发来的证书不可信任</li>
+<li>如果找到，那么浏览器就会从操作系统中取出颁发者CA的公钥，然后对服务器发来的证书里的签名<br>进行解密</li>
+<li>浏览器使用相同的hash算法计算出服务器发来的证书的hash值，将这个计算的hash值与证书中的<br>签名对比</li>
+<li>对比结果一直，则证明服务器发来的证书合法，没有被冒充。浏览器就可以读取证书中的公钥，用<br>于后续加密</li>
+</ul>
+<p>延伸：https加密过程<br>浏览器在解析证书后得到公钥<br>浏览器生成一个随机值，用公钥加密，发送给服务器<br>服务器得到这个随机值后，用私钥解密，得到用于信息对称加密的密钥<br>服务器对信息进行对称加密，发送给浏览器<br>浏览器得到加密的信息后，用之前的随机值，也就是密钥进行对称解密得到信息。</p>
+<p><strong>HTTP 存在的问题</strong></p>
 <p>HTTP 没有密码加密，无法保证通信内容不被窃听，攻击者可以截取客户发送的数据并得到他的信息。</p>
 <p>HTTP 没有报文完整性验证，无法确保通信内容在传输过程中不被改变，攻击者可以篡改客户通信内容。</p>
 <p>HTTP 没有身份鉴别，无法让通信双方确认对方的身份，攻击者可以伪装成客户或者服务器。</p>
@@ -1256,7 +1251,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">263</span>
+                  <span class="site-state-item-count">284</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1268,7 +1263,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1365,7 +1360,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共511.4k字</span>
+  <span class="post-count">博客全站共566.1k字</span>
 </div>
 
         
