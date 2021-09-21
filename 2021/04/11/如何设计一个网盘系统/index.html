@@ -79,22 +79,16 @@
 
 
 
-<meta name="description" content="[TOC] 1.为什么要云存储云文件存储服务最近变得非常流行，因为它们简化了多个设备之间的数字资源的存储和交换。从使用个人计算机到使用具有不同平台和操作系统（例如智能手机和平板电脑）的多个设备以及随时从各个地理位置进行便携式访问的转变被认为是对云存储服务的巨大普及。这些服务的一些主要好处是： 可用性：云存储服务是随时随地提供数据。用户可以随时随地通过任何设备访问他们的文件&#x2F;照片。 可靠性和耐用性：">
+<meta name="description" content="[TOC] https:&#x2F;&#x2F;blog.csdn.net&#x2F;MrCharles&#x2F;article&#x2F;details&#x2F;108761863 在本文中，我们将设计一个Google Drive服务！！ (类似百度网盘,所以标题取百度网盘应该没毛病。事实上不可能这么简单，有时间可以讨论以下百度网盘的网络架构) 系统设计是软件工程中最重要和最令人担忧的方面之一。很难理解软件体系结构书籍中使用的术语，并且没有明确的分步">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何设计一个网盘系统">
 <meta property="og:url" content="http://aamingaa.github.io/2021/04/11/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%BD%91%E7%9B%98%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 1.为什么要云存储云文件存储服务最近变得非常流行，因为它们简化了多个设备之间的数字资源的存储和交换。从使用个人计算机到使用具有不同平台和操作系统（例如智能手机和平板电脑）的多个设备以及随时从各个地理位置进行便携式访问的转变被认为是对云存储服务的巨大普及。这些服务的一些主要好处是： 可用性：云存储服务是随时随地提供数据。用户可以随时随地通过任何设备访问他们的文件&#x2F;照片。 可靠性和耐用性：">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-b84272d1555cf232.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/518/format/webp">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-a5b45886331de0bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/582/format/webp">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-747068a986b5770c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800/format/webp">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-0af0b63e7cfb072b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800/format/webp">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10803273-511eced85a15d3fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800/format/webp">
+<meta property="og:description" content="[TOC] https:&#x2F;&#x2F;blog.csdn.net&#x2F;MrCharles&#x2F;article&#x2F;details&#x2F;108761863 在本文中，我们将设计一个Google Drive服务！！ (类似百度网盘,所以标题取百度网盘应该没毛病。事实上不可能这么简单，有时间可以讨论以下百度网盘的网络架构) 系统设计是软件工程中最重要和最令人担忧的方面之一。很难理解软件体系结构书籍中使用的术语，并且没有明确的分步">
 <meta property="article:published_time" content="2021-04-11T09:13:12.000Z">
-<meta property="article:modified_time" content="2021-04-11T09:13:45.922Z">
+<meta property="article:modified_time" content="2021-09-02T08:32:50.641Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10803273-b84272d1555cf232.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/518/format/webp">
 
 
 
@@ -379,7 +373,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4.7k
+                  3.9k
                 </span>
               
 
@@ -395,7 +389,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  15
+                  13
                 </span>
               
             </div>
@@ -417,82 +411,65 @@
 
       
         <p>[TOC]</p>
-<h2 id="1-为什么要云存储"><a href="#1-为什么要云存储" class="headerlink" title="1.为什么要云存储"></a>1.为什么要云存储</h2><p>云文件存储服务最近变得非常流行，因为它们简化了多个设备之间的数字资源的存储和交换。从使用个人计算机到使用具有不同平台和操作系统（例如智能手机和平板电脑）的多个设备以及随时从各个地理位置进行便携式访问的转变被认为是对云存储服务的巨大普及。这些服务的一些主要好处是：</p>
-<p>可用性：云存储服务是随时随地提供数据。用户可以随时随地通过任何设备访问他们的文件/照片。</p>
-<p>可靠性和耐用性：云存储的另一个好处是它提供100％的可靠性和数据持久性。云存储通过保留存储在不同地理位置的服务器上的多个数据副本，确保用户永远不会丢失数据。</p>
-<p>可扩展性：用户永远不必担心会占用存储空间。使用云存储，只要您愿意为其付费，您就可以拥有无限存储空间。</p>
-<h2 id="系统的要求和目标"><a href="#系统的要求和目标" class="headerlink" title="系统的要求和目标"></a>系统的要求和目标</h2><h3 id="基本要求"><a href="#基本要求" class="headerlink" title="基本要求"></a>基本要求</h3><p>用户应该能够从任何设备上传和下载他们的文件/照片。</p>
-<p>用户应该能够与其他用户共享文件或文件夹。</p>
-<p>我们的服务应该支持设备之间的自动同步，即，在一个设备上更新文件之后，它应该在所有设备上同步。</p>
-<p>系统应支持存储最大为GB的大文件。</p>
-<p>ACID是必需的。 应保证所有文件操作的原子性，一致性，隔离性和持久性。</p>
-<p>我们的系统应支持离线编辑。 用户应该能够在离线时添加/删除/修改文件，一旦他们上线，他们的所有更改都应该同步到远程服务器和其他在线设备。</p>
-<h3 id="扩展要求"><a href="#扩展要求" class="headerlink" title="扩展要求"></a>扩展要求</h3><p>系统应支持数据快照，以便用户可以返回到任何版本的文件。</p>
-<h2 id="设计的考虑点"><a href="#设计的考虑点" class="headerlink" title="设计的考虑点"></a>设计的考虑点</h2><p>我们应该期待巨大的读写量。</p>
-<p>读写比率差不多。</p>
-<p>在内部，文件可以存储在块（例如4MB）中，这可以提供许多好处，例如 所有失败的操作只能在文件的较小部分重试。 如果用户无法上载文件，则只会重试失败的块。</p>
-<p>我们可以通过仅传输更新的块来减少数据交换量。</p>
-<p>通过删除重复的块，我们可以节省存储空间和带宽使用。</p>
-<p>使用客户端保存元数据的本地副本（文件名，大小等）可以为我们节省大量的往返服务器。</p>
-<p>对于小的更改，客户端可以智能地上传差异而不是整个块。</p>
-<h2 id="容量估计"><a href="#容量估计" class="headerlink" title="容量估计"></a>容量估计</h2><p><img src="https:////upload-images.jianshu.io/upload_images/10803273-b84272d1555cf232.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/518/format/webp" alt="img"></p>
-<p>image.png</p>
-<h2 id="高层设计"><a href="#高层设计" class="headerlink" title="高层设计"></a>高层设计</h2><p>用户将指定文件夹作为其设备上的工作区。放置在此文件夹中的任何文件/照片/文件夹都将上传到云端，无论何时修改或删除文件，它都将以相同的方式反映在云存储中。用户可以在其所有设备上指定类似的工作空间，并且在一个设备上完成的任何修改都将传播到所有其他设备，以便在任何地方都具有相同的工作空间视图。</p>
-<p>在较高的层面上，我们需要存储文件及其元数据信息，如文件名，文件大小，目录等，以及与谁共享此文件。因此，我们需要一些可以帮助客户将文件上传/下载到云存储的服务器以及一些可以促进更新文件和用户元数据的服务器。我们还需要一些机制来在发生更新时通知所有客户端，以便他们可以同步他们的文件。</p>
-<p>如下图所示，Block服务器将与客户端一起使用，以从云存储上载/下载文件，元数据服务器将在SQL或NoSQL数据库中保存文件的元数据。同步服务器将处理通知所有客户端有关同步的不同更改的工作流程。</p>
-<p><img src="https:////upload-images.jianshu.io/upload_images/10803273-a5b45886331de0bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/582/format/webp" alt="img"></p>
-<p>image.png</p>
-<h2 id="细节设计"><a href="#细节设计" class="headerlink" title="细节设计"></a>细节设计</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>客户端应用程序监视用户计算机上的工作区文件夹，并将其中的所有文件/文件夹与远程云存储同步。客户端应用程序将与存储服务器一起上载，下载和修改实际文件以后端云存储。客户端还与远程同步服务交互以处理任何文件元数据更新，例如更改文件名，大小，修改日期等。</p>
-<p>以下是客户端的一些基本操作：</p>
-<p>上传和下载文件。<br> 检测工作区文件夹中的文件更改。<br> 处理由脱机或并发更新引起的冲突。<br> 我们如何有效地处理文件传输？如上所述，我们可以将每个文件分成更小的块，这样我们只传输那些被修改的块而不是整个文件。假设我们将每个文件划分为4MB块的固定大小。我们可以静态计算什么是最佳块大小</p>
-<p>基于</p>
-<p>1）我们在云中使用的存储设备优化空间利用率和每秒输入/输出操作（IOPS）</p>
-<p>2）网络带宽</p>
-<p>3）存储中的平均文件大小等在我们的元数据中，我们还应该记录每个文件以及构成它的块。</p>
-<p>我们应该与客户保留元数据的副本吗？</p>
-<p>保留元数据的本地副本不仅使我们能够进行离线更新，而且还节省了大量往返以更新远程元数据。</p>
-<p>客户如何有效地监听其他客户端发生的变化？</p>
-<p>一种解决方案可能是客户端定期检查服务器是否有任何更改。这种方法的问题在于延迟，如果客户端经常检查服务器是否有变化，那么它不仅会浪费带宽，因为服务器必须在大多数时间内返回空响应，但也会使服务器保持忙碌状态。以这种方式提取信息也不具有可扩展性。</p>
-<p>上述问题的解决方案可能是使用HTTP长轮询。通过长轮询，客户端请求来自服务器的信息，期望服务器可能不会立即响应。如果服务器在收到轮询时没有新客户端数据，而不是发送空响应，则服务器保持请求打开并等待响应信息变为可用。一旦确实有新信息，服务器立即向客户端发送HTTP / S响应，完成打开的HTTP / S请求。收到服务器响应后，客户端可以立即发出另一个服务器请求以供将来更新。</p>
-<p>基于以上考虑，我们可以将客户分为以下四个部分：</p>
-<p>I.内部元数据数据库将跟踪文件系统中的所有文件，块，其版本及其位置。</p>
-<p>II。 Chunker会将文件拆分成称为块的较小块。它还负责从其块中重建文件。我们的分块算法将检测用户已修改的文件部分，并仅将这些部分传输到云存储;这将节省我们的带宽和同步时间。</p>
-<p>III。 Watcher将监视本地工作空间文件夹并通知索引模块（下面会说）用户执行的任何操作，例如，当用户创建，删除或更新文件或文件夹时。 Watcher还会侦听同步服务广播的其他客户端上发生的任何更改。</p>
-<p>IV。索引器将处理从Watcher接收的事件，并使用有关已修改文件的块的信息更新内部元数据数据库。成功提交/下载块到云存储后，索引器将与远程同步服务通信，以将更改广播到其他客户端并更新远程元数据数据库。</p>
-<p><img src="https:////upload-images.jianshu.io/upload_images/10803273-747068a986b5770c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800/format/webp" alt="img"></p>
-<p>image.png</p>
-<p>客户应如何处理慢速服务器？ 如果服务器忙/无响应，客户端应该以指数方式重试。 这意味着，如果服务器响应太慢，客户端应该延迟重试，并且此延迟应该呈指数级增长。</p>
-<p>移动客户端应立即同步远程更改吗？ 与定期检查文件更改的桌面或Web客户端不同，移动客户端通常按需同步以节省用户的带宽和空间。</p>
-<h3 id="元数据DB"><a href="#元数据DB" class="headerlink" title="元数据DB"></a>元数据DB</h3><p>元数据数据库负责维护有关文件/块，用户和工作空间的版本控制和元数据信息。 元数据数据库可以是关系数据库（如MySQL）或NoSQL数据库服务（如DynamoDB）。 无论数据库的类型如何，同步服务都应该能够使用数据库提供文件的一致视图，尤其是当多个用户同时使用同一文件时。 由于NoSQL数据存储不支持ACID属性以支持可伸缩性和性能，因此我们需要在我们的同步服务的逻辑中以编程方式包含对ACID属性的支持，以防我们选择此类数据库。 但是，使用关系数据库可以简化同步服务的实现，因为它们本身支持ACID属性。</p>
-<p>元数据库应该存储有关以下对象的信息：</p>
-<p>块信息<br> 文件信息<br> 用户信息<br> 设备信息<br> WORKSPACE信息</p>
-<h3 id="同步服务"><a href="#同步服务" class="headerlink" title="同步服务"></a>同步服务</h3><p>同步服务是处理客户端进行的文件更新并将这些更改应用于其他订阅客户端的组件。它还将客户端的本地数据库与存储在远程元数据DB中的信息同步。</p>
-<p>同步服务是系统体系结构中最重要的部分，因为它在管理元数据和同步用户文件方面发挥着关键作用。桌面客户端与同步服务进行通信，以从云存储获取更新，或者将文件和更新发送到云存储以及可能的其他用户。如果客户端在一段时间内处于脱机状态，则会在系统联机时立即轮询系统以获取新更新。当同步服务收到更新请求时，它会检查元数据数据库的一致性，然后继续更新。随后，向所有订阅的用户或设备发送通知以报告文件更新。</p>
-<p>为了实现在客户端和云存储之间传输更少的数据，以实现更好的响应时间的设计目标，同步服务可以使用差分算法来减少需要同步的数据量。我们可以只传输文件的两个版本之间的差异，而不是将整个文件从客户端传输到服务器，反之亦然。因此，仅传输已更改的文件部分。这还减少了最终用户的带宽消耗和云数据存储。如上所述，我们将文件划分为4MB块，并仅传输修改后的块。服务器和客户端可以计算散列（例如，SHA-256）以查看是否更新块的本地副本。在服务器上如果我们已经有一个具有类似哈希的块（甚至来自另一个用户），我们不需要创建另一个副本，我们可以使用相同的块。</p>
-<p>为了能够提供高效且可扩展的同步协议，我们可以考虑在客户端和同步服务之间使用消息中间件。MQ提供可伸缩的消息队列和更改通知，以使用拉或推策略支持大量客户端。这样，多个同步服务实例可以从全局请求队列接收请求，并且通信中间件将能够平衡其负载。</p>
-<h3 id="消息队列服务"><a href="#消息队列服务" class="headerlink" title="消息队列服务"></a>消息队列服务</h3><p>MQ应该能够处理大量请求。支持客户端和同步服务实例之间基于异步消息的通信的可伸缩消息队列服务。mq支持系统的分布式组件之间的异步和松散耦合的基于消息的通信。消息队列服务应该能够在高度可用，可靠和可伸缩的队列中有效地存储任意数量的消息。</p>
-<p>MQ将在我们的系统中实现两种类型的队列。请求队列是一个全局队列，所有客户端都将共享它。客户端更新元数据数据库的请求将首先发送到请求队列，同步服务将从此更新元数据。与各个订阅客户端相对应的响应队列负责将更新消息传递给每个客户端。由于客户端收到消息后将从队列中删除，因此我们需要为每个订阅的客户端创建单独的响应队列以共享更新消息。</p>
-<p><img src="https:////upload-images.jianshu.io/upload_images/10803273-0af0b63e7cfb072b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800/format/webp" alt="img"></p>
-<p>image.png</p>
-<h3 id="云存储"><a href="#云存储" class="headerlink" title="云存储"></a>云存储</h3><p><img src="https:////upload-images.jianshu.io/upload_images/10803273-511eced85a15d3fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800/format/webp" alt="img"></p>
-<p>image.png</p>
-<h2 id="文件处理的工作流"><a href="#文件处理的工作流" class="headerlink" title="文件处理的工作流"></a>文件处理的工作流</h2><p>下面的序列显示了当客户端A更新与客户端B和C共享的文件时，应用程序组件之间的交互，因此他们也应该接收更新。 如果其他客户端在更新时未联机，则消息队列服务会将更新通知保留在单独的响应队列中，直到它们稍后联机。</p>
-<p>客户端A将块上传到云存储。<br> 客户端A更新元数据并提交更改。<br> 客户端A获得确认，并向客户端B和C发送有关更改的通知。<br> 客户端B和C接收元数据更改并下载更新的块。</p>
-<h2 id="重复数据删除"><a href="#重复数据删除" class="headerlink" title="重复数据删除"></a>重复数据删除</h2><p>重复数据删除是一种用于消除重复数据副本以提高存储利用率的技术。它还可以应用于网络数据传输，以减少必须发送的字节数。对于每个新传入的块，我们可以计算它的哈希值，并将该哈希值与现有块的所有哈希值进行比较，以查看我们的存储中是否已存在相同的块。</p>
-<p>我们可以在系统中以两种方式实现重复数据删除：</p>
-<p>a.后处理重复数据删除<br> 通过后处理重复数据删除，新的块首先存储在存储设备上，稍后某些进程会分析数据以查找重复。好处是客户端在存储数据之前不需要等待哈希计算或查找完成，从而确保存储性能不会降低。这种方法的缺点是1）我们将不必要地存储重复数据在短时间里2）重复数据消耗带宽。</p>
-<p>b.在线重复数据删除<br> 重复数据删除哈希计算可以在客户端在其设备上输入数据时实时完成。如果我们的系统识别出已存储的块，则只会在元数据中添加对现有块的引用，而不是块的完整副本。这种方法将为我们提供最佳的网络和存储使用。</p>
-<h2 id="METADATA-分区"><a href="#METADATA-分区" class="headerlink" title="METADATA 分区"></a>METADATA 分区</h2><p>要扩展元数据DB，我们需要对其进行分区，以便它可以存储有关数百万用户和数十亿文件/块的信息。我们需要提出一种分区方案，将我们的数据划分并存储到不同的数据库服务器。</p>
-<p>1.垂直分区：我们可以对数据库进行分区，以便在一台服务器上存储与一个特定功能相关的表。例如，我们可以将所有用户相关表存储在一个数据库中，将所有文件/块相关表存储在另一个数据库中。虽然这种方法很容易实现，但它有一些问题：</p>
-<p>我们还会有规模问题吗？如果我们有数万亿的块存储并且我们的数据库不能支持存储如此大量的记录怎么办？我们如何进一步划分这些表？<br> 在两个单独的数据库中连接两个表可能会导致性能和一致性问题。我们多久要加入用户和文件表？</p>
-<p>2.基于范围的分区：如果我们根据文件路径的第一个字母将文件/块存储在单独的分区中，该怎么办？因此，我们将所有以字母“A”开头的文件保存在一个分区中，将那些以字母“B”开头的文件保存到另一个分区中，依此类推。这种方法称为基于范围的分区。我们甚至可以将某些不常出现的字母组合成一个数据库分区。我们应该静态地提出这个分区方案，以便我们可以始终以可预测的方式存储/查找文件。</p>
-<p>这种方法的主要问题是它可能导致服务器不平衡。例如，如果我们决定将所有以字母’E’开头的文件放入数据库分区，稍后我们就会发现我们有太多以字母’E’开头的文件，以至于我们无法将它们放入一个数据库分区。</p>
-<p>3.基于散列的分区：在这个方案中，我们采用我们正在存储的对象的散列，并基于此散列，我们找出该对象应该去的DB分区。在我们的例子中，我们可以获取我们存储的File对象的’FileID’的哈希值来确定文件将被存储的分区。我们的散列函数会将对象随机分配到不同的分区中，例如，我们的散列函数可以始终将任何ID映射到[1 … 256]之间的数字，这个数字将是我们将存储对象的分区。</p>
-<p>这种方法仍然可能导致分区过载，这可以通过使用Consistent Hashing来解决。</p>
-<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>在METADATA DB 做一层CACHE，在BLOCK STORAGE加一层CACHE。<br> 可以用LRU。</p>
-<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><p>可以加在客户端和BLOCK SERVER间。<br> 在加在客户端和META SERVER间。</p>
-<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><p>我们可以对那些私密文件，在文件的META DB了多存一个PERMISSION 属性。里面表示有哪些用户有读，哪些用户有写权限。</p>
-<p>作者：西部小笼包<br>链接：<a href="https://www.jianshu.com/p/853abdd913fa" target="_blank" rel="noopener">https://www.jianshu.com/p/853abdd913fa</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+<p><a href="https://blog.csdn.net/MrCharles/article/details/108761863" target="_blank" rel="noopener">https://blog.csdn.net/MrCharles/article/details/108761863</a></p>
+<p>在本文中，我们将设计一个Google Drive服务！！ (类似百度网盘,所以标题取百度网盘应该没毛病。事实上不可能这么简单，有时间可以讨论以下百度网盘的网络架构)</p>
+<p>系统设计是软件工程中最重要和最令人担忧的方面之一。很难理解软件体系结构书籍中使用的术语，并且没有明确的分步指南。 每个人似乎都有不同的方法。 当然，还有一个心理障碍是这些可能本来就很难理解。 因此，我根据自己学习架构课程的经验着手设计一个系统。让我们设计一种云文件存储服务，Google Drive。它是一个文件存储和同步服务，使用户可以将其数据存储在远程服务器上。</p>
+<p>现在，那些已经使用过Google Drive的人知道我们可以从任何设备上传任何大小的文件，并且可以在我们的手机，笔记本电脑，个人计算机等设备上找到这些文件。我们很多人想知道该系统如何处理如此大量的文件。</p>
+<p>★系统定义<br>我们需要澄清系统的目标。 系统设计是一个巨大的话题。如果我们不将其范围缩小到特定目的，那么设计系统就会变得复杂，尤其是对于新手。</p>
+<p>用户应该能够从任何设备上载和下载文件/照片。并且文件将在用户登录的所有设备中同步。</p>
+<p>如果考虑到服务中有1000万用户，每天有1亿个请求，那么写入和读取操作的数量将是巨大的。为简化起见，我们仅设计Google云端硬盘存储空间。换句话说，用户可以上传和下载文件，从而有效地将它们存储在云中。</p>
+<p>★系统要求<br>在这一部分中，我们决定系统的功能。我们可以将这些要求分为两部分：</p>
+<p>功能要求：</p>
+<p>用户应该能够从任何设备上载和下载文件。并且文件将在用户登录的所有设备中同步。<br>这些是系统的主要目标。这是系统必须交付的要求。</p>
+<p>非功能需求NFR：</p>
+<p>现在分析的更关键的要求。让我们定义我们的NFR：</p>
+<p>用户可以从任何设备上载和下载文件。该服务应支持存储最大1 GB的单个大文件。服务应在设备之间自动同步；如果一个文件是从设备上传的，则应在用户登录的所有设备上同步该文件。</p>
+<p>★服务器端组件设计<br>对于系统设计的新手，请记住：“如果您对从哪里开始系统设计感到困惑，请尝试从数据流开始。”</p>
+<p>我们在该系统中的用户可以上传和下载文件。用户从客户端应用程序/浏览器上载文件，服务器将存储它们。用户可以从服务器下载更新的文件。因此，让我们看看我们如何为如此大量的用户处理文件的上传和下载。</p>
+<p>上传/下载文件：<br>从图中可以看到，如果我们上传完整大小的文件，则会浪费我们的存储和带宽。而且，延迟会增加以完成上载或下载。</p>
+<p>图：完整文件传输需要更多时间，存储空间和带宽。</p>
+<p>高效处理文件传输：<br>我们可以将每个文件分成较小的块。然后，我们只能更改数据的小片段，而不是整个文件。万一数据上传失败，该策略也将有所帮助。我们需要将每个文件划分为固定大小，例如2 MB。</p>
+<p>图：将文件分成较小的块以优化存储利用率和带宽</p>
+<p>我们的块大小需要更小。这将有助于优化空间利用率，而网络带宽是做出决定时的另一个考虑因素。元数据应包括每个文件的块信息的记录。</p>
+<p>我们可以假设文件需要存储在2 MB的小块中。如果进程失败，则在文件较小的部分重试操作的情况下，我们也会受益。 如果未上传文件，则仅重试失败的块。</p>
+<p>客户端和云存储之间较少的数据传输量将帮助我们获得更好的响应时间。不用发送整个文件，我们只需要发送文件的修改后的块。</p>
+<p>图：仅传输更新的块</p>
+<p>在这种情况下，文件的更新部分将被传输。我们将把文件分成2MB的块，并仅传输文件的修改部分，如下图所示。<br>从上图可以看到，我们没有更新整个10 MB的文件，而是更新了文件的修改后的2MB部分。它将为用户减少带宽消耗和云存储。最重要的是，响应时间将更快。</p>
+<p>客户端离线时会发生什么？<br>客户端组件Watcher将观察客户端文件夹。如果用户发生任何更改，它将通知索引控制器（Index Controller，另一个客户端组件）有关用户操作的信息。它还将监视其他客户端（设备）是否发生任何更改，这些更改由Notification Server广播。</p>
+<p>当元数据服务收到更新/上传请求时，它需要检查元数据数据库的一致性，然后继续进行更新。 之后，将向所有订阅的设备发送通知以报告文件更新。</p>
+<p>元数据数据库：<br>我们需要一个负责保存有关文件，用户等信息的数据库。它可以是关系数据库，例如MySQL或NoSQL，例如MongoDB。我们需要将数据块，文件，用户信息等保存在数据库中。</p>
+<p>众所周知， 我们必须在两种类型的数据库（SQL或NoSQL）之间进行选择。无论我们选择什么，我们都需要确保数据的一致性。</p>
+<p>使用SQL数据库可以为我们提供同步实现的好处，因为它们支持ACID属性。</p>
+<p>NoSQL数据库不支持ACID属性。但是它们提供了对可伸缩性和性能的支持。因此，我们需要在Metadata Server的逻辑中以编程方式为此类数据库提供对ACID属性的支持。</p>
+<p>同步：<br>现在，客户端从设备更新文件。需要有一个组件来处理更新并将更改应用到其他设备。它需要同步客户端的本地数据库和远程元数据数据库。MetaData服务器可以执行这项工作来管理元数据并同步用户的文件。</p>
+<p>消息队列：<br>现在考虑一下；如此大量的用户正在同时上传文件，服务器如何处理如此大量的请求。为了能够处理如此大量的请求，我们可能在客户端和服务器之间使用消息队列。</p>
+<p>图：消息传递队列提供可伸缩的请求排队和更改通知，以使用pull或push策略支持大量客户端。</p>
+<p>当目标程序忙或未连接时，消息队列提供临时消息存储。它提供了异步通信协议。它 是一种将消息放入队列并且不需要立即响应即可继续处理的系统。RabbitMQ，Apache Kafka等是消息传递队列的一些示例。</p>
+<p>如果是消息队列，则一旦客户端接收到消息，就会从队列中删除消息。因此，我们需要为客户端的每个订阅的设备创建几个响应队列。</p>
+<p>图：每种设备类型的响应消息队列</p>
+<p>对于大量用户，我们需要一个可伸缩的消息队列，该队列支持客户端和同步服务之间基于异步消息的通信。该服务应该能够在高度可用，可靠和可伸缩的队列中有效地存储任意数量的消息。例如：apache Kafka，rabbitMQ等。</p>
+<p>云储存：<br>如今，有许多平台和操作系统，例如智能手机，笔记本电脑，个人计算机等。它们可随时随地提供移动访问。</p>
+<p>如果您将文件保存在笔记本电脑的本地存储中，并且出门在外但想在手机上使用它，那么如何获取数据？这就是为什么我们需要云存储作为解决方案。</p>
+<p>它存储用户上传的文件（块）。客户端可以通过文件处理服务器与存储进行交互，以从存储发送和接收对象。它只保存文件；元数据DB保留块大小和文件编号的数据。</p>
+<p>文件处理工作流程：<br>客户端A将块上传到云存储。客户端A使用元数据服务器更新元数据并提交对MetadataDB的更改。客户端得到确认，并将通知发送到同一用户的其他设备。其他设备接收元数据更改并从云存储下载更新的块。</p>
+<p>图：客户端A的文件处理工作流程</p>
+<p>★可扩展性<br>我们需要对元数据数据库进行分区，以便可以存储约100万用户和数十亿个文件/块的信息。我们可以对数据进行分区，以在服务器上分配读写请求。</p>
+<p>元数据分区：<br>我们可以基于文件路径的首字母将文件块存储在分区中。例如，我们将所有以字母“ A”开头的文件保留在一个分区中，并将所有以字母“ B”开头的文件保留在另一个分区中，依此类推。这称为基于范围的分区。不太频繁出现的字母（例如“ Z”或“ Y”），我们可以将它们组合成一个分区。<br>主要问题是，某些字母在首字母的情况下很常见。例如，如果我们将所有以字母“ A”开头的文件放入一个数据库分区中，而我们有太多以字母“ A”开头的文件，那么我们就无法将它们放入一个数据库分区中。<br>我们也可以基于文件’fileId’的哈希值进行分区。我们的哈希函数将随机生成一个服务器号，并将文件存储在该服务器中。 但是我们可能需要要求所有服务器找到列表，然后将它们合并在一起以得到结果。因此，响应时间延迟可能会增加。<br>如果我们使用这种方法，它仍然会导致分区过载，这可以通过使用“一致性哈希”来解决。<br>缓存：<br>众所周知，缓存是提高性能的常用技术。这对于降低延迟非常有帮助。服务器可以在访问数据库之前检查缓存服务器，以查看搜索列表是否已在缓存中。我们不能将所有数据都保存在缓存中。</p>
+<p>当缓存已满时，我们需要用一个更新的块替换一个块。Least Recently Used（LRU）可以用于此系统。在这种方法中，首先从高速缓存中删除最近最少使用的块。</p>
+<p>★安全性：<br>在文件共享服务中，用户数据的私密性和安全性至关重要。为了解决这个问题，我们可以将每个文件的权限存储在元数据数据库中，哪些文件可由哪个用户查看或修改。</p>
+<p>★客户端：<br>客户端应用程序（Web或移动设备）传输用户上传到云存储中的所有文件。该应用程序将上传，下载或修改文件到云存储。客户端可以更新元数据，例如重命名文件名，编辑文件等。</p>
+<p>客户端应用程序功能包括上传，下载文件。如上所述，我们将每个文件分成2MB的较小块，以便仅传输修改后的块，而不传输整个文件。</p>
+<p>如果由于用户的离线状态而引起任何冲突，则应用需要对其进行处理。现在，我们可以在客户端保留元数据的本地副本，以使我们能够进行脱机更新。</p>
+<p>客户端应用程序需要检测客户端文件夹中的文件是否已更改。我们可能有一个组件Watcher。它将检查客户端是否发生任何文件更改。</p>
+<p>★客户如何知道云存储已完成更改？<br>客户端可以定期与服务器核对是否有任何更改，这是一项手动策略。但是，如果客户端经常检查服务器的更改，则会给服务器带来压力，使服务器繁忙。</p>
+<p>我们可以使用HTTP 长时间轮询 技术。 在这种技术中，服务器不会立即响应客户端请求。服务器不发送空响应，而是使请求保持打开状态。 一旦准备好新信息，服务器就会向客户端发送响应。</p>
+<p>图：客户端应用程序向元数据服务器请求更新元数据信息</p>
+<p>我们可以将客户端应用程序分为以下几部分：</p>
+<p>本地数据库将跟踪客户端系统中的所有文件，块，目录路径等。<br>块控制器会将文件分割成较小的部分。它还将负责从其块中重建整个文件。这部分将有助于确定文件的最新修改块。而且仅将文件的已修改块发送到服务器，这将节省带宽和服务器计算时间。<br>守望者会观察客户端文件夹，如果用户发生任何变化，它会通知索引控制器对用户的作用。它还将监视由同步服务广播的其他客户端（设备）上是否发生了任何更改。<br>索引控制器将处理从观察程序收到的事件，并更新有关已修改文件块信息的本地数据库。它将与元数据服务通信，以将更改传送到其他设备并更新元数据数据库。该请求将通过消息请求队列发送到元数据服务。<br>下面是系统的完整图：</p>
+<p>图：Google驱动器的系统设计</p>
+<p>★结论：<br>在此系统中，我们未考虑UI部分。系统中也未考虑更新和脱机编辑的历史记录。移动客户端可以按需同步以节省用户的带宽和空间。在这里，我们没有使用其他服务器进行同步。元数据服务器正在执行该任务。</p>
+<p>我们决定将文件分成较小的块，以节省存储空间，带宽使用并减少延迟。 我们添加了Loadbalancer，以在后端服务器之间平均分配传入请求。如果服务器停止工作了，则LB将停止向其发送任何请求。</p>
+<p>在云架构中，用户数据的隐私和安全性至关重要。我们可以将每个文件的权限存储在元数据数据库中，以检查哪些文件对哪个用户可见或可以修改。<br>————————————————<br>版权声明：本文为CSDN博主「MrCharles」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/MrCharles/article/details/108761863" target="_blank" rel="noopener">https://blog.csdn.net/MrCharles/article/details/108761863</a></p>
 
       
     </div>
@@ -526,6 +503,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/04/12/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E9%A2%98/" rel="prev" title="系统设计题">
+                系统设计题 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -579,17 +560,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -609,7 +581,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">284</span>
+                  <span class="site-state-item-count">305</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -621,7 +593,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -658,22 +630,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-为什么要云存储"><span class="nav-number">1.</span> <span class="nav-text">1.为什么要云存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统的要求和目标"><span class="nav-number">2.</span> <span class="nav-text">系统的要求和目标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本要求"><span class="nav-number">2.1.</span> <span class="nav-text">基本要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展要求"><span class="nav-number">2.2.</span> <span class="nav-text">扩展要求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计的考虑点"><span class="nav-number">3.</span> <span class="nav-text">设计的考虑点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#容量估计"><span class="nav-number">4.</span> <span class="nav-text">容量估计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高层设计"><span class="nav-number">5.</span> <span class="nav-text">高层设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#细节设计"><span class="nav-number">6.</span> <span class="nav-text">细节设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端"><span class="nav-number">6.1.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元数据DB"><span class="nav-number">6.2.</span> <span class="nav-text">元数据DB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步服务"><span class="nav-number">6.3.</span> <span class="nav-text">同步服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列服务"><span class="nav-number">6.4.</span> <span class="nav-text">消息队列服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云存储"><span class="nav-number">6.5.</span> <span class="nav-text">云存储</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件处理的工作流"><span class="nav-number">7.</span> <span class="nav-text">文件处理的工作流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重复数据删除"><span class="nav-number">8.</span> <span class="nav-text">重复数据删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#METADATA-分区"><span class="nav-number">9.</span> <span class="nav-text">METADATA 分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存"><span class="nav-number">10.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#负载均衡"><span class="nav-number">11.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全"><span class="nav-number">12.</span> <span class="nav-text">安全</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -718,7 +674,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共566.1k字</span>
+  <span class="post-count">博客全站共644.9k字</span>
 </div>
 
         

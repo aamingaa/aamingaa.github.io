@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="流程Flink分布式快照流程首先我们来看一下一个简单的Checkpoint的大致流程：  暂停处理新流入数据，将新数据缓存起来。 将算子子任务的本地状态数据拷贝到一个远程的持久化存储上。 继续处理新流入的数据，包括刚才缓存起来的数据。  Flink是在Chandy–Lamport算法[1]的基础上实现的一种分布式快照算法。在介绍Flink的快照详细流程前，我们先要了解一下检查点分界线（Checkp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="checkpoint源码分析">
+<meta property="og:url" content="http://aamingaa.github.io/2021/09/08/checkpoint%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="流程Flink分布式快照流程首先我们来看一下一个简单的Checkpoint的大致流程：  暂停处理新流入数据，将新数据缓存起来。 将算子子任务的本地状态数据拷贝到一个远程的持久化存储上。 继续处理新流入的数据，包括刚才缓存起来的数据。  Flink是在Chandy–Lamport算法[1]的基础上实现的一种分布式快照算法。在介绍Flink的快照详细流程前，我们先要了解一下检查点分界线（Checkp">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-e4cf34ec73f06143548e15f38b280d6c_1440w.jpg">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-273367b7627b888f190202d237ef87d0_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-c9a641d9732ba81143b300db1f6320a7_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-30477dced9953e5b6c3455d4b891d167_1440w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-b346ec64ffa941b74a54e3e167a0eb72_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-77c3b8263080f9094ca642ea0fa35d6b_1440w.jpg">
+<meta property="article:published_time" content="2021-09-08T02:39:18.000Z">
+<meta property="article:modified_time" content="2021-09-09T13:34:44.541Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-e4cf34ec73f06143548e15f38b280d6c_1440w.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/09/08/checkpoint源码分析/"/>
+
+
+
+
+
+  <title>checkpoint源码分析 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/09/08/checkpoint%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">checkpoint源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-08T10:39:18+08:00">
+                2021-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  18
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><h2 id="Flink分布式快照流程"><a href="#Flink分布式快照流程" class="headerlink" title="Flink分布式快照流程"></a>Flink分布式快照流程</h2><p>首先我们来看一下一个简单的Checkpoint的大致流程：</p>
+<ol>
+<li>暂停处理新流入数据，将新数据缓存起来。</li>
+<li>将算子子任务的本地状态数据拷贝到一个远程的持久化存储上。</li>
+<li>继续处理新流入的数据，包括刚才缓存起来的数据。</li>
+</ol>
+<p>Flink是在Chandy–Lamport算法[1]的基础上实现的一种分布式快照算法。在介绍Flink的快照详细流程前，我们先要了解一下检查点分界线（Checkpoint Barrier）的概念。如下图所示，Checkpoint Barrier被插入到数据流中，它将数据流切分成段。Flink的Checkpoint逻辑是，一段新数据流入导致状态发生了变化，Flink的算子接收到Checpoint Barrier后，对状态进行快照。每个Checkpoint Barrier有一个ID，表示该段数据属于哪次Checkpoint。如图所示，当ID为n的Checkpoint Barrier到达每个算子后，表示要对n-1和n之间状态的更新做快照。Checkpoint Barrier有点像Event Time中的Watermark，它被插入到数据流中，但并不影响数据流原有的处理顺序。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-e4cf34ec73f06143548e15f38b280d6c_1440w.jpg" alt="img"></p>
+<p>接下来，我们构建一个并行数据流图，用这个并行数据流图来演示Flink的分布式快照机制。这个数据流图有两个Source子任务，数据流会在这些并行算子上从Source流动到Sink。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-273367b7627b888f190202d237ef87d0_1440w.jpg" alt="img"></p>
+<p>首先，Flink的检查点协调器（Checkpoint Coordinator）触发一次Checkpoint（Trigger Checkpoint），这个请求会发送给Source的各个子任务。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-c9a641d9732ba81143b300db1f6320a7_1440w.jpg" alt="img"></p>
+<p>各Source算子子任务接收到这个Checkpoint请求之后，会将自己的状态写入到状态后端，生成一次快照，并且会向下游广播Checkpoint Barrier。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-30477dced9953e5b6c3455d4b891d167_1440w.jpg" alt="img"></p>
+<p>Source算子做完快照后，还会给Checkpoint Coodinator发送一个确认，告知自己已经做完了相应的工作。这个确认中包括了一些元数据，其中就包括刚才备份到State Backend的状态句柄，或者说是指向状态的指针。至此，Source完成了一次Checkpoint。跟Watermark的传播一样，一个算子子任务要把Checkpoint Barrier发送给所连接的所有下游算子子任务。</p>
+<p>对于下游算子来说，可能有多个与之相连的上游输入，我们将算子之间的边称为通道。Source要将一个ID为n的Checkpoint Barrier向所有下游算子广播，这也意味着下游算子的多个输入里都有同一个Checkpoint Barrier，而且不同输入里Checkpoint Barrier的流入进度可能不同。Checkpoint Barrier传播的过程需要进行对齐（Barrier Alignment），我们从数据流图中截取一小部分来分析Checkpoint Barrier是如何在算子间传播和对齐的。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-b346ec64ffa941b74a54e3e167a0eb72_1440w.jpg" alt="img"></p>
+<p>如上图所示，对齐分为四步：</p>
+<ol>
+<li>算子子任务在某个输入通道中收到第一个ID为n的Checkpoint Barrier，但是其他输入通道中ID为n的Checkpoint Barrier还未到达，该算子子任务开始准备进行对齐。</li>
+<li>算子子任务将第一个输入通道的数据缓存下来，同时继续处理其他输入通道的数据，这个过程被称为对齐。</li>
+<li>第二个输入通道的Checkpoint Barrier抵达该算子子任务，该算子子任务执行快照，将状态写入State Backend，然后将ID为n的Checkpoint Barrier向下游所有输出通道广播。</li>
+<li>对于这个算子子任务，快照执行结束，继续处理各个通道中新流入数据，包括刚才缓存起来的数据。</li>
+</ol>
+<p>数据流图中的每个算子子任务都要完成一遍上述的对齐、快照、确认的工作，当最后所有Sink算子确认完成快照之后，说明ID为n的Checkpoint执行结束，Checkpoint Coordinator向State Backend写入一些本次Checkpoint的元数据。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-77c3b8263080f9094ca642ea0fa35d6b_1440w.jpg" alt="img"></p>
+<p>之所以要进行对齐，主要是为了保证一个Flink作业所有算子的状态是一致的。也就是说，某个ID为n的Checkpoint Barrier从前到后流入所有算子子任务后，所有算子子任务都能将同样的一段数据写入快照。</p>
+<h2 id="快照性能优化方案"><a href="#快照性能优化方案" class="headerlink" title="快照性能优化方案"></a>快照性能优化方案</h2><p>前面和大家分享了一致性快照的具体流程，这种方式保证了数据的一致性，但有一些潜在的问题：</p>
+<ol>
+<li>每次进行Checkpoint前，都需要暂停处理新流入数据，然后开始执行快照，假如状态比较大，一次快照可能长达几秒甚至几分钟。</li>
+<li>Checkpoint Barrier对齐时，必须等待所有上游通道都处理完，假如某个上游通道处理很慢，这可能造成整个数据流堵塞。</li>
+</ol>
+<p>针对这些问题Flink已经有了一些解决方案，并且还在不断优化。</p>
+<p>对于第一个问题，Flink提供了异步快照（Asynchronous Snapshot）的机制。当实际执行快照时，Flink可以立即向下广播Checkpoint Barrier，表示自己已经执行完自己部分的快照。同时，Flink启动一个后台线程，它创建本地状态的一份拷贝，这个线程用来将本地状态的拷贝同步到State Backend上，一旦数据同步完成，再给Checkpoint Coordinator发送确认信息。拷贝一份数据肯定占用更多内存，这时可以利用写入时复制（Copy-on-Write）的优化策略。Copy-on-Write指：如果这份内存数据没有任何修改，那没必要生成一份拷贝，只需要有一个指向这份数据的指针，通过指针将本地数据同步到State Backend上；如果这份内存数据有一些更新，那再去申请额外的内存空间并维护两份数据，一份是快照时的数据，一份是更新后的数据。</p>
+<p>对于第二个问题，Flink允许跳过对齐这一步，或者说一个算子子任务不需要等待所有上游通道的Checkpoint Barrier，直接将Checkpoint Barrier广播，执行快照并继续处理后续流入数据。为了保证数据一致性，Flink必须将那些较慢的数据流中的元素也一起快照，一旦重启，这些元素会被重新处理一遍。</p>
+<h2 id="State-Backend"><a href="#State-Backend" class="headerlink" title="State Backend"></a>State Backend</h2><p>前面已经分享了Flink的快照机制，其中State Backend起到了持久化存储数据的重要功能。Flink将State Backend抽象成了一种插件，并提供了三种State Backend，每种State Backend对数据的保存和恢复方式略有不同。接下来我们开始详细了解一下Flink的State Backend。</p>
+<h3 id="MemoryStateBackend"><a href="#MemoryStateBackend" class="headerlink" title="MemoryStateBackend"></a>MemoryStateBackend</h3><p>从名字中可以看出，这种State Backend主要基于内存，它将数据存储在Java的堆区。当进行分布式快照时，所有算子子任务将自己内存上的状态同步到JobManager的堆上，一个作业的所有状态要小于JobManager的内存大小。这种方式显然不能存储过大的状态数据，否则将抛出<code>OutOfMemoryError</code>异常。因此，这种方式只适合调试或者实验，不建议在生产环境下使用。下面的代码告知一个Flink作业使用内存作为State Backend，并在参数中指定了状态的最大值，默认情况下，这个最大值是5MB。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">env.setStateBackend(<span class="keyword">new</span> <span class="type">MemoryStateBackend</span>(<span class="type">MAX_MEM_STATE_SIZE</span>))</span><br></pre></td></tr></table></figure>
+
+<p>如果不做任何配置，默认情况是使用内存作为State Backend。</p>
+<h3 id="FsStateBackend"><a href="#FsStateBackend" class="headerlink" title="FsStateBackend"></a>FsStateBackend</h3><p>这种方式下，数据持久化到文件系统上，文件系统包括本地磁盘、HDFS以及包括Amazon、阿里云在内的云存储服务。使用时，我们要提供文件系统的地址，尤其要写明前缀，比如：<code>file://</code>、<code>hdfs://</code>或<code>s3://</code>。此外，这种方式支持Asynchronous Snapshot，默认情况下这个功能是开启的，可加快数据同步速度。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用HDFS作为State Backend</span></span><br><span class="line">env.setStateBackend(<span class="keyword">new</span> <span class="type">FsStateBackend</span>(<span class="string">"hdfs://namenode:port/flink-checkpoints/chk-17/"</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用阿里云OSS作为State Backend</span></span><br><span class="line">env.setStateBackend(<span class="keyword">new</span> <span class="type">FsStateBackend</span>(<span class="string">"oss://&lt;your-bucket&gt;/&lt;object-name&gt;"</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用Amazon作为State Backend</span></span><br><span class="line">env.setStateBackend(<span class="keyword">new</span> <span class="type">FsStateBackend</span>(<span class="string">"s3://&lt;your-bucket&gt;/&lt;endpoint&gt;"</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关闭Asynchronous Snapshot</span></span><br><span class="line">env.setStateBackend(<span class="keyword">new</span> <span class="type">FsStateBackend</span>(checkpointPath, <span class="literal">false</span>))</span><br></pre></td></tr></table></figure>
+
+<p>Flink的本地状态仍然在TaskManager的内存堆区上，直到执行快照时状态数据会写到所配置的文件系统上。因此，这种方式能够享受本地内存的快速读写访问，也能保证大容量状态作业的故障恢复能力。</p>
+<h3 id="RocksDBStateBackend"><a href="#RocksDBStateBackend" class="headerlink" title="RocksDBStateBackend"></a>RocksDBStateBackend</h3><p>这种方式下，本地状态存储在本地的RocksDB上。RocksDB是一种嵌入式Key-Value数据库，数据实际保存在本地磁盘上。比起<code>FsStateBackend</code>的本地状态存储在内存中，RocksDB利用了磁盘空间，所以可存储的本地状态更大。然而，每次从RocksDB中读写数据都需要进行序列化和反序列化，因此读写本地状态的成本更高。快照执行时，Flink将存储于本地RocksDB的状态同步到远程的存储上，因此使用这种State Backend时，也要配置分布式存储的地址。Asynchronous Snapshot在默认情况也是开启的。</p>
+<p>此外，这种State Backend允许增量快照（Incremental Checkpoint），Incremental Checkpoint的核心思想是每次快照时只对发生变化的数据增量写到分布式存储上，而不是将所有的本地状态都拷贝过去。Incremental Checkpoint非常适合超大规模的状态，快照的耗时将明显降低，同时，它的代价是重启恢复的时间更长。默认情况下，Incremental Checkpoint没有开启，需要我们手动开启。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启Incremental Checkpoint</span></span><br><span class="line"><span class="keyword">val</span> enableIncrementalCheckpointing = <span class="literal">true</span></span><br><span class="line">env.setStateBackend(<span class="keyword">new</span> <span class="type">RocksDBStateBackend</span>(checkpointPath, enableIncrementalCheckpointing))</span><br></pre></td></tr></table></figure>
+
+<p>相比<code>FsStateBackend</code>，<code>RocksDBStateBackend</code>能够支持的本地和远程状态都更大，Flink社区已经有TB级的案例。</p>
+<p>除了上述三种之外，开发者也可以自行开发State Backend的具体实现。</p>
+<h2 id="重启恢复流程"><a href="#重启恢复流程" class="headerlink" title="重启恢复流程"></a>重启恢复流程</h2><p>Flink的重启恢复逻辑相对比较简单：</p>
+<ol>
+<li>重启应用，在集群上重新部署数据流图。</li>
+<li>从持久化存储上读取最近一次的Checkpoint数据，加载到各算子子任务上。</li>
+<li>继续处理新流入的数据。</li>
+</ol>
+<p>这样的机制可以保证Flink内部状态的Excatly-Once一致性。至于端到端的Exactly-Once一致性，要根据Source和Sink的具体实现而定。当发生故障时，一部分数据有可能已经流入系统，但还未进行Checkpoint，Source的Checkpoint记录了输入的Offset；当重启时，Flink能把最近一次的Checkpoint恢复到内存中，并根据Offset，让Source从该位置重新发送一遍数据，以保证数据不丢不重。像Kafka等消息队列是提供重发功能的，<code>socketTextStream</code>就不具有这种功能，也意味着不能保证Exactly-Once投递保障。</p>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>checkpoint是Flink Fault Tolerance机制的重要构成部分，flink checkpoint的核心类名为org.apache.flink.runtime.checkpoint.CheckpointCoordinator。</p>
+<p><strong>定期产生的checkpoint事件</strong></p>
+<p>flink的checkpoint是由CheckpointCoordinator内部的一个timer线程池定时产生的，具体代码由ScheduledTrigger这个Runnable类启动。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">private final <span class="class"><span class="keyword">class</span> <span class="title">ScheduledTrigger</span> <span class="title">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public <span class="keyword">void</span> run() &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            triggerCheckpoint(System.currentTimeMillis(), <span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            LOG.error(<span class="string">"Exception while triggering checkpoint."</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个triggerCheckpoint方法大致分为三个部分:</p>
+<p><strong>1 环境前置检查</strong></p>
+<p>主要在生成一个chepoint之前进行了一些pre-checks，包括checkpoint的targetDirectory、正在进行中的pendingCheckpoint数量上限、前后两次checkpoint间隔是否过小、以及下游与checkpoint相关tasks是否存活等检测，任意一个条件不满足的都不会执行真正的checkpoint动作。</p>
+<p><strong>2 生成pendingcheckpoint</strong></p>
+<p>pendingcheckpoint表示一个待处理的检查点，每个pendingcheckpoint标有一个全局唯一的递增checkpointID，并声明了一个canceller用于后续超时情况下的checkpoint清理用于释放资源。</p>
+<p>pendingcheckpoint在正式执行前还会再执行一遍前置检查，主要等待完成的检查点数量是否过多以及前后两次完成的检查点间隔是否过短等问题，这些检查都通过后，会把之前定义好的cancller注册到timer线程池，如果等待时间过长会主动回收checkpoint的资源。</p>
+<p><strong>3 启动checkpoint执行</strong></p>
+<p>发送这个checkpoint的checkpointID和timestamp到各个对应的executor,也就是给各个TaskManger发一个TriggerCheckpoint类型的消息。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">            CheckpointOptions checkpointOptions;</span><br><span class="line">            <span class="keyword">if</span> (!props.isSavepoint()) &#123;</span><br><span class="line">                checkpointOptions = CheckpointOptions.forCheckpoint();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                checkpointOptions = CheckpointOptions.forSavepoint(targetDirectory);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// send the messages to the tasks that trigger their checkpoint</span></span><br><span class="line">            <span class="keyword">for</span> (Execution execution: executions) &#123;</span><br><span class="line">                execution.triggerCheckpoint(checkpointID, timestamp, checkpointOptions);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            numUnsuccessfulCheckpointsTriggers.set(<span class="number">0</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> CheckpointTriggerResult(checkpoint);</span><br><span class="line">public <span class="keyword">void</span> triggerCheckpoint(long checkpointId, long timestamp, CheckpointOptions checkpointOptions) &#123;</span><br><span class="line">    final SimpleSlot slot = assignedResource;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (slot != <span class="literal">null</span>) &#123;</span><br><span class="line">        final TaskManagerGateway taskManagerGateway = slot.getTaskManagerGateway();</span><br><span class="line"></span><br><span class="line">        taskManagerGateway.triggerCheckpoint(attemptId, getVertex().getJobId(), checkpointId, timestamp, checkpointOptions);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        LOG.debug(<span class="string">"The execution has no slot assigned. This indicates that the execution is "</span> +</span><br><span class="line">            <span class="string">"no longer running."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public <span class="keyword">void</span> triggerCheckpoint(</span><br><span class="line">        ExecutionAttemptID executionAttemptID,</span><br><span class="line">        JobID jobId,</span><br><span class="line">        long checkpointId,</span><br><span class="line">        long timestamp,</span><br><span class="line">        CheckpointOptions checkpointOptions) &#123;</span><br><span class="line"></span><br><span class="line">    Preconditions.checkNotNull(executionAttemptID);</span><br><span class="line">    Preconditions.checkNotNull(jobId);</span><br><span class="line"></span><br><span class="line">    actorGateway.tell(<span class="keyword">new</span> TriggerCheckpoint(jobId, executionAttemptID, checkpointId, timestamp, checkpointOptions));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，for (Execution execution: executions) 这里面的executions里面是所有的输入节点，也就是flink source节点，所以checkpoint这些barrier 时间首先从jobmanager发送给了所有的source task</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">JobCheckpointingSettings settings = <span class="keyword">new</span> JobCheckpointingSettings(</span><br><span class="line">            triggerVertices,</span><br><span class="line">            ackVertices,</span><br><span class="line">            commitVertices,</span><br><span class="line">            <span class="keyword">new</span> CheckpointCoordinatorConfiguration(</span><br><span class="line">                interval,</span><br><span class="line">                cfg.getCheckpointTimeout(),</span><br><span class="line">                cfg.getMinPauseBetweenCheckpoints(),</span><br><span class="line">                cfg.getMaxConcurrentCheckpoints(),</span><br><span class="line">                retentionAfterTermination,</span><br><span class="line">                isExactlyOnce),</span><br><span class="line">            serializedStateBackend,</span><br><span class="line">            serializedHooks);</span><br><span class="line"></span><br><span class="line">        jobGraph</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (JobVertex vertex : jobVertices.values()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (vertex.isInputVertex()) &#123;</span><br><span class="line">                triggerVertices.add(vertex.getID());</span><br><span class="line">            &#125;</span><br><span class="line">            commitVertices.add(vertex.getID());</span><br><span class="line">            ackVertices.add(vertex.getID());</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="barrier源码分析"><a href="#barrier源码分析" class="headerlink" title="barrier源码分析"></a>barrier源码分析</h1><p>Job 启动的时候，Flink 会 startCheckpointScheduler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public void startCheckpointScheduler() &#123;</span><br><span class="line">		synchronized (lock) &#123;</span><br><span class="line">			if (shutdown) &#123;</span><br><span class="line">				throw new IllegalArgumentException(&quot;Checkpoint coordinator is shut down&quot;);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			&#x2F;&#x2F; make sure all prior timers are cancelled</span><br><span class="line">			stopCheckpointScheduler();</span><br><span class="line"></span><br><span class="line">			periodicScheduling &#x3D; true;</span><br><span class="line">			long initialDelay &#x3D; ThreadLocalRandom.current().nextLong(</span><br><span class="line">				minPauseBetweenCheckpointsNanos &#x2F; 1_000_000L, baseInterval + 1L);</span><br><span class="line">			&#x2F;&#x2F; 定时任务</span><br><span class="line">			currentPeriodicTrigger &#x3D; timer.scheduleAtFixedRate(</span><br><span class="line">					new ScheduledTrigger(), initialDelay, baseInterval, TimeUnit.MILLISECONDS);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过定时任务来触发 checkpoint。<br>到 Task.triggerCheckpoint</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	&#x2F;&#x2F; trigger operator chain task trigger checkpoint</span><br><span class="line">	public CompletableFuture&lt;Acknowledge&gt; triggerCheckpoint(</span><br><span class="line">			ExecutionAttemptID executionAttemptID,</span><br><span class="line">			long checkpointId,</span><br><span class="line">			long checkpointTimestamp,</span><br><span class="line">			CheckpointOptions checkpointOptions) &#123;</span><br><span class="line">		log.debug(&quot;Trigger checkpoint &#123;&#125;@&#123;&#125; for &#123;&#125;.&quot;, checkpointId, checkpointTimestamp, executionAttemptID);</span><br><span class="line"></span><br><span class="line">		final Task task &#x3D; taskSlotTable.getTask(executionAttemptID);</span><br><span class="line"></span><br><span class="line">		if (task !&#x3D; null) &#123;</span><br><span class="line">			task.triggerCheckpointBarrier(checkpointId, checkpointTimestamp, checkpointOptions);</span><br><span class="line"></span><br><span class="line">			return CompletableFuture.completedFuture(Acknowledge.get());</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			final String message &#x3D; &quot;TaskManager received a checkpoint request for unknown task &quot; + executionAttemptID + &#39;.&#39;;</span><br><span class="line"></span><br><span class="line">			log.debug(message);</span><br><span class="line">			return FutureUtils.completedExceptionally(new CheckpointException(message));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到 Task.triggerCheckpointBarrier</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; trigger operator chain trigger checkpoint  最终触发 triggerCheckpointBarrier</span><br><span class="line">	public void triggerCheckpointBarrier(</span><br><span class="line">		final long checkpointID,</span><br><span class="line">		long checkpointTimestamp,</span><br><span class="line">		final CheckpointOptions checkpointOptions) &#123;</span><br><span class="line">		</span><br><span class="line">		&#x2F;&#x2F;实际上就是 StreamTask  Task类实际上是将 checkpoint 委托给了具体的类去执行，而 StreamTask 也将委托给更具体的类，直到业务代码</span><br><span class="line">		&#x2F;&#x2F; source -&gt;flatMap</span><br><span class="line">		&#x2F;&#x2F; invokable 实际上是 operator chain</span><br><span class="line">		final AbstractInvokable invokable &#x3D; this.invokable;</span><br><span class="line">		final CheckpointMetaData checkpointMetaData &#x3D; new CheckpointMetaData(checkpointID, checkpointTimestamp);</span><br><span class="line">		</span><br><span class="line">		if (executionState &#x3D;&#x3D; ExecutionState.RUNNING &amp;&amp; invokable !&#x3D; null) &#123;</span><br><span class="line">			</span><br><span class="line">			&#x2F;&#x2F; build a local closure</span><br><span class="line">			final String taskName &#x3D; taskNameWithSubtask;</span><br><span class="line">			final SafetyNetCloseableRegistry safetyNetCloseableRegistry &#x3D;</span><br><span class="line">				FileSystemSafetyNet.getSafetyNetCloseableRegistryForThread();</span><br><span class="line">			</span><br><span class="line">			Runnable runnable &#x3D; new Runnable() &#123;</span><br><span class="line">				@Override</span><br><span class="line">				public void run() &#123;</span><br><span class="line">					&#x2F;&#x2F; set safety net from the task&#39;s context for checkpointing thread</span><br><span class="line">					LOG.debug(&quot;Creating FileSystem stream leak safety net for &#123;&#125;&quot;, Thread.currentThread().getName());</span><br><span class="line">					FileSystemSafetyNet.setSafetyNetCloseableRegistryForThread(safetyNetCloseableRegistry);</span><br><span class="line">					</span><br><span class="line">					try &#123;</span><br><span class="line">						&#x2F;&#x2F; invokable 事实上就是 StreamTask Task 类实际上是将 checkpoint 委托给了更具体的类去执行，而 StreamTask 也将委托给更具体的类，直到业务代码</span><br><span class="line">						boolean success &#x3D; invokable.triggerCheckpoint(checkpointMetaData, checkpointOptions);</span><br><span class="line">						if (!success) &#123;</span><br><span class="line">							checkpointResponder.declineCheckpoint(</span><br><span class="line">								getJobID(), getExecutionId(), checkpointID,</span><br><span class="line">								new CheckpointDeclineTaskNotReadyException(taskName));</span><br><span class="line">						&#125;</span><br><span class="line">					&#125; catch (Throwable t) &#123;</span><br><span class="line">						if (getExecutionState() &#x3D;&#x3D; ExecutionState.RUNNING) &#123;</span><br><span class="line">							failExternally(new Exception(</span><br><span class="line">								&quot;Error while triggering checkpoint &quot; + checkpointID + &quot; for &quot; +</span><br><span class="line">									taskNameWithSubtask, t));</span><br><span class="line">						&#125; else &#123;</span><br><span class="line">							LOG.debug(&quot;Encountered error while triggering checkpoint &#123;&#125; for &quot; +</span><br><span class="line">									&quot;&#123;&#125; (&#123;&#125;) while being not in state running.&quot;, checkpointID,</span><br><span class="line">								taskNameWithSubtask, executionId, t);</span><br><span class="line">						&#125;</span><br><span class="line">					&#125; finally &#123;</span><br><span class="line">						FileSystemSafetyNet.setSafetyNetCloseableRegistryForThread(null);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;;</span><br><span class="line">			executeAsyncCallRunnable(runnable, String.format(&quot;Checkpoint Trigger for %s (%s).&quot;, taskNameWithSubtask, executionId));</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			LOG.debug(&quot;Declining checkpoint request for non-running task &#123;&#125; (&#123;&#125;).&quot;, taskNameWithSubtask, executionId);</span><br><span class="line">			</span><br><span class="line">			&#x2F;&#x2F; send back a message that we did not do the checkpoint</span><br><span class="line">			checkpointResponder.declineCheckpoint(jobId, executionId, checkpointID,</span><br><span class="line">				new CheckpointDeclineTaskNotReadyException(taskNameWithSubtask));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们以 SourceStreamTask 为例，进入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public boolean triggerCheckpoint(CheckpointMetaData checkpointMetaData, CheckpointOptions checkpointOptions) throws Exception &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			&#x2F;&#x2F; No alignment if we inject a checkpoint</span><br><span class="line">			CheckpointMetrics checkpointMetrics &#x3D; new CheckpointMetrics()</span><br><span class="line">					.setBytesBufferedInAlignment(0L)</span><br><span class="line">					.setAlignmentDurationNanos(0L);</span><br><span class="line"></span><br><span class="line">			return performCheckpoint(checkpointMetaData, checkpointOptions, checkpointMetrics);</span><br><span class="line">		&#125;</span><br><span class="line">		catch (Exception e) &#123;</span><br><span class="line">			&#x2F;&#x2F; propagate exceptions only if the task is still in &quot;running&quot; state</span><br><span class="line">			if (isRunning) &#123;</span><br><span class="line">				throw new Exception(&quot;Could not perform checkpoint &quot; + checkpointMetaData.getCheckpointId() +</span><br><span class="line">					&quot; for operator &quot; + getName() + &#39;.&#39;, e);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				LOG.debug(&quot;Could not perform checkpoint &#123;&#125; for operator &#123;&#125; while the &quot; +</span><br><span class="line">					&quot;invokable was not in state running.&quot;, checkpointMetaData.getCheckpointId(), getName(), e);</span><br><span class="line">				return false;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>StreamTask.performCheckpoint</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; trigger opator chain 一路调用到这里，开始出现 barrier (实际上是定时任务 checkpoint 产生的)</span><br><span class="line">	private boolean performCheckpoint(</span><br><span class="line">			CheckpointMetaData checkpointMetaData,</span><br><span class="line">			CheckpointOptions checkpointOptions,</span><br><span class="line">			CheckpointMetrics checkpointMetrics) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">		LOG.debug(&quot;Starting checkpoint (&#123;&#125;) &#123;&#125; on task &#123;&#125;&quot;,</span><br><span class="line">			checkpointMetaData.getCheckpointId(), checkpointOptions.getCheckpointType(), getName());</span><br><span class="line"></span><br><span class="line">		synchronized (lock) &#123;</span><br><span class="line">			if (isRunning) &#123;</span><br><span class="line">				&#x2F;&#x2F; we can do a checkpoint</span><br><span class="line"></span><br><span class="line">				&#x2F;&#x2F; All of the following steps happen as an atomic step from the perspective of barriers and</span><br><span class="line">				&#x2F;&#x2F; records&#x2F;watermarks&#x2F;timers&#x2F;callbacks.</span><br><span class="line">				&#x2F;&#x2F; We generally try to emit the checkpoint barrier as soon as possible to not affect downstream</span><br><span class="line">				&#x2F;&#x2F; checkpoint alignments</span><br><span class="line"></span><br><span class="line">				&#x2F;&#x2F; Step (1): Prepare the checkpoint, allow operators to do some pre-barrier work.</span><br><span class="line">				&#x2F;&#x2F;           The pre-barrier work should be nothing or minimal in the common case.</span><br><span class="line">				&#x2F;&#x2F;注意，从这里开始，整个执行链路上开始出现Barrier</span><br><span class="line">				operatorChain.prepareSnapshotPreBarrier(checkpointMetaData.getCheckpointId());</span><br><span class="line"></span><br><span class="line">				&#x2F;&#x2F; Step (2): Send the checkpoint barrier downstream</span><br><span class="line">				&#x2F;*</span><br><span class="line">				发送 barrier 到下游，下游的 operator 接收到本 barrier 就会触发其自身的 checkpoint</span><br><span class="line">				 *&#x2F;</span><br><span class="line">				operatorChain.broadcastCheckpointBarrier(</span><br><span class="line">						checkpointMetaData.getCheckpointId(),</span><br><span class="line">						checkpointMetaData.getTimestamp(),</span><br><span class="line">						checkpointOptions);</span><br><span class="line"></span><br><span class="line">				&#x2F;&#x2F; Step (3): Take the state snapshot. This should be largely asynchronous, to not</span><br><span class="line">				&#x2F;&#x2F;           impact progress of the streaming topology</span><br><span class="line">				&#x2F;&#x2F; 执行 checkoint source task chain(trigger task )是直接通过 triggerCheckpoint 来触发 checkpoint 的</span><br><span class="line">				&#x2F;&#x2F; 而非 source task chain 是通过 processBarrier 来触发 checkpoint 的</span><br><span class="line">				checkpointState(checkpointMetaData, checkpointOptions, checkpointMetrics);</span><br><span class="line">				return true;</span><br><span class="line">			&#125;</span><br><span class="line">			else &#123;</span><br><span class="line">				&#x2F;&#x2F; we cannot perform our checkpoint - let the downstream operators know that they</span><br><span class="line">				&#x2F;&#x2F; should not wait for any input from this operator</span><br><span class="line"></span><br><span class="line">				&#x2F;&#x2F; we cannot broadcast the cancellation markers on the &#39;operator chain&#39;, because it may not</span><br><span class="line">				&#x2F;&#x2F; yet be created</span><br><span class="line">				final CancelCheckpointMarker message &#x3D; new CancelCheckpointMarker(checkpointMetaData.getCheckpointId());</span><br><span class="line">				Exception exception &#x3D; null;</span><br><span class="line"></span><br><span class="line">				for (RecordWriter&lt;SerializationDelegate&lt;StreamRecord&lt;OUT&gt;&gt;&gt; recordWriter : recordWriters) &#123;</span><br><span class="line">					try &#123;</span><br><span class="line">						&#x2F;&#x2F;类似于 barrier 的另一种消息</span><br><span class="line">						recordWriter.broadcastEvent(message);</span><br><span class="line">					&#125; catch (Exception e) &#123;</span><br><span class="line">						exception &#x3D; ExceptionUtils.firstOrSuppressed(</span><br><span class="line">							new Exception(&quot;Could not send cancel checkpoint marker to downstream tasks.&quot;, e),</span><br><span class="line">							exception);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				if (exception !&#x3D; null) &#123;</span><br><span class="line">					throw exception;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				return false;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/07/%E7%A7%8B%E6%8B%9B%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/" rel="next" title="秋招实习经历">
+                <i class="fa fa-chevron-left"></i> 秋招实习经历
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/08/barrier%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="prev" title="barrier源码分析">
+                barrier源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#流程"><span class="nav-number">1.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Flink分布式快照流程"><span class="nav-number">1.1.</span> <span class="nav-text">Flink分布式快照流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快照性能优化方案"><span class="nav-number">1.2.</span> <span class="nav-text">快照性能优化方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#State-Backend"><span class="nav-number">1.3.</span> <span class="nav-text">State Backend</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MemoryStateBackend"><span class="nav-number">1.3.1.</span> <span class="nav-text">MemoryStateBackend</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FsStateBackend"><span class="nav-number">1.3.2.</span> <span class="nav-text">FsStateBackend</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RocksDBStateBackend"><span class="nav-number">1.3.3.</span> <span class="nav-text">RocksDBStateBackend</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重启恢复流程"><span class="nav-number">1.4.</span> <span class="nav-text">重启恢复流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析"><span class="nav-number">2.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#barrier源码分析"><span class="nav-number">3.</span> <span class="nav-text">barrier源码分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共644.9k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

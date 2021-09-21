@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] https:&#x2F;&#x2F;blog.csdn.net&#x2F;jsjsjs1789&#x2F;article&#x2F;details&#x2F;106841074 首先呢，Job 启动的时候，Flink 会 startCheckpointScheduler public void startCheckpointScheduler() {        synchronized (lock) {            if (shu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="barrier源码分析">
+<meta property="og:url" content="http://aamingaa.github.io/2021/09/08/barrier%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] https:&#x2F;&#x2F;blog.csdn.net&#x2F;jsjsjs1789&#x2F;article&#x2F;details&#x2F;106841074 首先呢，Job 启动的时候，Flink 会 startCheckpointScheduler public void startCheckpointScheduler() {        synchronized (lock) {            if (shu">
+<meta property="article:published_time" content="2021-09-08T03:18:28.000Z">
+<meta property="article:modified_time" content="2021-09-08T23:59:37.449Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/09/08/barrier源码分析/"/>
+
+
+
+
+
+  <title>barrier源码分析 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/09/08/barrier%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">barrier源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-08T11:18:28+08:00">
+                2021-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<p><a href="https://blog.csdn.net/jsjsjs1789/article/details/106841074" target="_blank" rel="noopener">https://blog.csdn.net/jsjsjs1789/article/details/106841074</a></p>
+<p>首先呢，Job 启动的时候，Flink 会 startCheckpointScheduler</p>
+<p>public void startCheckpointScheduler() {<br>        synchronized (lock) {<br>            if (shutdown) {<br>                throw new IllegalArgumentException(“Checkpoint coordinator is shut down”);<br>            }</p>
+<pre><code>        // make sure all prior timers are cancelled
+        stopCheckpointScheduler();
+
+        periodicScheduling = true;
+        long initialDelay = ThreadLocalRandom.current().nextLong(
+            minPauseBetweenCheckpointsNanos / 1_000_000L, baseInterval + 1L);
+        // 定时任务
+        currentPeriodicTrigger = timer.scheduleAtFixedRate(
+                new ScheduledTrigger(), initialDelay, baseInterval, TimeUnit.MILLISECONDS);
+    }
+}</code></pre><p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>通过定时任务来触发 checkpoint。<br>到 Task.triggerCheckpoint</p>
+<p>@Override<br>    // trigger operator chain task trigger checkpoint<br>    public CompletableFuture<Acknowledge> triggerCheckpoint(<br>            ExecutionAttemptID executionAttemptID,<br>            long checkpointId,<br>            long checkpointTimestamp,<br>            CheckpointOptions checkpointOptions) {<br>        log.debug(“Trigger checkpoint {}@{} for {}.”, checkpointId, checkpointTimestamp, executionAttemptID);</Acknowledge></p>
+<pre><code>    final Task task = taskSlotTable.getTask(executionAttemptID);
+
+    if (task != null) {
+        task.triggerCheckpointBarrier(checkpointId, checkpointTimestamp, checkpointOptions);
+
+        return CompletableFuture.completedFuture(Acknowledge.get());
+    } else {
+        final String message = &quot;TaskManager received a checkpoint request for unknown task &quot; + executionAttemptID + &apos;.&apos;;
+
+        log.debug(message);
+        return FutureUtils.completedExceptionally(new CheckpointException(message));
+    }
+}</code></pre><p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>到 Task.triggerCheckpointBarrier</p>
+<p>// trigger operator chain trigger checkpoint  最终触发 triggerCheckpointBarrier<br>    public void triggerCheckpointBarrier(<br>        final long checkpointID,<br>        long checkpointTimestamp,<br>        final CheckpointOptions checkpointOptions) {</p>
+<pre><code>    //实际上就是 StreamTask  Task类实际上是将 checkpoint 委托给了具体的类去执行，而 StreamTask 也将委托给更具体的类，直到业务代码
+    // source -&gt;flatMap
+    // invokable 实际上是 operator chain
+    final AbstractInvokable invokable = this.invokable;
+    final CheckpointMetaData checkpointMetaData = new CheckpointMetaData(checkpointID, checkpointTimestamp);
+
+    if (executionState == ExecutionState.RUNNING &amp;&amp; invokable != null) {
+
+        // build a local closure
+        final String taskName = taskNameWithSubtask;
+        final SafetyNetCloseableRegistry safetyNetCloseableRegistry =
+            FileSystemSafetyNet.getSafetyNetCloseableRegistryForThread();
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                // set safety net from the task&apos;s context for checkpointing thread
+                LOG.debug(&quot;Creating FileSystem stream leak safety net for {}&quot;, Thread.currentThread().getName());
+                FileSystemSafetyNet.setSafetyNetCloseableRegistryForThread(safetyNetCloseableRegistry);
+
+                try {
+                    // invokable 事实上就是 StreamTask Task 类实际上是将 checkpoint 委托给了更具体的类去执行，而 StreamTask 也将委托给更具体的类，直到业务代码
+                    boolean success = invokable.triggerCheckpoint(checkpointMetaData, checkpointOptions);
+                    if (!success) {
+                        checkpointResponder.declineCheckpoint(
+                            getJobID(), getExecutionId(), checkpointID,
+                            new CheckpointDeclineTaskNotReadyException(taskName));
+                    }
+                } catch (Throwable t) {
+                    if (getExecutionState() == ExecutionState.RUNNING) {
+                        failExternally(new Exception(
+                            &quot;Error while triggering checkpoint &quot; + checkpointID + &quot; for &quot; +
+                                taskNameWithSubtask, t));
+                    } else {
+                        LOG.debug(&quot;Encountered error while triggering checkpoint {} for &quot; +
+                                &quot;{} ({}) while being not in state running.&quot;, checkpointID,
+                            taskNameWithSubtask, executionId, t);
+                    }
+                } finally {
+                    FileSystemSafetyNet.setSafetyNetCloseableRegistryForThread(null);
+                }
+            }
+        };
+        executeAsyncCallRunnable(runnable, String.format(&quot;Checkpoint Trigger for %s (%s).&quot;, taskNameWithSubtask, executionId));
+    } else {
+        LOG.debug(&quot;Declining checkpoint request for non-running task {} ({}).&quot;, taskNameWithSubtask, executionId);
+
+        // send back a message that we did not do the checkpoint
+        checkpointResponder.declineCheckpoint(jobId, executionId, checkpointID,
+            new CheckpointDeclineTaskNotReadyException(taskNameWithSubtask));
+    }
+}</code></pre><p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>我们以 SourceStreamTask 为例，进入</p>
+<p>public boolean triggerCheckpoint(CheckpointMetaData checkpointMetaData, CheckpointOptions checkpointOptions) throws Exception {<br>        try {<br>            // No alignment if we inject a checkpoint<br>            CheckpointMetrics checkpointMetrics = new CheckpointMetrics()<br>                    .setBytesBufferedInAlignment(0L)<br>                    .setAlignmentDurationNanos(0L);</p>
+<pre><code>        return performCheckpoint(checkpointMetaData, checkpointOptions, checkpointMetrics);
+    }
+    catch (Exception e) {
+        // propagate exceptions only if the task is still in &quot;running&quot; state
+        if (isRunning) {
+            throw new Exception(&quot;Could not perform checkpoint &quot; + checkpointMetaData.getCheckpointId() +
+                &quot; for operator &quot; + getName() + &apos;.&apos;, e);
+        } else {
+            LOG.debug(&quot;Could not perform checkpoint {} for operator {} while the &quot; +
+                &quot;invokable was not in state running.&quot;, checkpointMetaData.getCheckpointId(), getName(), e);
+            return false;
+        }
+    }
+}</code></pre><p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>StreamTask.performCheckpoint</p>
+<p>// trigger opator chain 一路调用到这里，开始出现 barrier (实际上是定时任务 checkpoint 产生的)<br>    private boolean performCheckpoint(<br>            CheckpointMetaData checkpointMetaData,<br>            CheckpointOptions checkpointOptions,<br>            CheckpointMetrics checkpointMetrics) throws Exception {</p>
+<pre><code>    LOG.debug(&quot;Starting checkpoint ({}) {} on task {}&quot;,
+        checkpointMetaData.getCheckpointId(), checkpointOptions.getCheckpointType(), getName());
+
+    synchronized (lock) {
+        if (isRunning) {
+            // we can do a checkpoint
+
+            // All of the following steps happen as an atomic step from the perspective of barriers and
+            // records/watermarks/timers/callbacks.
+            // We generally try to emit the checkpoint barrier as soon as possible to not affect downstream
+            // checkpoint alignments
+
+            // Step (1): Prepare the checkpoint, allow operators to do some pre-barrier work.
+            //           The pre-barrier work should be nothing or minimal in the common case.
+            //注意，从这里开始，整个执行链路上开始出现Barrier
+            operatorChain.prepareSnapshotPreBarrier(checkpointMetaData.getCheckpointId());
+
+            // Step (2): Send the checkpoint barrier downstream
+            /*
+            发送 barrier 到下游，下游的 operator 接收到本 barrier 就会触发其自身的 checkpoint
+             */
+            operatorChain.broadcastCheckpointBarrier(
+                    checkpointMetaData.getCheckpointId(),
+                    checkpointMetaData.getTimestamp(),
+                    checkpointOptions);
+
+            // Step (3): Take the state snapshot. This should be largely asynchronous, to not
+            //           impact progress of the streaming topology
+            // 执行 checkoint source task chain(trigger task )是直接通过 triggerCheckpoint 来触发 checkpoint 的
+            // 而非 source task chain 是通过 processBarrier 来触发 checkpoint 的
+            checkpointState(checkpointMetaData, checkpointOptions, checkpointMetrics);
+            return true;
+        }
+        else {
+            // we cannot perform our checkpoint - let the downstream operators know that they
+            // should not wait for any input from this operator
+
+            // we cannot broadcast the cancellation markers on the &apos;operator chain&apos;, because it may not
+            // yet be created
+            final CancelCheckpointMarker message = new CancelCheckpointMarker(checkpointMetaData.getCheckpointId());
+            Exception exception = null;
+
+            for (RecordWriter&lt;SerializationDelegate&lt;StreamRecord&lt;OUT&gt;&gt;&gt; recordWriter : recordWriters) {
+                try {
+                    //类似于 barrier 的另一种消息
+                    recordWriter.broadcastEvent(message);
+                } catch (Exception e) {
+                    exception = ExceptionUtils.firstOrSuppressed(
+                        new Exception(&quot;Could not send cancel checkpoint marker to downstream tasks.&quot;, e),
+                        exception);
+                }
+            }
+
+            if (exception != null) {
+                throw exception;
+            }
+
+            return false;
+        }
+    }
+}</code></pre><p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>59<br>60<br>61<br>62<br>63<br>64<br>65<br>66<br>67<br>整个 Flink Graph 首次出现 checkpoint barrier。<br>需要注意的是主动触发 checkpoint 的只有 trigger operator( 在生成 ExecutionGraph 时会生成 trigger operator，ack operator，confirm operator，这些task 本质上是 operator chain ) ，trigger operator 我们可以简单的理解成 streamSource operator。<br>换言之，streamSource operator 触发了 checkpoint，一直到把 checkpoint 广播到下游，最后做 checkpoint state ( StreamSource operator 的 state )。<br>具体是怎么广播到下游的，其实与普通消息的传递类似，可以参考 一文搞定 Flink 消费消息的全流程</p>
+<p>然后下游的算子 比如 flatMap 在 OneInputStreamTask ( 以此为例 ) 中消费消息</p>
+<p>@Override<br>    protected void run() throws Exception {<br>        // cache processor reference on the stack, to make the code more JIT friendly<br>        final StreamInputProcessor<IN> inputProcessor = this.inputProcessor;<br>        //处理输入的消息<br>        while (running &amp;&amp; inputProcessor.processInput()) {<br>            // all the work happens in the “processInput” method<br>        }<br>    }<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>接下来，直接到 BarrierBuffer (当设置 checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE) 时 )</IN></p>
+<p>@Override<br>    // 从 ResultSubPartition 中获取数据<br>    public BufferOrEvent getNextNonBlocked() throws Exception {<br>        while (true) {<br>            // process buffered BufferOrEvents before grabbing new ones<br>            Optional<BufferOrEvent> next;<br>            if (currentBuffered == null) {<br>                // 如果当前有堆积的 boe，直接从 InputGate 中获取，否则从缓存中获取(通过 CachedBufferBlocker 缓存的数据)<br>                // 通过 inputGate 中的 inputChannel 来获取 ResultSubPartition 中的数据<br>                next = inputGate.getNextBufferOrEvent();<br>            }<br>            else {<br>                next = Optional.ofNullable(currentBuffered.getNext());<br>                if (!next.isPresent()) {<br>                    completeBufferedSequence();<br>                    return getNextNonBlocked();<br>                }<br>            }</BufferOrEvent></p>
+<pre><code>        if (!next.isPresent()) {
+            if (!endOfStream) {
+                // end of input stream. stream continues with the buffered data
+                endOfStream = true;
+                releaseBlocksAndResetBarriers();
+                return getNextNonBlocked();
+            }
+            else {
+                // final end of both input and buffered data
+                return null;
+            }
+        }
+
+        BufferOrEvent bufferOrEvent = next.get();
+        if (isBlocked(bufferOrEvent.getChannelIndex())) {
+            // if the channel is blocked, we just store the BufferOrEvent
+            //  barrier 对齐
+            bufferBlocker.add(bufferOrEvent);
+            checkSizeLimit();
+        }
+        else if (bufferOrEvent.isBuffer()) {
+            return bufferOrEvent;
+        }
+        // 处理 barrier
+        else if (bufferOrEvent.getEvent().getClass() == CheckpointBarrier.class) {
+            if (!endOfStream) {
+                // process barriers only if there is a chance of the checkpoint completing
+                //出 trigger task 外的 operator 都是在这里做的 checkpoint 只有通过 processInput 消费到才表示 barrier 经过了上游算子
+                processBarrier((CheckpointBarrier) bufferOrEvent.getEvent(), bufferOrEvent.getChannelIndex());
+            }
+        }
+        else if (bufferOrEvent.getEvent().getClass() == CancelCheckpointMarker.class) {
+            processCancellationBarrier((CancelCheckpointMarker) bufferOrEvent.getEvent());
+        }
+        else {
+            if (bufferOrEvent.getEvent().getClass() == EndOfPartitionEvent.class) {
+                processEndOfPartition();
+            }
+            return bufferOrEvent;
+        }
+    }
+}</code></pre><p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>59<br>60<br>61<br>接下来就是最为关键的逻辑 处理 barrier</p>
+<p>// 一个 opertor 必须收到从每个 inputchannel 发过来的同一序号的 barrier 之后才能发起本节点的 checkpoint，<br>    //  如果有的 channel 的数据处理的快了，那该 barrier 后的数据还需要缓存起来，<br>    //  如果有的 inputchannel 被关闭了，那它就不会再发送 barrier 过来了<br>    private void processBarrier(CheckpointBarrier receivedBarrier, int channelIndex) throws Exception {<br>        final long barrierId = receivedBarrier.getId();</p>
+<pre><code>    // fast path for single channel cases
+    if (totalNumberOfInputChannels == 1) {
+        if (barrierId &gt; currentCheckpointId) {
+            // new checkpoint
+            currentCheckpointId = barrierId;
+            // 触发 checkpoint
+            notifyCheckpoint(receivedBarrier);
+        }
+        return;
+    }
+
+    // -- general code path for multiple input channels --
+
+    if (numBarriersReceived &gt; 0) {
+        // this is only true if some alignment is already progress and was not canceled
+
+        if (barrierId == currentCheckpointId) {
+            // regular case
+            onBarrier(channelIndex);
+        }
+        else if (barrierId &gt; currentCheckpointId) {
+            // we did not complete the current checkpoint, another started before
+            LOG.warn(&quot;{}: Received checkpoint barrier for checkpoint {} before completing current checkpoint {}. &quot; +
+                    &quot;Skipping current checkpoint.&quot;,
+                inputGate.getOwningTaskName(),
+                barrierId,
+                currentCheckpointId);
+
+            // let the task know we are not completing this
+            notifyAbort(currentCheckpointId, new CheckpointDeclineSubsumedException(barrierId));
+
+            // abort the current checkpoint
+            releaseBlocksAndResetBarriers();
+
+            // begin a the new checkpoint
+            beginNewAlignment(barrierId, channelIndex);
+        }
+        else {
+            // ignore trailing barrier from an earlier checkpoint (obsolete now)
+            return;
+        }
+    }
+    else if (barrierId &gt; currentCheckpointId) {
+        // first barrier of a new checkpoint
+        beginNewAlignment(barrierId, channelIndex);
+    }
+    else {
+        // either the current checkpoint was canceled (numBarriers == 0) or
+        // this barrier is from an old subsumed checkpoint
+        return;
+    }
+
+    // check if we have all barriers - since canceled checkpoints always have zero barriers
+    // this can only happen on a non canceled checkpoint
+    // barrier 对齐之后才会触发 checkpoint 
+    if (numBarriersReceived + numClosedChannels == totalNumberOfInputChannels) {
+        // actually trigger checkpoint
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(&quot;{}: Received all barriers, triggering checkpoint {} at {}.&quot;,
+                inputGate.getOwningTaskName(),
+                receivedBarrier.getId(),
+                receivedBarrier.getTimestamp());
+        }
+
+        releaseBlocksAndResetBarriers();
+        // 当收到全部的 barrier 之后，就会触发 notifyCheckpoint()，
+        // 该方法又会调用 StreamTask 的 triggerCheckpoint ，和之前的operator是一样的
+        notifyCheckpoint(receivedBarrier);
+    }
+
+最终 notifyCheckpoint 有会调用 StreamTask 的 performCheckpoint ，开始 flatMap 的 checkpoint barrier 一些列操作，比如广播 barrier，然后做自己的 checkpoint state。循环往复，直至最后。
+————————————————
+版权声明：本文为CSDN博主「shengjk1」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/jsjsjs1789/article/details/106841074</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/08/checkpoint%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="next" title="checkpoint源码分析">
+                <i class="fa fa-chevron-left"></i> checkpoint源码分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/13/%E9%80%92%E5%BD%92%E6%9F%A5%E8%AF%A2/" rel="prev" title="递归查询">
+                递归查询 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共644.9k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

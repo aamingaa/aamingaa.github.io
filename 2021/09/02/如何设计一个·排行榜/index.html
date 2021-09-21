@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这是why哥的第89篇原创文章 前两天，有一个读者给我发了一张图片。 我问：发什么肾么事了？ 于是有了这样的对话： 他发的图，就是微信运动步数排行榜的截图： 其实扯了这么多，这就是个常见的面试场景题：如何设计一个排行榜？ 这个题吧，其实就是考你面试准备范围的广度，见过就会答，没见过…就难说了。 当然，如果你在实际业务中做过排行榜，那么这题正中下怀，你也不要笑出声来，场景题面试官是会给你思考时间的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何设计一个·排行榜">
+<meta property="og:url" content="http://aamingaa.github.io/2021/09/02/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%C2%B7%E6%8E%92%E8%A1%8C%E6%A6%9C/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="这是why哥的第89篇原创文章 前两天，有一个读者给我发了一张图片。 我问：发什么肾么事了？ 于是有了这样的对话： 他发的图，就是微信运动步数排行榜的截图： 其实扯了这么多，这就是个常见的面试场景题：如何设计一个排行榜？ 这个题吧，其实就是考你面试准备范围的广度，见过就会答，没见过…就难说了。 当然，如果你在实际业务中做过排行榜，那么这题正中下怀，你也不要笑出声来，场景题面试官是会给你思考时间的。">
+<meta property="article:published_time" content="2021-09-02T09:00:17.000Z">
+<meta property="article:modified_time" content="2021-09-03T02:11:24.207Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/09/02/如何设计一个·排行榜/"/>
+
+
+
+
+
+  <title>如何设计一个·排行榜 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/09/02/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%C2%B7%E6%8E%92%E8%A1%8C%E6%A6%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何设计一个·排行榜</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-02T17:00:17+08:00">
+                2021-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5.9k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  21
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这是why哥的第89篇原创文章</p>
+<p>前两天，有一个读者给我发了一张图片。</p>
+<p>我问：发什么肾么事了？</p>
+<p>于是有了这样的对话：</p>
+<p>他发的图，就是微信运动步数排行榜的截图：</p>
+<p>其实扯了这么多，这就是个常见的面试场景题：如何设计一个排行榜？</p>
+<p>这个题吧，其实就是考你面试准备范围的广度，见过就会答，没见过…就难说了。</p>
+<p>当然，如果你在实际业务中做过排行榜，那么这题正中下怀，你也不要笑出声来，场景题面试官是会给你思考时间的。</p>
+<p>所以你不要张口就来，你只需要眉头稍稍一皱，给面试官说：这题我想想啊。</p>
+<p>然后稍微组织一下语言，说出来就行。</p>
+<p>这次的文章，就带着大家分析一下“排行榜”这个场景题，到底应该怎么做。</p>
+<p>基于数据库<br>这个题，如果是真的之前没有遇见过，可能最容易进入大家视野的就是平时接触的最多的数据库了。</p>
+<p>因为一想到“排行榜”，就想到了 order by。</p>
+<p>一想了 order by，就想到了数据库。</p>
+<p>一想到了数据库…</p>
+<p>兄弟，你路就走窄了。</p>
+<p>虽然我曾经就基于 MySQL 做过排行榜，因为当时是为了一个比赛临时搭建的服务，根本就没有引入 Redis。我评估了一下搭建 Redis 的时间和用 MySQL 直接开发的时间。</p>
+<p>于是选择了 MySQL。</p>
+<p>而让我选择 MySQL 的根本原因还是我已经知道进入决赛的队伍只有 10 支，也就是说我的排行榜表里面从始至终也只有 10 条数据。</p>
+<p>选手提交代码之后，系统实时算分，然后更新排行榜表。</p>
+<p>然后接口返回给前端页面下面这些数据，而下面这些数据都在一个表里面：</p>
+<p>队伍按照历史最高分数排名<br>队伍名称<br>历史最高分数<br>最近一次提交得分<br>最近一次提交时间<br>前端每隔一分钟调用我的接口，相同分数，名次相同，所以我在接口里面用一条比较复杂的 sql 去查询数据库，上面的这些字段就都有了。</p>
+<p>你看，排行榜确实是可以用 MySQL 来做的。</p>
+<p>不一定非得上 Redis，记住一句话：脱离业务场景的方案设计，都是耍流氓。</p>
+<p>但是这玩意和“万物皆对象”一样，别对着面试官说，这一定不是面试官想要听到的答案。</p>
+<p>或者说，这只是想要听到的一部分回答。</p>
+<p>这个回答能用的原因是我给了一个具体的场景，用户量非常的小，怎么玩都可以。</p>
+<p>甚至我们不借助 MySQL 的排序，把数据查出来，在内存里面排序都可以。</p>
+<p>但是如果，这是一个游戏排行榜，随着游戏玩家的增加，达到千万用户级别的话，这个方案肯定是不行了。</p>
+<p>当然，也许你会给我扯什么查询慢就加索引，数据量大就分库分表的方案。</p>
+<p>怎么说呢，上面这句话是没有错的。</p>
+<p>但是一旦数据量大起来了，这个方案其实就不是一个特别好的方案。</p>
+<p>这问题，得从根上治理。</p>
+<p>基于 Redis<br>这个场景其实就是在考察你对于 Redis 的 sorted set 数据结构的掌握。</p>
+<p>sorted set，见名知意，就是有序集合的意思。</p>
+<p>在 Redis 中它大概是长这样的：</p>
+<p>前面的 sport:ranking:20210227 是 Redis 中的 key。</p>
+<p>value 是一个集合，且可以看出这个集合是有序的。集合中的每一个 member 都有一个 score，然后按照这个 score 进行降序排序。</p>
+<p>需要注意的是，图片中的 score/member 不是我随便写的，官网上就是这样定义的：</p>
+<p><a href="https://redis.io/commands/zadd#sorted-sets-101" target="_blank" rel="noopener">https://redis.io/commands/zadd#sorted-sets-101</a></p>
+<p>而且官网上说的是： score / member pairs。</p>
+<p>所以我画图的时候，score 在前，member 在后。这可不是随便画的，虽然谁前谁后好像也不影响什么玩意。</p>
+<p>另一个需要注意的点是，虽然我的示意图中没有体现出来，但是在有序集合中，元素即 member 是不可以重复的，但是 score 是可以重复的。</p>
+<p>这个很好理解，就比如 20210227 这一天的微信步数，我可以走 6666 步，你也可以走 6666 步，这个是不冲突：</p>
+<p>但是，问题就随之而来了：当 member 的 score 一样的时候，member 是怎么排序的呢？</p>
+<p>看一下来自官网的答案：</p>
+<p>当多个元素具有相同的分数时，它们按照 lexicographically 进行排序。</p>
+<p>哎呀，lexicographically 这个单词不认识。</p>
+<p>不慌，你知道的 why哥还兼职教英文：</p>
+<p>当分数一样的时候，按照字典序排序，所以上面的示意图 jay 在 why 之前。</p>
+<p>接下来，看一下有序集合的操作函数，一共有 32 个：</p>
+<p>我这里就不一个个的做 API 教学了，官网上已经写的很清楚了，如果对于不熟悉的命令，可以去官网上查看，都是有示例代码的。</p>
+<p><a href="https://redis.io/commands/zadd#sorted-sets-101" target="_blank" rel="noopener">https://redis.io/commands/zadd#sorted-sets-101</a></p>
+<p>比如这个 ZADD 方法：</p>
+<p>为了后面分享的顺利进行，我这里只讲几个需要用到的操作：</p>
+<p>添加 member 命令格式：zadd key score member [score member …]<br>增加 member 的 score 命令格式：zincrby key increment member<br>获取 member 排名命令格式：zrank/zrevrank key member<br>返回指定排名范围内的 member 命令格式：zrange/zrevrange key start end [withscores]<br>先看第一个：添加 member。</p>
+<p>比如我们把示意图中的数据添加到到有序集合里面去，语法是这样的：</p>
+<p>zadd key score member [score member …]<br>意思是可以一次添加一对或者多对 score-member，比如下面这两个命令：</p>
+<p>zadd sport:ranking:20210227 10026 why<br>zadd sport:ranking:20210227 10158 mx 30169 les 48858 skr 66079 jay</p>
+<p>执行之后，返回的数字代表添加成功的 member 个数。</p>
+<p>我用专门操作 Redis 的 RDM 可视化工具来查看插入的数据，和我自己画的示意图相差无几：</p>
+<p>接着看第二个：增加 member 的 score</p>
+<p>微信运动排行榜的数据是实时更新的。</p>
+<p>目前 member 为 why 的步数是 10268，假设我吃完晚饭出门跑步去了，又跑了 5000 步。</p>
+<p>这时得更新我的步数，就用 zincrby 命令，语法是这样的：</p>
+<p>zincrby key increment member<br>对应上面场景的执行命令是这样的：</p>
+<p>zincrby sport:ranking:20210227 5000 why<br>执行完成后，会返回 why 的步数，可以看到从 10026 变成了 15026 ：</p>
+<p>同时由于我的步数增加，按照 score 倒序，也导致了排序的变化：</p>
+<p>所以我们只需要更新 score 就行了，至于排名的变化，Redis 会帮忙保证的。</p>
+<p>然后看第三个命令：获取 member 排名</p>
+<p>语法是这样的：</p>
+<p>获取 member 排名：zrank key member<br>获取 member 排名：zrevrank key member<br>首先，排名都是 0 开始计算的。</p>
+<p>zrank 是按照分数从低到高返回 member 排名。</p>
+<p>zrevrank 是按照分数从高到低返回 member 排名。</p>
+<p>比如现在要获取 jay 的排名，用 zrank 返回结果就是 4。</p>
+<p>zrank sport:ranking:20210227 jay<br>当用 zrevrank 时，jay 的排名就是 0：</p>
+<p>zrevrank sport:ranking:20210227 jay</p>
+<p>所以，在微信步数排行榜的这个需求中，步数越多排名越靠前，我们应该用 zrevrank。</p>
+<p>第四个需要掌握的命令是：返回指定排名范围内的 member。</p>
+<p>zrange/zrevrange key start end [withscores] 返回指定排名范围内的 member<br>这个命令就很关键了。</p>
+<p>zrange 是按照 score 从低到高返回指定排名范围内的 member。</p>
+<p>zrevrange 是按照 score 从高到低返回指定排名范围内的 member。</p>
+<p>在这里，我只演示 zrevrange 的命令。</p>
+<p>比如我要获取步数排名前三的 member：</p>
+<p>zrevrange sport:ranking:20210227 0 2</p>
+<p>这个命令有个可选参数：withscores</p>
+<p>当带上这个参数之后，会返回对应 member 的 score：</p>
+<p>你想，这不就是排行榜 top N 的场景吗？</p>
+<p>假设我现在要获取所有用户的排名，怎么写呢？</p>
+<p>如下：</p>
+<p>zrevrange sport:ranking:20210227 0 -1</p>
+<p>这就是当前的微信步数排行榜，jay 步数最多，mx 步数最少。</p>
+<p>咦，怎么回事，排行榜好久就出来了呢？</p>
+<p>你想想，讲完几个 API 操作，好像功能就实现了呢？</p>
+<p>是的，确实是这样的，甚至我们只需要这两个 API 就能完成排行榜的需求：</p>
+<p>zadd key score member [score member …] 添加 member<br>zrange/zrevrange key start end [withscores] 返回指定排名范围内的 member<br>好了，如果大家喜欢的话，感谢大家一键三连。本次的文章就到这里了…</p>
+<p>那是不可能的。</p>
+<p>索然无味的 API 文章多没有意思啊。</p>
+<p>虽然前面的部分我们已经可以基于 Redis 的有序集合加上几个简单的命令，就可以实现排行榜需求了。</p>
+<p>但是前面只是铺垫，接下来，好戏才刚刚开始。</p>
+<p>再次审视排行榜<br>上面的微信步数排行榜有个问题，你发现了吗？</p>
+<p>就上面这个场景而言，所有人来看，看到的都是这样的排序：</p>
+<p>而真实情况是，每个人看见的数据排行数据来源自己的微信好友，而微信好友各不相同，所以看到的排行榜也各不相同。</p>
+<p>这个特性，我们并没有体现出来。</p>
+<p>我们上面的场景更加类似于游戏排行榜，所有的人看到的全服排行榜都是一样的。</p>
+<p>那么怎么保证我们每个人看到的各不相同呢？</p>
+<p>你思考一下，该从什么角度去解决这个问题呢？</p>
+<p>有序集合的 key 不同，就获取到不同的 value 集合。</p>
+<p>我们当前的 key 是 sport:ranking:20210227，里面只包含了某一天的信息。</p>
+<p>只要我们在 key 里面加上用户的属性就可以了，假设我的微信号是 why。</p>
+<p>那么 key 可以设计为这样 sport:ranking:why:20210227。</p>
+<p>这样，由于 key 里面多了用户信息，每个人的 key 都各不相同，就像这样的：</p>
+<p>对应的命令如下：</p>
+<p>zadd sport:ranking:why:20210227 10026 why 10158 mx 30169 les 48858 skr 66079 jay<br>zadd sport:ranking:mx:20210227 7688 赵四 9688 刘能 10026 why 10158 mx 54367 大脚<br>why 和 mx 看到的都是各自好友某一天的微信步数排行榜。</p>
+<p>只要把 key 设计好了，这个问题就迎刃而解了。</p>
+<p>但是你仔细思考一下，真的就迎刃而解了吗？</p>
+<p>这个问题，我在写第一版的时候可能是被猪油蒙蔽了双眼，没发现。</p>
+<p>有种“只缘身在此山中”的味道，一心想着 Redis 了。</p>
+<p>你想，如果每个用户都有在redis有一个自己的排行榜，一个用户的分数更新的时候就需要对所有好友的zset更新，这多大的代价啊，对吧？</p>
+<p>当以用户为纬度做排行榜的时候，就会出现排行榜巨多的情况，导致维护成本升高。</p>
+<p>Redis能做，但不是最佳方案。</p>
+<p>那么用什么方案去做呢？</p>
+<p>我提个思路吧：</p>
+<p>每个用户看到的排行榜不一样，我们其实不用时时刻刻帮用户维护好排行榜。</p>
+<p>维护好了，用户还不一定来看，出力不讨好的节奏。</p>
+<p>所以还不如延迟到用户请求的阶段。</p>
+<p>当用户请求查看排行榜的时候，再去根据用户的好友关系，循环获取好友的步数，生成排行榜。</p>
+<p>具体方案，大家自己思考一下吧。</p>
+<p>另外多说一嘴，前段时间不是微信支持了修改微信号吗，赢得一大片叫好声。</p>
+<p>其实我当时认真的想了一下，从技术上的实现来说这个需求到底有多难。</p>
+<p>我不知道有没有历史技术债务在里面。</p>
+<p>但是就说当前这个场景，key 里面包含了微信号，注意是微信号，不是微信昵称。</p>
+<p>因为在设计之初，产品打包票说：放心，微信号绝对全局唯一，一旦确定，不可变更。</p>
+<p>结果呢，现在要变化了。</p>
+<p>产品屁颠屁颠的说：怎么实现我不管，这个需求用户呼吁很大，赶紧上线。</p>
+<p>你说，对这些类似场景的冲击有多大？</p>
+<p>其实冲击也不算特别大，一个字段的变化而已。</p>
+<p>但是，微信 14 亿用户啊。</p>
+<p>一个简单的需求，涉及到这个体量之后，就一句话：</p>
+<p>量变引起质变。</p>
+<p>好了，好了，扯远了。说回来。</p>
+<p>当我把目光再次放到微信排行榜上的时候，我发现，其实我只是给了一个阉割版的排行榜。</p>
+<p>是的，我们现在可以获取到 why 的当前步数是 1680 步，当前排名是 814 名。</p>
+<p>比如还是沿用上面的例子，假设现在要获取我的微信好友 jay 的微信步数排行榜情况。</p>
+<p>先获取 jay 的名次：</p>
+<p>zrevrank sport:ranking:why:20210227 jay</p>
+<p>名次为 0，程序里面可以对其进行加一操作。就是第一名了。</p>
+<p>接着获取 jay 的今日步数：</p>
+<p>zscore sport:ranking:why:20210227 jay</p>
+<p>66079，步数也有了。</p>
+<p>现在我们知道了：why 的好友 jay 今日运动步数 66079 步，在 why 的微信好友中排第一名。</p>
+<p>但是你仔细看，这上面我还漏了两个字段：</p>
+<p>微信头像<br>朋友点赞个数<br>两个字段应该怎么放呢？</p>
+<p>放数据库里面当然可以，但是我们主要还是说一下 Redis 的解决方案。</p>
+<p>这个时候其实我们想要存储的是 User 对象，对象里面有这几个字段：昵称、头像图片链接、点赞数、步数。</p>
+<p>你说，这个用 Redis 的啥数据结构来存？</p>
+<p>可不就得用 Hash 结构了吗。</p>
+<p>Hash 结构同样涉及到 key 和 value，那么它们分别是什么呢？</p>
+<p>key 就是我们的有序集合的 key 后面再加上好友昵称，比如这样的：</p>
+<p>对应的命令是这样的：</p>
+<p>hmset sport:ranking:why:20210227:jay nickName jay headPhoto xxx likeNum 520 walkNum 66079<br>执行完成之后，在 RDM 里面看起来是这样的：</p>
+<p>当后续有更多的赞的时候，需要调用更新命令更新 likeNum：</p>
+<p>hincrby sport:ranking:why:20210227:jay likeNum 500<br>执行完成之后点赞数就会变成 1020：</p>
+<p>这样，排行榜上的所有字段我们都能获取到了，微信排行榜就说完了。</p>
+<p>呃……</p>
+<p>怎么感觉还是 API 教学呢？</p>
+<p>不得劲，换个其他的。</p>
+<p>最近七天排行榜怎么弄？<br>前面我们说的都是每日排行榜。</p>
+<p>假设面试官要求我们提供一个最近七天、上一周、上一月、上个季度、这一年排行榜啥的，又该怎么搞呢？</p>
+<p>其实这还是在考察你对于 Redis 有序集合 API 的掌握程度。</p>
+<p>也就是这个 API：</p>
+<p>zinterstore/zunionstore destination numkeys key [key …] [weights weight [weight …]] [aggregate sum|min|max] 获取交集/并集<br>这个 API 看起来有点复杂，不要怕，一个个的讲：</p>
+<p>zinterstore/zunionstore其实就是交集/并集<br>destination 将交集/并集的结果保存到这个键中<br>numkeys 需要做交集/并集的集合的个数<br>key [key …] 具体参与交集/并集的集合<br>weights weight [weight …] 每个参与计算的集合的权重。在做交集/并集计算时，每个集合中的 member 会把自己的 score 乘以这个权重，默认为 1。<br>aggregate sum|min|max 对于各个集合中的相同元素是 sum(求和)、min(取最小值)还是max(取最大值)，默认为 sum。<br>拿最近七天举例，我们随便搞点数据进来，你可以直接粘过去玩：</p>
+<p>zadd sport:ranking:why:20210222 43243 why 2341 mx 8764 les 42321 skr<br>zadd sport:ranking:why:20210223 57632 why 24354 mx 4231 les 43512 skr 5341 jay<br>zadd sport:ranking:why:20210224 10026 why 12344 mx 54312 les 34531 skr 43512 jay<br>zadd sport:ranking:why:20210225 54312 why 32451 mx 23412 les 21341 skr 56321 jay<br>zadd sport:ranking:why:20210226 3212 why 63421 mx 53652 les 45621 skr 5723 jay<br>zadd sport:ranking:why:20210227 5462 why 10158 mx 30169 les 48858 skr 66079 jay<br>zadd sport:ranking:why:20210228 43553 why 4451 mx 7431 les 9563 skr 8232 jay<br>可以看到我们一共有 7 天的数据：</p>
+<p>而且需要注意的是 20210222 这一天是没有 jay 的数据的。</p>
+<p>现在我们要求出最近 7 天的排行榜，就用下面这行命令，命令有点复杂，但是对着命令格式看，还是很清晰的：</p>
+<p>zunionstore sport:ranking:why:last_seven_day 7 sport:ranking:why:20210222 sport:ranking:why:20210223 sport:ranking:why:20210224 sport:ranking:why:20210225 sport:ranking:why:20210226 sport:ranking:why:20210227 sport:ranking:why:20210228 weights 1 1 1 1 1 1 1 aggregate sum<br>这条命令后面的 weights 和 aggregate 都是可以不用写的，有默认值，我这里为了不隐藏数据，都写了出来。</p>
+<p>执行完成后，可以看到多了一个 key，里面放的就是最近 7 天的数据汇总：</p>
+<p>上面用的是并集，如果我们的要求是对最近 7 天，每天都上传运动数据的人进行排序，就用交集来算。</p>
+<p>命令和上面的一致，只是把 zunionstore 修改为 zinterstore 即可。</p>
+<p>另外为了有对比，合并之后的队列名称也修改一下，命令如下：</p>
+<p>zinterstore sport:ranking:why:last_seven_day_zinterstore 7 sport:ranking:why:20210222 sport:ranking:why:20210223 sport:ranking:why:20210224 sport:ranking:why:20210225 sport:ranking:why:20210226 sport:ranking:why:20210227 sport:ranking:why:20210228 weights 1 1 1 1 1 1 1 aggregate sum<br>从执行结果可以看出来，由于 jay 同学在 20210222 这一天没有上传运动数据，所以取交集的时候没有他了：</p>
+<p>知道最近 7 天的做法了，我们又有每一天数据，上一周、上一月、上个季度、这一年排行榜啥的不都是这个套路吗？</p>
+<p>呃……</p>
+<p>怎么感觉还是 API 教学呢？</p>
+<p>还是不得劲，再换个其他的。</p>
+<p>亿级用户排行榜<br>王者荣耀，妥妥的亿级用户吧。比如我想看看我在亿级用户中排多少名，于是我打开了游戏，二十多分钟（玩了一局）之后我终于找到排行榜的位置。</p>
+<p>结果，未上榜：</p>
+<p>我这个千年老夫子，当然是未上榜了。</p>
+<p>就算真的有排名了，排名好几千万，8 位数字，在页面上也不好放呀。</p>
+<p>但是假设现在的需求就是要查询用户的全服排名，怎么查？</p>
+<p>我瞎说一个我能想到的基于 Redis 的初版方案，注意是我瞎想的，实际做起来肯定是异常复杂的方案。</p>
+<p>我是怎么想的呢？</p>
+<p>我就寻思，一般面试遇到什么千万条数据、几个 G 文件、上亿的数据啥的，首先想到的方案就是分而治之。</p>
+<p>这个亿级用户排行榜的需求也得用分治的思想。</p>
+<p>王者一共 8 个段位：</p>
+<p>1、倔强青铜<br>2、秩序白银<br>3、荣耀黄金<br>4、尊贵铂金<br>5、永恒钻石<br>6、至尊星耀<br>7、最强王者<br>8、荣耀王者<br>所以我们可以有 8 个桶。</p>
+<p>这个桶可以是一个 Redis 里面的 8 个不同的 key，甚至可以是 8 个 Redis 里面各一个 key，看面试官给你的经费是多少，钱多就可劲造。</p>
+<p>如下图所示：</p>
+<p>解释一下上面的图片中 score 为 8588 是怎么来的。</p>
+<p>首先我们用 Redis 的有序集合，那么我们就得给每个 member 一个 score。</p>
+<p>所以，每个用户在桶里面都一个经过公式计算后得出的积分。</p>
+<p>比如why哥现在的段位就是星耀，假设计算出来的分数是 8588。</p>
+<p>那么现在要算why哥在全服的排名就很好算了：</p>
+<p>写程序的时候是可以知道我现在的段位是星耀，那么直接去星耀的桶里面，用 zrevrank 计算出当前桶里面的排名，假设为 n。</p>
+<p>然后再通过 zcard 这个 O(1) 的命令获取到，前面的桶，也就是最强王者和荣耀王者这两个桶的集合大小，分别为 y 和 x。</p>
+<p>那么why哥的全服排名就是 n+y+x。</p>
+<p>所以获取任何一个用户的全服排名，就是看他在自己的桶里面的排名加上前面桶里面的元素个数即可。</p>
+<p>而且现在要计算全服 top 100 就很容易了嘛。</p>
+<p>直接取最前面的桶，也就是荣耀王者里面的前 100 个就完事了。</p>
+<p>搞定。</p>
+<p>等等，真的搞定了吗？</p>
+<p>思路是对了，但是对于亿级用户只分 8 个桶未免太少了吧？</p>
+<p>那就继续分桶呗，别忘了，每个段位里面还有小段位的。</p>
+<p>比如星耀，里面就有星耀五到星耀一五个小段位，青铜三到青铜一三个小段位。</p>
+<p>全部算上就是 27 个桶。</p>
+<p>但是，27 个桶也少。</p>
+<p>那么星耀二到星耀一还需要五颗星、青铜三到青铜二要三颗星才行呢。</p>
+<p>这样算下来，就是 160 个桶。</p>
+<p>160 个桶还是不够？</p>
+<p>额。。。</p>
+<p>推翻重来，直接把段位加上各种其他条件换算成积分，然后按照积分来拆分：</p>
+<p>这样，想怎么拆分数段都行、拆多细都行。</p>
+<p>完美。</p>
+<p>等等，真的完美吗？</p>
+<p>你看我的积分范围，都划分的非常的均匀。</p>
+<p>按照段位拆分，有些菜鸡选手，打了两把觉得没意思，骂骂咧咧的退出游戏，就一直留在了青铜段位。</p>
+<p>所以青铜段位的选手肯定是远大于荣耀王者的。</p>
+<p>所以，实际情况下，用户的落点其实并不是均匀的。</p>
+<p>怎么办？</p>
+<p>这个时候就需要进行数据分析，通过一系列的高数、概率、离散等知识去做个桶大小的预估。</p>
+<p>啊，这玩意就超纲了啊。</p>
+<p>那就告辞，收工。</p>
+<p>技术之外的考虑<br>做一个排行榜好像是一个很简单的事情。</p>
+<p>但是其实不然，特别是推荐类的排行榜，需要避免马太效应：</p>
+<p>比如作者推荐榜单，被推荐到前面的作者，曝光度很高。即使输出质量下降，但是还是很容易获得更多的关注。</p>
+<p>位于榜单尾部的作者就很没有参与感。</p>
+<p>于是两极分化就出现了，马太效应就来了。</p>
+<p>对于这种情况怎么处理呢？</p>
+<p>里面就涉及到一个复杂的计算公式了，比如掘金社区的掘力值，用于消息流推荐和作者榜单：</p>
+<p><a href="https://juejin.cn/book/6844733795329900551/section/6844733795380232206" target="_blank" rel="noopener">https://juejin.cn/book/6844733795329900551/section/6844733795380232206</a></p>
+<p>所以千万不要错误的以为排行榜是一个非常简单的需求，这里面涉及到一些非常复杂的算法。</p>
+<p>最后说一句<br>感谢大家的阅读。</p>
+<p>才疏学浅，难免会有纰漏，如果你发现了错误的地方，可以在后台提出来，我对其加以修改。<br>————————————————<br>版权声明：本文为CSDN博主「why技术」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_27243343/article/details/114292931" target="_blank" rel="noopener">https://blog.csdn.net/qq_27243343/article/details/114292931</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" rel="next" title="消息队列">
+                <i class="fa fa-chevron-left"></i> 消息队列
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/04/%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/" rel="prev" title="设计思路">
+                设计思路 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共644.9k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

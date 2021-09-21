@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="消息队列 消息队列堆积？MQ消息堆积，一般都是由消费侧能力不足导致的。可能的原因如下：  生产侧流量暴涨，消费侧消费速度不变 生产侧流量不变，消费侧消费速度下降  针对原因1，可以通过横向扩容实例的方式来提升消费速度，解决积压问题； 针对原因2，横向扩容只能临时缓存消费积压问题，根本原因在于消费服务内部出现问题，可能是自身服务性能、下游接口耗时增加等导致整体吞吐量降低 EventBus生产侧监控：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="消息队列">
+<meta property="og:url" content="http://aamingaa.github.io/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="消息队列 消息队列堆积？MQ消息堆积，一般都是由消费侧能力不足导致的。可能的原因如下：  生产侧流量暴涨，消费侧消费速度不变 生产侧流量不变，消费侧消费速度下降  针对原因1，可以通过横向扩容实例的方式来提升消费速度，解决积压问题； 针对原因2，横向扩容只能临时缓存消费积压问题，根本原因在于消费服务内部出现问题，可能是自身服务性能、下游接口耗时增加等导致整体吞吐量降低 EventBus生产侧监控：">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=MWRmMmQ1ZTEwNDNjZGUxZWI0MzA4MTIxMjYxYjdmNWRfRlpFUHAyUkJlNUhXZkgzcWdqVHpaejZ0emRqNnlVWXlfVG9rZW46Ym94Y25uNlBQTVZ4TFdrNHN6cjFTdnlSR0xiXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=N2JmZjQyYWZjMGY0MGQyYjQ4OGI0MGE0M2NiMjEzN2FfOTJzWGRJTE5kYVQ5YkdVTUhMb25qcGl2ZEs5MWZ2T0JfVG9rZW46Ym94Y25DcjZzY3gzMVNEUlZPT3RrRWRWZmxjXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=NTQyMjJhYzZiNjkyYmQzZDU3YzMyYjdjNzYyYTgzZTJfVTV3bmhJcDdmV1FzaEV3WU4wcGNUM2FJMlpaNUlJYzBfVG9rZW46Ym94Y25XOUpTNjFSSzRPODZLdEloSm1xaDViXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=YTYwYmNiNmFhNzYyMGFlMjZhNWE2NjE1M2I4Y2M4NGNfMkJQRWFqWHZ3cDdLZmJoTlpMcUdySG0wUlNSYVpmRXFfVG9rZW46Ym94Y245MHE5d1Q5ZlJtRHpJd1V1VDc2Uk1kXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjBmZjIyNzg0YjZkMWE4ZjhmZWM3Nzc1ZTcyM2VlYzJfaTBWUEFYOVE0YjRSOFJseTk0bktvb2VVT3JUWFhFaExfVG9rZW46Ym94Y25lMkVjbXFjdmZIQmhsbjJqQWZwSjVnXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=MjVhMmYyMjM2NThmMGQ5YjlhYjM0MTgwODc1Y2NkNzRfZjhiam9UU1hGNXFQUEdRWUNRcjNTQTFMUFJPZHk0cGtfVG9rZW46Ym94Y24xSUM5YWpGUXlPMm1tVUp3d0UwenFkXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=NzQ3ZTQ5YjUxMzYxZDA3N2FhYzg1MmZmMWYyMTY4MDlfelRHcE5XZkhyR1lDV0trM1dqYzg4UDhhMlhZbkRUV0ZfVG9rZW46Ym94Y25CbnFDUHBDaHZkTHJmRXVGd1lvWG1jXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=M2Y5NDJjMzI4OTMxZGY1MjJhMzFmNDhlZjhhZWIyNjBfd2I4c20yVndKMmdIN2pmM05Sbko1N2xPaUMzenhsMllfVG9rZW46Ym94Y25wZllHTGVTaFZMazJiNE9LSXFpTmxkXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+<meta property="og:image" content="http://aamingaa.github.io/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210830184036940.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210830184011396.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210830184138515.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Users/77406/AppData/Roaming/Typora/typora-user-images/image-20210830192114779.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Users/77406/AppData/Roaming/Typora/typora-user-images/image-20210830192226825.png">
+<meta property="article:published_time" content="2021-08-30T18:03:22.309Z">
+<meta property="article:modified_time" content="2021-08-30T18:03:59.411Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=MWRmMmQ1ZTEwNDNjZGUxZWI0MzA4MTIxMjYxYjdmNWRfRlpFUHAyUkJlNUhXZkgzcWdqVHpaejZ0emRqNnlVWXlfVG9rZW46Ym94Y25uNlBQTVZ4TFdrNHN6cjFTdnlSR0xiXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/08/31/消息队列/"/>
+
+
+
+
+
+  <title>消息队列 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">消息队列</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-31T02:03:22+08:00">
+                2021-08-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>消息队列</p>
+<h2 id="消息队列堆积？"><a href="#消息队列堆积？" class="headerlink" title="消息队列堆积？"></a>消息队列堆积？</h2><p>MQ消息堆积，一般都是由消费侧能力不足导致的。可能的原因如下：</p>
+<ol>
+<li>生产侧流量暴涨，消费侧消费速度不变</li>
+<li>生产侧流量不变，消费侧消费速度下降</li>
+</ol>
+<p>针对原因1，可以通过横向扩容实例的方式来提升消费速度，解决积压问题；</p>
+<p>针对原因2，横向扩容只能临时缓存消费积压问题，根本原因在于消费服务内部出现问题，可能是自身服务性能、下游接口耗时增加等导致整体吞吐量降低</p>
+<p>EventBus生产侧监控：</p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=MWRmMmQ1ZTEwNDNjZGUxZWI0MzA4MTIxMjYxYjdmNWRfRlpFUHAyUkJlNUhXZkgzcWdqVHpaejZ0emRqNnlVWXlfVG9rZW46Ym94Y25uNlBQTVZ4TFdrNHN6cjFTdnlSR0xiXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<p>消费侧监控：</p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=N2JmZjQyYWZjMGY0MGQyYjQ4OGI0MGE0M2NiMjEzN2FfOTJzWGRJTE5kYVQ5YkdVTUhMb25qcGl2ZEs5MWZ2T0JfVG9rZW46Ym94Y25DcjZzY3gzMVNEUlZPT3RrRWRWZmxjXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<p>由两图可以看出生产侧QPS与消费侧QPS几乎持平，理论上不存在积压才对……，why？遇到奇怪的、想不通的问题找Oncall</p>
+<p>联系NSQ Oncall得知：消费者侧只有一个client与NSQ相连接</p>
+<p>链路：<a href="https://grafana-us.byted.org/d/000006115/nsq-channel-aliyun-mva?orgId=1&amp;var-topic=live_room_event_topic&amp;var-channel=tikcast_room_live_notice&amp;var-cluster=i18n_maliva_ies_normal1_mva&amp;var-client_cluster=ies_normal1&amp;from=1629302400000&amp;to=1629320399000" target="_blank" rel="noopener">https://grafana-us.byted.org/d/000006115/nsq-channel-aliyun-mva?orgId=1&amp;var-topic=live_room_event_topic&amp;var-channel=tikcast_room_live_notice&amp;var-cluster=i18n_maliva_ies_normal1_mva&amp;var-client_cluster=ies_normal1&amp;from=1629302400000&amp;to=1629320399000</a></p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=NTQyMjJhYzZiNjkyYmQzZDU3YzMyYjdjNzYyYTgzZTJfVTV3bmhJcDdmV1FzaEV3WU4wcGNUM2FJMlpaNUlJYzBfVG9rZW46Ym94Y25XOUpTNjFSSzRPODZLdEloSm1xaDViXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=YTYwYmNiNmFhNzYyMGFlMjZhNWE2NjE1M2I4Y2M4NGNfMkJQRWFqWHZ3cDdLZmJoTlpMcUdySG0wUlNSYVpmRXFfVG9rZW46Ym94Y245MHE5d1Q5ZlJtRHpJd1V1VDc2Uk1kXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<p>但查看FaaS函数，函数实例数明明有10个呢？为什么只有一个实例与NSQ相连？</p>
+<p>联系EventBus Oncall得知：针对MQ触发器，FaaS任务是一个消息转发服务，先消费NSQ的消息，再将消息发送给FaaS函数，链路：MQ -&gt; FaaS任务 -&gt; FaaS函数实例，在配置MQ触发器时，默认消费者数量（这里是指FaaS任务消费NSQ的实例数）为1，也即表示者只有一个实例与NSQ相连，破案了。</p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjBmZjIyNzg0YjZkMWE4ZjhmZWM3Nzc1ZTcyM2VlYzJfaTBWUEFYOVE0YjRSOFJseTk0bktvb2VVT3JUWFhFaExfVG9rZW46Ym94Y25lMkVjbXFjdmZIQmhsbjJqQWZwSjVnXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><p>将MQ触发器数量调整为20，效果如下（11：16左右调整的），消费积压状况之后未出现</p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=MjVhMmYyMjM2NThmMGQ5YjlhYjM0MTgwODc1Y2NkNzRfZjhiam9UU1hGNXFQUEdRWUNRcjNTQTFMUFJPZHk0cGtfVG9rZW46Ym94Y24xSUM5YWpGUXlPMm1tVUp3d0UwenFkXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<p>NSQ侧消费实例数亦恢复正常</p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=NzQ3ZTQ5YjUxMzYxZDA3N2FhYzg1MmZmMWYyMTY4MDlfelRHcE5XZkhyR1lDV0trM1dqYzg4UDhhMlhZbkRUV0ZfVG9rZW46Ym94Y25CbnFDUHBDaHZkTHJmRXVGd1lvWG1jXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<h3 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h3><p>NSQ监控需要去NSQ平台查看才可以，EventBus平台生产监控不准确，查看方法：</p>
+<p><img src="https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=M2Y5NDJjMzI4OTMxZGY1MjJhMzFmNDhlZjhhZWIyNjBfd2I4c20yVndKMmdIN2pmM05Sbko1N2xPaUMzenhsMllfVG9rZW46Ym94Y25wZllHTGVTaFZMazJiNE9LSXFpTmxkXzE2MzAxNTM2NzQ6MTYzMDE1NzI3NF9WNA" alt="img"></p>
+<p>1.出现rpc超时问题，经过排查</p>
+<h2 id="消息队列是怎么选型的？"><a href="#消息队列是怎么选型的？" class="headerlink" title="消息队列是怎么选型的？"></a>消息队列是怎么选型的？</h2><p><a href="http://www.mstacks.com/133/1401.html#content1401" target="_blank" rel="noopener">http://www.mstacks.com/133/1401.html#content1401</a></p>
+<h3 id="消息队列的特点"><a href="#消息队列的特点" class="headerlink" title="消息队列的特点"></a>消息队列的特点</h3><p>先说一下消息队列常见的使用场景吧，其实场景有很多，但是比较核心的有 3 个：<strong>解耦</strong>、<strong>异步</strong>、<strong>削峰</strong>。</p>
+<h4 id="解耦"><a href="#解耦" class="headerlink" title="解耦"></a>解耦</h4><p><img src="/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210830184036940.png" alt="image-20210830184036940"></p>
+<h4 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h4><p><img src="/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210830184011396.png" alt="image-20210830184011396"></p>
+<h4 id="削峰"><a href="#削峰" class="headerlink" title="削峰"></a>削峰</h4><p><img src="/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210830184138515.png" alt="image-20210830184138515"></p>
+<h3 id="消息队列有什么优缺点"><a href="#消息队列有什么优缺点" class="headerlink" title="消息队列有什么优缺点"></a>消息队列有什么优缺点</h3><p>优点上面已经说了，就是<strong>在特殊场景下有其对应的好处</strong>，<strong>解耦</strong>、<strong>异步</strong>、<strong>削峰</strong>。</p>
+<p>缺点有以下几个：</p>
+<ul>
+<li>系统可用性降低</li>
+</ul>
+<p>系统引入的外部依赖越多，越容易挂掉。本来你就是 A 系统调用 BCD 三个系统的接口就好了。高可用：kafka的高可用。Leader -&gt;follower</p>
+<ul>
+<li>系统复杂度提高</li>
+</ul>
+<p>硬生生加个 MQ 进来，你怎么<a href="https://github.com/doocs/advanced-java/blob/main/docs/high-concurrency/how-to-ensure-that-messages-are-not-repeatedly-consumed.md" target="_blank" rel="noopener">保证消息没有重复消费</a>？怎么<a href="https://github.com/doocs/advanced-java/blob/main/docs/high-concurrency/how-to-ensure-the-reliable-transmission-of-messages.md" target="_blank" rel="noopener">处理消息丢失的情况</a>？怎么保证消息传递的顺序性？</p>
+<ul>
+<li>一致性问题</li>
+</ul>
+<p>A 系统处理完了直接返回成功了，人都以为你这个请求就成功了；但是问题是，要是 BCD 三个系统那里，BD 两个系统写库成功了，结果 C 系统写库失败了，咋整？你这数据就不一致了。</p>
+<p>所以消息队列实际是一种非常复杂的架构，你引入它有很多好处，但是也得针对它带来的坏处做各种额外的技术方案和架构来规避掉，做好之后，你会发现，妈呀，系统复杂度提升了一个数量级，也许是复杂了 10 倍。但是关键时刻，用，还是得用的。</p>
+<h3 id="Kafka、ActiveMQ、RabbitMQ、RocketMQ-有什么优缺点？"><a href="#Kafka、ActiveMQ、RabbitMQ、RocketMQ-有什么优缺点？" class="headerlink" title="Kafka、ActiveMQ、RabbitMQ、RocketMQ 有什么优缺点？"></a>Kafka、ActiveMQ、RabbitMQ、RocketMQ 有什么优缺点？</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>RocketMQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单机吞吐量</td>
+<td>万级，比 RocketMQ、Kafka 低一个数量级</td>
+<td>同 ActiveMQ</td>
+<td>10 万级，支撑高吞吐</td>
+<td>10 万级，高吞吐，一般配合大数据类的系统来进行实时数据计算、日志采集等场景</td>
+</tr>
+<tr>
+<td>topic 数量对吞吐量的影响</td>
+<td></td>
+<td></td>
+<td>topic 可以达到几百/几千的级别，吞吐量会有较小幅度的下降，这是 RocketMQ 的一大优势，在同等机器下，可以支撑大量的 topic</td>
+<td>topic 从几十到几百个时候，吞吐量会大幅度下降，在同等机器下，Kafka 尽量保证 topic 数量不要过多，如果要支撑大规模的 topic，需要增加更多的机器资源</td>
+</tr>
+<tr>
+<td>时效性</td>
+<td>ms 级</td>
+<td>微秒级，这是 RabbitMQ 的一大特点，延迟最低</td>
+<td>ms 级</td>
+<td>延迟在 ms 级以内</td>
+</tr>
+<tr>
+<td>可用性</td>
+<td>高，基于主从架构实现高可用</td>
+<td>同 ActiveMQ</td>
+<td>非常高，分布式架构</td>
+<td>非常高，分布式，一个数据多个副本，少数机器宕机，不会丢失数据，不会导致不可用</td>
+</tr>
+<tr>
+<td>消息可靠性</td>
+<td>有较低的概率丢失数据</td>
+<td>基本不丢</td>
+<td>经过参数优化配置，可以做到 0 丢失</td>
+<td>同 RocketMQ</td>
+</tr>
+<tr>
+<td>功能支持</td>
+<td>MQ 领域的功能极其完备</td>
+<td>基于 erlang 开发，并发能力很强，性能极好，延时很低</td>
+<td>MQ 功能较为完善，还是分布式的，扩展性好</td>
+<td>功能较为简单，主要支持简单的 MQ 功能，在大数据领域的实时计算以及日志采集被大规模使用</td>
+</tr>
+</tbody></table>
+<p>衡量一款消息队列是否符合需求需要从多个维度考察，但是首要的还是考察功能维度，这个直接决定了你能否最大程度上实现开箱即用，进而缩短项目周期、降低成本等。技术是为了业务服务，技术选型要优先满足业务述求。我们来看一下一些消息队列常见功能诉求有哪些。</p>
+<h4 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h4><p>功能维度是消息中间件选型中的一个重要的参考维度，但这并不是唯一的维度。有时候性能比功能还要重要，况且性能和功能很多时候是相悖的，鱼和熊掌不可兼得，比如Kafka开启同步刷盘，其性能就会降低。</p>
+<blockquote>
+<p>消息中间件的吞吐量始终会受到硬件层面的限制。就以网卡带宽为例，如果单机单网卡的带宽为 1Gbps，如果要达到百万级的吞吐，那么消息体大小不得超过 (1Gb/8)/100W，即约等于 134B，换句话说如果消息体大小超过 134B，那么就不可能达到百万级别的吞吐。这种计算方式同样可以适用于内存和磁盘。</p>
+</blockquote>
+<p>前期公司主要的MQ服务是Nsq 和 Kafka，但是仍然有一些需求没有被覆盖到，引入RocketMQ主要是针对线上服务，提供可靠存储的消息中间件，并提供Nsq和Kafka未能提供的功能，并解决Nsq和Kafka在使用过程中的问题。</p>
+<ul>
+<li><strong>功能丰富</strong>：支持延时消息，死信队列，消息重试，消息回溯、事务消息等高级特性，另外消息体支持消息头，这个是非常有用的，可以直接支持实现消息链路追踪，不然就需要把追踪信息写到 message 的 body 里。</li>
+<li><strong>稳定性</strong>：这是一个经过阿里巴巴多年双11验证过的、可以支持亿级并发的开源消息队列，是值得信任的。和 Kafka 一样是先写 PageCache ，再落盘，并且数据有多副本。</li>
+<li><strong>性能</strong>：存储模型是所有的 Topic 都写到同一个 Commitlog 里，是一个append only 操作，在海量 Topic 下也能将磁盘的性能发挥到极致，并且保持稳定的写入时延。采用一主两从的结构，单机 qps 可以达到 14w , latency 保持在 2ms 以内。对比NSQ 和 Kafka ， Kafka 的吞吐非常高，但是在多 Topic 下， Kafka 的 PCT99 毛刺会非常多,而且平均值非常长，不适合在线业务场景。另外 NSQ 的消息首先经过 Golang 的 channel ，这是非常消耗 CPU 的，在单机 5<del>6w 的时候 CPU 利用率达到 50</del>60% ，高负载下的写延迟不稳定。</li>
+</ul>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><img src="/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Users\77406\AppData\Roaming\Typora\typora-user-images\image-20210830192114779.png" alt="image-20210830192114779" style="zoom: 33%;">
+
+<p>1、消费者发送的Message会在Broker中的Queue队列中记录。 2、一个Topic的数据可能会存在多个Broker中。 3、一个Broker存在多个Queue。 4、单个的Queue也可能存储多个Topic的消息。</p>
+<p><code>Queue不是真正存储Message的地方，真正存储Message的地方是在CommitLog</code>。</p>
+<p>如图（盗图）</p>
+<img src="/2021/08/31/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Users\77406\AppData\Roaming\Typora\typora-user-images\image-20210830192226825.png" alt="image-20210830192226825" style="zoom:33%;">
+
+
+
+<p>commitLog文件存放实际的消息数据，每个commitLog上限是1G，满了之后会自动新建一个commitLog文件保存数据。</p>
+<p>一个broker通常是一个服务器节点，broker分为master和slave，master和slave存储的数据一样，slave从master同步数据。</p>
+<p>1）nameserver与每个集群成员保持心跳，保存着Topic-Broker路由信息，同一个topic的队列会分布在不同的服务器上。</p>
+<p>2）发送消息通过轮询队列的方式发送，每个队列接收平均的消息量。发送消息指定topic、tags、keys，无法指定投递到哪个队列（没有意义，集群消费和广播消费跟消息存放在哪个队列没有关系）。</p>
+<p>tags选填，类似于 Gmail 为每封邮件设置的标签，方便服务器过滤使用。目前只支 持每个消息设置一个 tag，所以也可以类比为 Notify 的 MessageType 概念。</p>
+<p>keys选填，代表这条消息的业务关键词，服务器会根据 keys 创建哈希索引，设置后， 可以在 Console 系统根据 Topic、Keys 来查询消息，由于是哈希索引，请尽可能 保证 key 唯一，例如订单号，商品 Id 等。</p>
+<h3 id="PUSH-VS-PULL"><a href="#PUSH-VS-PULL" class="headerlink" title="PUSH VS PULL"></a>PUSH VS PULL</h3><p>pull和push指的是：由 consumer 从 broker 那里 pull 数据，还是由 broker 将数据 push 到 consumer。（kafka采用的是pull）</p>
+<p>push-based系统是由broker来控制数据传输速率， 所以 push-based 系统很难处理不同的 consumer；让 broker 控制数据传输速率主要是为了让 consumer 能够以可能的最大速率消费，有更好的时效性；不幸的是，这可能会导致在 push-based 的系统中，当消费速率低于生产速率时，consumer 往往会不堪重负。</p>
+<p>pull-based系统有一个很好的特性， 那就是当 consumer 速率落后于 producer 时，可以在适当的时间赶上来。</p>
+<p>简单的 pull-based 系统的不足之处在于：如果 broker 中没有数据，consumer 可能会在一个紧密的循环中进行轮询，实际上 busy-waiting 直到数据到来。为了避免 busy-waiting，我们在 pull 请求中加入参数，使得 consumer 在一个“long pull”中阻塞等待，直到数据到来（还可以选择等待给定字节长度的数据来确保传输长度）。</p>
+<h3 id="详细对比"><a href="#详细对比" class="headerlink" title="详细对比"></a>详细对比</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>RocketMQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>消息投递方式</td>
+<td>pull + PUSH</td>
+<td>pull</td>
+</tr>
+<tr>
+<td>延时队列</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>死信队列</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>消息重试</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>可靠消息</td>
+<td>不丢消息</td>
+<td>丢</td>
+</tr>
+<tr>
+<td>吞吐</td>
+<td>万</td>
+<td>十万</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/30/%E5%AD%97%E8%8A%82%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/" rel="next" title="字节实习经历">
+                <i class="fa fa-chevron-left"></i> 字节实习经历
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/02/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%C2%B7%E6%8E%92%E8%A1%8C%E6%A6%9C/" rel="prev" title="如何设计一个·排行榜">
+                如何设计一个·排行榜 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息队列堆积？"><span class="nav-number">1.</span> <span class="nav-text">消息队列堆积？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决问题"><span class="nav-number">1.1.</span> <span class="nav-text">解决问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反思"><span class="nav-number">1.2.</span> <span class="nav-text">反思</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息队列是怎么选型的？"><span class="nav-number">2.</span> <span class="nav-text">消息队列是怎么选型的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的特点"><span class="nav-number">2.1.</span> <span class="nav-text">消息队列的特点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解耦"><span class="nav-number">2.1.1.</span> <span class="nav-text">解耦</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异步"><span class="nav-number">2.1.2.</span> <span class="nav-text">异步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#削峰"><span class="nav-number">2.1.3.</span> <span class="nav-text">削峰</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列有什么优缺点"><span class="nav-number">2.2.</span> <span class="nav-text">消息队列有什么优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka、ActiveMQ、RabbitMQ、RocketMQ-有什么优缺点？"><span class="nav-number">2.3.</span> <span class="nav-text">Kafka、ActiveMQ、RabbitMQ、RocketMQ 有什么优缺点？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#性能"><span class="nav-number">2.3.1.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特点"><span class="nav-number">2.3.2.</span> <span class="nav-text">特点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUSH-VS-PULL"><span class="nav-number">2.4.</span> <span class="nav-text">PUSH VS PULL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#详细对比"><span class="nav-number">2.5.</span> <span class="nav-text">详细对比</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共644.9k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

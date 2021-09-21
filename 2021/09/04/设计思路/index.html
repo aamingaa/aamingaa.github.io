@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="作者：路人zhang链接：https:&#x2F;&#x2F;www.nowcoder.com&#x2F;discuss&#x2F;729493?type&#x3D;0&amp;order&#x3D;7&amp;pos&#x3D;35&amp;page&#x3D;2&amp;source_id&#x3D;discuss_center_0_nctrack&amp;channel&#x3D;1009&amp;ncTraceId&#x3D;bd2dd10f51a54fd49e43ed7bf9945e9c.417">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计思路">
+<meta property="og:url" content="http://aamingaa.github.io/2021/09/04/%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="作者：路人zhang链接：https:&#x2F;&#x2F;www.nowcoder.com&#x2F;discuss&#x2F;729493?type&#x3D;0&amp;order&#x3D;7&amp;pos&#x3D;35&amp;page&#x3D;2&amp;source_id&#x3D;discuss_center_0_nctrack&amp;channel&#x3D;1009&amp;ncTraceId&#x3D;bd2dd10f51a54fd49e43ed7bf9945e9c.417">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589378215/4A47A0DB6E60853DEDFCFDF08A5CA249">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589642033/63202222E58F3A79A394C0195CBA399A">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589743099/3B8B3920144F905AC35B858958847F9C">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20210902/115285789_1630589333047/584578-044ce81079679c1c.png">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589776812/62106D06220191BB7A30A35B52F747C2">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589797970/3E78723C7913C5282FD8F40FAA2B24EA">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589813305/A1A80F0BA859656A5E0BFE5A387656F8">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589824581/204EBC55C46BD71BB29C45F0EBBB0306">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589860801/359C20160CC5BAD1B8CDCD660420B869">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589896781/C01DC25A039067372687A2C280813FA5">
+<meta property="article:published_time" content="2021-09-04T08:05:01.581Z">
+<meta property="article:modified_time" content="2021-09-04T08:05:14.785Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589378215/4A47A0DB6E60853DEDFCFDF08A5CA249">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/09/04/设计思路/"/>
+
+
+
+
+
+  <title>设计思路 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/09/04/%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">设计思路</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-04T16:05:01+08:00">
+                2021-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  15.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  63
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>作者：路人zhang<br>链接：<a href="https://www.nowcoder.com/discuss/729493?type=0&amp;order=7&amp;pos=35&amp;page=2&amp;source_id=discuss_center_0_nctrack&amp;channel=1009&amp;ncTraceId=bd2dd10f51a54fd49e43ed7bf9945e9c.417.16307414887289410" target="_blank" rel="noopener">https://www.nowcoder.com/discuss/729493?type=0&amp;order=7&amp;pos=35&amp;page=2&amp;source_id=discuss_center_0_nctrack&amp;channel=1009&amp;ncTraceId=bd2dd10f51a54fd49e43ed7bf9945e9c.417.16307414887289410</a><br>来源：牛客网</p>
+<p>需要注意的是，在面试过程中是比较紧张的，但遇到这种系统设计题，一定先不要急着回答，一定要先需要设计系统的一些使用场景。</p>
+<ol>
+<li><p>第一步：像面试官不断提问，搞清楚系统的使用场景</p>
+<ul>
+<li>系统的功能是什么 </li>
+<li>系统的目标群体是什么 </li>
+<li>系统的用户量有多大 </li>
+<li>希望每秒钟处理多少请求？ </li>
+<li>希望处理多少数据？ </li>
+<li>希望的读写比率？ </li>
+</ul>
+</li>
+<li><p>第二步：创造一个高层级的设计</p>
+<ul>
+<li><p>画出主要的组件和连接</p>
+<p>例如设计一个网络爬虫，这个是个完整的架构图，在这一步只需要画出一个抽象的架构图即可，不需要这么具体。<br><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589378215/4A47A0DB6E60853DEDFCFDF08A5CA249" alt="图片说明"> </p>
+</li>
+</ul>
+</li>
+<li><p>设计核心组件</p>
+<p>对每一个核心组件进行具体地分析。例如，面试官让你设计一个url短网址，你需要考虑这些问题</p>
+<ul>
+<li>生成并储存一个完整 url 的 hash    <ul>
+<li>MD5和 Base62 </li>
+<li>Hash 碰撞 </li>
+<li>SQL 还是 NoSQL </li>
+<li>数据库模型 </li>
+</ul>
+</li>
+<li>将一个 hashed url 翻译成完整的 url    <ul>
+<li>数据库查找 </li>
+</ul>
+</li>
+<li>API 和面向对象设计 </li>
+</ul>
+</li>
+<li><p>对系统进行优化</p>
+<p>找到系统的瓶颈所在，对其进行优化，例如可以考虑水平扩展、数据库分片等等。</p>
+</li>
+</ol>
+<h2 id="系统的一些性能指标"><a href="#系统的一些性能指标" class="headerlink" title="系统的一些性能指标"></a>系统的一些性能指标</h2><ol>
+<li><p>响应时间</p>
+<p>响应时间指从发出请求开始到收到最后响应数据所需的时间，响应时间是系统最重要的性能指标其直观地反映了系统的“快慢”。</p>
+</li>
+<li><p>并发数</p>
+<p>并发数指系统能够同时处理请求的数目，这个数字反映了系统的负载特性。</p>
+</li>
+<li><p>吞吐量</p>
+<p>吞吐量指单位时间内系统处理的请求数量，体现系统的整体处理能力。</p>
+<p>QPS（Query Per Second）：服务器每秒可以执行的查询次数</p>
+<p>TPS（Transaction Per Second）：服务器每秒处理的事务数</p>
+<p>并发数=QPS*平均响应时间</p>
+</li>
+<li><p>经常听到的一些系统活跃度的名词</p>
+<ul>
+<li><p>PV（Page View）</p>
+<p>页面点击量或者浏览量，用户每次对网站中的每个页面访问均被记录一个PV，多次访问则会累计。</p>
+</li>
+<li><p>UV（Unique visitor）</p>
+<p>独立访客，统计一天内访问网站的用户数，一个用户多次访问网站算一个用户</p>
+</li>
+<li><p>IP（Internet <a href>Proto</a>col）</p>
+<p>指一天内访问某站点的IP总数，以用户的IP地址作为统计的指标，相同IP多次访问某站点算一次</p>
+<p>IP和UV的区别：</p>
+<p>在同一个IP地址下，两个不同的账号访问同一个站点，UV算两次，IP算一次</p>
+</li>
+<li><p>DAU（Daily Active User）：日活跃用户数量。</p>
+</li>
+<li><p>MAU(monthly active users)：月活跃用户人数。</p>
+</li>
+</ul>
+</li>
+<li><p>常用软件的QPS</p>
+<ul>
+<li>Nginx：一般Nginx的QPS是比较大的，单机的可达到30万 </li>
+<li>MySQL：对于读操作可达几百k，对于写操作更低，大概只有100k </li>
+<li>Redis：大概在几万左右，像set命令甚至可达10万 </li>
+<li>Tomcat：单机 Tomcat 的QPS 在 2万左右。 </li>
+<li>Memcached：大概在几十万左右 </li>
+</ul>
+<p>通过了解这些软件的QPS可以更清楚地找出系统的瓶颈所在。</p>
+</li>
+</ol>
+<h2 id="常见系统设计题与思路"><a href="#常见系统设计题与思路" class="headerlink" title="常见系统设计题与思路"></a>常见系统设计题与思路</h2><p>这里列举了一些比较经典的系统设计题，并给出了解题思路，该部分内容来源于Gitbook，链接：<a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">https://github.com/donnemartin/system-design-primer</a></p>
+<h3 id="分布式ID生成器"><a href="#分布式ID生成器" class="headerlink" title="分布式ID生成器"></a>分布式ID生成器</h3><p>如何设计一个分布式ID生成器(Distributed ID Generator)，并保证ID按时间粗略有序？</p>
+<h4 id="应用场景-Scenario"><a href="#应用场景-Scenario" class="headerlink" title="应用场景(Scenario)"></a>应用场景(Scenario)</h4><p>现实中很多业务都有<strong>生成唯一ID</strong>的需求，例如：</p>
+<ul>
+<li>用户ID </li>
+<li><a href>微博</a>ID </li>
+<li>聊天消息ID </li>
+<li>帖子ID </li>
+<li>订单ID </li>
+</ul>
+<h4 id="需求-Needs"><a href="#需求-Needs" class="headerlink" title="需求(Needs)"></a>需求(Needs)</h4><p>这个ID往往会作为数据库主键，所以需要保证<strong>全局唯一</strong>。数据库会在这个字段上建立聚集索引(Clustered Index，参考 MySQL InnoDB)，即该字段会影响各条数据再物理存储上的顺序。</p>
+<p>ID还要尽可能<strong>短</strong>，节省内存，让数据库索引效率更高。基本上64位整数能够满足绝大多数的场景，但是如果能做到比64位更短那就更好了。需要根据具体业务进行分析，预估出ID的最大值，这个最大值通常比64位整数的上限小很多，于是我们可以用更少的bit表示这个ID。</p>
+<p>查询的时候，往往有分页或者<strong><a href>排序</a></strong>的需求，所以需要给每条数据添加一个时间字段，并在其上建立普通索引(Secondary Index)。但是普通索引的访问效率比聚集索引慢，如果能够让ID<strong>按照时间粗略有序</strong>，则可以省去这个时间字段。为什么不是按照时间精确有序呢？因为按照时间精确有序是做不到的，除非用一个单机<a href>算法</a>，在分布式场景下做到精确有序性能一般很差。</p>
+<p>这就引出了ID生成的三大核心需求：</p>
+<ul>
+<li>全局唯一(unique) </li>
+<li>按照时间粗略有序(sortable by time) </li>
+<li>尽可能短 </li>
+</ul>
+<p>下面介绍一些常用的生成ID的方法。</p>
+<h4 id="UUID"><a href="#UUID" class="headerlink" title="UUID"></a>UUID</h4><p>用过MongoDB的人会知道，MongoDB会自动给每一条数据赋予一个唯一的<a href="https://docs.mongodb.com/manual/reference/method/ObjectId/" target="_blank" rel="noopener">ObjectId</a>,保证不会重复，这是怎么做到的呢？实际上它用的是一种UUID<a href>算法</a>，生成的ObjectId占12个字节，由以下几个部分组成，</p>
+<ul>
+<li>4个字节表示的Unix timestamp, </li>
+<li>3个字节表示的机器的ID </li>
+<li>2个字节表示的进程ID </li>
+<li>3个字节表示的计数器 </li>
+</ul>
+<p><a href="https://en.wikipedia.org/wiki/Universally_unique_identifier" target="_blank" rel="noopener">UUID</a>是一类<a href>算法</a>的统称，具体有不同的实现。UUID的有点是每台机器可以独立产生ID，理论上保证不会重复，所以天然是分布式的，缺点是生成的ID太长，不仅占用内存，而且索引查询效率低。</p>
+<h3 id="多台MySQL服务器"><a href="#多台MySQL服务器" class="headerlink" title="多台MySQL服务器"></a>多台MySQL服务器</h3><p>既然MySQL可以产生自增ID，那么用多台MySQL服务器，能否组成一个高性能的分布式发号器呢？ 显然可以。</p>
+<p>假设用8台MySQL服务器协同工作，第一台MySQL初始值是1，每次自增8，第二台MySQL初始值是2，每次自增8，依次类推。前面用一个 round-robin load balancer 挡着，每来一个请求，由 round-robin balancer 随机地将请求发给8台MySQL中的任意一个，然后返回一个ID。</p>
+<p><a href="http://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/" target="_blank" rel="noopener">Flickr就是这么做的</a>，仅仅使用了两台MySQL服务器。可见这个方法虽然简单无脑，但是性能足够好。不过要注意，在MySQL中，不需要把所有ID都存下来，每台机器只需要存一个MAX_ID就可以了。这需要用到MySQL的一个<a href="http://dev.mysql.com/doc/refman/5.0/en/replace.html" target="_blank" rel="noopener">REPLACE INTO</a>特性。</p>
+<p>这个方法跟单台数据库比，缺点是<strong>ID是不是严格递增的</strong>，只是粗略递增的。不过这个问题不大，我们的目标是粗略有序，不需要严格递增。</p>
+<h3 id="Twitter-Snowflake"><a href="#Twitter-Snowflake" class="headerlink" title="Twitter Snowflake"></a>Twitter Snowflake</h3><p>比如 Twitter 有个成熟的开源<a href>项目</a>，就是专门生成ID的，<a href="https://github.com/twitter/snowflake" target="_blank" rel="noopener">Twitter Snowflake</a> 。Snowflake的核心<a href>算法</a>如下：</p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589642033/63202222E58F3A79A394C0195CBA399A" alt="图片说明"> </p>
+<p>最高位不用，永远为0，其余三组bit占位均可浮动，看具体的业务需求而定。默认情况下41bit的时间戳可以支持该<a href>算法</a>使用到2082年，10bit的工作机器id可以支持1023台机器，序列号支持1毫秒产生4095个自增序列id。</p>
+<p><a href="https://engineering.instagram.com/sharding-ids-at-instagram-1cf5a71e5a5c" target="_blank" rel="noopener">Instagram用了类似的方案</a>，41位表示时间戳，13位表示shard Id(一个shard Id对应一台PostgreSQL机器),最低10位表示自增ID，怎么样，跟Snowflake的设计非常类似吧。这个方案用一个PostgreSQL集群代替了Twitter Snowflake 集群，优点是利用了现成的PostgreSQL，容易懂，维护方便。</p>
+<p>有的面试官会问，如何让ID可以粗略的按照时间<a href>排序</a>？上面的这种格式的ID，含有时间戳，且在高位，恰好满足要求。如果面试官又问，如何保证ID严格有序呢？在分布式这个场景下，是做不到的，要想高性能，只能做到粗略有序，无法保证严格有序。</p>
+<h3 id="短网址系统"><a href="#短网址系统" class="headerlink" title="短网址系统"></a>短网址系统</h3><p>如何设计一个短网址服务(TinyURL)？</p>
+<h4 id="使用场景-Scenario"><a href="#使用场景-Scenario" class="headerlink" title="使用场景(Scenario)"></a>使用场景(Scenario)</h4><p><a href>微博</a>和Twitter都有140字数的限制，如果分享一个长网址，很容易就超出限制，发布出去。短网址服务可以把一个长网址变成短网址，方便在社交网络上传播。</p>
+<h4 id="需求-Needs-1"><a href="#需求-Needs-1" class="headerlink" title="需求(Needs)"></a>需求(Needs)</h4><p>很显然，要尽可能的<strong>短</strong>。长度设计为多少才合适呢？</p>
+<h4 id="短网址的长度"><a href="#短网址的长度" class="headerlink" title="短网址的长度"></a>短网址的长度</h4><p>当前互联网上的网页总数大概是 45亿(参考 <a href="http://www.worldwidewebsize.com/" target="_blank" rel="noopener">http://www.worldwidewebsize.com</a>)，45亿超过了 2^{32}=4294967296232=4294967296，但远远小于64位整数的上限值，那么用一个64位整数足够了。</p>
+<p><a href>微博</a>的短网址服务用的是长度为7的字符串，这个字符串可以看做是62进制的数，那么最大能表示{62}^7=3521614606208627=3521614606208个网址，远远大于45亿。所以<strong>长度为7就足够了</strong>。</p>
+<p>一个64位整数如何转化为字符串呢？，假设我们只是用大小写字母加数字，那么可以看做是62进制数，log_{62} {(2^{64}-1)}=10.7<em>l*</em>o*<em>g</em>62(264−1)=10.7，即字符串最长11就足够了。</p>
+<p>实际生产中，还可以再短一点，比如<a href>新浪</a><a href>微博</a>采用的长度就是7，因为 62^7=3521614606208627=3521614606208，这个量级远远超过互联网上的URL总数了，绝对够用了。</p>
+<p>现代的web服务器（例如Apache, Nginx）大部分都区分URL里的大小写了，所以用大小写字母来区分不同的URL是没问题的。</p>
+<p>因此，<strong>正确答案：长度不超过7的字符串，由大小写字母加数字共62个字母组成</strong></p>
+<h4 id="一对一还是一对多映射？"><a href="#一对一还是一对多映射？" class="headerlink" title="一对一还是一对多映射？"></a>一对一还是一对多映射？</h4><p>一个长网址，对应一个短网址，还是可以对应多个短网址？ 这也是个重大选择问题</p>
+<p>一般而言，一个长网址，在不同的地点，不同的用户等情况下，生成的短网址应该不一样，这样，在后端数据库中，可以更好的进行<a href>数据分析</a>。如果一个长网址与一个短网址一一对应，那么在数据库中，仅有一行数据，无法区分不同的来源，就无法做<a href>数据分析</a>了。</p>
+<p>以这个7位长度的短网址作为唯一ID，这个ID下可以挂各种信息，比如生成该网址的用户名，所在网站，HTTP头部的 User Agent等信息，收集了这些信息，才有可能在后面做大<a href>数据分析</a>，挖掘数据的价值。短网址服务商的一大盈利来源就是这些数据。</p>
+<p><strong>正确答案：一对多</strong></p>
+<h4 id="如何计算短网址"><a href="#如何计算短网址" class="headerlink" title="如何计算短网址"></a>如何计算短网址</h4><p>现在我们设定了短网址是一个长度为7的字符串，如何计算得到这个短网址呢？</p>
+<p>最容易想到的办法是哈希，先hash得到一个64位整数，将它转化为62进制整，截取低7位即可。但是哈希算***有冲突，如何处理冲突呢，又是一个麻烦。这个方法只是转移了矛盾，没有解决矛盾，抛弃。</p>
+<p><strong>正确答案：</strong>分布式ID生成器</p>
+<h4 id="如何存储"><a href="#如何存储" class="headerlink" title="如何存储"></a>如何存储</h4><p>如果存储短网址和长网址的对应关系？以短网址为 primary key, 长网址为value, 可以用传统的关系数据库存起来，例如MySQL, PostgreSQL，也可以用任意一个分布式KV数据库，例如Redis, LevelDB。</p>
+<p>如果你手痒想要手工设计这个存储，那就是另一个话题了，你需要完整地造一个KV存储引擎轮子。当前流行的KV存储引擎有LevelDB何RockDB，去读它们的<a href>源码</a>吧 </p>
+<h4 id="301还是302重定向"><a href="#301还是302重定向" class="headerlink" title="301还是302重定向"></a>301还是302重定向</h4><p>这也是一个有意思的问题。这个问题主要是考察你对301和302的理解，以及浏览器缓存机制的理解。</p>
+<p>301是永久重定向，302是临时重定向。短地址一经生成就不会变化，所以用301是符合http语义的。但是如果用了301， Google，<a href>百度</a>等搜索引擎，搜索的时候会直接展示真实地址，那我们就无法统计到短地址被点击的次数了，也无法收集用户的Cookie, User Agent 等信息，这些信息可以用来做很多有意思的大<a href>数据分析</a>，也是短网址服务商的主要盈利来源。</p>
+<p>所以，<strong>正确答案是302重定向</strong>。</p>
+<p>可以抓包看看<a href>新浪</a><a href>微博</a>的短网址是怎么做的，使用 Chrome 浏览器，访问这个URL <a href="http://t.cn/RX2VxjI，是我事先发微博自动生成的短网址。来抓包看看返回的结果是啥" target="_blank" rel="noopener">http://t.cn/RX2VxjI，是我事先发微博自动生成的短网址。来抓包看看返回的结果是啥</a></p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589743099/3B8B3920144F905AC35B858958847F9C" alt="图片说明"> </p>
+<p>可见<a href>新浪</a><a href>微博</a>用的就是302临时重定向。</p>
+<h4 id="预防攻击"><a href="#预防攻击" class="headerlink" title="预防攻击"></a>预防攻击</h4><p>如果一些别有用心的黑客，短时间内向TinyURL服务器发送大量的请求，会迅速耗光ID，怎么办呢？</p>
+<p>首先，限制IP的单日请求总数，超过阈值则直接拒绝服务。</p>
+<p>光限制IP的请求数还不够，因为黑客一般手里有上百万台肉鸡的，IP地址大大的有，所以光限制IP作用不大。</p>
+<p>可以用一台Redis作为缓存服务器，存储的不是 ID-&gt;长网址，而是 长网址-&gt;ID，仅存储一天以内的数据，用LRU机制进行淘汰。这样，如果黑客大量发同一个长网址过来，直接从缓存服务器里返回短网址即可，他就无法耗光我们的ID了。</p>
+<h3 id="定时任务调度器"><a href="#定时任务调度器" class="headerlink" title="定时任务调度器"></a>定时任务调度器</h3><p>请实现一个定时任务调度器，有很多任务，每个任务都有一个时间戳，任务会在该时间点开始执行。</p>
+<p>定时执行任务是一个很常见的需求，例如<a href>Uber</a>打车48小时后自动好评，淘宝购物15天后默认好评，等等。</p>
+<h4 id="方案1-PriorityBlockingQueue-Polling"><a href="#方案1-PriorityBlockingQueue-Polling" class="headerlink" title="方案1: PriorityBlockingQueue + Polling"></a>方案1: PriorityBlockingQueue + Polling</h4><p>我们很快可以想到第一个办法：</p>
+<ul>
+<li>用一个<code>java.util.concurrent.PriorityBlockingQueue</code>来作为优先队列。因为我们需要一个优先队列，又需要线程安全，用<code>PriorityBlockingQueue</code>再合适不过了。你也可以手工实现一个自己的<code>PriorityBlockingQueue</code>，用<code>java.util.PriorityQueue</code> + <code>ReentrantLock</code>，用一把锁把这个队列保护起来，就是线程安全的啦 </li>
+<li>对于生产者，可以用一个<code>while(true)</code>，造一些随机任务塞进去 </li>
+<li>对于消费者，起一个线程，在 <code>while(true)</code>里每隔几秒检查一下队列，如果有任务，则取出来执行。 </li>
+</ul>
+<p>这个方案的确可行，总结起来就是<strong>轮询(polling)</strong>。轮询通常有个很大的缺点，就是时间间隔不好设置，间隔太长，任务无法及时处理，间隔太短，会很耗CPU。</p>
+<h4 id="方案2-PriorityBlockingQueue-时间差"><a href="#方案2-PriorityBlockingQueue-时间差" class="headerlink" title="方案2: PriorityBlockingQueue + 时间差"></a>方案2: PriorityBlockingQueue + 时间差</h4><p>可以把方案1改进一下，<code>while(true)</code>里的逻辑变成：</p>
+<ul>
+<li>偷看一下堆顶的元素，但并不取出来，如果该任务过期了，则取出来 </li>
+<li>如果没过期，则计算一下时间差，然后 sleep()该时间差 </li>
+</ul>
+<p>不再是 sleep() 一个固定间隔了，消除了轮询的缺点。</p>
+<p><strong>稍等！这个方案其实有个致命的缺陷</strong>，导致它比 <code>PiorityBlockingQueue + Polling</code> 更加不可用，这个缺点是什么呢？。。。假设当前堆顶的任务在100秒后执行，消费者线程peek()偷看到了后，开始sleep 100秒，这时候一个新的任务插了进来，该任务在10秒后应该执行，但是由于消费者线程要睡眠100秒，这个新任务无法及时处理</p>
+<h4 id="方案3-DelayQueue"><a href="#方案3-DelayQueue" class="headerlink" title="方案3: DelayQueue"></a>方案3: DelayQueue</h4><p>方案2虽然已经不错了，但是还可以优化一下，Java里有一个<a href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/java/util/concurrent/DelayQueue.java" target="_blank" rel="noopener">DelayQueue</a>，完全符合题目的要求。DelayQueue 设计得非常巧妙，可以看做是一个特化版的<code>PriorityBlockingQueue</code>，它把<strong>计算时间差并让消费者等待该时间差</strong>的功能集成进了队列，消费者不需要关心时间差的事情了，直接在<code>while(true)</code>里不断<code>take()</code>就行了。</p>
+<p>DelayQueue的实现原理见下面的代码。</p>
+<p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import&#96; &#96;java.util.PriorityQueue;&#96;&#96;import&#96; &#96;java.util.concurrent.Delayed;&#96;&#96;import&#96; &#96;java.util.concurrent.locks.Condition;&#96;&#96;import&#96; &#96;java.util.concurrent.locks.ReentrantLock;&#96; &#96;import&#96; &#96;static&#96; &#96;java.util.concurrent.TimeUnit.NANOSECONDS;&#96; &#96;public&#96; &#96;class&#96; &#96;DelayQueue&lt;E &#96;&#96;extends&#96; &#96;Delayed&gt; &#123;&#96;&#96;  &#96;&#96;private&#96; &#96;final&#96; &#96;transient&#96; &#96;ReentrantLock lock &#x3D; &#96;&#96;new&#96; &#96;ReentrantLock();&#96;&#96;  &#96;&#96;private&#96; &#96;final&#96; &#96;PriorityQueue&lt;E&gt; q &#x3D; &#96;&#96;new&#96; &#96;PriorityQueue&lt;E&gt;();&#96;&#96;  &#96;&#96;private&#96; &#96;final&#96; &#96;Condition available &#x3D; lock.newCondition();&#96;&#96;  &#96;&#96;private&#96; &#96;Thread leader &#x3D; &#96;&#96;null&#96;&#96;;&#96; &#96;  &#96;&#96;public&#96; &#96;DelayQueue() &#123;&#125;&#96; &#96;  &#96;&#96;&#x2F;**&#96;&#96;   &#96;&#96;* Inserts the specified element into this delay queue.&#96;&#96;   &#96;&#96;*&#96;&#96;   &#96;&#96;* @param e the element to add&#96;&#96;   &#96;&#96;* &lt;a href&#x3D;&quot;&#x2F;profile&#x2F;547241&quot; data-card-uid&#x3D;&quot;547241&quot; class&#x3D;&quot;js-nc-card&quot; target&#x3D;&quot;_blank&quot; from-niu&#x3D;&quot;default&quot;&gt;@return &#123;&lt;&#x2F;a&gt;&lt;a href&#x3D;&quot;&#x2F;profile&#x2F;620506&quot; data-card-uid&#x3D;&quot;620506&quot; class&#x3D;&quot;js-nc-card&quot; target&#x3D;&quot;_blank&quot; from-niu&#x3D;&quot;default&quot;&gt;@code true&#125;&#96;&#96;   &#96;&#96;* @throws NullPointerException if the specified element is null&#96;&#96;   &#96;&#96;*&#x2F;&#96;&#96;  &#96;&#96;public&#96; &#96;boolean&#96; &#96;put(E e) &#123;&#96;&#96;    &#96;&#96;final&#96; &#96;ReentrantLock lock &#x3D; &#96;&#96;this&#96;&#96;.lock;&#96;&#96;    &#96;&#96;lock.lock();&#96;&#96;    &#96;&#96;try&#96; &#96;&#123;&#96;&#96;      &#96;&#96;q.offer(e);&#96;&#96;      &#96;&#96;if&#96; &#96;(q.peek() &#x3D;&#x3D; e) &#123;&#96;&#96;        &#96;&#96;leader &#x3D; &#96;&#96;null&#96;&#96;;&#96;&#96;        &#96;&#96;available.signal();&#96;&#96;      &#96;&#96;&#125;&#96;&#96;      &#96;&#96;return&#96; &#96;true&#96;&#96;;&#96;&#96;    &#96;&#96;&#125; &#96;&#96;finally&#96; &#96;&#123;&#96;&#96;      &#96;&#96;lock.unlock();&#96;&#96;    &#96;&#96;&#125;&#96;&#96;  &#96;&#96;&#125;&#96; &#96;  &#96;&#96;&#x2F;**&#96;&#96;   &#96;&#96;* Retrieves and removes the head of this queue, waiting if necessary&#96;&#96;   &#96;&#96;* until an element with an expired delay is available on this queue.&#96;&#96;   &#96;&#96;*&#96;&#96;   &#96;&#96;* &lt;&#x2F;a&gt;&lt;a href&#x3D;&quot;&#x2F;profile&#x2F;547241&quot; data-card-uid&#x3D;&quot;547241&quot; class&#x3D;&quot;js-nc-card&quot; target&#x3D;&quot;_blank&quot; from-niu&#x3D;&quot;default&quot;&gt;@return the head of this queue&#96;&#96;   &#96;&#96;* @throws InterruptedException &#123;@inheritDoc&#125;&#96;&#96;   &#96;&#96;*&#x2F;&#96;&#96;  &#96;&#96;public&#96; &#96;E take() &#96;&#96;throws&#96; &#96;InterruptedException &#123;&#96;&#96;    &#96;&#96;final&#96; &#96;ReentrantLock lock &#x3D; &#96;&#96;this&#96;&#96;.lock;&#96;&#96;    &#96;&#96;lock.lockInterruptibly();&#96;&#96;    &#96;&#96;try&#96; &#96;&#123;&#96;&#96;      &#96;&#96;for&#96; &#96;(;;) &#123;&#96;&#96;        &#96;&#96;E first &#x3D; q.peek();&#96;&#96;        &#96;&#96;if&#96; &#96;(first &#x3D;&#x3D; &#96;&#96;null&#96;&#96;)&#96;&#96;          &#96;&#96;available.await();&#96;&#96;        &#96;&#96;else&#96; &#96;&#123;&#96;&#96;          &#96;&#96;long&#96; &#96;delay &#x3D; first.getDelay(NANOSECONDS);&#96;&#96;          &#96;&#96;if&#96; &#96;(delay &lt;&#x3D; &#96;&#96;0&#96;&#96;)&#96;&#96;            &#96;&#96;return&#96; &#96;q.poll();&#96;&#96;          &#96;&#96;first &#x3D; &#96;&#96;null&#96;&#96;; &#96;&#96;&#x2F;&#x2F; don&#39;t retain ref while waiting&#96;&#96;          &#96;&#96;if&#96; &#96;(leader !&#x3D; &#96;&#96;null&#96;&#96;)&#96;&#96;            &#96;&#96;available.await();&#96;&#96;          &#96;&#96;else&#96; &#96;&#123;&#96;&#96;            &#96;&#96;Thread thisThread &#x3D; Thread.currentThread();&#96;&#96;            &#96;&#96;leader &#x3D; thisThread;&#96;&#96;            &#96;&#96;try&#96; &#96;&#123;&#96;&#96;              &#96;&#96;available.awaitNanos(delay);&#96;&#96;            &#96;&#96;&#125; &#96;&#96;finally&#96; &#96;&#123;&#96;&#96;              &#96;&#96;if&#96; &#96;(leader &#x3D;&#x3D; thisThread)&#96;&#96;                &#96;&#96;leader &#x3D; &#96;&#96;null&#96;&#96;;&#96;&#96;            &#96;&#96;&#125;&#96;&#96;          &#96;&#96;&#125;&#96;&#96;        &#96;&#96;&#125;&#96;&#96;      &#96;&#96;&#125;&#96;&#96;    &#96;&#96;&#125; &#96;&#96;finally&#96; &#96;&#123;&#96;&#96;      &#96;&#96;if&#96; &#96;(leader &#x3D;&#x3D; &#96;&#96;null&#96; &#96;&amp;&amp; q.peek() !&#x3D; &#96;&#96;null&#96;&#96;)&#96;&#96;        &#96;&#96;available.signal();&#96;&#96;      &#96;&#96;lock.unlock();&#96;&#96;    &#96;&#96;&#125;&#96;&#96;  &#96;&#96;&#125;&#96;&#96;&#125;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个代码中有几个要点要注意一下。</p>
+<p><strong>1. put()方法</strong></p>
+<p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if&#96; &#96;(q.peek() &#x3D;&#x3D; e) &#123;&#96;&#96;  &#96;&#96;leader &#x3D; &#96;&#96;null&#96;&#96;;&#96;&#96;  &#96;&#96;available.signal();&#96;&#96;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果第一个元素等于刚刚插入进去的元素，说明刚才队列是空的。现在队列里有了一个任务，那么就<strong>应该唤醒所有在等待的消费者线程，避免了方案2的缺点</strong>。将<code>leader</code>重置为null，这些消费者之间互相竞争，自然有一个会被选为leader。</p>
+<p><strong>2. 线程leader的作用</strong></p>
+<p><code>leader</code>这个成员有啥作用？DelayQueue的设计其实是一个Leader/Follower模式，<code>leader</code>就是指向Leader线程的。该模式可以减少不必要的等待时间，当一个线程是Leader时，它只需要一个时间差；其他Follower线程则无限等待。比如头节点任务还有5秒就要开始了，那么Leader线程会sleep 5秒，不需要傻傻地等待固定时间间隔。</p>
+<p>想象一下有个多个消费者线程用take方法去取任务,内部先加锁,然后每个线程都去peek头节点。如果leader不为空说明已经有线程在取了，让当前消费者无限等待。</p>
+<p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if&#96; &#96;(leader !&#x3D; &#96;&#96;null&#96;&#96;)&#96;&#96;  &#96;&#96;available.await();</span><br></pre></td></tr></table></figure>
+
+<p>如果为空说明没有其他消费者去取任务,设置leader为当前消费者，并让改消费者等待指定的时间，</p>
+<p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">else&#96; &#96;&#123;&#96;&#96;  &#96;&#96;Thread thisThread &#x3D; Thread.currentThread();&#96;&#96;  &#96;&#96;leader &#x3D; thisThread;&#96;&#96;  &#96;&#96;try&#96; &#96;&#123;&#96;&#96;     &#96;&#96;available.awaitNanos(delay);&#96;&#96;  &#96;&#96;&#125; &#96;&#96;finally&#96; &#96;&#123;&#96;&#96;     &#96;&#96;if&#96; &#96;(leader &#x3D;&#x3D; thisThread)&#96;&#96;       &#96;&#96;leader &#x3D; &#96;&#96;null&#96;&#96;;&#96;&#96;  &#96;&#96;&#125;&#96;&#96;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下次循环会走如下分支，取到任务结束，</p>
+<p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if&#96; &#96;(delay &lt;&#x3D; &#96;&#96;0&#96;&#96;)&#96;&#96;  &#96;&#96;return&#96; &#96;q.poll();</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. take()方法中为什么释放first</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">first &#x3D; null; &#x2F;&#x2F; don&#39;t retain ref while waiting</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到 Doug Lea 后面写的注释，那么这行代码有什么用呢？</p>
+<p>如果删除这行代码，会发生什么呢？假设现在有3个消费者线程，</p>
+<ul>
+<li>线程A进来获取first,然后进入 else 的 else ,设置了leader为当前线程A，并让A等待一段时间 </li>
+<li>线程B进来获取first, 进入else的阻塞操作,然后无限期等待，这时线程B是持有first引用的 </li>
+<li>线程A等待指定时间后被唤醒，获取对象成功，出队，这个对象理应被GC回收，但是它还被线程B持有着，GC链可达，所以不能回收这个first </li>
+<li>只要线程B无限期的睡眠，那么这个本该被回收的对象就不能被GC销毁掉，那么就会造成内存泄露 </li>
+</ul>
+<h5 id="Task对象"><a href="#Task对象" class="headerlink" title="Task对象"></a>Task对象</h5><p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import&#96; &#96;java.util.concurrent.Delayed;&#96;&#96;import&#96; &#96;java.util.concurrent.TimeUnit;&#96; &#96;public&#96; &#96;class&#96; &#96;Task &#96;&#96;implements&#96; &#96;Delayed &#123;&#96;&#96;  &#96;&#96;private&#96; &#96;String name;&#96;&#96;  &#96;&#96;private&#96; &#96;long&#96; &#96;startTime; &#96;&#96;&#x2F;&#x2F; milliseconds&#96; &#96;  &#96;&#96;public&#96; &#96;Task(String name, &#96;&#96;long&#96; &#96;delay) &#123;&#96;&#96;    &#96;&#96;this&#96;&#96;.name &#x3D; name;&#96;&#96;    &#96;&#96;this&#96;&#96;.startTime &#x3D; System.currentTimeMillis() + delay;&#96;&#96;  &#96;&#96;&#125;&#96; &#96;  &#96;&#96;&lt;a href&#x3D;&#96;&#96;&quot;&#x2F;profile&#x2F;992988&quot;&#96; &#96;data-card-uid&#x3D;&#96;&#96;&quot;992988&quot;&#96; &#96;class&#96;&#96;&#x3D;&#96;&#96;&quot;js-nc-card&quot;&#96; &#96;target&#x3D;&#96;&#96;&quot;_blank&quot;&#96; &#96;from-niu&#x3D;&#96;&#96;&quot;default&quot;&#96;&#96;&gt;&#96;&#96;@Override&#96;&#96;  &#96;&#96;public&#96; &#96;long&#96; &#96;getDelay(TimeUnit unit) &#123;&#96;&#96;    &#96;&#96;long&#96; &#96;diff &#x3D; startTime - System.currentTimeMillis();&#96;&#96;    &#96;&#96;return&#96; &#96;unit.convert(diff, TimeUnit.MILLISECONDS);&#96;&#96;  &#96;&#96;&#125;&#96; &#96;  &#96;&#96;&lt;&#x2F;a&gt;&lt;a href&#x3D;&#96;&#96;&quot;&#x2F;profile&#x2F;992988&quot;&#96; &#96;data-card-uid&#x3D;&#96;&#96;&quot;992988&quot;&#96; &#96;class&#96;&#96;&#x3D;&#96;&#96;&quot;js-nc-card&quot;&#96; &#96;target&#x3D;&#96;&#96;&quot;_blank&quot;&#96; &#96;from-niu&#x3D;&#96;&#96;&quot;default&quot;&#96;&#96;&gt;&#96;&#96;@Override&#96;&#96;  &#96;&#96;public&#96; &#96;int&#96; &#96;compareTo(Delayed o) &#123;&#96;&#96;    &#96;&#96;return&#96; &#96;(&#96;&#96;int&#96;&#96;)(&#96;&#96;this&#96;&#96;.startTime - ((Task) o).startTime);&#96;&#96;  &#96;&#96;&#125;&#96; &#96;  &#96;&#96;&lt;&#x2F;a&gt;&lt;a href&#x3D;&#96;&#96;&quot;&#x2F;profile&#x2F;992988&quot;&#96; &#96;data-card-uid&#x3D;&#96;&#96;&quot;992988&quot;&#96; &#96;class&#96;&#96;&#x3D;&#96;&#96;&quot;js-nc-card&quot;&#96; &#96;target&#x3D;&#96;&#96;&quot;_blank&quot;&#96; &#96;from-niu&#x3D;&#96;&#96;&quot;default&quot;&#96;&#96;&gt;&#96;&#96;@Override&#96;&#96;  &#96;&#96;public&#96; &#96;String toString() &#123;&#96;&#96;    &#96;&#96;return&#96; &#96;&quot;task &quot;&#96; &#96;+ name + &#96;&#96;&quot; at &quot;&#96; &#96;+ startTime;&#96;&#96;  &#96;&#96;&#125;&#96;&#96;&#125;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+
+<p>JDK中有一个接口<code>java.util.concurrent.Delayed</code>，可以用于表示具有过期时间的元素，刚好可以拿来表示任务这个概念。</p>
+<h5 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h5><p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import&#96; &#96;java.util.Random;&#96;&#96;import&#96; &#96;java.util.UUID;&#96; &#96;public&#96; &#96;class&#96; &#96;TaskProducer &#96;&#96;implements&#96; &#96;Runnable &#123;&#96;&#96;  &#96;&#96;private&#96; &#96;final&#96; &#96;Random random &#x3D; &#96;&#96;new&#96; &#96;Random();&#96;&#96;  &#96;&#96;private&#96; &#96;DelayQueue&lt;Task&gt; q;&#96; &#96;  &#96;&#96;public&#96; &#96;TaskProducer(DelayQueue&lt;Task&gt; q) &#123;&#96;&#96;    &#96;&#96;this&#96;&#96;.q &#x3D; q;&#96;&#96;  &#96;&#96;&#125;&#96; &#96;  &#96;&#96;&lt;a href&#x3D;&#96;&#96;&quot;&#x2F;profile&#x2F;992988&quot;&#96; &#96;data-card-uid&#x3D;&#96;&#96;&quot;992988&quot;&#96; &#96;class&#96;&#96;&#x3D;&#96;&#96;&quot;js-nc-card&quot;&#96; &#96;target&#x3D;&#96;&#96;&quot;_blank&quot;&#96; &#96;from-niu&#x3D;&#96;&#96;&quot;default&quot;&#96;&#96;&gt;&#96;&#96;@Override&#96;&#96;  &#96;&#96;public&#96; &#96;void&#96; &#96;run() &#123;&#96;&#96;    &#96;&#96;while&#96; &#96;(&#96;&#96;true&#96;&#96;) &#123;&#96;&#96;      &#96;&#96;try&#96; &#96;&#123;&#96;&#96;        &#96;&#96;int&#96; &#96;delay &#x3D; random.nextInt(&#96;&#96;10000&#96;&#96;);&#96;&#96;        &#96;&#96;Task task &#x3D; &#96;&#96;new&#96; &#96;Task(UUID.randomUUID().toString(), delay);&#96;&#96;        &#96;&#96;System.out.println(&#96;&#96;&quot;Put &quot;&#96; &#96;+ task);&#96;&#96;        &#96;&#96;q.put(task);&#96;&#96;        &#96;&#96;Thread.sleep(&#96;&#96;3000&#96;&#96;);&#96;&#96;      &#96;&#96;&#125; &#96;&#96;catch&#96; &#96;(InterruptedException e) &#123;&#96;&#96;        &#96;&#96;e.printStackTrace();&#96;&#96;      &#96;&#96;&#125;&#96;&#96;    &#96;&#96;&#125;&#96;&#96;  &#96;&#96;&#125;&#96;&#96;&#125;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+
+<p>生产者很简单，就是一个死循环，不断<a href>地产</a>生一些是时间随机的任务。</p>
+<h5 id="消费者"><a href="#消费者" class="headerlink" title="消费者"></a>消费者</h5><p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public&#96; &#96;class&#96; &#96;TaskConsumer &#96;&#96;implements&#96; &#96;Runnable &#123;&#96;&#96;  &#96;&#96;private&#96; &#96;DelayQueue&lt;Task&gt; q;&#96; &#96;  &#96;&#96;public&#96; &#96;TaskConsumer(DelayQueue&lt;Task&gt; q) &#123;&#96;&#96;    &#96;&#96;this&#96;&#96;.q &#x3D; q;&#96;&#96;  &#96;&#96;&#125;&#96; &#96;  &#96;&#96;&lt;a href&#x3D;&#96;&#96;&quot;&#x2F;profile&#x2F;992988&quot;&#96; &#96;data-card-uid&#x3D;&#96;&#96;&quot;992988&quot;&#96; &#96;class&#96;&#96;&#x3D;&#96;&#96;&quot;js-nc-card&quot;&#96; &#96;target&#x3D;&#96;&#96;&quot;_blank&quot;&#96; &#96;from-niu&#x3D;&#96;&#96;&quot;default&quot;&#96;&#96;&gt;&#96;&#96;@Override&#96;&#96;  &#96;&#96;public&#96; &#96;void&#96; &#96;run() &#123;&#96;&#96;    &#96;&#96;while&#96; &#96;(&#96;&#96;true&#96;&#96;) &#123;&#96;&#96;      &#96;&#96;try&#96; &#96;&#123;&#96;&#96;        &#96;&#96;Task task &#x3D; q.take();&#96;&#96;        &#96;&#96;System.out.println(&#96;&#96;&quot;Take &quot;&#96; &#96;+ task);&#96;&#96;      &#96;&#96;&#125; &#96;&#96;catch&#96; &#96;(InterruptedException e) &#123;&#96;&#96;        &#96;&#96;e.printStackTrace();&#96;&#96;      &#96;&#96;&#125;&#96;&#96;    &#96;&#96;&#125;&#96;&#96;  &#96;&#96;&#125;&#96;&#96;&#125;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当 DelayQueue 里没有任务时，<code>TaskConsumer</code>会无限等待，直到被唤醒，因此它不会消耗CPU。</p>
+<h5 id="定时任务调度器-1"><a href="#定时任务调度器-1" class="headerlink" title="定时任务调度器"></a>定时任务调度器</h5><p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public&#96; &#96;class&#96; &#96;TaskScheduler &#123;&#96;&#96;  &#96;&#96;public&#96; &#96;static&#96; &#96;void&#96; &#96;main(String[] args) &#123;&#96;&#96;    &#96;&#96;DelayQueue&lt;Task&gt; queue &#x3D; &#96;&#96;new&#96; &#96;DelayQueue&lt;&gt;();&#96;&#96;    &#96;&#96;new&#96; &#96;Thread(&#96;&#96;new&#96; &#96;TaskProducer(queue), &#96;&#96;&quot;Producer Thread&quot;&#96;&#96;).start();&#96;&#96;    &#96;&#96;new&#96; &#96;Thread(&#96;&#96;new&#96; &#96;TaskConsumer(queue), &#96;&#96;&quot;Consumer Thread&quot;&#96;&#96;).start();&#96;&#96;  &#96;&#96;&#125;&#96;&#96;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>DelayQueue这个方案，每个消费者线程只需要等待所需要的时间差，因此响应速度更快。它内部用了一个优先队列，所以插入和删除的时间复杂度都是log<em>n</em>。</p>
+<p>JDK里还有一个<a href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/java/util/concurrent/ScheduledThreadPoolExecutor.java" target="_blank" rel="noopener">ScheduledThreadPoolExecutor</a>，原理跟DelayQueue类似，封装的更完善，平时工作中可以用它，不过面试中，还是拿DelayQueue来讲吧，它封装得比较薄，容易讲清楚原理。</p>
+<h4 id="方案4-时间轮-HashedWheelTimer"><a href="#方案4-时间轮-HashedWheelTimer" class="headerlink" title="方案4: 时间轮(HashedWheelTimer)"></a>方案4: 时间轮(HashedWheelTimer)</h4><p>时间轮(HashedWheelTimer)其实很简单，就是一个循环队列，如下图所示，</p>
+<p><img src="https://uploadfiles.nowcoder.com/files/20210902/115285789_1630589333047/584578-044ce81079679c1c.png" alt="img"></p>
+<p>上图是一个长度为8的循环队列，假设该时间轮精度为秒，即每秒走一格，像手表那样，走完一圈就是8秒。每个格子指向一个任务集合，时间轮无限循环，每转到一个格子，就扫描该格子下面的所有任务，把时间到期的任务取出来执行。</p>
+<p>举个例子，假设指针当前正指向格子0，来了一个任务需要4秒后执行，那么这个任务就会放在格子4下面，如果来了一个任务需要20秒后执行怎么？由于这个循环队列转一圈只需要8秒，这个任务需要多转2圈，所以这个任务的位置虽然依旧在格子4(20%8+0=4)下面，不过需要多转2圈后才执行。因此每个任务需要有一个字段记录需圈数，每转一圈就减1，减到0则立刻取出来执行。</p>
+<p>怎么实现时间轮呢？<a href>Netty</a>中已经有了一个时间轮的实现, <a href="https://github.com/netty/netty/blob/4.1/common/src/main/java/io/netty/util/HashedWheelTimer.java" target="_blank" rel="noopener">HashedWheelTimer.java</a>，可以参考它的源代码。</p>
+<p>时间轮的优点是性能高，插入和删除的时间复杂度都是O(1)。Linux 内核中的定时器采用的就是这个方案。</p>
+<p><strong>Follow up: 如何设计一个分布式的定时任务调度器呢？</strong> 答: Redis ZSet, RabbitMQ等</p>
+<h3 id="最近一个小时内访问频率最高的10个IP"><a href="#最近一个小时内访问频率最高的10个IP" class="headerlink" title="最近一个小时内访问频率最高的10个IP"></a>最近一个小时内访问频率最高的10个IP</h3><p>实时输出最近一个小时内访问频率最高的10个IP，要求：</p>
+<ul>
+<li>实时输出 </li>
+<li>从当前时间向前数的1个小时 </li>
+<li>QPS可能会达到10W/s </li>
+</ul>
+<p>这道题乍一看很像<a href="https://soulmachine.gitbooks.io/system-design/content/cn/bigdata/heavy-hitters.html" target="_blank" rel="noopener">Top K 频繁项</a>，是不是需要 Lossy Count 或 Count-Min Sketch 之类的<a href>算法</a>呢？</p>
+<p>其实杀鸡焉用牛刀，这道题用不着上述<a href>算法</a>，请听我仔细分析。</p>
+<ol>
+<li>QPS是 10万/秒，即一秒内最高有 10万个请求，那么一个小时内就有 $100000∗3600=360000000≈228.4100000*3600=360000000≈2^{28.4}100000∗3600=360000000≈228.4，向上取整，大概是，向上取整，大概是 ，向上取整，大概是2292^{29}229个请求，也不是很大。我们在内存中建立3600个‘HashMap&lt;Int,Int&gt;‘，放在一个数组里，每秒对应一个HashMap，IP地址为key,出现次数作为value。这样，一个小时内最多有个请求，也不是很大。我们在内存中建立3600个<code>HashMap&lt;Int,Int&gt;</code>，放在一个数组里，每秒对应一个HashMap，IP地址为key, 出现次数作为value。这样，一个小时内最多有个请求，也不是很大。我们在内存中建立3600个‘HashMap&lt;Int,Int&gt;‘，放在一个数组里，每秒对应一个HashMap，IP地址为key,出现次数作为value。这样，一个小时内最多有2292^{29}229个pair，每个pair占8字节，总内存大概是个pair，每个pair占8字节，总内存大概是个pair，每个pair占8字节，总内存大概是229×8=232 2^{29} \times 8=2^{32}229×8=232$节，即4GB，单机完全可以存下。 </li>
+<li>同时还要新建一个固定大小为10的小根堆，用于存放当前出现次数最大的10个IP。堆顶是10个IP里频率最小的IP。 </li>
+<li>每次来一个请求，就把该秒对应的HashMap里对应的IP计数器增1，并查询该IP是否已经在堆中存在，  <ul>
+<li>如果不存在，则把该IP在3600个HashMap的计数器加起来，与堆顶IP的出现次数进行比较，如果大于堆顶元素，则替换掉堆顶元素，如果小于，则什么也不做 </li>
+<li>如果已经存在，则把堆中该IP的计数器也增1，并调整堆 </li>
+</ul>
+</li>
+<li>需要有一个后台常驻线程，每过一秒，把最旧的那个HashMap销毁，并为当前这一秒新建一个HashMap，这样维持一个一小时的窗口。 </li>
+<li>每次查询top 10的IP地址时，把堆里10个IP地址返回来即可。 </li>
+</ol>
+<p>以上就是该方案的全部内容。</p>
+<p>有的人问，可不可以用”IP + 时间”作为key, 把所有pair放在单个HashMap里？如果把所有数据放在一个HashMap里，有两个巨大的缺点，</p>
+<ul>
+<li>第4步里，怎么淘汰掉一个小时前的pair呢？这时候后台线程只能每隔一秒，全量扫描这个HashMap里的所有pair,把过期数据删除，这是线性时间复杂度，很慢。 </li>
+<li>这时候HashMap里的key存放的是”IP + 时间”组合成的字符串，占用内存远远大于一个int。而前面的方案，不用存真正的时间，只需要开一个3600长度的数组来表示一个小时时间窗口。 </li>
+</ul>
+<h3 id="key-Value存储引擎"><a href="#key-Value存储引擎" class="headerlink" title="key-Value存储引擎"></a>key-Value存储引擎</h3><p>请设计一个Key-Value存储引擎(Design a key-value store)。</p>
+<p>这是一道频繁出现的题目，个人认为也是一道很好的题目，这题纵深非常深，内行的人可以讲的非常深。</p>
+<p>首先讲两个术语，<strong>数据库</strong>和<strong>存储引擎</strong>。数据库往往是一个比较丰富完整的系统, 提供了SQL查询语言，事务和水平扩展等支持。然而存储引擎则是小而精, 纯粹专注于单机的读/写/存储。一般来说, 数据库底层往往会使用某种存储引擎。</p>
+<p>目前开源的KV存储引擎中，RocksDB是流行的一个，MongoDB和MySQL底层可以切换成RocksDB， TiDB底层直接使用了RocksDB。大多数分布式数据库的底层不约而同的都选择了RocksDB。</p>
+<p>RocksDB最初是从LevelDB进化而来的，我们先从简单一点的LevelDB入手，借鉴它的设计思路。</p>
+<h4 id="LevelDB整体结构"><a href="#LevelDB整体结构" class="headerlink" title="LevelDB整体结构"></a>LevelDB整体结构</h4><p>有一个反直觉的事情是，<strong>内存随机写甚至比硬盘的顺序读还要慢</strong>，磁盘随机写就更慢了，说明我们要避免随机写，最好设计成顺序写。因此好的KV存储引擎，都在尽量避免更新操作，把更新和删除操作转化为顺序写操作。LevelDB采用了一种SSTable的数据结构来达到这个目的。</p>
+<p>SSTable(Sorted String Table)就是一组按照key<a href>排序</a>好的 key-value对, key和value都是字节数组。SSTable既可以在内存中，也可以在硬盘中。SSTable底层使用LSM Tree(Log-Structured Merge Tree)来存放有序的key-value对。</p>
+<p>LevelDB整体由如下几个组成部分，</p>
+<ol>
+<li>MemTable。即内存中的SSTable，新数据会写入到这里，然后批量写入磁盘，以此提高写的吞吐量。</li>
+<li>Log文件。写MemTable前会写Log文件，即用WAL(Write Ahead Log)方式记录日志，如果机器突然掉电，内存中的MemTable丢失了，还可以通过日志恢复数据。WAL日志是很多传统数据库例如MySQL采用的技术，详细解释可以参考<a href="https://zhuanlan.zhihu.com/p/24900322" target="_blank" rel="noopener">数据库如何用 WAL 保证事务一致性？ - 知乎专栏</a>。</li>
+<li>Immutable MemTable。内存中的MemTable达到指定的大小后，将不再接收新数据，同时会有新的MemTable产生，新数据写入到这个新的MemTable里，Immutable MemTable随后会写入硬盘，变成一个SST文件。</li>
+<li><code>SSTable</code>文件。即硬盘上的SSTable，文件尾部追加了一块索引，记录key-&gt;offset，提高随机读的效率。SST文件为Level 0到Level N多层，每一层包含多个SST文件；单个SST文件容量随层次增加成倍增长；Level0的SST文件由Immutable MemTable直接Dump产生，其他Level的SST文件由其上一层的文件和本层文件归并产生。</li>
+<li>Manifest文件。 Manifest文件中记录SST文件在不同Level的分布，单个SST文件的最大最小key，以及其他一些LevelDB需要的元信息。</li>
+<li>Current文件。从上面的介绍可以看出，LevelDB启动时的首要任务就是找到当前的Manifest，而Manifest可能有多个。Current文件简单的记录了当前Manifest的文件名。</li>
+</ol>
+<p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589776812/62106D06220191BB7A30A35B52F747C2" alt="图片说明"> </p>
+<p> LevelDB的一些核心逻辑如下，</p>
+<ol>
+<li><p>首先SST文件尾部的索引要放在内存中，这样读索引就不需要一次磁盘IO了</p>
+</li>
+<li><p>所有读要先查看<code>MemTable</code>，如果没有再查看内存中的索引</p>
+</li>
+<li><p>所有写操作只能写到<code>MemTable</code>, 因为SST文件不可修改</p>
+</li>
+<li><p>定期把<code>Immutable MemTable</code>写入硬盘，成为<code>SSTable</code>文件，同时新建一个<code>MemTable</code>会继续接收新来的写操作</p>
+</li>
+<li><p>定期对<code>SSTable</code>文件进行合并</p>
+</li>
+<li><p>由于硬盘上的<code>SSTable</code>文件是不可修改的，那怎么更新和删除数据呢？对于更新操作，追加一个新的key-value对到文件尾部，由于读<code>SSTable</code>文件是从前向后读的，所以新数据会最先被读到；对于删除操作，追加“墓碑”值(tombstone)，表示删除该key，在定期合并<code>SSTable</code>文件时丢弃这些key, 即可删除这些key。</p>
+<h3 id="Manifest文件"><a href="#Manifest文件" class="headerlink" title="Manifest文件"></a>Manifest文件</h3><p>Manifest文件记录各个SSTable各个文件的管理信息，比如该SST文件处于哪个Level，文件名称叫啥，最小key和最大key各自是多少，如下图所示，</p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589797970/3E78723C7913C5282FD8F40FAA2B24EA" alt="图片说明"> </p>
+<h3 id="Log文件"><a href="#Log文件" class="headerlink" title="Log文件"></a>Log文件</h3><p>Log文件主要作用是系统发生故障时，能够保证不会丢失数据。因为在数据写入内存中的MemTable之前，会先写入Log文件，这样即使系统发生故障，MemTable中的数据没有来得及Dump到磁盘，LevelDB也可以根据log文件恢复内存中的MemTable，不会造成系统丢失数据。这个方式就叫做 WAL(Write Ahead Log)，很多传统数据库例如MySQL也使用了WAL技术来记录日志。</p>
+<p>每个Log文件由多个block组成，每个block大小为32K，读取和写入以block为基本单位。下图所示的Log文件包含3个Block</p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589813305/A1A80F0BA859656A5E0BFE5A387656F8" alt="图片说明"> </p>
+<h4 id="SSTable"><a href="#SSTable" class="headerlink" title="SSTable"></a>SSTable</h4><p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589824581/204EBC55C46BD71BB29C45F0EBBB0306" alt="图片说明"> </p>
+<h4 id="MemTable"><a href="#MemTable" class="headerlink" title="MemTable"></a>MemTable</h4><p>MemTable 是内存中的数据结构，存储的内容跟硬盘上的SSTable一样，只是格式不一样。Immutable MemTable的内存结构和Memtable是完全一样的，区别仅仅在于它是只读的，而MemTable则是允许写入和读取的。当MemTable写入的数据占用内存到达指定大小，则自动转换为Immutable Memtable，等待Dump到磁盘中，系统会自动生成一个新的MemTable供写操作写入新数据，理解了MemTable，那么Immutable MemTable自然不在话下。</p>
+<p>MemTable里的数据是按照key有序的，因此当插入新数据时，需要把这个key-value对插入到合适的位置上，以保持key有序性。MemTable底层的核心数据结构是一个跳表(Skip List)。跳表是<a href>红黑树</a>的一种替代数据结构，具有更高的写入速度，而且实现起来更加简单，请参考<a href="https://soulmachine.gitbooks.io/system-design/content/cn/appendix/skip-list.html" target="_blank" rel="noopener">跳表(Skip List)</a>。</p>
+<p>前面我们介绍了LevelDB的一些内存数据结构和文件，这里开始介绍一些动态操作，例如读取，写入，更新和删除数据，分层合并，错误恢复等操作。</p>
+<h4 id="添加、更新和删除数据"><a href="#添加、更新和删除数据" class="headerlink" title="添加、更新和删除数据"></a>添加、更新和删除数据</h4><p>LevelDB写入新数据时，具体分为两个步骤：</p>
+</li>
+<li><p>将这个操作顺序追加到log文件末尾。尽管这是一个磁盘操作，但是文件的顺序写入效率还是跟高的，所以不会降低写入的速度</p>
+</li>
+<li><p>如果log文件写入成功，那么将这条key-value记录插入到内存中MemTable。</p>
+<p>LevelDB更新一条记录时，并不会本地修改SST文件，而是会作为一条新数据写入MemTable，随后会写入SST文件，在SST文件合并过程中，新数据会处于文件尾部，而读取操作是从文件尾部倒着开始读的，所以新值一定会最先被读到。</p>
+<p>LevelDB删除一条记录时，也不会修改SST文件，而是用一个特殊值(墓碑值，tombstone)作为value，将这个key-value对追加到SST文件尾部，在SST文件合并过程中，这种值的key都会被忽略掉。</p>
+<p>核心思想就是把写操作转换为顺序追加，从而提高了写的效率。</p>
+<h4 id="读取数据"><a href="#读取数据" class="headerlink" title="读取数据"></a>读取数据</h4><p>读操作使用了如下几个手段进行优化：</p>
+</li>
+</ol>
+<ul>
+<li><p>MemTable + SkipList</p>
+</li>
+<li><p>Binary Search(通过 manifest 文件)</p>
+</li>
+<li><p>页缓存</p>
+</li>
+<li><p>bloom filter</p>
+</li>
+<li><p>周期性分层合并</p>
+<h3 id="数据流采样"><a href="#数据流采样" class="headerlink" title="数据流采样"></a>数据流采样</h3><p>有一个无限的整数数据流，如何从中随机地抽取k个整数出来？</p>
+<p>这是一个经典的数据流采样问题，我们一步一步来分析。</p>
+<h4 id="当k-1时"><a href="#当k-1时" class="headerlink" title="当k=1时"></a>当k=1时</h4><p>我们先考虑最简单的情况，k=1，即只需要随机抽取一个样本出来。抽样方法如下：</p>
+</li>
+</ul>
+<ol>
+<li><p>当第一个整数到达时，保存该整数</p>
+</li>
+<li><p>当第2个整数到达时，以1/2的概率使用该整数替换第1个整数，以1/2的概率丢弃改整数</p>
+</li>
+<li><p>当第i个整数到达时，以$1i\dfrac{1}{i}i1的概率使用第i个整数替换被选中的整数，以的概率使用第i个整数替换被选中的整数，以的概率使用第i个整数替换被选中的整数，以1−1i1-\dfrac{1}{i}1−i1$的概率丢弃第i个整数</p>
+<p>假设数据流目前已经流出共n个整数，这个方法能保证每个元素被选中的概率是$1n\dfrac{1}{n}n1$吗？用数学归纳法，证明如下：</p>
+</li>
+<li><p>当n=1时，由于是第1个数，被选中的概率是100%，命题成立</p>
+</li>
+<li><p>假设当n=m(m&gt;=1)时，命题成立，即前m个数，每一个被选中的概率是$1m\dfrac{1}{m}m1$</p>
+</li>
+<li><p>当n=m+1时，第m+1个数被选中的概率是 $1m+1\dfrac{1}{m+1}m+11,前m个数被选中的概率是, 前m个数被选中的概率是,前m个数被选中的概率是1m⋅(1−1m+1)=1m+1\dfrac{1}{m} \cdot (1-\dfrac{1}{m+1})=\dfrac{1}{m+1}m1⋅(1−m+11)=m+11$，命题依然成立</p>
+<p>由1，2，3知n&gt;=1时命题成立，证毕。</p>
+<h4 id="当k-gt-1时"><a href="#当k-gt-1时" class="headerlink" title="当k&gt;1时"></a>当k&gt;1时</h4><p>当 k &gt; 1，需要随机采样多个样本时，方法跟上面很类似，</p>
+</li>
+<li><p>前k个整数到达时，全部保留，即被选中的概率是 100%，</p>
+</li>
+<li><p>第i个整数到达时，以$k/ik/ik/i的概率替换k个数中的某一个，以的概率替换k个数中的某一个，以的概率替换k个数中的某一个，以1−ki1-\dfrac{k}{i}1−ik$的概率丢弃，保留k个数不变</p>
+<p>假设数据流目前已经流出共N个整数，这个方法能保证每个元素被选中的概率是$kN\dfrac{k}{N}Nk$吗？用数学归纳法，证明如下：</p>
+</li>
+<li><p>当n=m(m&lt;=k)时，被选中的概率是100%，命题成立</p>
+</li>
+<li><p>假设当n=m(m&gt;k)时，命题成立，即前m个数，每一个被选中的概率是 $1m\dfrac{1}{m}m1$</p>
+</li>
+<li><p>当n=m+1时，第m+1个数被选中的概率是 $km+1\dfrac{k}{m+1}m+1k,前m个数被选中的概率是, 前m个数被选中的概率是,前m个数被选中的概率是1m⋅[km+1⋅(1−1k)+1−km+1]=1m+1\dfrac{1}{m} \cdot [\dfrac{k}{m+1} \cdot (1-\dfrac{1}{k})+1-\dfrac{k}{m+1}]=\dfrac{1}{m+1}m1⋅[m+1k⋅(1−k1)+1−m+1k]=m+11$，命题依然成立</p>
+<p>由1，2，3知n&gt;=1时命题成立，证毕。</p>
+</li>
+</ol>
+<h3 id="基数估计"><a href="#基数估计" class="headerlink" title="基数估计"></a>基数估计</h3><p>如何计算数据流中不同元素的个数？例如，独立访客(Unique Visitor，简称UV)统计。这个问题称为基数估计(Cardinality Estimation)，也是一个很经典的题目。</p>
+<h4 id="方案1-HashSet"><a href="#方案1-HashSet" class="headerlink" title="方案1: HashSet"></a>方案1: HashSet</h4><p>首先最容易想到的办法是用HashSet，每来一个元素，就往里面塞，HashSet的大小就所求答案。但是在大数据的场景下，HashSet在单机内存中存不下。</p>
+<h4 id="方案2-bitmap"><a href="#方案2-bitmap" class="headerlink" title="方案2: bitmap"></a>方案2: bitmap</h4><p>HashSet耗内存主要是由于存储了元素的真实值，可不可以不存储元素本身呢？bitmap就是这样一个方案，假设已经知道不同元素的个数的上限，即基数的最大值，设为N，则开一个长度为N的bit数组，地位跟HashSet一样。每个元素与bit数组的某一位一一对应，该位为1，表示此元素在集合中，为0表示不在集合中。那么bitmap中1的个数就是所求答案。</p>
+<p>这个方案的缺点是，bitmap的长度与实际的基数无关，而是与基数的上限有关。假如要计算上限为1亿的基数，则需要12.5MB的bitmap，十个网站就需要125M。关键在于，这个内存使用与集合元素数量无关，即使一个网站仅仅有一个1UV，也要为其分配12.5MB内存。该<a href>算法</a>的空间复杂度是O(N_{max})<em>O</em>(<em>N<strong>m</strong>a**x</em>)。</p>
+<p>实际上目前还没有发现在大数据场景中准确计算基数的高效<a href>算法</a>，因此在不追求绝对准确的情况下，使用近似<a href>算法</a>算是一个不错的解决方案。</p>
+<h4 id="方案3-Linear-Counting"><a href="#方案3-Linear-Counting" class="headerlink" title="方案3: Linear Counting"></a>方案3: Linear Counting</h4><p>Linear Counting的基本思路是：</p>
+<ul>
+<li>选择一个哈希函数h，其结果服从均匀分布 </li>
+<li>开一个长度为m的bitmap，均初始化为0(m设为多大后面有讨论) </li>
+<li>数据流每来一个元素，计算其哈希值并对m取模，然后将该位置为1 </li>
+<li>查询时，设bitmap中还有u个bit为0，则不同元素的总数近似为 $−mlog⁡um-m\log\dfrac{u}{m}−mlogmu$ </li>
+</ul>
+<p>在使用Linear Counting<a href>算法</a>时，主要需要考虑的是bitmap长度<code>m</code>。m主要由两个因素决定，基数大小以及容许的误差。假设基数大约为n，允许的误差为ϵ，则m需要满足如下约束，</p>
+<p>m&gt;ϵt−t−1(ϵt)2m &gt; \dfrac{\epsilon^t-t-1}{(\epsilon t)^2}m&gt;(ϵt)2ϵt−t−1</p>
+<p>, 其中 $t=nmt=\dfrac{n}{m}t=mn$</p>
+<p>精度越高，需要的m越大。</p>
+<p>Linear Counting 与方案1中的bitmap很类似，只是改善了bitmap的内存占用，但并没有完全解决，例如一个网站只有一个UV，依然要为其分配m位的bitmap。该<a href>算法</a>的空间复杂度与方案2一样，依然是$O(Nmax)O(N_{max})O(Nmax)$。</p>
+<h4 id="方案4-LogLog-Counting"><a href="#方案4-LogLog-Counting" class="headerlink" title="方案4: LogLog Counting"></a>方案4: LogLog Counting</h4><p>LogLog Counting的<a href>算法</a>流程：</p>
+<ol>
+<li>均匀随机化。选取一个哈希函数h应用于所有元素，然后对哈希后的值进行基数估计。哈希函数h必须满足如下条件，  <ol>
+<li>哈希碰撞可以忽略不计。哈希函数h要尽可能的减少冲突 </li>
+<li>h的结果是均匀分布的。也就是说无论原始数据的分布如何，其哈希后的结果几乎服从均匀分布（完全服从均匀分布是不可能的，D. Knuth已经证明不可能通过一个哈希函数将一组不服从均匀分布的数据映射为绝对均匀分布，但是很多哈希函数可以生成几乎服从均匀分布的结果，这里我们忽略这种理论上的差异，认为哈希结果就是服从均匀分布）。 </li>
+<li>哈希后的结果是固定长度的 </li>
+</ol>
+</li>
+<li>对于元素计算出哈希值，由于每个哈希值是等长的，令长度为L </li>
+<li>对每个哈希值，从高到低找到第一个1出现的位置，取这个位置的最大值，设为p，则基数约等于$2p2^p2p$ </li>
+</ol>
+<p>如果直接使用上面的单一估计量进行基数估计会由于偶然性而存在较大误差。因此，LLC采用了分桶平均的思想来降低误差。具体来说，就是将哈希空间平均分成m份，每份称之为一个桶（bucket）。对于每一个元素，其哈希值的前k比特作为桶编号，其中$2k=m2^k=m2k=m，而后L−k个比特作为真正用于基数估计的比特串。桶编号相同的元素被分配到同一个桶，在进行基数估计时，首先计算每个桶内最大的第一个1的位置，设为‘p[i]‘，然后对这m个值取平均后再进行估计，即基数的估计值为，而后L-k个比特作为真正用于基数估计的比特串。桶编号相同的元素被分配到同一个桶，在进行基数估计时，首先计算每个桶内最大的第一个1的位置，设为<code>p[i]</code>，然后对这m个值取平均后再进行估计，即基数的估计值为，而后L−k个比特作为真正用于基数估计的比特串。桶编号相同的元素被分配到同一个桶，在进行基数估计时，首先计算每个桶内最大的第一个1的位置，设为‘p[i]‘，然后对这m个值取平均后再进行估计，即基数的估计值为21mΣi=0m−1p[i]2^{\frac{1}{m}\Sigma_{i=0}^{m-1} p[i]}2m1Σi=0m−1p[i]$。这相当于做多次实验然后去平均值，可以有效降低因偶然因素带来的误差。</p>
+<p>LogLog Counting 的空间复杂度仅有$O(log⁡2(log⁡2(Nmax)))O(\log_2(\log_2(N_{max})))O(log2(log2(Nmax)))$，内存占用极少，这是它的优点。不过LLC也有自己的缺点，当基数不是很大的时候，误差比较大。</p>
+<p>关于该<a href>算法</a>的数学证明，请阅读原始论文和参考资料里的链接，这里不再赘述。</p>
+<h4 id="方案5-HyperLogLog-Counting"><a href="#方案5-HyperLogLog-Counting" class="headerlink" title="方案5: HyperLogLog Counting"></a>方案5: HyperLogLog Counting</h4><p>HyperLogLog Counting（以下简称HLLC）的基本思想是在LLC的基础上做改进，</p>
+<ul>
+<li>第1个改进是使用调和平均数替代几何平均数，调和平均数可以有效抵抗离群值的扰。注意LLC是对各个桶取算术平均数，而算术平均数最终被应用到2的指数上，所以总体来看LLC取的是几何平均数。由于几何平均数对于离群值（例如0）特别敏感，因此当存在离群值时，LLC的偏差就会很大，这也从另一个角度解释了为什么基数n不太大时LLC的效果不太好。这是因为n较小时，可能存在较多空桶，这些特殊的离群值干扰了几何平均数的稳定性。使用调和平均数后，估计公式变为 $n^=αmm2Σi=0m−1p[i]\hat{n}=\frac{\alpha_mm^2}{\Sigma_{i=0}^{m-1} p[i]}n^=Σi=0m−1p[i]αmm2，其中，其中，其中αm=(m∫0∞(log2(2+u1+u))mdu)−1\alpha_m=(m\int_0^{\infty}(log_2(\frac{2+u}{1+u}))^mdu)^{-1}αm=(m∫0∞(log2(1+u2+u))mdu)−1$ </li>
+<li>第2个改进是加入了分段偏差修正。具体来说，设e为基数的估计值，  <ul>
+<li>当 $e≤52me \leq \frac{5}{2}me≤25m$时，使用 Linear Counting </li>
+<li>当 $52m&lt;e≤130232\frac{5}{2}m&lt;e\leq \frac{1}{30}2^{32}25m&lt;e≤301232$时，使用 HyperLogLog Counting </li>
+<li>当 $e&gt;130232e&gt;\frac{1}{30}2^{32}e&gt;301232时，修改估计公式为时，修改估计公式为时，修改估计公式为n^=−232log⁡(1−e/232)\hat{n}=-2^{32}\log(1-e/2^{32})n^=−232log(1−e/232)$ </li>
+</ul>
+</li>
+</ul>
+<p>关于分段偏差修正的效果分析也可以在原论文中找到。</p>
+<h3 id="频率估计"><a href="#频率估计" class="headerlink" title="频率估计"></a>频率估计</h3><p>如何计算数据流中任意元素的频率？</p>
+<p>这个问题也是大数据场景下的一个经典问题，称为频率估计(Frequency Estimation)问题。</p>
+<h4 id="方案1-HashMap"><a href="#方案1-HashMap" class="headerlink" title="方案1: HashMap"></a>方案1: HashMap</h4><p>用一个HashMap记录每个元素的出现次数，每来一个元素，就把相应的计数器增1。这个方法在大数据的场景下不可行，因为元素太多，单机内存无法存下这个巨大的HashMap。</p>
+<h4 id="方案2-数据分片-HashMap"><a href="#方案2-数据分片-HashMap" class="headerlink" title="方案2: 数据分片 + HashMap"></a>方案2: 数据分片 + HashMap</h4><p>既然单机内存存不下所有元素，一个很自然的改进就是使用多台机器。假设有8台机器，每台机器都有一个HashMap，第1台机器只处理<code>hash(elem)%8==0</code>的元素，第2台机器只处理<code>hash(elem)%8==1</code>的元素，以此类推。查询的时候，先计算这个元素在哪台机器上，然后去那台机器上的HashMap里取出计数器。</p>
+<p>方案2能够scale, 但是依旧是把所有元素都存了下来，代价比较高。</p>
+<p>如果允许近似计算，那么有很多高效的近似<a href>算法</a>，单机就可以处理海量的数据。下面讲几个经典的近似<a href>算法</a>。</p>
+<h4 id="方案3-Count-Min-Sketch"><a href="#方案3-Count-Min-Sketch" class="headerlink" title="方案3: Count-Min Sketch"></a>方案3: Count-Min Sketch</h4><p>Count-Min Sketch <a href>算法</a>流程：</p>
+<ol>
+<li>选定d个hash函数，开一个 dxm 的二维整数数组作为<a href>哈希表</a> </li>
+<li>对于每个元素，分别使用d个hash函数计算相应的哈希值，并对m取余，然后在对应的位置上增1，二维数组中的每个整数称为sketch </li>
+<li>要查询某个元素的频率时，只需要取出d个sketch, 返回最小的那一个（其实d个sketch都是该元素的近似频率，返回任意一个都可以，该<a href>算法</a>选择最小的那个） </li>
+</ol>
+<p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589860801/359C20160CC5BAD1B8CDCD660420B869" alt="图片说明"> </p>
+<p>这个方法的思路和 Bloom Filter 比较类似，都是用多个hash函数来降低冲突。</p>
+<ul>
+<li>空间复杂度<code>O(dm)</code>。Count-Min Sketch 需要开一个 <code>dxm</code> 大小的二位数组，所以空间复杂度是<code>O(dm)</code> </li>
+<li>时间复杂度<code>O(n)</code>。Count-Min Sketch 只需要一遍扫描，所以时间复杂度是<code>O(n)</code> </li>
+</ul>
+<p>Count-Min Sketch<a href>算法</a>的优点是省内存，缺点是对于出现次数比较少的元素，准确性很差，因为二维数组相比于原始数据来说还是太小，hash冲突比较严重，导致结果偏差比较大。</p>
+<h4 id="方案4-Count-Mean-Min-Sketch"><a href="#方案4-Count-Mean-Min-Sketch" class="headerlink" title="方案4: Count-Mean-Min Sketch"></a>方案4: Count-Mean-Min Sketch</h4><p>Count-Min Sketch<a href>算法</a>对于低频的元素，结果不太准确，主要是因为hash冲突比较严重，产生了噪音，例如当m=20时，有1000个数hash到这个20桶，平均每个桶会收到50个数，这50个数的频率重叠在一块了。Count-Mean-Min Sketch <a href>算法</a>做了如下改进：</p>
+<ul>
+<li>来了一个查询，按照 Count-Min Sketch的正常流程，取出它的d个sketch </li>
+<li>对于每个hash函数，估算出一个噪音，噪音等于该行所有整数(除了被查询的这个元素)的平均值 </li>
+<li>用该行的sketch 减去该行的噪音，作为真正的sketch </li>
+<li>返回d个sketch的中位数 </li>
+</ul>
+<p><a href="#">复制代码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class&#96; &#96;CountMeanMinSketch &#123;&#96;&#96;  &#96;&#96;&#x2F;&#x2F; initialization and addition procedures as in CountMinSketch&#96;&#96;  &#96;&#96;&#x2F;&#x2F; n is total number of added elements&#96;&#96;  &#96;&#96;long&#96; &#96;estimateFrequency(value) &#123;&#96;&#96;    &#96;&#96;long&#96; &#96;e[] &#x3D; &#96;&#96;new&#96; &#96;long&#96;&#96;[d]&#96;&#96;    &#96;&#96;for&#96;&#96;(i &#x3D; &#96;&#96;0&#96;&#96;; i &lt; d; i++) &#123;&#96;&#96;      &#96;&#96;sketchCounter &#x3D; estimators[i][ hash(value, i) ]&#96;&#96;      &#96;&#96;noiseEstimation &#x3D; (n - sketchCounter) &#x2F; (m - &#96;&#96;1&#96;&#96;)&#96;&#96;      &#96;&#96;e[i] &#x3D; sketchCounter – noiseEstimator&#96;&#96;    &#96;&#96;&#125;&#96;&#96;    &#96;&#96;return&#96; &#96;median(e)&#96;&#96;  &#96;&#96;&#125;&#96;&#96;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Count-Mean-Min Sketch<a href>算法</a>能够显著的改善在长尾数据上的精确度。</p>
+<h3 id="Top-k频繁项"><a href="#Top-k频繁项" class="headerlink" title="Top k频繁项"></a>Top k频繁项</h3><p>寻找数据流中出现最频繁的k个元素(find top k frequent items in a data stream)。这个问题也称为 Heavy Hitters.</p>
+<p>这题也是从实践中提炼而来的，例如搜索引擎的热搜榜，找出访问网站次数最多的前10个IP地址，等等。</p>
+<h4 id="方案1-HashMap-Heap"><a href="#方案1-HashMap-Heap" class="headerlink" title="方案1: HashMap + Heap"></a>方案1: HashMap + Heap</h4><p>用一个 <code>HashMap&lt;String, Long&gt;</code>，存放所有元素出现的次数，用一个小根堆，容量为k，存放目前出现过的最频繁的k个元素，</p>
+<ol>
+<li>每次从数据流来一个元素，如果在HashMap里已存在，则把对应的计数器增1，如果不存在，则插入，计数器初始化为1 </li>
+<li>在堆里查找该元素，如果找到，把堆里的计数器也增1，并调整堆；如果没有找到，把这个元素的次数跟堆顶元素比较，如果大于堆丁元素的出现次数，则把堆丁元素替换为该元素，并调整堆 </li>
+<li>空间复杂度<code>O(n)</code>。HashMap需要存放下所有元素，需要<code>O(n)</code>的空间，堆需要存放k个元素，需要<code>O(k)</code>的空间，跟<code>O(n)</code>相比可以忽略不急，总的时间复杂度是<code>O(n)</code> </li>
+<li>时间复杂度<code>O(n)</code>。每次来一个新元素，需要在HashMap里查找一下，需要<code>O(1)</code>的时间；然后要在堆里查找一下，<code>O(k)</code>的时间，有可能需要调堆，又需要<code>O(logk)</code>的时间，总的时间复杂度是<code>O(n(k+logk))</code>，k是常量，所以可以看做是O(n)。 </li>
+</ol>
+<p>如果元素数量巨大，单机内存存不下，怎么办？ 有两个办法，见方案2和3。</p>
+<h4 id="方案2-多机HashMap-Heap"><a href="#方案2-多机HashMap-Heap" class="headerlink" title="方案2: 多机HashMap + Heap"></a>方案2: 多机HashMap + Heap</h4><ul>
+<li>可以把数据进行分片。假设有8台机器，第1台机器只处理<code>hash(elem)%8==0</code>的元素，第2台机器只处理<code>hash(elem)%8==1</code>的元素，以此类推。 </li>
+<li>每台机器都有一个HashMap和一个 Heap, 各自独立计算出 top k 的元素 </li>
+<li>把每台机器的Heap，通过网络汇总到一台机器上，将多个Heap合并成一个Heap，就可以计算出总的 top k 个元素了 </li>
+</ul>
+<h4 id="方案3-Count-Min-Sketch-Heap"><a href="#方案3-Count-Min-Sketch-Heap" class="headerlink" title="方案3: Count-Min Sketch + Heap"></a>方案3: Count-Min Sketch + Heap</h4><p>既然方案1中的HashMap太大，内存装不小，那么可以用<a href="https://soulmachine.gitbooks.io/system-design/content/cn/bigdata/frequency-estimation.html" target="_blank" rel="noopener">Count-Min Sketch算法</a>代替HashMap，</p>
+<ul>
+<li>在数据流不断流入的过程中，维护一个标准的Count-Min Sketch 二维数组 </li>
+<li>维护一个小根堆，容量为k </li>
+<li>每次来一个新元素，  <ul>
+<li>将相应的sketch增1 </li>
+<li>在堆中查找该元素，如果找到，把堆里的计数器也增1，并调整堆；如果没有找到，把这个元素的sketch作为钙元素的频率的近似值，跟堆顶元素比较，如果大于堆丁元素的频率，则把堆丁元素替换为该元素，并调整堆 </li>
+</ul>
+</li>
+</ul>
+<p>这个方法的时间复杂度和空间复杂度如下：</p>
+<ul>
+<li>空间复杂度<code>O(dm)</code>。m是二维数组的列数，d是二维数组的行数，堆需要<code>O(k)</code>的空间，不过k通常很小，堆的空间可以忽略不计 </li>
+<li>时间复杂度<code>O(nlogk)</code>。每次来一个新元素，需要在二维数组里查找一下，需要<code>O(1)</code>的时间；然后要在堆里查找一下，<code>O(logk)</code>的时间，有可能需要调堆，又需要<code>O(logk)</code>的时间，总的时间复杂度是<code>O(nlogk)</code>。 </li>
+</ul>
+<h4 id="方案4-Lossy-Counting"><a href="#方案4-Lossy-Counting" class="headerlink" title="方案4: Lossy Counting"></a>方案4: Lossy Counting</h4><p>Lossy Couting <a href>算法</a>流程：</p>
+<ol>
+<li>建立一个HashMap，用于存放每个元素的出现次数 </li>
+<li>建立一个窗口（窗口的大小由错误率决定，后面具体讨论） </li>
+<li>等待数据流不断流进这个窗口，直到窗口满了，开始统计每个元素出现的频率，统计结束后，每个元素的频率减1，然后将出现次数为0的元素从HashMap中删除 </li>
+<li>返回第2步，不断循环 </li>
+</ol>
+<p>Lossy Counting 背后朴素的思想是，出现频率高的元素，不太可能减一后变成0，如果某个元素在某个窗口内降到了0，说明它不太可能是高频元素，可以不再跟踪它的计数器了。随着处理的窗口越来越多，HashMap也会不断增长，同时HashMap里的低频元素会被清理出去，这样内存占用会保持在一个很低的水平。</p>
+<p>很显然，Lossy Counting <a href>算法</a>是个近似<a href>算法</a>，但它的错误率是可以在数学上证明它的边界的。假设要求错误率不大于ε，那么窗口大小为1/ε，对于长度为N的流，有N／（1/ε）＝εN 个窗口，由于每个窗口结束时减一了，那么频率最多被少计数了窗口个数εN。</p>
+<p>该<a href>算法</a>只需要一遍扫描，所以时间复杂度是<code>O(n)</code>。</p>
+<p>该<a href>算法</a>的内存占用，主要在于那个HashMap, Gurmeet Singh Manku 在他的论文里，证明了HashMap里最多有 <code>1/ε log (εN)</code>个元素，所以空间复杂度是<code>O(1/ε log (εN))</code>。</p>
+<h3 id="范围查询"><a href="#范围查询" class="headerlink" title="范围查询"></a>范围查询</h3><p>给定一个无限的整数数据流，如何查询在某个范围内的元素出现的总次数？例如数据库常常需要SELECT count(v) WHERE v &gt;= l AND v &lt; u。这个经典的问题称为范围查询(Range Query)。</p>
+<h4 id="方案1-Array-of-Count-Min-Sketches"><a href="#方案1-Array-of-Count-Min-Sketches" class="headerlink" title="方案1: Array of Count-Min Sketches"></a>方案1: Array of Count-Min Sketches</h4><p>有一个简单方法，既然<a href="https://soulmachine.gitbooks.io/system-design/content/cn/bigdata/frequency-estimation.html" target="_blank" rel="noopener">Count-Min Sketch</a>可以计算每个元素的频率，那么我们把指定范围内所有元素的sketch加起来，不就是这个范围内元素出现的总数了吗？要注意，由于每个sketch都是近似值，多个近似值相加，误差会被放大，所以这个方法不可行。</p>
+<p>解决的办法就是使用多个“分辨率”不同的Count-Min Sketch。第1个sketch每个格子存放单个元素的频率，第2个sketch每个格子存放2个元素的频率（做法很简答，把该元素的哈希值的最低位bit去掉，即右移一位，等价于除以2，再继续后续流程），第3个sketch每个格子存放4个元素的频率（哈希值右移2位即可），以此类推，最后一个sketch有2个格子，每个格子存放一半元素的频率总数，即第1个格子存放最高bit为0的元素的总次数，第2个格子存放最高bit为1的元素的总次数。Sketch的个数约等于<code>log(不同元素的总数)</code>。</p>
+<ul>
+<li><p>插入元素时，<a href>算法</a>伪代码如下，</p>
+<p><a href="#">复制代码</a></p>
+<p><code>def insert(x):``  ``for</code> <code>i in range(``1``, d+``1``):``    ``M1[i][h[i](x)] += ``1``    ``M2[i][h[i](x)/``2``] += ``1``    ``M3[i][h[i](x)/``4``] += ``1``    ``M4[i][h[i](x)/``8``] += ``1``    ``# ...</code></p>
+</li>
+<li><p>查询范围[l, u)时，从粗粒度到细粒度，找到多个区间，能够不重不漏完整覆盖区间[l, u)，将这些sketch的值加起来，就是该范围内的元素总数。举个例子，给定某个范围，如下图所示，最粗粒度的那个sketch里找不到一个格子，就往细粒度找，最后找到第1个sketch的2个格子，第2个sketch的1个格子和第3个sketch的1个格子，共4个格子，能够不重不漏的覆盖整个范围，把4个红线部分的值加起来就是所求结果</p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20210902/115285789_1630589896781/C01DC25A039067372687A2C280813FA5" alt="图片说明"> </p>
+</li>
+</ul>
+<h3 id="成员查询"><a href="#成员查询" class="headerlink" title="成员查询"></a>成员查询</h3><p>给定一个无限的数据流和一个有限集合，如何判断数据流中的元素是否在这个集合中？</p>
+<p>在实践中，我们经常需要判断一个元素是否在一个集合中，例如垃圾邮件过滤，爬虫的网址去重，等等。这题也是一道很经典的题目，称为成员查询(Membership Query)。</p>
+<p>答案: Bloom Filter</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/02/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%C2%B7%E6%8E%92%E8%A1%8C%E6%A6%9C/" rel="next" title="如何设计一个·排行榜">
+                <i class="fa fa-chevron-left"></i> 如何设计一个·排行榜
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/" rel="prev" title="C++和Go相关">
+                C++和Go相关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统的一些性能指标"><span class="nav-number">1.</span> <span class="nav-text">系统的一些性能指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见系统设计题与思路"><span class="nav-number">2.</span> <span class="nav-text">常见系统设计题与思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式ID生成器"><span class="nav-number">2.1.</span> <span class="nav-text">分布式ID生成器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#应用场景-Scenario"><span class="nav-number">2.1.1.</span> <span class="nav-text">应用场景(Scenario)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#需求-Needs"><span class="nav-number">2.1.2.</span> <span class="nav-text">需求(Needs)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UUID"><span class="nav-number">2.1.3.</span> <span class="nav-text">UUID</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多台MySQL服务器"><span class="nav-number">2.2.</span> <span class="nav-text">多台MySQL服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Twitter-Snowflake"><span class="nav-number">2.3.</span> <span class="nav-text">Twitter Snowflake</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#短网址系统"><span class="nav-number">2.4.</span> <span class="nav-text">短网址系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用场景-Scenario"><span class="nav-number">2.4.1.</span> <span class="nav-text">使用场景(Scenario)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#需求-Needs-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">需求(Needs)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#短网址的长度"><span class="nav-number">2.4.3.</span> <span class="nav-text">短网址的长度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一对一还是一对多映射？"><span class="nav-number">2.4.4.</span> <span class="nav-text">一对一还是一对多映射？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何计算短网址"><span class="nav-number">2.4.5.</span> <span class="nav-text">如何计算短网址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何存储"><span class="nav-number">2.4.6.</span> <span class="nav-text">如何存储</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#301还是302重定向"><span class="nav-number">2.4.7.</span> <span class="nav-text">301还是302重定向</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#预防攻击"><span class="nav-number">2.4.8.</span> <span class="nav-text">预防攻击</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定时任务调度器"><span class="nav-number">2.5.</span> <span class="nav-text">定时任务调度器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方案1-PriorityBlockingQueue-Polling"><span class="nav-number">2.5.1.</span> <span class="nav-text">方案1: PriorityBlockingQueue + Polling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案2-PriorityBlockingQueue-时间差"><span class="nav-number">2.5.2.</span> <span class="nav-text">方案2: PriorityBlockingQueue + 时间差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案3-DelayQueue"><span class="nav-number">2.5.3.</span> <span class="nav-text">方案3: DelayQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Task对象"><span class="nav-number">2.5.3.1.</span> <span class="nav-text">Task对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#生产者"><span class="nav-number">2.5.3.2.</span> <span class="nav-text">生产者</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#消费者"><span class="nav-number">2.5.3.3.</span> <span class="nav-text">消费者</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#定时任务调度器-1"><span class="nav-number">2.5.3.4.</span> <span class="nav-text">定时任务调度器</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案4-时间轮-HashedWheelTimer"><span class="nav-number">2.5.4.</span> <span class="nav-text">方案4: 时间轮(HashedWheelTimer)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最近一个小时内访问频率最高的10个IP"><span class="nav-number">2.6.</span> <span class="nav-text">最近一个小时内访问频率最高的10个IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#key-Value存储引擎"><span class="nav-number">2.7.</span> <span class="nav-text">key-Value存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LevelDB整体结构"><span class="nav-number">2.7.1.</span> <span class="nav-text">LevelDB整体结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Manifest文件"><span class="nav-number">2.8.</span> <span class="nav-text">Manifest文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Log文件"><span class="nav-number">2.9.</span> <span class="nav-text">Log文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SSTable"><span class="nav-number">2.9.1.</span> <span class="nav-text">SSTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MemTable"><span class="nav-number">2.9.2.</span> <span class="nav-text">MemTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加、更新和删除数据"><span class="nav-number">2.9.3.</span> <span class="nav-text">添加、更新和删除数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取数据"><span class="nav-number">2.9.4.</span> <span class="nav-text">读取数据</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据流采样"><span class="nav-number">2.10.</span> <span class="nav-text">数据流采样</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当k-1时"><span class="nav-number">2.10.1.</span> <span class="nav-text">当k&#x3D;1时</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当k-gt-1时"><span class="nav-number">2.10.2.</span> <span class="nav-text">当k&gt;1时</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基数估计"><span class="nav-number">2.11.</span> <span class="nav-text">基数估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方案1-HashSet"><span class="nav-number">2.11.1.</span> <span class="nav-text">方案1: HashSet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案2-bitmap"><span class="nav-number">2.11.2.</span> <span class="nav-text">方案2: bitmap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案3-Linear-Counting"><span class="nav-number">2.11.3.</span> <span class="nav-text">方案3: Linear Counting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案4-LogLog-Counting"><span class="nav-number">2.11.4.</span> <span class="nav-text">方案4: LogLog Counting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案5-HyperLogLog-Counting"><span class="nav-number">2.11.5.</span> <span class="nav-text">方案5: HyperLogLog Counting</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#频率估计"><span class="nav-number">2.12.</span> <span class="nav-text">频率估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方案1-HashMap"><span class="nav-number">2.12.1.</span> <span class="nav-text">方案1: HashMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案2-数据分片-HashMap"><span class="nav-number">2.12.2.</span> <span class="nav-text">方案2: 数据分片 + HashMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案3-Count-Min-Sketch"><span class="nav-number">2.12.3.</span> <span class="nav-text">方案3: Count-Min Sketch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案4-Count-Mean-Min-Sketch"><span class="nav-number">2.12.4.</span> <span class="nav-text">方案4: Count-Mean-Min Sketch</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Top-k频繁项"><span class="nav-number">2.13.</span> <span class="nav-text">Top k频繁项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方案1-HashMap-Heap"><span class="nav-number">2.13.1.</span> <span class="nav-text">方案1: HashMap + Heap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案2-多机HashMap-Heap"><span class="nav-number">2.13.2.</span> <span class="nav-text">方案2: 多机HashMap + Heap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案3-Count-Min-Sketch-Heap"><span class="nav-number">2.13.3.</span> <span class="nav-text">方案3: Count-Min Sketch + Heap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案4-Lossy-Counting"><span class="nav-number">2.13.4.</span> <span class="nav-text">方案4: Lossy Counting</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#范围查询"><span class="nav-number">2.14.</span> <span class="nav-text">范围查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方案1-Array-of-Count-Min-Sketches"><span class="nav-number">2.14.1.</span> <span class="nav-text">方案1: Array of Count-Min Sketches</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#成员查询"><span class="nav-number">2.15.</span> <span class="nav-text">成员查询</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共644.9k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

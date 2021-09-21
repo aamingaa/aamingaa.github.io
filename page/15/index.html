@@ -282,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/07/ReentrantReadWriteLock%E5%89%96%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/15/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -301,7 +301,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/11/07/ReentrantReadWriteLock%E5%89%96%E6%9E%90/" itemprop="url">ReentrantReadWriteLock剖析</a></h1>
+                <a class="post-title-link" href="/2020/11/15/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" itemprop="url">自定义注解</a></h1>
         
 
         <div class="post-meta">
@@ -313,550 +313,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-07T09:27:40+08:00">
-                2020-11-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index">
-                    <span itemprop="name">并发编程</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  4.2k
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  17
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          [TOC]
-一、读写锁简介  现实中有这样一种场景：对共享资源有读和写的操作，且写操作没有读操作那么频繁。在没有写操作的时候，多个线程同时读一个资源没有任何问题，所以应该允许多个线程同时读取共享资源；但是如果一个线程想去写这些共享资源，就不应该允许其他线程对该资源进行读和写的操作了。
-　针对这种场景
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/11/07/ReentrantReadWriteLock%E5%89%96%E6%9E%90/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/05/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avator.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/11/05/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84/" itemprop="url">数据库的乐观锁怎么实现的?</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-05T20:11:01+08:00">
-                2020-11-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index">
-                    <span itemprop="name">mysql</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  126
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  1
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          [TOC]
-MySql最经常使用的乐观锁时进行版本控制，也就是在数据库表中增加一列，记为version，当我们将数据读出时，将版本号一并读出，当数据进行更新时，会对这个版本号进行加1，当我们提交数据时，会判断数据库表中当前的version列值和当时读出的version是否相同，若相同说明没有进行更新
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/11/05/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/05/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%81%8F%E9%97%A8%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avator.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/11/05/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%81%8F%E9%97%A8%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url">一些比较偏门的面试题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-05T11:19:28+08:00">
-                2020-11-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index">
-                    <span itemprop="name">其他</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  7.5k
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  26
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          [TOC]
-Java基础大端序小端序1.小端法(Little-Endian)就是低位字节排放在内存的低地址端(即该值的起始地址),高位字节排放在内存的高地址端; 2.大端法(Big-Endian)就是高位字节排放在内存的低地址端(即该值的起始地址),低位字节排放在内存的高地址端; 
-枚举可以new吗
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/11/05/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%81%8F%E9%97%A8%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/05/spring%E5%89%96%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avator.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/11/05/spring%E5%89%96%E6%9E%90/" itemprop="url">spring剖析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-05T10:12:16+08:00">
-                2020-11-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-15T09:44:41+08:00">
+                2020-11-15
               </time>
             
 
@@ -909,7 +367,7 @@ Java基础大端序小端序1.小端法(Little-Endian)就是低位字节排放�
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  499
+                  830
                 </span>
               
 
@@ -925,7 +383,7 @@ Java基础大端序小端序1.小端法(Little-Endian)就是低位字节排放�
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  3
                 </span>
               
             </div>
@@ -949,11 +407,11 @@ Java基础大端序小端序1.小端法(Little-Endian)就是低位字节排放�
         
           
           [TOC]
-IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原本在程序中手动创建对象的控制权，交由Spring框架来管理。 IoC 在其他语言中也有应用，并非 Spring 特有。 IoC 容器是 Spring 用来实现 IoC 的载体， IoC 容器实际上就是
+元注解的作用就是负责注解其他注解。Java5.0定义了4个标准的meta-annotation类型，它们被用来提供对其它 annotation类型作说明。Java5.0定义的元注解：　　　　1.@Target, Annotation所修饰的对象范围　　　　2.@Retention,该An
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/11/05/spring%E5%89%96%E6%9E%90/#more" rel="contents">
+            <a class="btn" href="/2020/11/15/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1004,7 +462,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/05/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/14/Zookeeper%E7%9A%84leader%E9%80%89%E4%B8%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1023,7 +481,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/11/05/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" itemprop="url">分布式事务</a></h1>
+                <a class="post-title-link" href="/2020/11/14/Zookeeper%E7%9A%84leader%E9%80%89%E4%B8%BE/" itemprop="url">Zookeeper的leader选举</a></h1>
         
 
         <div class="post-meta">
@@ -1035,8 +493,8 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-05T10:06:22+08:00">
-                2020-11-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-14T21:24:11+08:00">
+                2020-11-14
               </time>
             
 
@@ -1089,7 +547,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3.2k
+                  5.2k
                 </span>
               
 
@@ -1105,7 +563,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  11
+                  23
                 </span>
               
             </div>
@@ -1129,12 +587,12 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
         
           
           [TOC]
-分布式事务指事务的操作位于不同的节点上，需要保证事务的 ACID 特性。例如在下单场景下，库存和订单如果不在同一个节点上，就涉及分布式事务。
-两阶段提交（2PC）两阶段提交（Two-phase Commit，2PC），通过引入协调者（Coordinator）来协调参与者的行为，并最终决定
+Zookeeper的Leader选举前面我们聊了一下ZAB协议以及Zookeeper的基础概念，心想着都到这个份上了，那还是把剩下的“Leader选举”、“分布式锁”、“惊群和脑裂”都跟大家简单聊聊,这些知识应该足够准备校招的你造火箭了。
+今天首先说一下Zookeeper的Leader选
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/11/05/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/#more" rel="contents">
+            <a class="btn" href="/2020/11/14/Zookeeper%E7%9A%84leader%E9%80%89%E4%B8%BE/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1185,7 +643,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/05/JWT%E8%AE%A4%E8%AF%81/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/14/ZAB%E5%8D%8F%E8%AE%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1204,7 +662,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/11/05/JWT%E8%AE%A4%E8%AF%81/" itemprop="url">JWT认证</a></h1>
+                <a class="post-title-link" href="/2020/11/14/ZAB%E5%8D%8F%E8%AE%AE/" itemprop="url">ZAB协议</a></h1>
         
 
         <div class="post-meta">
@@ -1216,8 +674,191 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-05T09:57:15+08:00">
-                2020-11-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-14T21:22:42+08:00">
+                2020-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          Zookeeper
+百度百科：ZooKeeper是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby一个开源的实现，是Hadoop和Hbase的重要组件。
+它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等
+
+zookeepe
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/11/14/ZAB%E5%8D%8F%E8%AE%AE/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/14/HTTP-2-0%E5%85%B7%E4%BD%93%EF%BC%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/11/14/HTTP-2-0%E5%85%B7%E4%BD%93%EF%BC%9F/" itemprop="url">HTTP 2.0具体？</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-14T16:02:47+08:00">
+                2020-11-14
               </time>
             
 
@@ -1270,7 +911,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.5k
+                  539
                 </span>
               
 
@@ -1286,7 +927,7 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  1
                 </span>
               
             </div>
@@ -1309,12 +950,13 @@ IOCIoC（Inverse of Control:控制反转）是一种设计思想，就是 将原
       
         
           
-          [TOC]
-JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一个使用 Spring Security 实现 JWT 身份认证的 Demo，文章地址：适合初学者入门 Spring Security With JWT 的 Demo。 Demo 非常简单，没有介绍到 JWT 存在的一些问题。所以，
+          二进制传输HTTP/2 采用二进制格式传输数据，而非 HTTP/1 的文本格式，二进制协议解析起来更高效。
+HTTP/1 的请求和响应报文，都是由起始行、首部和实体正文（可选）组成，各部分之间以文本换行符分隔。HTTP/2 将请求和响应数据分割为更小的帧，并且它们采用二进制编码。
+接下来我们介绍几个
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/11/05/JWT%E8%AE%A4%E8%AF%81/#more" rel="contents">
+            <a class="btn" href="/2020/11/14/HTTP-2-0%E5%85%B7%E4%BD%93%EF%BC%9F/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1365,7 +1007,7 @@ JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/04/%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/14/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1384,7 +1026,7 @@ JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/11/04/%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4/" itemprop="url">两阶段提交</a></h1>
+                <a class="post-title-link" href="/2020/11/14/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF/" itemprop="url">攻击技术</a></h1>
         
 
         <div class="post-meta">
@@ -1396,8 +1038,8 @@ JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-04T21:38:50+08:00">
-                2020-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-14T09:24:24+08:00">
+                2020-11-14
               </time>
             
 
@@ -1419,8 +1061,8 @@ JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index">
-                    <span itemprop="name">mysql</span>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
                   </a>
                 </span>
 
@@ -1450,7 +1092,7 @@ JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一�
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k
+                  1.1k
                 </span>
               
 
@@ -1466,7 +1108,7 @@ JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一�
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  3
                 </span>
               
             </div>
@@ -1490,11 +1132,14 @@ JWT 身份认证优缺点分析以及常见问题解决方案之前分享了一�
         
           
           [TOC]
-redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称重做日志文件，用于记录事务操作的变化，记录的是数据修改之后的值，不管事务是否提交都会记录下来。在实例和介质失败（media failure）时，redo log文件就能派上用场，如数据库掉电，In
+arp欺骗在使用以太网交换机的网络中，攻击者向某个以太网交换机发送大量的伪造源 MAC 地址，以太网交换机收到这样的帧就把虚假的 MAC 源地址填入到交换表中，由于伪造的数量很大很快就填满了表，导致以太网交换机无法正常工作。
+ 1.解决方法：
+利用交换机防止ARP攻击
+在交换机上绑定MA
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/11/04/%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4/#more" rel="contents">
+            <a class="btn" href="/2020/11/14/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1545,7 +1190,7 @@ redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/04/kafka%E5%89%AF%E6%9C%AC%E5%90%8C%E6%AD%A5/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/14/final-finally-finalize%E7%9A%84%E5%8C%BA%E5%88%AB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1564,7 +1209,7 @@ redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/11/04/kafka%E5%89%AF%E6%9C%AC%E5%90%8C%E6%AD%A5/" itemprop="url">kafka副本同步</a></h1>
+                <a class="post-title-link" href="/2020/11/14/final-finally-finalize%E7%9A%84%E5%8C%BA%E5%88%AB/" itemprop="url">final finally finalize的区别</a></h1>
         
 
         <div class="post-meta">
@@ -1576,8 +1221,8 @@ redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-04T16:58:08+08:00">
-                2020-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-14T08:32:19+08:00">
+                2020-11-14
               </time>
             
 
@@ -1599,8 +1244,8 @@ redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index">
-                    <span itemprop="name">消息队列</span>
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
                   </a>
                 </span>
 
@@ -1630,7 +1275,7 @@ redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称�
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.8k
+                  626
                 </span>
               
 
@@ -1646,7 +1291,7 @@ redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称�
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  2
                 </span>
               
             </div>
@@ -1670,11 +1315,15 @@ redo logredo log日志模块redo log是InnoDB存储引擎层的日志，又称�
         
           
           [TOC]
-Kafka副本Kafka中主题的每个Partition有一个预写式日志文件，每个Partition都由一系列有序的、不可变的消息组成，这些消息被连续的追加到Partition中，Partition中的每个消息都有一个连续的序列号叫做offset,确定它在分区日志中唯一的位置。Kafka每
+1. final 
+　　在java中，final可以用来修饰类，方法和变量（成员变量或局部变量）。下面将对其详细介绍。
+1.1 修饰类
+　　当用final修饰类的时，表明该类不能被其他类所继承。当我们需要让一个类永远不被继承，此时就可以用final修饰，但要注意：
+final类中所有的成
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/11/04/kafka%E5%89%AF%E6%9C%AC%E5%90%8C%E6%AD%A5/#more" rel="contents">
+            <a class="btn" href="/2020/11/14/final-finally-finalize%E7%9A%84%E5%8C%BA%E5%88%AB/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1725,7 +1374,7 @@ Kafka副本Kafka中主题的每个Partition有一个预写式日志文件，每�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/04/kafka%E7%9A%84%E5%88%86%E5%8C%BA%E5%86%8D%E5%B9%B3%E8%A1%A1/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/13/redis%E7%9A%84IO%E5%A4%8D%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1744,7 +1393,7 @@ Kafka副本Kafka中主题的每个Partition有一个预写式日志文件，每�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/11/04/kafka%E7%9A%84%E5%88%86%E5%8C%BA%E5%86%8D%E5%B9%B3%E8%A1%A1/" itemprop="url">kafka的分区再平衡</a></h1>
+                <a class="post-title-link" href="/2020/11/13/redis%E7%9A%84IO%E5%A4%8D%E7%94%A8/" itemprop="url">redis的IO复用?</a></h1>
         
 
         <div class="post-meta">
@@ -1756,8 +1405,8 @@ Kafka副本Kafka中主题的每个Partition有一个预写式日志文件，每�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-04T16:31:34+08:00">
-                2020-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-13T21:12:10+08:00">
+                2020-11-13
               </time>
             
 
@@ -1779,8 +1428,8 @@ Kafka副本Kafka中主题的每个Partition有一个预写式日志文件，每�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index">
-                    <span itemprop="name">消息队列</span>
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
                   </a>
                 </span>
 
@@ -1810,7 +1459,7 @@ Kafka副本Kafka中主题的每个Partition有一个预写式日志文件，每�
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  499
+                  426
                 </span>
               
 
@@ -1850,15 +1499,13 @@ Kafka副本Kafka中主题的每个Partition有一个预写式日志文件，每�
         
           
           [TOC]
-所谓的再平衡，指的是在kafka consumer所订阅的topic发生变化时发生的一种分区重分配机制。一般有三种情况会触发再平衡：
+Redis 基于 Reactor 模式开发了自己的网络事件处理器，使用 I/O 多路复用程序来同时监听多个套接字，并将到达的事件传送给文件事件分派器，分派器会根据套接字产生的事件类型调用相应的事件处理器。
 
-consumer group中的新增或删除某个consumer
-consumer订阅的topic发生变化
-consumer所订阅的topic发生了新增分
+事件的调度与执行服务器需要不断监听文件事件的套接字才能得到待处理的文件事件，但是
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/11/04/kafka%E7%9A%84%E5%88%86%E5%8C%BA%E5%86%8D%E5%B9%B3%E8%A1%A1/#more" rel="contents">
+            <a class="btn" href="/2020/11/13/redis%E7%9A%84IO%E5%A4%8D%E7%94%A8/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1909,7 +1556,7 @@ consumer所订阅的topic发生了新增分
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/04/kafka%E7%9A%84%E9%9B%86%E7%BE%A4%E9%80%89%E4%B8%BE%E3%80%81%E5%88%86%E5%8C%BA%E5%86%8D%E5%B9%B3%E8%A1%A1%E3%80%81%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/13/%E5%A4%A7%E9%87%8Ftime-wait%E5%87%BA%E7%8E%B0%E7%9A%84%E5%8E%9F%E5%9B%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1928,7 +1575,7 @@ consumer所订阅的topic发生了新增分
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/11/04/kafka%E7%9A%84%E9%9B%86%E7%BE%A4%E9%80%89%E4%B8%BE%E3%80%81%E5%88%86%E5%8C%BA%E5%86%8D%E5%B9%B3%E8%A1%A1%E3%80%81%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/" itemprop="url">kafka的集群选举、数据同步</a></h1>
+                <a class="post-title-link" href="/2020/11/13/%E5%A4%A7%E9%87%8Ftime-wait%E5%87%BA%E7%8E%B0%E7%9A%84%E5%8E%9F%E5%9B%A0/" itemprop="url">大量time_wait出现的原因?</a></h1>
         
 
         <div class="post-meta">
@@ -1940,8 +1587,8 @@ consumer所订阅的topic发生了新增分
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-04T10:53:46+08:00">
-                2020-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-13T16:38:16+08:00">
+                2020-11-13
               </time>
             
 
@@ -1963,8 +1610,8 @@ consumer所订阅的topic发生了新增分
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index">
-                    <span itemprop="name">消息队列</span>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
                   </a>
                 </span>
 
@@ -1994,7 +1641,7 @@ consumer所订阅的topic发生了新增分
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  474
+                  416
                 </span>
               
 
@@ -2034,11 +1681,389 @@ consumer所订阅的topic发生了新增分
         
           
           [TOC]
-Broker选举所谓控制器就是一个Borker，在一个kafka集群中，有多个broker节点，但是它们之间需要选举出一个leader，其他的broker充当follower角色。集群中第一个启动的broker会通过在zookeeper中创建临时节点/controller来让自己成为控制
+大量TIME_WAIT出现场景　　在高并发短连接的TCP服务器上，当服务器处理完请求后立刻按照主动正常关闭连接这个场景下，会出现大量socket处于TIMEWAIT状态。如果客户端的并发量持续很高，此时部分客户端就会显示连接不上。
+大量TIME_WAIT解决方案应用层面　　尽量避免频繁关
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/11/04/kafka%E7%9A%84%E9%9B%86%E7%BE%A4%E9%80%89%E4%B8%BE%E3%80%81%E5%88%86%E5%8C%BA%E5%86%8D%E5%B9%B3%E8%A1%A1%E3%80%81%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/#more" rel="contents">
+            <a class="btn" href="/2020/11/13/%E5%A4%A7%E9%87%8Ftime-wait%E5%87%BA%E7%8E%B0%E7%9A%84%E5%8E%9F%E5%9B%A0/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/13/%E5%A4%A7%E9%87%8Fclose-wait%E5%87%BA%E7%8E%B0%E7%9A%84%E5%8E%9F%E5%9B%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/11/13/%E5%A4%A7%E9%87%8Fclose-wait%E5%87%BA%E7%8E%B0%E7%9A%84%E5%8E%9F%E5%9B%A0/" itemprop="url">大量close_wait出现的原因?</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-13T16:34:33+08:00">
+                2020-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  209
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          通常，CLOSE_WAIT 状态在服务器停留时间很短，如果你发现大量的 CLOSE_WAIT 状态，那么就意味着被动关闭的一方没有及时发出 FIN 包，一般有如下几种可能：
+
+程序问题：如果代码层面忘记了 close 相应的 socket 连接，那么自然不会发出 FIN 包，从而导致 CLOSE_W
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/11/13/%E5%A4%A7%E9%87%8Fclose-wait%E5%87%BA%E7%8E%B0%E7%9A%84%E5%8E%9F%E5%9B%A0/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2020/11/13/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%92%E6%9F%A5%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/11/13/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%92%E6%9F%A5%E9%97%AE%E9%A2%98/" itemprop="url">服务器排查问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-13T09:30:19+08:00">
+                2020-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index">
+                    <span itemprop="name">其他</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          [TOC]
+TOP指令图一(ubuntu)：
+
+第1行：top - 05:43:27 up 4:52, 2 users, load average: 0.58, 0.41, 0.30第1行是任务队列信息，其参数如下：
+
+
+
+内容
+含义
+
+
+
+05:43:27
+表示当前时间
+
+
+up 4:52
+系统运
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/11/13/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%92%E6%9F%A5%E9%97%AE%E9%A2%98/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -2080,7 +2105,7 @@ Broker选举所谓控制器就是一个Borker，在一个kafka集群中，有多
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/14/">&lt;i class&#x3D;&quot;fa fa-angle-left&quot;&gt;&lt;&#x2F;i&gt;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/16/">&lt;i class&#x3D;&quot;fa fa-angle-right&quot;&gt;&lt;&#x2F;i&gt;</a>
+    <a class="extend prev" rel="prev" href="/page/14/">&lt;i class&#x3D;&quot;fa fa-angle-left&quot;&gt;&lt;&#x2F;i&gt;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/31/">31</a><a class="extend next" rel="next" href="/page/16/">&lt;i class&#x3D;&quot;fa fa-angle-right&quot;&gt;&lt;&#x2F;i&gt;</a>
   </nav>
 
 
@@ -2131,7 +2156,7 @@ Broker选举所谓控制器就是一个Borker，在一个kafka集群中，有多
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">284</span>
+                  <span class="site-state-item-count">305</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2143,7 +2168,7 @@ Broker选举所谓控制器就是一个Borker，在一个kafka集群中，有多
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2224,7 +2249,7 @@ Broker选举所谓控制器就是一个Borker，在一个kafka集群中，有多
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共566.1k字</span>
+  <span class="post-count">博客全站共644.9k字</span>
 </div>
 
         

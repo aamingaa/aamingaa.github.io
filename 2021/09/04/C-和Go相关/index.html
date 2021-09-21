@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="C++链接 静态链接静态链接静态链接器以一组可重定位目标文件为输入，生成一个完全链接的可执行目标文件作为输出。链接器主要完成以下两个任务：符号解析：每个符号对应于一个函数、一个全局变量或一个静态变量，符号解析的目的是将每个符号引用与一个符号定义关联起来。重定位：链接器通过把每个符号定义与一个内存位置关联起来，然后修改所有对这些符号的引用，使得它们指向这个内存位置。  目标文件可执行目标文件：可以直">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++和Go相关">
+<meta property="og:url" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="C++链接 静态链接静态链接静态链接器以一组可重定位目标文件为输入，生成一个完全链接的可执行目标文件作为输出。链接器主要完成以下两个任务：符号解析：每个符号对应于一个函数、一个全局变量或一个静态变量，符号解析的目的是将每个符号引用与一个符号定义关联起来。重定位：链接器通过把每个符号定义与一个内存位置关联起来，然后修改所有对这些符号的引用，使得它们指向这个内存位置。  目标文件可执行目标文件：可以直">
+<meta property="og:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904195125524.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904195229372.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904195259492.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20160427123813079">
+<meta property="og:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210905231656813.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904200137742.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904200209665.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904200218310.png">
+<meta property="og:image" content="https://images.cnblogs.com/cnblogs_com/skynet/201012/201012122157476286.png">
+<meta property="og:image" content="https://images.cnblogs.com/cnblogs_com/skynet/201012/201012122157494693.png">
+<meta property="article:published_time" content="2021-09-04T11:38:58.000Z">
+<meta property="article:modified_time" content="2021-09-05T15:44:12.351Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904195125524.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/09/04/C-和Go相关/"/>
+
+
+
+
+
+  <title>C++和Go相关 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++和Go相关</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-04T19:38:58+08:00">
+                2021-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index">
+                    <span itemprop="name">其他</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  19
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h2><h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p><img src="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904195125524.png" alt="image-20210904195125524"></p>
+<h3 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h3><p>静态链接<br>静态链接器以一组可重定位目标文件为输入，生成一个完全链接的可执行目标文件作为输出。链接器主要完成以下两<br>个任务：<br>符号解析：每个符号对应于一个函数、一个全局变量或一个静态变量，符号解析的目的是将每个符号引用与一<br>个符号定义关联起来。<br>重定位：链接器通过把每个符号定义与一个内存位置关联起来，然后修改所有对这些符号的引用，使得它们指<br>向这个内存位置。</p>
+<p><img src="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904195229372.png" alt="image-20210904195229372"></p>
+<p>目标文件<br>可执行目标文件：可以直接在内存中执行；<br>可重定位目标文件：可与其它可重定位目标文件在链接阶段合并，创建一个可执行目标文件；<br>共享目标文件：这是一种特殊的可重定位目标文件，可以在运行时被动态加载进内存并链接；</p>
+<p>动态链接<br>静态库有以下两个问题：<br>当静态库更新时那么整个程序都要重新进行链接；<br>对于 printf 这种标准函数库，如果每个程序都要有代码，这会极大浪费资源。<br>共享库是为了解决静态库的这两个问题而设计的，在 Linux 系统中通常用 .so 后缀来表示，Windows 系统上它们被<br>称为 DLL。它具有以下特点：<br>在给定的文件系统中一个库只有一个文件，所有引用该库的可执行目标文件都共享这个文件，它不会被复制到<br>引用它的可执行文件中；<br>在内存中，一个共享库的 .text 节（已编译程序的机器代码）的一个副本可以被不同的正在运行的进程共享。</p>
+<p><img src="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904195259492.png" alt="image-20210904195259492"></p>
+<h3 id="进程和线程"><a href="#进程和线程" class="headerlink" title="进程和线程"></a>进程和线程</h3><p>对于Linux的进程，进程是一个数据结构task_struct，它就是Linux内核检测到的一个描述。其中有一个mm指针，它指向的是进程的虚拟内存，files指针指向一个数据， files_struct 结构来记录文件描述符的使用情况。一般来说，一个进程会从files[0]读取输入，将输出写入到files[1]，将错误信息写入files[2]。每个进程被创建时候files0-2分别被填入标准输入流、标准输出流、标准错误流。如果我们写的程序需要其他资源，比如打开一个文件进行读写，就进行一个系统调用，让内核把文件打开，放到files[4]<br>从Linux内核的角度，线程和进程并没有区别对待，都是用task_struct来表示，唯一的区别就是共享的数据区域不同。对于同一个进程的线程来说，他们的mm和files都指向同一块区域。</p>
+<p>线程共享的环境包括：进程代码段、进程的公有数据(利用这些共享的数据，线程很容易的实现相互之间的通讯)、进程打开的文件描述符、信号的处理器、进程的当前目录和进程用户ID与进程组ID。</p>
+<h3 id="C-的内存分区"><a href="#C-的内存分区" class="headerlink" title="C++的内存分区"></a>C++的内存分区</h3><p>.reserve(预留)段<br>一共占用128M，属于预留空间，进程是禁止访问的</p>
+<p>.text(代码段)<br>可执行文件加载到内存中的只有数据和指令之分，而指令被存放在.text段中，一般是共享的，编译时确定,只读，不允许修改</p>
+<p>.data<br>存放在编译阶段(而非运行时)就能确定的数据,可读可写。也就是通常所说的静态存储区,赋了初值的全局变量和赋初值的静态变量存放在这个区域,常量也存放在这个区域</p>
+<p>.bss段<br>通常用来存放程序中未初始化以及初始化为0的全局/静态变量的一块内存区域，在程序载入时由内核清0</p>
+<p>.heap(堆)<br>用于存放进程运行时动态分配的内存，可动态扩张或缩减，这块内存由程序员自己管理，通过malloc/new可以申请内存，free/delete用来释放内存，heap的地址从低向高扩展，是不连续的空间</p>
+<p>.stack(栈)<br>记录函数调用过程相关的维护性信息，栈的地址从高地址向低地址扩展，是连续的内存区域</p>
+<p>共享库(libc.so)<br>静态库和动态库的区别：<br>(1)、不同操作系统下后缀不一样</p>
+<pre><code>windows    linux</code></pre><p>静态库         .lib       .a<br>动态/共享库     .dll       .so<br>1<br>2<br>3<br>(2)、加载方法的时间点不同<br>*.a 在程序生成链接的时候已经包含(拷贝)进来了<br>*.so 程序在运行的时候才加载使用</p>
+<p>(3)静态库把包含调用函数的库是一次性全部加载进去的，动态库是在运行的时候，把用到的函数的定义加载进去，所以包含静态库的程序所以用静态库编译的文件比较大，如果静态库改变了，程序得重新编译，相反的，动态库编译的可执行文件较小，但.so改变了，不影响程序，动态库的开发很方便</p>
+<p>(4)程序对静态库没有依赖性，对动态库有依赖性。</p>
+<p><img src="https://img-blog.csdn.net/20160427123813079" alt="img"></p>
+<p><img src="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210905231656813.png" alt="image-20210905231656813"></p>
+<h3 id="大端和小端"><a href="#大端和小端" class="headerlink" title="大端和小端"></a>大端和小端</h3><p>大端模式：低位字节存在高地址上，高位字节存在低地址上<br>小端模式：高位字节存在高地址上，低位字节存在地地址上<br>地址从左往右增长，字节则是左高右低。0x2211，大端存储是0x2211，小端是0x1122</p>
+<h3 id="函数调用的过程"><a href="#函数调用的过程" class="headerlink" title="函数调用的过程"></a>函数调用的过程</h3><p>函数调用过程中用到了一种很重要的数据结构——栈帧。其本质也是一种栈，这种栈专门用于保存函数<br>调用过程中的各种信息（参数、返回地址、本地变量等）。栈帧有栈顶和栈底之分，其中栈顶的地址最<br>低，栈底的地址最高，<br>两个关键的寄存器：<br>esp：栈指针寄存器(extended stack pointer)，其内存放着一个指针，该指针永远指向系统栈最上<br>面一个栈帧的栈顶。<br>ebp：基址指针寄存器(extended base pointer)，其内存放着一个指针，该指针永远指向系统栈最<br>上面一个栈帧的底部。</p>
+<p><img src="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904200137742.png" alt="image-20210904200137742"></p>
+<p>一般来说，ebp到esp之间的区域就是栈帧。在操作系统的栈空间中可以有多个栈帧，每调用一个函数，<br>就会生出一个新的栈帧。在调用过程中，我们将调用函数的函数称为“调用者”，被调用的函数称为“被调<br>用者”。调用者需要知道在哪获取被调用者的返回值，调用之需要知道传入的参数在哪、返回的地址在<br>哪。同时我们也要保住两个指针在调用前后一致。</p>
+<h3 id="函数调用的过程："><a href="#函数调用的过程：" class="headerlink" title="函数调用的过程："></a>函数调用的过程：</h3><p>调用者做了两件事：1、将被调用函数的参数按照从右到左的顺序压入栈中；2、将返回地址压入栈中。<br>被调用者也做了两件事：1、将调用者的ebp压入栈，作为保存；2、将esp的值赋予ebp。此时ebp就有<br>了新值，指向存放老的ebp的栈空间。此时这个位置变成了被调用函数的栈帧的栈底，并建立一个新的<br>栈帧。<br>在ebp被赋值后，就可以在新的栈帧上开辟空间，存放被调用函数的本地变量。如图：</p>
+<p><img src="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904200209665.png" alt="image-20210904200209665"></p>
+<p><img src="/2021/09/04/C-%E5%92%8CGo%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210904200218310.png" alt="image-20210904200218310"></p>
+<p>函数的返回<br>函数返回的过程和调用过程相反，当被调用函数结束后，它会将esp转移到ebp处，并且弹出ebp中存储<br>的值，再赋值给ebp，这样，ebp就回到了调用前的状态。</p>
+<h3 id="socket"><a href="#socket" class="headerlink" title="socket"></a>socket</h3><p>socket函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int socket(int family,int type,int protocol);</span><br></pre></td></tr></table></figure>
+
+<p>socket函数用于创建socket，它指定了期望的通信协议类型，其中family参数指明协议族（一般使<br>用AF_INET指定IPV4, AF_INET6指定IPV6），type参数指明套接字类型（一般使用SOCK_STREAM<br>指定TCP，SOCK_DGRAM指定UDP），protocol参数一般设为0.<br>socket函数执行成功时返回一个非负整数值，称为监听套接字描述符，简称为sockfd<br>bind函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int bind(int sockfd,const struct sockaddr *myaddr,socklen_t addrlen);</span><br></pre></td></tr></table></figure>
+
+<p>bind函数将一个socket与socket地址进行了绑定。bind将my_addr所指向的socket地址分配给<br>sockfd，addrlen指出该socket地址的长度、</p>
+<p>listen函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int listen(int sockfd, int backlog);</span><br></pre></td></tr></table></figure>
+
+<p>socket被绑定后，还不能马上接收客户端的连接。listen函数把一个未连接的套接字转换成一个被<br>动套接字，指示内核应该接受指向该套接字的连接请求。第二个参数backlog，代表未完成连接队<br>列和已完成队列连接之和的最大值。<br>accept函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int accept(int sockfd,struct sockaddr *cliaddr, socklen_t *addrlen);</span><br></pre></td></tr></table></figure>
+
+<p>accept函数从已完成连接的队列接受队列头的已完成连接。参数cliaddr用来返回已连接的客户端<br>的协议地址。<br>如果accept成功，那么返回值是一个全新的fd，称为已连接套接字。它和监听套接字有所区别。一<br>个服务器通常只创建一个监听套接字，它在该服务器的生命周期内一直存在，内核会为每个由服务<br>器进程接收的客户端连接创建一个已连接套接字。当完成客户端和服务器的交流后，这个已连接套<br>接字就关闭。<br>close函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int close(int sockfd)</span><br></pre></td></tr></table></figure>
+
+<p>close一个TCP的默认行为是把该套接字标记为已关闭，然后返回到调用的进程。该套接字不能再<br>使用。</p>
+<p>客户端：<br>socket函数<br>connect函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);</span><br></pre></td></tr></table></figure>
+
+<p>sockfd是socket函数返回的套接字描述符，servaddr是一个指向套接字地址结构的指针，套接字<br>地址结构必须含有服务器的IP地址和端口号。<br>connect函数会导致客户端从CLOSED状态转移到SYN_SENT状态。若connect函数成功返回会再次<br>转移到ESTABILISHED状态</p>
+<h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><p>们知道tcp建立连接要进行“三次握手”，即交换三个分组。大致流程如下：</p>
+<ul>
+<li>客户端向服务器发送一个SYN J</li>
+<li>服务器向客户端响应一个SYN K，并对SYN J进行确认ACK J+1</li>
+<li>客户端再想服务器发一个确认ACK K+1</li>
+</ul>
+<p>只有就完了三次握手，但是这个三次握手发生在socket的那几个函数中呢？请看下图：</p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/skynet/201012/201012122157467258.png" target="_blank" rel="noopener"><img src="https://images.cnblogs.com/cnblogs_com/skynet/201012/201012122157476286.png" alt="image"></a></p>
+<p>图1、socket中发送的TCP三次握手</p>
+<p>从图中可以看出，当客户端调用connect时，触发了连接请求，向服务器发送了SYN J包，这时connect进入阻塞状态；服务器监听到连接请求，即收到SYN J包，调用accept函数接收请求向客户端发送SYN K ，ACK J+1，这时accept进入阻塞状态；客户端收到服务器的SYN K ，ACK J+1之后，这时connect返回，并对SYN K进行确认；服务器收到ACK K+1时，accept返回，至此三次握手完毕，连接建立。</p>
+<blockquote>
+<p>总结：客户端的connect在三次握手的第二个次返回，而服务器端的accept在三次握手的第三次返回。</p>
+</blockquote>
+<h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p>上面介绍了socket中TCP的三次握手建立过程，及其涉及的socket函数。现在我们介绍socket中的四次握手释放连接的过程，请看下图：</p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/skynet/201012/201012122157487616.png" target="_blank" rel="noopener"><img src="https://images.cnblogs.com/cnblogs_com/skynet/201012/201012122157494693.png" alt="image"></a></p>
+<p>图2、socket中发送的TCP四次握手</p>
+<p>图示过程如下：</p>
+<ul>
+<li>某个应用进程首先调用close主动关闭连接，这时TCP发送一个FIN M；</li>
+<li>另一端接收到FIN M之后，执行被动关闭，对这个FIN进行确认。它的接收也作为文件结束符传递给应用进程，因为FIN的接收意味着应用进程在相应的连接上再也接收不到额外数据；</li>
+<li>一段时间之后，接收到文件结束符的应用进程调用close关闭它的socket。这导致它的TCP也发送一个FIN N；</li>
+<li>接收到这个FIN的源发送端TCP对它进行确认。</li>
+</ul>
+<p>这样每个方向上都有一个FIN和ACK。</p>
+<p>UDP:</p>
+<p>服务器：<br>socket函数<br>bind函数<br>客户端：<br>socket函数</p>
+<h2 id="Go"><a href="#Go" class="headerlink" title="Go"></a>Go</h2><h3 id="GMP"><a href="#GMP" class="headerlink" title="GMP"></a>GMP</h3><p>GMP是Go语言自己实现的一套调度系统。</p>
+<p>1.Go就是goroutinue，里面除了存放goroutinue的信息，还有与P的绑定信息</p>
+<p>2.P管理这一组goroutinue队列，P会存储当前goruntinue运行的上下文信息（函数指针，堆栈指针以及地址边界).P会对自己管理的gorountine队列做一些调度（把占用CPU时间长的goruntine暂停、运行后续的goruntinue等）。等自己的队列消费完就去全局队列会去其他的P里抢任务。</p>
+<p>3.M是Go对操作系统内核线程的虚拟，M与内核线程、P都是一一对应的关系。</p>
+<p>P管理着一组G挂载在一个M上执行，当G长久阻塞在M上，会新建一个M供其执行。当旧的G阻塞完成或者认为其已经死掉，回收旧的M。</p>
+<h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><h4 id="GC-不回收什么？"><a href="#GC-不回收什么？" class="headerlink" title="GC 不回收什么？"></a>GC 不回收什么？</h4><p>为了解释垃圾回收是什么，我们先来说说 GC 不回收什么。在我们程序中会使用到两种内存，分别为堆（Heap）和栈（Stack），而 GC 不负责回收栈中的内存。那么这是为什么呢？</p>
+<p>主要原因是栈是一块专用内存，专门为了函数执行而准备的，存储着函数中的局部变量以及调用栈。除此以外，栈中的数据都有一个特点——简单。比如局部变量就不能被函数外访问，所以这块内存用完就可以直接释放。正是因为这个特点，栈中的数据可以通过简单的编译器指令自动清理，也就不需要通过 GC 来回收了。</p>
+<h4 id="为什么需要垃圾回收？"><a href="#为什么需要垃圾回收？" class="headerlink" title="为什么需要垃圾回收？"></a>为什么需要垃圾回收？</h4><p>现在我们知道了垃圾回收只负责回收堆中的数据，那么为什么堆中的数据需要自动垃圾回收呢？</p>
+<p>其实早期的语言是没有自动垃圾回收的。比如在 C 语言中就需要使用 malloc/free 来人为地申请或者释放堆内存。这种做法除了增加工作量以外，还容易出现其他问题[1]。</p>
+<p>一种可能是并发问题，并发执行的程序容易错误地释放掉还在使用的内存。一种可能是重复释放内存，还有可能是直接忘记释放内存，从而导致内存泄露等问题。而这类问题不管是发现还是排查往往会花费很多时间和精力。所以现代的语言都有了这样的需求——一个自动内存管理工具。</p>
+<h4 id="什么是垃圾回收？"><a href="#什么是垃圾回收？" class="headerlink" title="什么是垃圾回收？"></a>什么是垃圾回收？</h4><p>看到这里，垃圾回收的定义也就十分清楚了。当我们说垃圾回收（GC garbage collection）的时候，我们其实说的是自动垃圾回收（Automatic Garbage Collection），一个自动回收堆内存的工具。所以垃圾回收一点也不神奇，它只是一种工具，可以更便捷更高效地帮助程序员管理内存。</p>
+<h3 id="2-三色标记法"><a href="#2-三色标记法" class="headerlink" title="2.三色标记法"></a>2.三色标记法</h3><h4 id="追踪式垃圾回收（Tracing-garbage-collection）"><a href="#追踪式垃圾回收（Tracing-garbage-collection）" class="headerlink" title="追踪式垃圾回收（Tracing garbage collection）"></a>追踪式垃圾回收（Tracing garbage collection）</h4><p>主流的两类垃圾回收算法有两种，分别是追踪式垃圾回收算法[1]和引用计数法（ Reference counting ）。而三色标记法是属于追踪式垃圾回收算法的一种。</p>
+<h4 id="为什么需要三色标记法？"><a href="#为什么需要三色标记法？" class="headerlink" title="为什么需要三色标记法？"></a>为什么需要三色标记法？</h4><p>在三色标记法之前有一个算法叫 Mark-And-Sweep（标记清扫），这个算法就是严格按照追踪式算法的思路来实现的。这个算法会设置一个标志位来记录对象是否被使用。最开始所有的标记位都是 0，如果发现对象是可达的就会置为 1，一步步下去就会呈现一个类似树状的结果。等标记的步骤完成后，会将未被标记的对象统一清理，再次把所有的标记位设置成 0 方便下次清理。</p>
+<p>这个算法最大的问题是 GC 执行期间需要把整个程序完全暂停，不能异步进行 GC 操作。因为在不同阶段标记清扫法的标志位 0 和 1 有不同的含义，那么新增的对象无论标记为什么都有可能意外删除这个对象。对实时性要求高的系统来说，这种需要长时间挂起的标记清扫法是不可接受的。所以就需要一个算法来解决 GC 运行时程序长时间挂起的问题，那就三色标记法。</p>
+<h4 id="三色标记法好在哪里？"><a href="#三色标记法好在哪里？" class="headerlink" title="三色标记法好在哪里？"></a>三色标记法好在哪里？</h4><p>相比传统的标记清扫算法，三色标记最大的好处是可以异步执行，从而可以以中断时间极少的代价或者完全没有中断来进行整个 GC。</p>
+<p>三色标记法过程。</p>
+<ul>
+<li>首先将对象用三种颜色表示，分别是白色、灰色和黑色。</li>
+<li>最开始所有对象都是白色的，然后把其中<strong>全局变量和函数栈</strong>里的对象置为灰色。</li>
+<li>第二步把灰色的对象全部置为黑色，然后把原先灰色对象指向的变量都置为灰色，</li>
+<li>以此类推。等发现没有对象可以被置为灰色时，所有的白色变量就一定是需要被清理的垃圾了。</li>
+</ul>
+<p>三色标记法因为多了一个白色的状态来存放不确定的对象，所以可以异步地执行。当然异步执行的代价是可能会造成一些遗漏，因为那些早先被标记为黑色的对象可能目前已经是不可达的了。所以三色标记法是一个 false negative（假阴性）的算法。</p>
+<h2 id="3-一次完整回收过程"><a href="#3-一次完整回收过程" class="headerlink" title="3.一次完整回收过程"></a>3.一次完整回收过程</h2><p>1）Go 执行三色标记前，需要先做一个准备工作——打开 Write Barrier。</p>
+<h4 id="Write-Barrier"><a href="#Write-Barrier" class="headerlink" title="Write Barrier"></a>Write Barrier</h4><p>那么 Write Barrier[1]是什么呢？我们知道三色标记法是一种可以并发执行的算法。所以在运行过程中程序的函数栈内可能会有新分配的对象，那么这些对象该怎么通知到 GC，怎么给他们着色呢？这个时候就需要我们的 Write Barrier 出马了。Write Barrier 主要做这样一件事情，修改原先的写逻辑，然后在对象新增的同时给它着色，并且着色为”灰色“。因此打开了 Write Barrier 可以保证了三色标记法在并发下安全正确地运行。</p>
+<h4 id="Stop-The-World"><a href="#Stop-The-World" class="headerlink" title="Stop The World"></a>Stop The World</h4><p>不过在打开 Write Barrier 前有一个依赖，我们需要先停止所有的 goroutine，也就是所说的 STW（Stop The World）操作。那么接下来问题来了，GC 该怎么通知所有的 goroutine 停止呢 ？</p>
+<p>我们知道，在停止 goroutine 的方案中，Go 语言采取的是合作式抢占模式（当前 1.13 及之前版本）。这种模式的做法是在程序编译阶段注入额外的代码，更精确的说法是在每个函数的序言中增加一个合作式抢占点。因为一个 goroutine 中通常有无数调用函数的操作，选择在函数序言中增加抢占点可以较好地平衡性能和实时性之间的利弊。在通常情况下，一次 Mark Setup 操作会在 10-30 微秒[3]之间。</p>
+<h4 id="2）Marking-标记（Concurrent）"><a href="#2）Marking-标记（Concurrent）" class="headerlink" title="2）Marking 标记（Concurrent）"></a>2）Marking 标记（Concurrent）</h4><p>在第一阶段打开 Write Barrier 后，就进入第二阶段的标记了。Marking 使用的算法就是我们之前提到的三色标记法，这里不再赘述。不过我们可以简单了解一下标记阶段的资源分配情况。</p>
+<p>在标记开始的时候，收集器会默认抢占 25% 的 CPU 性能，剩下的75%会分配给程序执行。但是一旦收集器认为来不及进行标记任务了，就会改变这个 25% 的性能分配。这个时候收集器会抢占程序额外的 CPU，这部分被抢占 goroutine 有个名字叫 Mark Assist。而且因为抢占 CPU的目的主要是 GC 来不及标记新增的内存，那么抢占正在分配内存的 goroutine 效果会更加好，所以分配内存速度越快的 goroutine 就会被抢占越多的资源。</p>
+<p>除此以外 GC 还有一个额外的优化，一旦某次 GC 中用到了 Mark Assist，下次 GC 就会提前开始，目的是尽量减少 Mark Assist 的使用，从而避免影响正常的程序执行。</p>
+<h4 id="3）Mark-Termination-标记结束（STW）"><a href="#3）Mark-Termination-标记结束（STW）" class="headerlink" title="3）Mark Termination 标记结束（STW）"></a>3）Mark Termination 标记结束（STW）</h4><p>最重要的 Marking 阶段结束后就会进入 Mark Termination 阶段。这个阶段会关闭掉已经打开了的 Write Barrier，和 Mark Setup 阶段一样这个阶段也需要 STW。</p>
+<p>标记结束阶段还需要做的事情是计算下一次清理的目标和计划，比如第二阶段使用了 Mark Assist 就会促使下次 GC 提早进行。如果想人为地减少或者增加 GC 的频率，那么我们可以用 GOGC 这个环境变量设置。一个小细节是在 Go 的文档[5]中有提及， Go 的 GC 有且只会有一个参数进行调优，也就是我们所说的 GOGC，目的是为了防止大家在一大堆调优参数中摸不着头脑。</p>
+<p>通常情况下，标记结束阶段会耗时 60-90 微秒。</p>
+<h4 id="4）weeping-清理（Concurrent）"><a href="#4）weeping-清理（Concurrent）" class="headerlink" title="4）weeping 清理（Concurrent）"></a>4）weeping 清理（Concurrent）</h4><p>最后一个阶段就是垃圾清理阶段，这个过程是并发进行的。清扫的开销会增加到分配堆内存的过程中，所以这个时间也是无感知不会与垃圾回收的延迟相关联。</p>
+<h4 id="5）总结"><a href="#5）总结" class="headerlink" title="5）总结"></a>5）总结</h4><p>一次完整的垃圾回收会分为四个阶段，分别是标记准备、标记、结束标记以及清理。在标记准备和标记结束阶段会需要 STW，标记阶段会减少程序的性能，而清理阶段是不会对程序有影响的。目前已经讲了这么多理论了，所以在下一篇文章中，我们会介绍一些实战案例。</p>
+<h4 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h4>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/04/%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/" rel="next" title="设计思路">
+                <i class="fa fa-chevron-left"></i> 设计思路
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/07/Linux-64%E4%BD%8D%E5%92%8C32%E4%BD%8D%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="prev" title="Linux 64位和32位的区别">
+                Linux 64位和32位的区别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C"><span class="nav-number">1.</span> <span class="nav-text">C++</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#链接"><span class="nav-number">1.1.</span> <span class="nav-text">链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态链接"><span class="nav-number">1.2.</span> <span class="nav-text">静态链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程和线程"><span class="nav-number">1.3.</span> <span class="nav-text">进程和线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-的内存分区"><span class="nav-number">1.4.</span> <span class="nav-text">C++的内存分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大端和小端"><span class="nav-number">1.5.</span> <span class="nav-text">大端和小端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数调用的过程"><span class="nav-number">1.6.</span> <span class="nav-text">函数调用的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数调用的过程："><span class="nav-number">1.7.</span> <span class="nav-text">函数调用的过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket"><span class="nav-number">1.8.</span> <span class="nav-text">socket</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手"><span class="nav-number">1.8.1.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四次挥手"><span class="nav-number">1.8.2.</span> <span class="nav-text">四次挥手</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Go"><span class="nav-number">2.</span> <span class="nav-text">Go</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GMP"><span class="nav-number">2.1.</span> <span class="nav-text">GMP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾回收"><span class="nav-number">2.2.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GC-不回收什么？"><span class="nav-number">2.2.1.</span> <span class="nav-text">GC 不回收什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么需要垃圾回收？"><span class="nav-number">2.2.2.</span> <span class="nav-text">为什么需要垃圾回收？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是垃圾回收？"><span class="nav-number">2.2.3.</span> <span class="nav-text">什么是垃圾回收？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-三色标记法"><span class="nav-number">2.3.</span> <span class="nav-text">2.三色标记法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#追踪式垃圾回收（Tracing-garbage-collection）"><span class="nav-number">2.3.1.</span> <span class="nav-text">追踪式垃圾回收（Tracing garbage collection）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么需要三色标记法？"><span class="nav-number">2.3.2.</span> <span class="nav-text">为什么需要三色标记法？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三色标记法好在哪里？"><span class="nav-number">2.3.3.</span> <span class="nav-text">三色标记法好在哪里？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-一次完整回收过程"><span class="nav-number">3.</span> <span class="nav-text">3.一次完整回收过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Write-Barrier"><span class="nav-number">3.0.1.</span> <span class="nav-text">Write Barrier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Stop-The-World"><span class="nav-number">3.0.2.</span> <span class="nav-text">Stop The World</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2）Marking-标记（Concurrent）"><span class="nav-number">3.0.3.</span> <span class="nav-text">2）Marking 标记（Concurrent）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3）Mark-Termination-标记结束（STW）"><span class="nav-number">3.0.4.</span> <span class="nav-text">3）Mark Termination 标记结束（STW）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4）weeping-清理（Concurrent）"><span class="nav-number">3.0.5.</span> <span class="nav-text">4）weeping 清理（Concurrent）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5）总结"><span class="nav-number">3.0.6.</span> <span class="nav-text">5）总结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存分配"><span class="nav-number">3.0.7.</span> <span class="nav-text">内存分配</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共644.9k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

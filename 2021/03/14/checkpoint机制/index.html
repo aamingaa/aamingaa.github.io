@@ -98,7 +98,7 @@
 <meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==">
 <meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==">
 <meta property="article:published_time" content="2021-03-14T07:51:32.000Z">
-<meta property="article:modified_time" content="2021-03-14T08:06:39.152Z">
+<meta property="article:modified_time" content="2021-09-08T03:13:43.525Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://oscimg.oschina.net/oscnet/62f9c2f43cd0528004c154c287bd3f86b17.jpg">
@@ -386,7 +386,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.8k
+                  2.1k
                 </span>
               
 
@@ -402,7 +402,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  7
                 </span>
               
             </div>
@@ -464,8 +464,11 @@
 <p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="img">)<img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">如果 <code>taskmanager.log</code> 中没有这个日志，则表示 barrier 一直没有对齐，接下来我们需要了解哪些上游的 barrier 没有发送下来，如果你使用 At Least Once 的话，可以观察下面的日志：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DEBUG</span><br><span class="line">Received barrier for checkpoint 96508 from channel 5</span><br></pre></td></tr></table></figure>
 
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="img">)<img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>表示该 task 收到了 channel 5 来的 barrier，然后看对应 Checkpoint，再查看还剩哪些上游的 barrier 没有接受到，对于 ExactlyOnce 暂时没有类似的日志，可以考虑自己添加，或者 jmap 查看。</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="img">)<img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">表示该 task 收到了 channel 5 来的 barrier，然后看对应 Checkpoint，再查看还剩哪些上游的 barrier 没有接受到，对于 ExactlyOnce 暂时没有类似的日志，可以考虑自己添加，或者 jmap 查看。</p>
+<p>从实现上看，Flink 通过在 DAG 数据源定时向数据流注入名为 Barrier 的特殊元素，将连续的数据流切分为多个有限序列，对应多个 Checkpoint 周期。每当接收到 Barrier，算子进行本地的 Checkpoint 快照，并在完成后异步上传本地快照，同时将 Barrier 以广播方式发送至下游。当某个 Checkpoint 的所有 Barrier 到达 DAG 末端且所有算子完成快照，则标志着全局快照的成功。</p>
+<p>图2. Barrier Alignment</p>
+<p>在有多个输入 Channel 的情况下，为了数据准确性，算子会等待所有流的 Barrier 都到达之后才会开始本地的快照，这种机制被称为 Barrier 对齐。在对齐的过程中，算子只会继续处理的来自未出现 Barrier Channel 的数据，而其余 Channel 的数据会被写入输入队列，直至在队列满后被阻塞。当所有 Barrier 到达后，算子进行本地快照，输出 Barrier 到下游并恢复正常处理。</p>
+<p>比起其他分布式快照，该算法的优势在于辅以 Copy-On-Write 技术的情况下不需要 “Stop The World” 影响应用吞吐量，同时基本不用持久化处理中的数据，只用保存进程的状态信息，大大减小了快照的大小。</p>
 <h4 id="2-2-4-同步阶段做的慢"><a href="#2-2-4-同步阶段做的慢" class="headerlink" title="2.2.4 同步阶段做的慢"></a>2.2.4 同步阶段做的慢</h4><p>同步阶段一般不会太慢，但是如果我们通过日志发现同步阶段比较慢的话，对于非 RocksDBBackend 我们可以考虑查看是否开启了异步 snapshot，如果开启了异步 snapshot 还是慢，需要看整个 JVM 在干嘛，也可以使用前一节中的工具。对于 RocksDBBackend 来说，我们可以用 <code>iostate</code> 查看磁盘的压力如何，另外可以查看 tm 端 RocksDB 的 log 的日志如何，查看其中 SNAPSHOT 的时间总共开销多少。</p>
 <p>RocksDB 开始 snapshot 的日志如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2019&#x2F;09&#x2F;10-14:22:55.734684 7fef66ffd700 [utilities&#x2F;checkpoint&#x2F;checkpoint_impl.cc:83] Started the snapshot process -- creating snapshot in directory &#x2F;tmp&#x2F;flink-io-87c360ce-0b98-48f4-9629-2cf0528d5d53&#x2F;XXXXXXXXXXX&#x2F;chk-92729</span><br></pre></td></tr></table></figure>
@@ -600,7 +603,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">284</span>
+                  <span class="site-state-item-count">305</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -612,7 +615,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -709,7 +712,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共566.1k字</span>
+  <span class="post-count">博客全站共644.9k字</span>
 </div>
 
         

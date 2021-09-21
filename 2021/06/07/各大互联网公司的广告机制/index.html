@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="广告的意义 花钱做广告，反而卖的更便宜。广告带来的规模效应，通过广告，消费者更多生产的规模就能提升，而规模的提升又会反过来降低平均的价格。  可以降低我们的选择成本。假如现在所有的洗发水都不打广告，这时候我们的超市会如何去选择去屑的洗发水？ 我们至少要阅读很多次的说明书，挑出带去屑功能的，我们可能还要比较它们的成分，产地，功效以及价格；   广告占美国GDP的比重基本保持不变，长期徘徊在2%到5%">
+<meta property="og:type" content="article">
+<meta property="og:title" content="各大互联网公司的广告机制">
+<meta property="og:url" content="http://aamingaa.github.io/2021/06/07/%E5%90%84%E5%A4%A7%E4%BA%92%E8%81%94%E7%BD%91%E5%85%AC%E5%8F%B8%E7%9A%84%E5%B9%BF%E5%91%8A%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="广告的意义 花钱做广告，反而卖的更便宜。广告带来的规模效应，通过广告，消费者更多生产的规模就能提升，而规模的提升又会反过来降低平均的价格。  可以降低我们的选择成本。假如现在所有的洗发水都不打广告，这时候我们的超市会如何去选择去屑的洗发水？ 我们至少要阅读很多次的说明书，挑出带去屑功能的，我们可能还要比较它们的成分，产地，功效以及价格；   广告占美国GDP的比重基本保持不变，长期徘徊在2%到5%">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVrezhpe38IMsVbS9b500icPzYDP2TUdrADqweBVE3YNibQiaezP6LdkMQ5JzQWgzO2H5m5f1iaONEPnQFQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVrezhpe38IMsVbS9b500icPzYwzGjvy9wRZsPNbs2xznxhJ8AdcPa19Kw7rsd433C4O3uSHveD2AxwQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTz9HExjILE3heaib3Z8RT5XD4hF9OlNjxKTk56E2JaAlWr0K8M1zAVWQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTicicUK0Jf1mNoKFMiblR2E54Bibpliazy8ib0buNpibWvb13DmjDkibYmwq3Zg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTqEhqjufOEfSkoeiaCte2gTFAHK48emvaRHdpz5KeShxq9rm0OPPCs7A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTxSiaibUKqMEJ3geubrR62UqZibW3lqpI1NOEdHV2pbtWhPc5uyaicgricBw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTkiaXpgPJMhsKCHpOueMP39l8YICSEJGH7gvkU3JF8c5mZ1RfIs70fxg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTqj1dyxOBiah2y8KgunlqtAhHApo5tvwD3PJicPiaqP6GqTseKP73VypRA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTuMHkz4nTSWC9DEvFUBO0pVQ8sZXXNoB8a4S8LeFRxlLFjmtNYFd5mA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTXzyAibCibQpnggqLA8Fxiale1rJRbC9MZIkzu5voNmYMicdwAIbHI9yJbA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT3rpy7ZAmGlVM1vvwxyTbsiaS8fu8UesX7ECZVXl6VrPaKaKkXwfUL8Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTBetaiaSjqLVyFm7lKfd90f2GzmZcEIjUCQyL1HUrA4obpBwLIichBVqQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTN9egH5PvvWB2lgpdWEyp7nwzWTicqzic1wEqDwQIiczVrx0tibBn3lztsw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTu0pkmdiaqAt0b1Fibvac1XhKSPZoO6XcQXI1Ah3014RteZcw4bTCs0nA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT5w8Q4HttwVwYoDhudbEoAnjw2diabT2hlsWKroDPwVOub0tFmfyceiaw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="http://aamingaa.github.io/2021/06/07/%E5%90%84%E5%A4%A7%E4%BA%92%E8%81%94%E7%BD%91%E5%85%AC%E5%8F%B8%E7%9A%84%E5%B9%BF%E5%91%8A%E6%9C%BA%E5%88%B6/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTWnkbOjWxq35L2yZUmQlDHTsmNOBz7j21ibz7w0DZguMGPzfcWUL2hSw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT6WL1MWUiab4ZM7TDMbbBiaGLj1fmBsVibXQY53o2vaSSIINB9a8ibnD1zA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT807R60MVsGdrm4syIqap28yT5ZVLMHM5dPrChtcKTUsFZlYFJFsCpw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT4mAbYPicRsnibIOOJ4kTLN10yyXiaUr7YIC2cZDR0eFicJnWg13s5KgvUg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTWhGJ2TGolFbSo2UOOZQLIsrPGupIzibWamleK83dTW0VotOiaTKyvyKw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHThCh6hjnVzbEGo6JwIvBia6WD9x6Jia5pw8LoJuQ1Lmdz7tCPyHgYibVUg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTP43EvoHjaYXZLv2vVcQptezHFAAN6rIjFIuceESctDGEHY16WT8lRA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTYYoAaicbmlUT6vklTnRPTULLGtzXXiaIa3lurh930CxBWjE7jtDwozibQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="http://aamingaa.github.io/2021/06/07/%E5%90%84%E5%A4%A7%E4%BA%92%E8%81%94%E7%BD%91%E5%85%AC%E5%8F%B8%E7%9A%84%E5%B9%BF%E5%91%8A%E6%9C%BA%E5%88%B6/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTQxQWoLVVQomjUl4n7UTuPvh3F62ERWdpVBMeFnh7WOwicPoEclibrpaw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTYkzDIpPtg2mVVj4Cm5m2w1fykC2jDV5h3rNrYwMeutVicfTib5TvibYIg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTkHLzvrDCE7eNshicR2fem0icjXdba5kG1QJUDkePVnx9ac9DpeYrO75Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTR1yCiajatRyZPp1TR19CHGId0Ovu95zJjiaicLTvrsicicqztliaSEyWh0Zg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTWXJb6hNJgT4vfF0J14TyYbPic62WicjNpqHhqEeIahsbrPV46sYw2YEQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTyIRFybWYJStrZToaSCMLet271L6e6QPQmEJPjiclcW2Za2FiaIMNWnAw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTceEW34Oh67lJLhaZnqIDL82ZTVWUZw3UDRIKAarfUajrG5gkMAKCMQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTFAg9xAQh5tWe5fibyP8Sgf17WEhibsyWQoO4iblqhj3VtnTI9Un3ToDzQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT2MNtA3RoDWMDCSkEm2seeccP4QApB6E37ia4HbUQchpGIZgU3dBOujg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="article:published_time" content="2021-06-06T16:06:42.000Z">
+<meta property="article:modified_time" content="2021-06-19T12:37:35.686Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVrezhpe38IMsVbS9b500icPzYDP2TUdrADqweBVE3YNibQiaezP6LdkMQ5JzQWgzO2H5m5f1iaONEPnQFQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/06/07/各大互联网公司的广告机制/"/>
+
+
+
+
+
+  <title>各大互联网公司的广告机制 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/06/07/%E5%90%84%E5%A4%A7%E4%BA%92%E8%81%94%E7%BD%91%E5%85%AC%E5%8F%B8%E7%9A%84%E5%B9%BF%E5%91%8A%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">各大互联网公司的广告机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-07T00:06:42+08:00">
+                2021-06-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%B8%9A%E5%8A%A1%E6%80%9D%E7%BB%B4/" itemprop="url" rel="index">
+                    <span itemprop="name">业务思维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  14.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  49
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="广告的意义"><a href="#广告的意义" class="headerlink" title="广告的意义"></a>广告的意义</h2><ol>
+<li><p><strong>花钱做广告，反而卖的更便宜</strong>。<strong>广告带来的规模效应</strong>，通过广告，消费者更多生产的规模就能提升，而规模的提升又会反过来降低平均的价格。</p>
+</li>
+<li><p><strong>可以降低我们的选择成本。</strong>假如现在所有的洗发水都不打广告，这时候我们的超市会如何去选择去屑的洗发水？</p>
+<p>我们至少要阅读很多次的说明书，挑出带去屑功能的，我们可能还要比较它们的成分，产地，功效以及价格；</p>
+</li>
+</ol>
+<p>广告占美国GDP的比重基本保持不变，长期徘徊在2%到5%之间。广告占GDP的比重基本保持不变，并不是美国所独有的，中国其实也一样，只不过中国的占比比美国要低一些，只有0.88%，而作为对比中国的国防支出占比是1.3%。<strong>广告的总盘子基本保持不变，或者说增长极其缓慢</strong>，而不管是大型的互联网公司还是常规的媒体广告收入都在快速增长，那么到底是谁在跌呢？</p>
+<p><strong>答案是，传统广告在跌，他们都被互联网广告所取代了。</strong></p>
+<p>2000年传统广告的份额几乎是百分之百，而到20年之后的今天，他的份额下降到50%，也就是说，全球广告有一半的份额都被互联网广告所取代。<strong>答案其实也很简单，因为互联网占据大家的时间。</strong>而互联网也正好占据人们51%的时间。</p>
+<p>腾讯、字节跳动、阿里、百度占据中国互联网超过70%的用户时长。</p>
+<h2 id="两大广告"><a href="#两大广告" class="headerlink" title="两大广告"></a>两大广告</h2><h3 id="竞价广告"><a href="#竞价广告" class="headerlink" title="竞价广告"></a>竞价广告</h3><p>和英国式拍卖类似，还有荷兰式拍卖，荷兰式拍卖的形式正好相反，拍卖师先出一个非常高的价格，然后不断往下试探，直到有竞拍者愿意接受这个成交价格。</p>
+<p><strong>那么在线的广告是不是也可以用同样的方法进行竞价呢？**</strong>答案是否定的**，原因在于在线广告的拍卖与传统广告拍卖有几点重要的区别，而这些区别会对竞价机制的设计产生重要影响——</p>
+<p>第一，不管是英国式拍卖还是荷兰式拍卖，每个人的出价都是公开的，而<strong>在线广告主可能很多并不愿意公开自己的出价</strong>，因此公开竞价就变得不适合。</p>
+<p>第二，央视的拍卖是单次行为，而<strong>在线广告是多次重复博弈</strong>，即这个广告位被抢了，广告主还可以抢下个广告位，广告主可以不断调整自己的出价。</p>
+<p>第三，<strong>在线广告存在多个标的物</strong>（每一次广告请求可能都是多个竞价标的物）、海量实时计算的特征。</p>
+<p>那么在线广告应该采取什么样的竞价机制呢？其实有很多选择，我们一个个来看：</p>
+<p><strong>第一个可能的选项是“密封第一价格”竞价</strong>，这其实也是我们熟悉的一种竞价方式，很多工程招标都采取这种方式，它的机制是每个竞价者不公布自己的出价，把它密封在信封里交给卖主，拍卖主让最高出价者赢得竞拍，并且支付最高出价者的出价。</p>
+<p>有人说，这种方式看起来很完美啊，符合广告主不公开报价的需求，而且也被很多实践证明过，<strong>然而这种竞价方式广告主的出价策略取决于别人怎么出，反而和自己的真实估值关系不大</strong>，而这应用到在线广告拍卖就会存在问题。</p>
+<p>在线广告一个特征就是重复博弈，神马意思呢？比如线下的工程招标是一次性的，竞拍者会更加倾向于谨慎对待自己的出价，因为他只有一次机会，然而<strong>在线广告是多次的，即广告主有多次机会不断试探别人的出价，从而实现自己的最优策略。</strong></p>
+<p>我举一个例子——谷歌的关键词“跑步”下面的广告位，耐克认为一次点击值10块钱，阿迪认为值6块钱，这时候如果他们采取“密封第一价格”拍卖，而<strong>谷歌广告系统给出的底价是2块，那么阿迪和耐克都会试探着出价。</strong></p>
+<p>阿迪从2块开始出，耐克出2.1，阿迪出2.2，耐克出2.3，双方有一个不断加价的过程，一直加到6块的时候，阿迪停止出价了，因为它认为这个广告为最多值6块，阿迪退出了。</p>
+<p>这时候只剩耐克了，耐克也不傻，既然没人和我竞争，那么我为啥要出6块呢，于是赶紧调到2块，这时候阿迪又会进场，周而复始的循环开始了。</p>
+<p><strong>*\</strong>***获得诺贝尔奖的一次改动********</p>
+<p>经济学家威廉·维克里试图解决这个问题，他在1961年发表的<strong>《反投机、拍卖与竞争性密封投标》</strong>，这篇经典论文中系统性地论述了“第二密封价格”的拍卖方式。</p>
+<p>它对“第一密封价格”做了一个小的改动，具体为——<strong>竞价者依然密封出价，依然是出价最高者赢得拍卖，但是胜出者只需要支付第二名出价的钱</strong>，即如果耐克出价10块，阿迪出价6块，依然是耐克胜出，但耐克只需要支付第二名阿迪的出价——6块。</p>
+<p>这是一个违反直觉的小小改动——第一名居然只需要支付第二名的出价，然而不要小看这个小小的改动，<strong>正是因为系统地论述了这个改动，让威廉·维克里获得了1996年的诺贝尔经济学奖</strong>，“密封第二价格”拍卖在经济学里也因此被称之为“维克里拍卖”，那么这个神奇的小改动到底隐藏着神马秘密呢？</p>
+<p>答案是它正好系统地解决了“第一密封价格”存在的重大缺陷。有人立马会问：为什么这样改一下就能克服这个缺陷呢？</p>
+<p>简单地说，在<strong>“密封第二价格”的竞价机制中，每个人都存在一个固定的最优策略——出价等于自己的估值，</strong>还是以上的价格策略，耐克估值为10块，阿迪的出价多少不知道，这时候耐克的最优策略是神马？答案是10块。为什么？</p>
+<p>我们考虑两个种情况：</p>
+<p>第一，<strong>阿迪出价如果超过10块，那么耐克无论如何也赢不了</strong>，因为耐克不可能出价高于自己的估值，高过自己就亏了。</p>
+<p>第二，<strong>阿迪低于10块，那么耐克应该出到自己能出到的最大价格以增加自己的获胜概率</strong>，而这个最大价值就是10块，即耐克没有下调出价的动力，因为它没有最终支付价格的控制力。</p>
+<p>神马意思？假如耐克出8块，这时候如果阿迪出6块，耐克赢得竞拍而且只需要支付6块，和它出10块没有区别，但如果阿迪出9块它就会失去竞价，<strong>因此耐克没有动力把出价调到8块这种有可能导致竞价失败的出价，唯一的最优策略就是出价10块。</strong></p>
+<p><strong>用博弈论的话说，“密封第二价格”存在一个唯一的纳什均衡，即每个人都出自己对于商品的真实估值是最优策略</strong>，因此该机制是一个鼓励竞拍者讲真话的机制，同时具有相当的稳定性，即广告主没有频繁调整自己出价的动力。</p>
+<p>在这种机制下，永远是对广告位评价最高的广告主胜出，同时保证了平台的收入，没有广告主出价比自己评价更低的出价。<strong>事实上，谷歌、百度、新浪微博等广告平台都是采取这种竞价方式。</strong></p>
+<p>好，有人会说，这种竞价方式就是完美的竞价方式吗？其实不一定，“密封第二竞价”机制至少存在一个缺陷，那就是它的反作弊特性不强，<strong>假如存在互相勾结的同谋，在这种竞价机制下，同谋更加容易实现。</strong>神马意思？</p>
+<p>依然拿耐克阿迪来打比喻，耐克的心理出价是10块，阿迪是6块，这时候他们勾结，阿迪出1块，耐克出10块，最终耐克只需要花1块钱就能买走这个广告位，受伤的是广告平台。聪明的人立马会说——难道“第一密封价格”不会出现这种情况吗？比如耐克和阿迪商量好，耐克出1块，阿迪出0.5元，还是耐克以1块钱的价格买走这个广告位啊！</p>
+<p>哈哈，这么说也没错，<strong>但“第一密封价格”更容易出现背叛同谋的情况</strong>，尽管商量好耐克出1块，阿迪出0.5毛，但阿迪是有动力去违反同谋的，只要阿迪出2块，它就能赢得拍卖，这时候耐克就傻眼了。</p>
+<p>好，既然有这个缺陷，那么现在在线广告谷歌、百度为什么还要使用它呢？一个重要的原因是，<strong>不同于线下的单一拍卖，在线广告是大规模重复博弈，大规模意味着参与竞价的广告主数量众多，客观上增加了勾结作弊的难度，从某种意义上掩盖了这种机制的缺陷。</strong></p>
+<p>以上我们讨论了竞价机制的基本原理，所有的例子都是一个广告位的情况，而在现实的广告系统中，一次请求的广告为往往是多个，<strong>比如搜索引擎就有多个广告位，我们应该如何设置竞价机制呢？</strong></p>
+<p><strong>谷歌、百度就把“密封第二价格”拍卖进行了一个扩展，即如果有多个广告位，第一名按第二名加一个最小竞价单位扣费（如0.01元）、第二名按第三名扣费，第三按第四名扣费，以此类推，这种竞价方式被称作为“广义第二价格拍卖”</strong>（Generalized Second Price auction），简称GSP。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVrezhpe38IMsVbS9b500icPzYDP2TUdrADqweBVE3YNibQiaezP6LdkMQ5JzQWgzO2H5m5f1iaONEPnQFQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>GSP广义第二价格拍卖</p>
+<p>这种方式最大限度地保留了“密封第二价格”的优势，即它能形成稳定的均衡，<strong>但它也有一个缺点，它并非全体竞价者福利最大化的竞价方式。</strong></p>
+<p>于是，三位经济学家Vickrey、Clarke、Groves分别在三篇论文中提出了一个多物品的拍卖机制，简称“VCG拍卖”，这种复杂的竞价机制从整个竞价者的整体利益出发，<strong>它依然是价高者得，但扣费却是计算价高者参与给其他竞拍者带来的总损失，即先算出没有价高者参与时的总福利，然后算价高者参与之后的其他人的总福利，这个福利之差就是其他参与者的损失。</strong></p>
+<p>简而言之，<strong>你参与竞价，你因此给其他竞价者造成了损失，你需要为这个系统的整体福利的减小而付出成本，以保证整体福利的最大化。</strong></p>
+<p>这个竞价方式计算起来相对复杂，我用一个简单的例子来阐述——假如现在有两个广告位，即搜索“跑步”这个关键词的第一位和第二位，<strong>第一位能带来20个点击，第二位能带来10个点击。</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVrezhpe38IMsVbS9b500icPzYwzGjvy9wRZsPNbs2xznxhJ8AdcPa19Kw7rsd433C4O3uSHveD2AxwQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">有三个广告主来竞价，<strong>分别是耐克每点击付6块、阿迪的4块和锐步的2块</strong>。按照价高者得的原则，耐克赢得第一个广告位，阿迪赢得第二个广告位，锐步竞价失败。</p>
+<p>这时候问题来了：应该扣耐克多少钱？按照VCG竞价法则：</p>
+<ul>
+<li><strong>先算出没有耐克参与竞价时候阿迪和锐步的收益，即阿迪赢得第一个广告位，锐步赢得第二个广告位，收益为4*20+10*2=100</strong></li>
+<li><strong>然后算出有耐克参与竞价阿迪和锐步的收益，即阿迪赢得第二个广告位，锐步出局，收益为4*10+2*0=40。</strong></li>
+<li><strong>二者福利之差为100-40=60</strong></li>
+<li><strong>那么耐克应该为每个点击付的钱为60/20=3块。</strong></li>
+</ul>
+<p>Facebook广告系统采取的就是这种竞价方式，这种竞价方式最大化了竞价参与者的福利，但我们可以看到，拍卖方的利益并非是最大化的，上面的案例中耐克的扣费3块比GSP竞价规则下按第二位收取的4块要少，可以说，Facebook是牺牲了短期利益，<strong>从更长远的角度进行考虑，因为竞价广告不是一个短期的行为，Facebook相信保证广告主的总体利益而言符合自己的长远利益。</strong></p>
+<p>那么谷歌为什么不也采取同样的VCG竞价方式呢，<strong>一方面是因为尽管VCG可以最大化竞价者福利，但它非常难向广告主解释，会面临极大的教育成本；谷歌首席经济学家</strong>Hal Varian曾经就明确表示谷歌在2002年不愿意从GSP转到VCG其中一个原因就是用户教育成本太高。</p>
+<p><strong>另一方面也因为从GSP直接转向VCG会面临收入下滑的风险，经济学家们已经证明VCG的收入不会比GSP高。</strong></p>
+<p>这篇文章主要介绍了竞价广告机制设计中的来龙去脉，事实上，竞价机制选择只是竞价广告中的一个小的方面，关于竞价广告的其他方面，我会在后续的其他文章中陆续向大家介绍.</p>
+<p>大家应该也注意到了，<strong>卫夕的文章一直致力于不仅仅告诉你“是什么”，更重要的是告诉你“为什么”，知识本身很重要，表达知识的方式也很重要</strong>，关注“卫夕聊广告”，更轻松地理解互联网商业的底层逻辑。</p>
+<h3 id="品牌广告"><a href="#品牌广告" class="headerlink" title="品牌广告"></a>品牌广告</h3><h2 id="六大问题"><a href="#六大问题" class="headerlink" title="六大问题"></a>六大问题</h2><ul>
+<li><strong><em>第一，是微信会收集哪些信息来投放广告？\</em></strong></li>
+<li><strong><em>第二，是为什么你看到的是这个广告而不是其他广告？\</em></strong></li>
+<li><strong><em>第三，这个广告的投放和传统广告的投放有什么区别？\</em></strong></li>
+<li><strong><em>第四，为什么头像是刘涛，这背后的意义到底是什么？\</em></strong></li>
+<li><strong><em>第五，为什么微信我们每天只能看到两到三条广告，而微博、头条，每天我们可以看到更多？\</em></strong></li>
+<li><strong><em>第六，广告下边的点赞和评论对广告而言到底又意味着什么？\</em></strong></li>
+</ul>
+<p>张一鸣早期创业的故事，头条的CEO张一鸣早年创业的时候公司需要大量用到Python那个时候，Python这种语言还不怎么流行，因此，招人就特别不容易。</p>
+<p>张一鸣没有去拉勾这些垂直的招聘网站上去打广告，那么他是怎么样做的？</p>
+<p><strong>他选择去百度买和Python相关的关键词广告</strong>，比如说Python里的一些函数，因为只有Python的工程师才会去搜这些关键词，结果这些关键词很冷门、很便宜，招聘的效果也很有效。</p>
+<p>这六个问题其实是可以分成两类，前面三个是和技术相关，后面三个和产品相关，而每一个问题他都会对应一个关键词，这六个关键词分别是——<strong>数据、竞价、自动化、原生广告、频次控制和互动性。</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTz9HExjILE3heaib3Z8RT5XD4hF9OlNjxKTk56E2JaAlWr0K8M1zAVWQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><strong>问题一：微信会收集我哪些信息来投放广告？</strong></p>
+<p>微信会收集我哪些信息来投放广告？它对应的关键词叫数据。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTicicUK0Jf1mNoKFMiblR2E54Bibpliazy8ib0buNpibWvb13DmjDkibYmwq3Zg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>在广告界有一个叫哥德巴赫猜想，就是：</p>
+<p><strong><em>我知道我的广告费有一半都被浪费掉，但就是不知道哪一半。</em></strong></p>
+<p>这是一位零售大亨在70年代说的，它在本质上是在控诉广告的不精准，但是今天这个难题在一定程度上被解决了。</p>
+<p>互联网广告就像红娘，红娘连接的是男人和女人，而<strong>广告一边是广告主的需求，一边是用户的特征，广告系统就把他们两边匹配起来。</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTqEhqjufOEfSkoeiaCte2gTFAHK48emvaRHdpz5KeShxq9rm0OPPCs7A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>接下来我们说一下广告精准性的进化史——</p>
+<p>最开始我们是通过媒介定向，像比如说中央五套、比如说南方都市报；</p>
+<p>在互联网的门户时代，我们通过内容来定向，像比如说新浪网的各个频道；</p>
+<p>接着到搜索的时代，我们是通过意图来定向；</p>
+<p>最后到我们今天的社交媒体短视频的时代，我们是通过人群属性去进行广告定向。</p>
+<p>刚刚我们说微信会收集哪些信息来投放广告，这就涉及到微信广告的用户画像体系：</p>
+<p>由于腾讯有众多的产品矩阵，因此<strong>他能从六个平台获取交叉的数据，从而去构建一个非常立体的，精准的用户画像。</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTxSiaibUKqMEJ3geubrR62UqZibW3lqpI1NOEdHV2pbtWhPc5uyaicgricBw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>这六个平台分别是：社交平台，比如说qq；微信游戏平台，比如说我们每天玩的手机游戏；广告平台，比如说腾讯的广点通，品牌广告，视频广告等等；还有媒体工具，比如说腾讯网，腾讯视频等等；还有基础平台和电商生活平台。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTkiaXpgPJMhsKCHpOueMP39l8YICSEJGH7gvkU3JF8c5mZ1RfIs70fxg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>然后我们再来看一下阿里是如何挖掘广告数据的，<strong>和大家的印象不同，阿里其实不仅仅只有电商和支付的数据</strong>，通过收购高德地图、UC浏览器、优酷等等，阿里能够全方位的去构建一个完整的用户画像。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTqj1dyxOBiah2y8KgunlqtAhHApo5tvwD3PJicPiaqP6GqTseKP73VypRA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>然后我们再来看一下字节跳动的广告定向，通过抖音、今日头条、西瓜、火山、懂车帝这些App，头条也能准确的知道用户的兴趣以及他相应的行为。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTuMHkz4nTSWC9DEvFUBO0pVQ8sZXXNoB8a4S8LeFRxlLFjmtNYFd5mA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>课程中的这张图是Facebook的广告定向后台，通过Facebook，Instagram，Whatsapp这些应用收集相应的数据，Facebook的广告系统的定向维度也非常的精准。</p>
+<p>当然数据和数据的重要性也是不一样的——</p>
+<p>我们来比较两类不同的数据，<strong>在互联网的早期，以百度、淘宝为代表的产品主要解决的是有用的问题</strong>，更多的是为大家Save time，就是节省时间，是满足已有的需求，是存量，这时候的数据重要性高，但是维度和量都比较少。</p>
+<p>而<strong>今天以朋友圈，抖音为代表的产品，主要解决的是有趣的问题</strong>，更多的是Kill time，就是杀你的时间，是挖掘大家的新需求，是增量，这时候数据的重要性没那么高，但是维度和总量都要多很多。</p>
+<p>数据，彻底改变了广告。</p>
+<p><strong>在谷歌的广告信息页面，它会直接告诉你他收集你哪些信息来投放广告。</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTXzyAibCibQpnggqLA8Fxiale1rJRbC9MZIkzu5voNmYMicdwAIbHI9yJbA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>大家可以看到课程中的这张图，这是谷歌广告设置页面给我打的标签——</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT3rpy7ZAmGlVM1vvwxyTbsiaS8fu8UesX7ECZVXl6VrPaKaKkXwfUL8Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>我其实很少用谷歌的产品，偶尔用一下搜索，翻译和YouTube，但是谷歌神奇的地方在于，他给我打的标签有着极高的准确性，这些标签90%都是非常准确的数据，让广告的精准性发生巨大的变化。</p>
+<p>谷歌广告系统前核心成员郄小虎透露，<strong>谷歌首页的第一条广告的点击率高达30%到40%</strong>，也就是几乎有一半的人都会点谷歌的第一条广告，而作为对比在报纸时代一条广告有5%的人感兴趣，就是一个不起的成绩。</p>
+<p>下面，我们通过两个故事来直观理解一下广告系统的精准性。</p>
+<p>首先，是张一鸣早期创业的故事，头条的CEO张一鸣早年创业的时候公司需要大量用到Python那个时候，Python这种语言还不怎么流行，因此，招人就特别不容易。</p>
+<p>张一鸣没有去拉勾这些垂直的招聘网站上去打广告，那么他是怎么样做的？</p>
+<p><strong>他选择去百度买和Python相关的关键词广告</strong>，比如说Python里的一些函数，因为只有Python的工程师才会去搜这些关键词，结果这些关键词很冷门、很便宜，招聘的效果也很有效。</p>
+<p>然后我们再来看一位硅谷工程师的故事，硅谷有一位工程师想去一家叫Reddit的的网站工作，他能想到一个非常有意思的方法，他首先写一篇水平很高，关于怎么样改进这个网站推荐算法的文章。</p>
+<p>接着，他通过网站的CEO霍夫曼在Facebook的公开账号寻找到一些独特的广告定向，然后他通过Facebook的广告系统使用这些定向把自己的文章投放给197个人，在<strong>这197个人中居然就精准的命中霍夫曼，而这次推广仅仅花他10.6美元</strong>，最后他的文章被霍夫曼所认可，而他也被这个网站成功的录取。</p>
+<p>通过这两个故事，我们可以看到——<strong>有了精准的数据广而告之就变成窄而告之。</strong></p>
+<p>所以<strong>从这个意义上讲，互联网广告其实更应该被称之为窄告。</strong></p>
+<p>数据就是新时代的石油，所以Facebook，谷歌就是数字时代的标准石油，而腾讯阿里就是数字时代的中石油和中石化。</p>
+<p>OK，我们对这一小节做一个总结——<strong>我们如何利用数据把广告投放给我们的目标用户？</strong></p>
+<p><strong>答案是充分的挖掘有价值的数据去进行广告投放</strong>，它包括第一方数据，第二方数据和第三方数据。</p>
+<p>所谓第一方数据就是广告主自己的数据，比如说客户的邮箱，手机等等。</p>
+<p>第二方数据就是广告平台能够提供的数据，比如说我们上面说的阿里，腾讯的各个维度的数据。</p>
+<p>第三方数据就是第三方的数据公司提供的数据，比如说通过数据市场获取的数据。</p>
+<p><strong>问题二：\</strong>为什么给一个人展示的是这个广告，而不是其他广告？****</p>
+<p>OK，我们来看<strong>第二个问题——为什么给一个人展示的是这个广告，而不是其他广告</strong>，它涉及的关键词叫竞价。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTBetaiaSjqLVyFm7lKfd90f2GzmZcEIjUCQyL1HUrA4obpBwLIichBVqQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>我们通过一个极其简单的例子来理解竞价——</p>
+<p>一个篮子总共有三个红苹果和三个青苹果，这时候有两个人，第一个人只喜欢吃红苹果不喜欢吃青苹果，所以他愿意为一个红苹果出价一块钱，青苹果出价就是0，另一个人正好和他相反。</p>
+<p>这时候问题就来了——我们有两种售卖方式，第一种售卖方式：把整个篮子卖给其中的一个人，这时候我们的收入是三块钱。</p>
+<p>第二种方式，就是我们能够把红苹果和青苹果分开分别卖给他们，我们的收入就有三块加三块等于六块。</p>
+<p>如果我们把广告看成刚刚例子中的苹果，那么通过这个例子，我们可以得出以下的结论：</p>
+<ul>
+<li><strong>第一，竞价的前提是人们对不同广告的价值判断其实是不一样的。</strong></li>
+<li><strong>第二，互联网的技术能够对不同的广告进行有效的区隔，</strong></li>
+<li><strong>第三，进价能够实现资源配置的最优化，</strong></li>
+</ul>
+<p>OK，我们回到开始的这个问题，为什么你看到的是这个广告而不是其他广告？</p>
+<p>大家可以看到课程中的这个示意图，<strong>假如广告系统通过数据识别到小明是一名生活在北京25岁，对健身感兴趣的男性。</strong></p>
+<p><strong>那么广告是怎么样投放给他的？</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTN9egH5PvvWB2lgpdWEyp7nwzWTicqzic1wEqDwQIiczVrx0tibBn3lztsw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><strong>广告系统投放其实非常的复杂，但其中有两个关键的步骤</strong>：</p>
+<p>第一步叫Target，就是匹配，这一步会在全体的广告库中找到符合小明这个定向的广告，比如说图中的A、C、E；</p>
+<p>第二步叫Rank，就是竞价排序，这一步，会挑出排在最前面的广告发给小明就是图中的C。</p>
+<p>这时候小明就看到了C这个广告。</p>
+<p>那么问题来了，广告的竞价排序是如何进行的？</p>
+<p><strong>假如现在我们有两个广告主——Nike出价一块钱一个点击、阿迪出价两块钱一个点击，我们总共有100次曝光，我们应该给谁？</strong></p>
+<p>很多人会直观的说，那当然得给阿迪，它出价高啊！</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTu0pkmdiaqAt0b1Fibvac1XhKSPZoO6XcQXI1Ah3014RteZcw4bTCs0nA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>但如果我们考虑到点击率，结果就会大不一样，假如耐克的点击率是5%，100次曝光就会产生五个点击一块钱一个点击收入是五块钱。</p>
+<p>而这时候如果阿迪的点击率是1%，那么100次曝光就会产生一个点击，两块钱一个点击收入是两块。</p>
+<p>所以两块对五块，我们应该给耐克，不是阿迪，因为它的综合收益更高。</p>
+<p>我们不要看这个案例非常简单，但他揭示按效果付费竞价广告的几个最重要的法则。</p>
+<ul>
+<li><strong>第一，广告平台关心自己流量的总收益；</strong></li>
+<li><strong>第二，广告主通常按效果进行出价，比如说这次就是按单次的点击进行竞价；</strong></li>
+<li><strong>第三，广告平台需要把点击出价转化成它的收益去进行排序；</strong></li>
+<li><strong>第四，CTR也就是点击率就架起从点击到收益的一座桥梁，未排序去提供基础。</strong></li>
+</ul>
+<p>所以，在竞价广告中，点击率就是一个极其关键的指标。</p>
+<p>那么问题就来了——点击率它是一个结果指标，就是我们投放完之后，我们可以去统计这个点击率，没有投放之前，我们其实是不知道的，而<strong>每一次投放都需要排序。</strong></p>
+<p><strong>那么点击率这个数据应该怎么算？</strong></p>
+<p>很多人就想到一个方法——“尝试投放一下”</p>
+<p>那么“尝试投放一下”这种方法是不是行得通呢？</p>
+<p>答案是行不通，为什么行不通呢？我们接着往下看——</p>
+<p>我们依然通过一个简单的例子来说明：</p>
+<p>假如现在有四个广告主——分别是卖高跟鞋、卖买西装、卖布娃娃和卖游戏机的，他们的出价都是一块钱一个点击。</p>
+<p>假如整个平台上有4000个用户，</p>
+<p>按照刚刚的说法，我们开始不知道每一个广告主的点击率，所以我们可以试投一下，比如说每个广告主我们都是投100个，结果我们发现投放之后，它们每一个的点击率都是25%，一模一样，这时候排序就变得很困难。</p>
+<p>于是，我们只能公平的随机去进行投放，这个时候我们的点击数是4000，乘以点击率25%等于1000，我们的总收益是1000个，点击乘以一块钱，总的就是1000块钱。</p>
+<p><strong>但是，如果我们知道这4000个用户的特征，我们就不会这样去预估点击率。</strong></p>
+<p>那么真相是什么？</p>
+<p>真相就是这4000个用户，<strong>其实可以根据年龄和性别分成四类——分别是成熟男人、成熟女人、小男孩和小女孩</strong>，每一个分类都是1000个，他们每个人对自己喜欢的物品的点击率是100%，不喜欢的物品的点击率是0%，</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT5w8Q4HttwVwYoDhudbEoAnjw2diabT2hlsWKroDPwVOub0tFmfyceiaw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>比如说小男孩一定会点游戏机，一定不会点其他的，而成熟女人一定会点高跟鞋，也一定不会点其他的商品。</p>
+<p>所以这时候我们正确的预估应该是——当一个小男孩来访问的时候，我们就能精确的预估到他对游戏机这个广告的点击率是100%，而其他人的点击率这时候是0%，</p>
+<p>这样预估的话，所有人的点击率就都是100%，这时候点击数就会变成4000，整个收益也会变成4000，比刚刚的1000翻四倍。</p>
+<p>上面的例子告诉我们，<strong>我们要根据广告特征和用户特征来实时的预估点击率。</strong></p>
+<p><strong>那么点击率需要哪些特征来预估，或者说点击率都和什么因素相关？</strong></p>
+<p>主要有三个方面会影响点击率——广告侧、用户侧和平台侧。</p>
+<p>广告侧很容易理解广告主的行业广告，文案、广告、图片和广告的形式都会影响点击率。</p>
+<p>而用户侧我们刚刚说的年龄、性别、地域、手机兴趣以及它的使用环境等等。</p>
+<p>然后平台侧就是平台的频次控制时间、竞价策略和流量分配策略都会影响点击率。</p>
+<p><img src="/2021/06/07/%E5%90%84%E5%A4%A7%E4%BA%92%E8%81%94%E7%BD%91%E5%85%AC%E5%8F%B8%E7%9A%84%E5%B9%BF%E5%91%8A%E6%9C%BA%E5%88%B6/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="图片"></p>
+<p>点击率的预估其实是一个非常复杂的过程，它是互联网广告最核心的技术之一。</p>
+<p><strong>我们可以把点击率预估简化成两个步骤，第一步叫特征工程，第二步叫模型训练。</strong></p>
+<p>特征工程就是找到很多跟点击率相关的特征，通过模型训练我们就能够得出特定的点击率。</p>
+<p>从这个意义上说，点击率预估其实是一个黑盒子，输入很多特征就能实时的输出预估的点击率。</p>
+<p>点击率的预估应用非常的广泛，我们今天熟悉的今日头条、抖音的推荐系统的核心技术也是点击率的预估，平时咱们观察到的是——看过什么就给我推荐什么，非常的精准。</p>
+<p><strong>这背后其实是把所有可能投放给你的内容的点击率都进行一次预估，然后把点击率最高的推送给你</strong>。</p>
+<p>广告比推荐排序会多一个步骤，推荐只需要知道谁排在前面就OK，而广告需要知道具体的数值，因为它需要和出价一起来综合排序。</p>
+<p>理解点击率预估对广告排序的意义，我们就能够破除一个按效果付费的理解误区：<img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTWnkbOjWxq35L2yZUmQlDHTsmNOBz7j21ibz7w0DZguMGPzfcWUL2hSw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>有人说按点击和成交去进行付费简直太爽，不点不要钱简直没风险！</p>
+<p>那我能不能我出一分钱一个点击，同时我还没有时间去好好做广告素材，然后我还要点击一天给我来一百万个？</p>
+<p>事实上是不会有这样的好事，你出一分钱一个点击，广告平台如果产生点击，它的确只扣你一分钱，不产生点击的确也不会扣你的钱。</p>
+<p>但是最可能的结果就是你出价太低或者你的点击率太低，你被排在后面根本投放不出去，<strong>所以的确没有风险，但同样也没有收益。</strong></p>
+<p>OK，对这一小节做一个总结：如何通过竞价来提升广告投放的效率，按效果付费，的确是一个对广告组友好的计费方式，但是他也是一个公平的计费方式，想要获得更多的点击只有两个办法：</p>
+<ul>
+<li><p>第一，提升出价，当然出价通常要考虑到自己的承受范围；</p>
+</li>
+<li><p>第二，我们提升我们的点击率和转化率，不断的优化自己的广告素材广告定向和广告投放的数据。</p>
+</li>
+</ul>
+<p><strong>问题三：\</strong>这个广告是如何被投放出来的？****</p>
+<p>OK，<strong>我们来看第三个问题，这个广告是如何被投放出来的</strong>，它对应的关键词叫自动化。学习完这一小节，我们就能知道如何利用自动化的工具来提升广告投放的效率。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT6WL1MWUiab4ZM7TDMbbBiaGLj1fmBsVibXQY53o2vaSSIINB9a8ibnD1zA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>广告，其实从一开始就很注重实验，在奥格威的时代，广告实验是这样进行的——在同一份报纸，同一个版面，同一个日期去刊登不同文案的广告，然后去观察两份文案带来的免费样品索取量的差异。</p>
+<p>那么在今天，广告的实验是怎么做的？</p>
+<p>Facebook开发一个创意实验系统，输入不同的图片，普通的标题和不同的描述，系统就会自动的生成多个广告创意去进行广告实验。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT807R60MVsGdrm4syIqap28yT5ZVLMHM5dPrChtcKTUsFZlYFJFsCpw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>根据谷歌的首席经济学家范里安说，仅仅在2016年，谷歌广告系统就进行超过12000次实验。</p>
+<p>今日头条开发一个广告创作机器人——妙笔，输入行业和关键词，立马就能够创造出海量的广告。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT4mAbYPicRsnibIOOJ4kTLN10yyXiaUr7YIC2cZDR0eFicJnWg13s5KgvUg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>我有一天试一下，我选择游戏行业，输入二次元这个关键词，一瞬间一大批的文案就创作完成。</p>
+<p>而且智能优化出价让很多广告优化师都失业，只要广告组确定自己的转化成本广告，平台就会自动智能的出价，然后让最容易产生转化的用户看到我们的广告。今天Facebook、谷歌和腾讯都在推广这种智能的出价方式，</p>
+<p>OK，对这一小节做一个总结：</p>
+<p>如何利用自动化的工具来提升广告投放的效率。档案室我们不要和机器去对抗，我们需要和机器来合作，我们需要充分利用现有的这些工具来帮助我们进行广告投放。</p>
+<p><strong>问题四：***</strong>*为什么刘涛会出现在朋友圈的广告中？****</p>
+<p><strong>我们来聊一下第四个问题，为什么刘涛会出现在朋友圈的广告中</strong>，它对应的关键词叫原生广告，理解原生广告的含义我们就能知道如何在互联网时代去制作受欢迎的广告内容。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTWhGJ2TGolFbSo2UOOZQLIsrPGupIzibWamleK83dTW0VotOiaTKyvyKw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>大家可以看到课程中的两张图——左边是一张炫酷的图片，右边是一个简单的文字链，我们来猜一下哪一个广告点击率更高？</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHThCh6hjnVzbEGo6JwIvBia6WD9x6Jia5pw8LoJuQ1Lmdz7tCPyHgYibVUg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>答案是右边的文字链。</p>
+<p>那么为什么一个简单的文字链点击率反而更高，是<strong>因为那个文字链看起来像一个功能，而不是一个广告，所以它的点击率更高。</strong></p>
+<p><strong>这就是原生广告的威力。</strong></p>
+<p>那么什么是原生广告，我们通过下面的例子直观解一下——</p>
+<p>和传统的电视广告不同，《奇葩说》的花式口播广告其实就是一种原生广告，比如说肯德基的“一人吃鸡、全家光荣”</p>
+<p>所谓原生广告，就是让广告和内容看起来差不多。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTP43EvoHjaYXZLv2vVcQptezHFAAN6rIjFIuceESctDGEHY16WT8lRA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>原生广告的分成两种：形式原生和意图原生，所谓形式原生，就是用广告和内容或者功能长得一样。</p>
+<p>我们来看一些形形色色的原生广告——在知乎广告是一个问题、在抖音广告是一个竖屏的视频、在美颜相机广告是一个图标、在QQ附近的人广告是一个头像、在小游戏跳一跳广告是一个小盒子。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTYYoAaicbmlUT6vklTnRPTULLGtzXXiaIa3lurh930CxBWjE7jtDwozibQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>接下来我们看一下什么是意图原生，这是天猫在双11的时候在抖音投放的一个广告。</p>
+<p><img src="/2021/06/07/%E5%90%84%E5%A4%A7%E4%BA%92%E8%81%94%E7%BD%91%E5%85%AC%E5%8F%B8%E7%9A%84%E5%B9%BF%E5%91%8A%E6%9C%BA%E5%88%B6/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="图片"></p>
+<p>我们看到这个广告没有请明星，整个场景也非常的生活化，就像我们每天刷的抖音的视频，这其实就是一种意图原生的广告。</p>
+<p>所谓意图原生，就是用广告的调性以及意图和普通内容一样。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTQxQWoLVVQomjUl4n7UTuPvh3F62ERWdpVBMeFnh7WOwicPoEclibrpaw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>我们看到课程中的这张图，这是美图为ud定制的一个肤色检测广告，拍一张照片就能给你推荐适合你肤色的粉底，他把广告和功能进行一个深度的结合，让用户在功能中就能体会品牌的内涵，这也是一种意图原生的广告，</p>
+<p>那么你可能会问，<strong>那有没有一些形式原生和意图原生都做得比较好的广告？</strong></p>
+<p>答案是有，搜索广告就是一个典型，首先广告和搜索结果长得很像，然后广告也和搜索关键词息息相关。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTYkzDIpPtg2mVVj4Cm5m2w1fykC2jDV5h3rNrYwMeutVicfTib5TvibYIg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>好，我们对这一小节做一个总结：</p>
+<p>如何在互联网时代去制作受欢迎的广告内容，答案是一个中心，两个基本点——</p>
+<p><strong>一个中心就是用广告看起来不像广告，两个基本点就是在形式上让广告看起来和内容一致，在内容上尽可能提供符合调性和意图的创意。</strong></p>
+<p>**<br>**</p>
+<p><strong>问题五：为什么微信每天只会看到两三条广告？</strong></p>
+<p>OK，<strong>我们看第五个问题，为什么微信每天只会看到两条广告</strong>，但是微博头条每天可以看到很多条，它对应的关键词叫广告频次。</p>
+<p>理解频次对广告的影响，我们就能知道如何合理的控制广告投放的频次。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTkHLzvrDCE7eNshicR2fem0icjXdba5kG1QJUDkePVnx9ac9DpeYrO75Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>我们从一个抱怨开始说起，陌陌的总裁王力，他的昵称叫王老板，在微博上公开的抱怨，他想永远的屏蔽掉一个直发类的广告，每天都给他推。</p>
+<p>那么这个广告为什么会频繁的曝光给同一个人？</p>
+<p>这就涉及到广告投放的频次问题，<strong>频次深刻地影响着广告的三方平衡</strong>，因为广告是一个需要考虑三方利益的系统，这三方分别是广告平台、广告主和用户。</p>
+<ul>
+<li><strong>对于平台而言，频次意味着库存频次严格，库存就少，频次宽松，库存较多；</strong></li>
+<li><strong>对于广告主而言，频次会影响转化率和点击率，一天看一次和一天看五次，点击率和转化率肯定不一样。</strong></li>
+<li><strong>对于用户而言，频次意味着核心的用户体验，如果广告太多，用户就走。</strong></li>
+</ul>
+<p>我们看一下从平台的角度，哪些因素会影响广告的频次，</p>
+<p>首先是场景，不同的场景会影响广告的频次，比如说我们刚刚说的微信朋友圈每天两条，而头条可以做到五条内容，就差一条广告。</p>
+<p>有人进行对比，然后得出微信广告的库存还有很大的增长空间，这个说法其实是不准确的，因为朋友圈是一个私密的空间，我们看到的内容都是我们的朋友发的；</p>
+<p>那头条是一个公开的平台，我们看到的内容本身就是陌生的，所以广告多一点也无所谓，<strong>从这个意义上说，朋友圈广告永远也不可能像头条那么多。</strong></p>
+<p>第二个影响频次的因素就是——内容的吸引程度，这个很容易理解，优酷的热播剧可以贴120秒的广告，但是美拍我们就不能在他前面去贴钱贴片。</p>
+<p>影响广告频次的还有产品的发展阶段。在产品发展早期，为用户体验广告可能会少一些，而后期需要商业化的时候，广告就会多一些。</p>
+<p>用户的行为特征也会影响广告的频次，比如说有一些App，头条、微博都会根据用户的活跃度来动态的调整广告的频次。</p>
+<p>我们来看一个频次的案例，这大概是今日头条两到三年前的一个频次策略。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTR1yCiajatRyZPp1TR19CHGId0Ovu95zJjiaicLTvrsicicqztliaSEyWh0Zg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>它包含三个层面，广告主层面，广告创意层面和负反馈层面。</p>
+<p>广告主是指同一个广告组，同一个广告计划在12个小时之内只出现一次。</p>
+<p>而广告创意的部分是同一个广告创意，同一个广告的落地页，同一个应用、同一篇文章在12小时之内只出现一次。</p>
+<p>负反馈，就是用户点负反馈之后同一个账户同一个应用和同一个落地页在两周之内不再展示给用户。</p>
+<p>OK，我们在从广告主的角度来聊一聊频次对于广告主而言意味着印象加成。</p>
+<p>很多人的一个疑惑就是——<strong>为什么像可口可乐这样家喻户晓的品牌还要继续的打广告</strong>，难道可口可乐不打广告我们就不喝了嘛？</p>
+<p>事实上，还真有可能是这样，我们来看一个天然的案例，健力宝的故事在90年代，健力宝对于中国人而言是一个家喻户晓的品牌，1997年它的销售超过50亿，比可口可乐和百事可乐总和还要多。</p>
+<p>后来，健力宝衰落，当然衰落的原因有很多，我们不能简单的把它归因于不打广告，但是他给我们提供一个天然的案例，<strong>那就是如果不打广告，消费者就会忘记它。</strong></p>
+<p>今天健力宝并没有倒闭，它还在超市卖，但由于它很多年不打广告，我们今天的消费者几乎已经把他忘记，这背后其实是遗忘曲线在起作用。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTWXJb6hNJgT4vfF0J14TyYbPic62WicjNpqHhqEeIahsbrPV46sYw2YEQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>德国的心理学家艾宾浩斯的遗忘曲线告诉我们，任何一段记忆需要在还没有忘记之前反复加强。</p>
+<p>品牌在投放广告的时候非常关心的一个指标就是覆盖频次。</p>
+<p>通常一个广告会在电视上播放四周，然后停止两周，在互联网上投放的时候也会对同一个用户覆盖至少三次以上，目的就是让你在忘记之前反复加强印象，</p>
+<p>OK，我们对这一小节做一个总结，如何合理的控制广告投放的频次。</p>
+<p><strong>对于效果广告而言，我们需要不断的实验控制好广告的频次来优化整个转化率。</strong></p>
+<p><strong>而对于品牌广告而言，我们需要遵循遗忘曲线</strong>，在短时间内多次去触达来占领用户的心智。</p>
+<p><strong>问题六：\</strong>广告下方的点赞和评论到底意味着什么？****</p>
+<p>我们接下来看<strong>最后一个问题，广告下方的点赞和评论到底意味着什么？</strong>它对应的关键词叫实时互动。</p>
+<p>解释这个问题我们就知道如何得在互联网时代更好地和广告受众进行有效的互动。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTyIRFybWYJStrZToaSCMLet271L6e6QPQmEJPjiclcW2Za2FiaIMNWnAw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>实时互动是互联网广告和传统广告的一个重要区别——</p>
+<p>传统的报纸，电视这些广告其实是没办法去进行互动的互动，对于消费者而言，可以非常明确的表达自己对广告的态度。</p>
+<p>互动，对于商家而言，可以在多个维度上去收集受众对广告的具体反馈。</p>
+<p>我们一起来看一个深层次的互动案例，负反馈，这是今日头条负反馈的界面，点击一条光大银行信用卡广告旁边就会出现如下界面。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTceEW34Oh67lJLhaZnqIDL82ZTVWUZw3UDRIKAarfUajrG5gkMAKCMQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>首先，它提供很多个负反馈的选项，比如说不感兴趣垃圾内容和屏蔽选项，</p>
+<p>其次，它提供多个维度的精准的屏蔽选项，由广告处一级分类和二级分类，我们仔细看会发现，光大银行，信用卡，银行类金融类这三个选项其实是有层次的，通过这种方式，它就能够实时的知道受众真实的广告需求和广告偏好。</p>
+<p>我们再来看一个深层次的互动案例，YouTube的可跳过广告按钮，这是一个非常经典的案例。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHTFAg9xAQh5tWe5fibyP8Sgf17WEhibsyWQoO4iblqhj3VtnTI9Un3ToDzQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">YouTube的贴片广告在五秒钟之后就可以跳过，那么这个跳过按钮，让广告主增加一个维度来衡量自己广告的质量，比如说是在第七秒跳过，还是在第23秒跳过，就非常准确的反映广告的吸引程度。</p>
+<p><strong>这个小小的跳过按钮，既可以是负反馈，比如说立马跳过，也可以是正反馈，比如说坚持看完。</strong>这些指标都会优化广告，提供非常广阔的空间。</p>
+<p>关于这个案例，大家可以去听逻辑思维的626期，罗振宇老师把卫夕的一篇文章做成了一期节目。</p>
+<p>OK，我们一起对这个小节做一个总结，<strong>如何更好的在互联网时代和广告受众去进行有效的互动，答案是两点：</strong></p>
+<p>第一，分析互动，第二，反馈互动。</p>
+<p>所谓分析互动，就是充分利用各类互动的指标，及时调整广告，去提升整个广告的转化率；所谓反馈互动就是如果受众对你进行互动，你要立马进行回应用你的广告变得鲜活起来。</p>
+<p>OK，我们回顾一下，我们要通过六个问题代表的六个关键词，梳理互联网广告的微观逻辑，<strong>这六个关键词分别是数据、竞价、自动化、原生广告、频次控制和互动性。</strong></p>
+<p>广告有很多定义，我在这里以我的理解给广告下一个自己的定义，那就是——<strong>在合适的时间把合适的广告内容以合适的方式高效的投放给合适的人。</strong></p>
+<p>我们刚刚聊的这几个关键词就正好和这个定义非常的契合——</p>
+<p>频次控制能让我们把握合适的时间；通过原生广告，我们能创作出合适的内容；竞价是一种合适的方式；而自动化能够实现高效率；数据能够帮助我们找到合适的人；</p>
+<p>我们会发现其实少一个关键词，所以我在定义中增加一点，就是根据反馈不断的重复，对应互动性这个关键词。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/iaJWJqYxkVreX78WOa5g4upTvzxx7uWHT2MNtA3RoDWMDCSkEm2seeccP4QApB6E37ia4HbUQchpGIZgU3dBOujg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>互联网广告投放是一个综合的过程，想要获得很高的回报，需要我们把以上的每一个环节都做到极致。</p>
+<h2 id="广告的演化方向"><a href="#广告的演化方向" class="headerlink" title="广告的演化方向"></a>广告的演化方向</h2><p><strong>演化的两个方向是——精准性和生动性。**</strong>精准性很容易理解，广告一定要和用户相关；生动性是让广告看起来更友好、更直观、更原生和更好交互。**</p>
+<h4 id="动态商品广告"><a href="#动态商品广告" class="headerlink" title="动态商品广告"></a>动态商品广告</h4><p>当你上午在电商网站上搜索、浏览过某件商品，下午再刷资讯APP的时候就看到了这款商品的广告。广告主需要将一个庞大的商品目录库通过某种方式上传到广告平台，将用户对商品的行为（如搜索、浏览、加购等）同步到广告平台，广告平台针对用户的行为将与之相关的商品作为广告推送到用户面前。</p>
+<p><strong>1.商品广告1.0——基于电商SKU的商品广告时代</strong></p>
+<p><strong>2.商品广告2.0——横向拓展的“万物商品化”时代</strong></p>
+<p>它的“ 目录”不仅仅局限于电商商品，比如Facebook就将动态商品广告扩展到了旅游等多个行业。但具体的解决方案能否真正洞察广告主的痛点、实现广告效果质的提升就很考验广告平台的功力了。</p>
+<p><strong>3.广告商品化3.0——纵向深耕的“商品行业化”时代</strong></p>
+<p><strong>第一个层面是平台的系统能力</strong></p>
+<p>能根据数据变化去预测爆品，<strong>爆品预测能力也是商品广告系统能力的一个重要体现。</strong></p>
+<p><strong>第二个层面是精细的运营能力</strong></p>
+<p>比如阅读行业，它的落地页可直接拉取商品章节内容字段、创意图片快速生成广告落地页；再比如视频直播行业，腾讯广告支持按照客户传参时间点进行创意合成</p>
+<h4 id="互动广告"><a href="#互动广告" class="headerlink" title="互动广告"></a>互动广告</h4><p>互动广告最早可以追溯到谷歌于2015年12月推出的两种广告形式——</p>
+<p>（Trial Run Ads）让用户在广告中先体验APP60秒，然后决定是否下载这个应用；</p>
+<p>（Interactive Interstitial Ads）“交互界面广告”则是利用HTML5技术将广告制作成网页交互界面，不仅仅适用于游戏应用，也适用于电商、资讯等其他应用形态；</p>
+<p>抖音互动广告的本质其实是由三部分组成——</p>
+<p><strong>1.图片&amp;短视频</strong>，用于引入应用的核心卖点；</p>
+<p><strong>2.互动界面，</strong>用于体验沉浸式功能或体验，提升正反馈和成就感；</p>
+<p><strong>3.转化按钮，</strong>用于方便用户便捷地下载或下单，这三个部分层层递进，是一个完整统一的体验流程。</p>
+<p>互动广告在步骤上降低了用户体验功能的操作成本，能让用户在无戒备、无压力的情况下和广告“玩”起来。</p>
+<p><strong>这在本质上其实是一种催眠，它让用户放下了戒心，</strong>同时提供了即时的反馈，让整个体验过程变得无缝，这种沉浸式的体验和抖音本身的产品理念也是一脉相承的。</p>
+<p><strong>从传统广告到互联网进化的过程中，在我看来发生了两重革命：</strong></p>
+<p><strong>第一重革命是“精准性革命”，</strong>互联网广告能做到千人千面，这很容易理解。</p>
+<p><strong>第二重革命则是“互动性革命”，</strong>从传统广告的单向“看广告”时代到互联网早期的双向“点广告”时代，是一种进步，但点击毕竟太单一，今天的手机的多点触摸屏并非是为点击而生的，而是为多重互动而生。</p>
+<p>互动广告本质上是一种深度沟通，能更加鲜明地传达具体的、即时的信息，它能将应用的体验前置，让用户不下载应用也能体验产品核心玩法，降低用户的心理成本，从而提升整体的转化率。</p>
+<p><strong>因此它适合决策链条短、内容导向强的行业，比如游戏、社交、资讯等行业。</strong></p>
+<p>先说游戏行业，移动游戏行业2020年总规模高达2335亿，增长率超30%，是文娱产业绝对的第一大赛道，玩家数和付费额两个关键指标支撑行业长期成长逻辑。</p>
+<p><strong>游戏行业的效果是极其明显的：</strong>在多家千万级游戏厂商的大推起量阶段，试玩广告的消耗最高超过了60%，以三国即时对战类游戏为例，其PVR提升23.9%，付费率提升39.7%，计划平均消耗提升39.2%。</p>
+<p>在日常投放场景中，广告主对互动广告的认可度也非常高，这种认可度源于效果的实际提升——相对于普通广告，试玩广告PVR提升20%，付费率提升带动的整体付费成本下降18%-25%。</p>
+<p>衡量买量能力的终极核心指标是ROI，而游戏行业的最终ROI=单用户全生命周期价值/单用户获取成本，互动广告一方面能有效提升对高意向用户的吸引力，提高LTV，同时也会通过提高转化率来减少单用户的获取成本，从而整体提升游戏的ROI。</p>
+<p>再说社交和资讯行业，这两个行业也面临着极其激烈的竞争，根据Questmobile的数据，在大盘的挤压下，移动社交和移动资讯的用户增量和时长增量在整个行业版图中并不靠前。</p>
+<p>以资讯应用为例，当一款资讯APP有多个核心类目的时候，传统单一的广告素材通常没办法逐一展示每一个类目。</p>
+<p>而利用互动广告，就可以将类目转化成可以滑动、可以选择的界面，用户可以直接操作交互界面，相比下载，<strong>这在本质上是体验前置，投放效果非常显著。</strong></p>
+<p><strong>事实上，互动广告的场景还有非常多的潜力可以挖掘，</strong>它在本质上能放大广告主原有的优势，在电商行业发展的早期，有一个理念叫“十米工程”，说的是电商的详情页的理想长度应该超过10米才能淋漓尽致地展示商品的优势。</p>
+<p><strong>互动素材一般有两种实现方式：</strong>第一种是HTML5的网页实现方式，另一种则是互动视频，无论哪一种都有着一定的制作复杂度。</p>
+<p>复杂就意味着门槛，那么，如何解决门槛问题呢？</p>
+<p><strong>巨量引擎采取了两个策略：</strong></p>
+<p><strong>第一，开发通用的制作平台，</strong>提供标准而多元的模板，巨量引擎开发了Rubeex平台，这个平台遵循“模块化填空”的设计理念，让广告主根据提供的模板直接上传相应的素材就能快速直观地搭建自己的素材。</p>
+<p>比如游戏行业，Rubeex平台更加不同游戏的题材、风格设计的模板细分到了每一帧，广告主只需完成图片和视频上传，其余都交给平台。</p>
+<p><strong>第二个，建立第三方服务体系，</strong>筛选了优质的供应商，并且提供基础的交易平台来支持广告主下单，让专业的团队做专业的事，同时还输出了广告主自制生产链路，为广告主自建素材团队提供指导。</p>
+<p>产品和服务体系并非一个静止的体系，它本身也在进化，而它后续的进化方向则是——</p>
+<p>首先，巨量引擎会继续升级展示方式，后续会在短视频加上“轻互动”的全新交互方式；其次，也会进一步降低制作门槛，引入更多的创意制作供应商加入到这个体系；最后，还会更加精细化地呈现互动素材的详细数据，向广告主和平台反哺优化方向；</p>
+<p>中国的互联网广告早已进入深水区，粗放的增长和变现一去不复返了，想要良性增长，需要平台和广告主都切实转变思路，在每一个可能优化的环节进行深耕细作。</p>
+<h2 id="各大公司"><a href="#各大公司" class="headerlink" title="各大公司"></a>各大公司</h2><h3 id="字节"><a href="#字节" class="headerlink" title="字节"></a>字节</h3><h4 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h4><p> 这并非耸人听闻，根据Questmobile的数据，2020年整年中国移动互联网月活规模、人均使用时长、人均打开APP个数三个关键指标的增长率分别为1.7%、4.9%、2.8%。</p>
+<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p><strong>广告是其中最坚定的一块压舱石，因为它足够确定、足够可预期、体量足够大同时有足够多的优化空间。</strong></p>
+<p>广告在本质上是一种投资，操盘广告就像在运作一只基金，而广告操盘手就是基金经理，每一次选择出手都需要得到收益和结果。</p>
+<p>以前大盘在涨，随便买哪只股票都可以获得不错的收益，只是幅度不同，然而今天业界面临难题是——大盘不涨了，这时候基金经理精细化选股的能力就体现出来了。</p>
+<p>每一个玩家都在精细化自己的广告投资组合，同时也对广告效率提出了非常高的要求，<strong>这又会反向影响广告平台的决策，今天的广告平台必须适应广告主对效率的极致追求。</strong></p>
+<p>巨量引擎作为字节跳动营销服务品牌，是国内领先的广告平台，在今天的广告主日益追求极致效率的大背景下，它在系统、推荐机制、广告样式、运营模式等多方面都做出了很多亮眼的创新。</p>
+<h4 id="优缺点："><a href="#优缺点：" class="headerlink" title="优缺点："></a>优缺点：</h4><h3 id><a href="#" class="headerlink" title></a></h3><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p> 互联网广告的一次重要进化——广告商品化 <a href="https://mp.weixin.qq.com/s/0-HlxWgoaezp9Ikk7UhurQ" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/0-HlxWgoaezp9Ikk7UhurQ</a></p>
+<p>巨量引擎互动广告的逻辑 <a href="https://mp.weixin.qq.com/s/REHbtJx9hhI37EUtAKXjHw" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/REHbtJx9hhI37EUtAKXjHw</a></p>
+<p>互联网广告是如何运行的 <a href="https://mp.weixin.qq.com/s/2R8HLVrZoVeIU58Va_fb4g" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/2R8HLVrZoVeIU58Va_fb4g</a></p>
+<p>从央视到谷歌：聊一聊竞价广告的机制设计  <a href="https://mp.weixin.qq.com/s/HFP1GzLD6eowAjVlv-Z3Tw" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/HFP1GzLD6eowAjVlv-Z3Tw</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/05/30/%E6%8A%96%E9%9F%B3%E7%94%B5%E5%95%86/" rel="next" title="抖音电商">
+                <i class="fa fa-chevron-left"></i> 抖音电商
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/06/19/%E6%BB%B4%E6%BB%B4%E5%87%BA%E8%A1%8C%E4%B8%8A%E5%B8%82/" rel="prev" title="滴滴出行上市">
+                滴滴出行上市 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#广告的意义"><span class="nav-number">1.</span> <span class="nav-text">广告的意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两大广告"><span class="nav-number">2.</span> <span class="nav-text">两大广告</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#竞价广告"><span class="nav-number">2.1.</span> <span class="nav-text">竞价广告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#品牌广告"><span class="nav-number">2.2.</span> <span class="nav-text">品牌广告</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六大问题"><span class="nav-number">3.</span> <span class="nav-text">六大问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广告的演化方向"><span class="nav-number">4.</span> <span class="nav-text">广告的演化方向</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#动态商品广告"><span class="nav-number">4.0.1.</span> <span class="nav-text">动态商品广告</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#互动广告"><span class="nav-number">4.0.2.</span> <span class="nav-text">互动广告</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各大公司"><span class="nav-number">5.</span> <span class="nav-text">各大公司</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字节"><span class="nav-number">5.1.</span> <span class="nav-text">字节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据"><span class="nav-number">5.1.1.</span> <span class="nav-text">数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">5.1.2.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优缺点："><span class="nav-number">5.1.3.</span> <span class="nav-text">优缺点：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">5.2.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">6.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共644.9k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -79,21 +79,29 @@
 
 
 
-<meta name="description" content="面试题为什么要分库分表（设计高并发系统的时候，数据库层面该如何设计）？用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？你们具体是如何对数据库如何进行垂直拆分或水平拆分的？ 面试官心理分析其实这块肯定是扯到高并发了，因为分库分表一定是为了支撑高并发、数据量大两个问题的。而且现在说实话，尤其是互联网类的公司面试，基本上都会来这么一下，分库分表如此普遍的技术问题，不问实在是不行，而如果你">
+<meta name="description" content="作者：是Yes呀链接：https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;459955079&#x2F;answer&#x2F;1949098113来源：知乎著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。 是这样的。 随着用户量的激增和时间的堆砌，存在数据库里面的数据越来越多，此时的数据库就会产生瓶颈，出现资源报警、查询慢等场景。 首先单机数据库所能承载的连接数、I&#x2F;O及网络的吞吐等都">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分库分表">
 <meta property="og:url" content="http://aamingaa.github.io/2021/01/30/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="面试题为什么要分库分表（设计高并发系统的时候，数据库层面该如何设计）？用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？你们具体是如何对数据库如何进行垂直拆分或水平拆分的？ 面试官心理分析其实这块肯定是扯到高并发了，因为分库分表一定是为了支撑高并发、数据量大两个问题的。而且现在说实话，尤其是互联网类的公司面试，基本上都会来这么一下，分库分表如此普遍的技术问题，不问实在是不行，而如果你">
-<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-split-horizon.png">
-<meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-split-vertically.png">
+<meta property="og:description" content="作者：是Yes呀链接：https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;459955079&#x2F;answer&#x2F;1949098113来源：知乎著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。 是这样的。 随着用户量的激增和时间的堆砌，存在数据库里面的数据越来越多，此时的数据库就会产生瓶颈，出现资源报警、查询慢等场景。 首先单机数据库所能承载的连接数、I&#x2F;O及网络的吞吐等都">
+<meta property="og:image" content="https://pic1.zhimg.com/50/v2-741bf9ec4b38b684e3a4a30443e75706_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-741bf9ec4b38b684e3a4a30443e75706_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic1.zhimg.com/50/v2-efad5dff9fe449ce992f642af56643e2_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-efad5dff9fe449ce992f642af56643e2_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic1.zhimg.com/50/v2-dbc1ed1bdeef9639d4f51505e9646b10_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-dbc1ed1bdeef9639d4f51505e9646b10_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic1.zhimg.com/50/v2-514aa1e4cfeaf8edf887e90e11991c11_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-514aa1e4cfeaf8edf887e90e11991c11_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic3.zhimg.com/50/v2-376b651bf8433ef2bce6b2e8b438d748_720w.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-376b651bf8433ef2bce6b2e8b438d748_720w.jpg?source=1940ef5c">
 <meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-shard-method-1.png">
 <meta property="og:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-shard-method-2.png">
 <meta property="article:published_time" content="2021-01-29T16:20:46.000Z">
-<meta property="article:modified_time" content="2021-01-29T16:22:58.253Z">
+<meta property="article:modified_time" content="2021-09-21T01:01:47.040Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-split-horizon.png">
+<meta name="twitter:image" content="https://pic1.zhimg.com/50/v2-741bf9ec4b38b684e3a4a30443e75706_720w.jpg?source=1940ef5c">
 
 
 
@@ -378,7 +386,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  5.8k
+                  4.5k
                 </span>
               
 
@@ -394,7 +402,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  20
+                  15
                 </span>
               
             </div>
@@ -415,81 +423,96 @@
       
 
       
-        <h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2><p>为什么要分库分表（设计高并发系统的时候，数据库层面该如何设计）？用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？你们具体是如何对数据库如何进行垂直拆分或水平拆分的？</p>
-<h2 id="面试官心理分析"><a href="#面试官心理分析" class="headerlink" title="面试官心理分析"></a>面试官心理分析</h2><p>其实这块肯定是扯到<strong>高并发</strong>了，因为分库分表一定是为了<strong>支撑高并发、数据量大</strong>两个问题的。而且现在说实话，尤其是互联网类的公司面试，基本上都会来这么一下，分库分表如此普遍的技术问题，不问实在是不行，而如果你不知道那也实在是说不过去！</p>
-<h2 id="面试题剖析"><a href="#面试题剖析" class="headerlink" title="面试题剖析"></a>面试题剖析</h2><h3 id="为什么要分库分表？（设计高并发系统的时候，数据库层面该如何设计？）"><a href="#为什么要分库分表？（设计高并发系统的时候，数据库层面该如何设计？）" class="headerlink" title="为什么要分库分表？（设计高并发系统的时候，数据库层面该如何设计？）"></a>为什么要分库分表？（设计高并发系统的时候，数据库层面该如何设计？）</h3><p>说白了，分库分表是两回事儿，大家可别搞混了，可能是光分库不分表，也可能是光分表不分库，都有可能。</p>
-<p>我先给大家抛出来一个场景。</p>
-<p>假如我们现在是一个小创业公司（或者是一个 BAT 公司刚兴起的一个新部门），现在注册用户就 20 万，每天活跃用户就 1 万，每天单表数据量就 1000，然后高峰期每秒钟并发请求最多就 10。天，就这种系统，随便找一个有几年工作经验的，然后带几个刚培训出来的，随便干干都可以。</p>
-<p>结果没想到我们运气居然这么好，碰上个 CEO 带着我们走上了康庄大道，业务发展迅猛，过了几个月，注册用户数达到了 2000 万！每天活跃用户数 100 万！每天单表数据量 10 万条！高峰期每秒最大请求达到 1000！同时公司还顺带着融资了两轮，进账了几个亿人民币啊！公司估值达到了惊人的几亿美金！这是小独角兽的节奏！</p>
-<p>好吧，没事，现在大家感觉压力已经有点大了，为啥呢？因为每天多 10 万条数据，一个月就多 300 万条数据，现在咱们单表已经几百万数据了，马上就破千万了。但是勉强还能撑着。高峰期请求现在是 1000，咱们线上部署了几台机器，负载均衡搞了一下，数据库撑 1000QPS 也还凑合。但是大家现在开始感觉有点担心了，接下来咋整呢……</p>
-<p>再接下来几个月，我的天，CEO 太牛逼了，公司用户数已经达到 1 亿，公司继续融资几十亿人民币啊！公司估值达到了惊人的几十亿美金，成为了国内今年最牛逼的明星创业公司！天，我们太幸运了。</p>
-<p>但是我们同时也是不幸的，因为此时每天活跃用户数上千万，每天单表新增数据多达 50 万，目前一个表总数据量都已经达到了两三千万了！扛不住啊！数据库磁盘容量不断消耗掉！高峰期并发达到惊人的 <code>5000~8000</code>！别开玩笑了，哥。我跟你保证，你的系统支撑不到现在，已经挂掉了！</p>
-<p>好吧，所以你看到这里差不多就理解分库分表是怎么回事儿了，实际上这是跟着你的公司业务发展走的，你公司业务发展越好，用户就越多，数据量越大，请求量越大，那你单个数据库一定扛不住。</p>
-<h4 id="分表"><a href="#分表" class="headerlink" title="分表"></a>分表</h4><p>比如你单表都几千万数据了，你确定你能扛住么？绝对不行，<strong>单表数据量太大</strong>，会极大影响你的 sql <strong>执行的性能</strong>，到了后面你的 sql 可能就跑的很慢了。一般来说，就以我的经验来看，单表到几百万的时候，性能就会相对差一些了，你就得分表了。</p>
-<p>分表是啥意思？就是把一个表的数据放到多个表中，然后查询的时候你就查一个表。比如按照用户 id 来分表，将一个用户的数据就放在一个表中。然后操作的时候你对一个用户就操作那个表就好了。这样可以控制每个表的数据量在可控的范围内，比如每个表就固定在 200 万以内。</p>
-<h4 id="分库"><a href="#分库" class="headerlink" title="分库"></a>分库</h4><p>分库是啥意思？就是你一个库一般我们经验而言，最多支撑到并发 2000，一定要扩容了，而且一个健康的单库并发值你最好保持在每秒 1000 左右，不要太大。那么你可以将一个库的数据拆分到多个库中，访问的时候就访问一个库好了。</p>
-<p>这就是所谓的<strong>分库分表</strong>，为啥要分库分表？你明白了吧。</p>
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>分库分表前</th>
-<th>分库分表后</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>并发支撑情况</td>
-<td>MySQL 单机部署，扛不住高并发</td>
-<td>MySQL从单机到多机，能承受的并发增加了多倍</td>
-</tr>
-<tr>
-<td>磁盘使用情况</td>
-<td>MySQL 单机磁盘容量几乎撑满</td>
-<td>拆分为多个库，数据库服务器磁盘使用率大大降低</td>
-</tr>
-<tr>
-<td>SQL 执行性能</td>
-<td>单表数据量太大，SQL 越跑越慢</td>
-<td>单表数据量减少，SQL 执行效率明显提升</td>
-</tr>
-</tbody></table>
-<h3 id="用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？"><a href="#用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？" class="headerlink" title="用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？"></a>用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？</h3><p>这个其实就是看看你了解哪些分库分表的中间件，各个中间件的优缺点是啥？然后你用过哪些分库分表的中间件。</p>
-<p>比较常见的包括：</p>
+        <p>作者：是Yes呀<br>链接：<a href="https://www.zhihu.com/question/459955079/answer/1949098113" target="_blank" rel="noopener">https://www.zhihu.com/question/459955079/answer/1949098113</a><br>来源：知乎<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+<p>是这样的。</p>
+<p>随着用户量的激增和时间的堆砌，存在数据库里面的数据越来越多，此时的数据库就会产生瓶颈，出现资源报警、查询慢等场景。</p>
+<p>首先单机数据库所能承载的连接数、I/O及网络的吞吐等都是有限的，所以当并发量上来了之后，数据库就渐渐顶不住了。</p>
+<p><img src="https://pic1.zhimg.com/50/v2-741bf9ec4b38b684e3a4a30443e75706_720w.jpg?source=1940ef5c" alt="img">)<img src="https://pic1.zhimg.com/80/v2-741bf9ec4b38b684e3a4a30443e75706_720w.jpg?source=1940ef5c" alt="img"></p>
+<p>再则，如果单表的数据量过大，查询的性能也会下降。因为数据越多 B+ 树就越高，树越高则查询 I/O 的次数就越多，那么性能也就越差。</p>
+<p>因为上述的原因，不得已就得上分库分表了。</p>
+<p>把以前存在一个数据库实例里的数据拆分成多个数据库实例，部署在不同的服务器中，<strong>这是分库</strong>。</p>
+<p>把以前存在一张表里面的数据拆分成多张表，<strong>这是分表</strong>。</p>
+<p>一般而言：</p>
 <ul>
-<li>Cobar</li>
-<li>TDDL</li>
-<li>Atlas</li>
-<li>Sharding-jdbc</li>
-<li>Mycat</li>
+<li>分表：是为了解决由于单张表数据量多大，而导致查询慢的问题。大致三、四千万行数据就得拆分，不过具体还是得看每一行的数据量大小，有些字段都很小的可能支持更多行数，有些字段大的可能一千万就顶不住了。</li>
+<li>分库：是为了解决服务器资源受单机限制，顶不住高并发访问的问题，把请求分配到多台服务器上，降低服务器压力。</li>
 </ul>
-<h4 id="Cobar"><a href="#Cobar" class="headerlink" title="Cobar"></a>Cobar</h4><p>阿里 b2b 团队开发和开源的，属于 proxy 层方案，就是介于应用服务器和数据库服务器之间。应用程序通过 JDBC 驱动访问 Cobar 集群，Cobar 根据 SQL 和分库规则对 SQL 做分解，然后分发到 MySQL 集群不同的数据库实例上执行。早些年还可以用，但是最近几年都没更新了，基本没啥人用，差不多算是被抛弃的状态吧。而且不支持读写分离、存储过程、跨库 join 和分页等操作。</p>
-<h4 id="TDDL"><a href="#TDDL" class="headerlink" title="TDDL"></a>TDDL</h4><p>淘宝团队开发的，属于 client 层方案。支持基本的 crud 语法和读写分离，但不支持 join、多表查询等语法。目前使用的也不多，因为还依赖淘宝的 diamond 配置管理系统。</p>
-<h4 id="Atlas"><a href="#Atlas" class="headerlink" title="Atlas"></a>Atlas</h4><p>360 开源的，属于 proxy 层方案，以前是有一些公司在用的，但是确实有一个很大的问题就是社区最新的维护都在 5 年前了。所以，现在用的公司基本也很少了。</p>
-<h4 id="Sharding-jdbc"><a href="#Sharding-jdbc" class="headerlink" title="Sharding-jdbc"></a>Sharding-jdbc</h4><p>当当开源的，属于 client 层方案，目前已经更名为 <a href="https://github.com/apache/incubator-shardingsphere" target="_blank" rel="noopener"><code>ShardingSphere</code></a>（后文所提到的 <code>Sharding-jdbc</code>，等同于 <code>ShardingSphere</code>）。确实之前用的还比较多一些，因为 SQL 语法支持也比较多，没有太多限制，而且截至 2019.4，已经推出到了 <code>4.0.0-RC1</code> 版本，支持分库分表、读写分离、分布式 id 生成、柔性事务（最大努力送达型事务、TCC 事务）。而且确实之前使用的公司会比较多一些（这个在官网有登记使用的公司，可以看到从 2017 年一直到现在，是有不少公司在用的），目前社区也还一直在开发和维护，还算是比较活跃，个人认为算是一个现在也<strong>可以选择的方案</strong>。</p>
-<h4 id="Mycat"><a href="#Mycat" class="headerlink" title="Mycat"></a>Mycat</h4><p>基于 Cobar 改造的，属于 proxy 层方案，支持的功能非常完善，而且目前应该是非常火的而且不断流行的数据库中间件，社区很活跃，也有一些公司开始在用了。但是确实相比于 Sharding jdbc 来说，年轻一些，经历的锤炼少一些。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>综上，现在其实建议考量的，就是 Sharding-jdbc 和 Mycat，这两个都可以去考虑使用。</p>
-<p>Sharding-jdbc 这种 client 层方案的<strong>优点在于不用部署，运维成本低，不需要代理层的二次转发请求，性能很高</strong>，但是如果遇到升级啥的需要各个系统都重新升级版本再发布，各个系统都需要<strong>耦合</strong> Sharding-jdbc 的依赖；</p>
-<p>Mycat 这种 proxy 层方案的<strong>缺点在于需要部署</strong>，自己运维一套中间件，运维成本高，但是<strong>好处在于对于各个项目是透明的</strong>，如果遇到升级之类的都是自己中间件那里搞就行了。</p>
-<p>通常来说，这两个方案其实都可以选用，但是我个人建议中小型公司选用 Sharding-jdbc，client 层方案轻便，而且维护成本低，不需要额外增派人手，而且中小型公司系统复杂度会低一些，项目也没那么多；但是中大型公司最好还是选用 Mycat 这类 proxy 层方案，因为可能大公司系统和项目非常多，团队很大，人员充足，那么最好是专门弄个人来研究和维护 Mycat，然后大量项目直接透明使用即可。</p>
-<h3 id="你们具体是如何对数据库如何进行垂直拆分或水平拆分的？"><a href="#你们具体是如何对数据库如何进行垂直拆分或水平拆分的？" class="headerlink" title="你们具体是如何对数据库如何进行垂直拆分或水平拆分的？"></a>你们具体是如何对数据库如何进行垂直拆分或水平拆分的？</h3><p><strong>水平拆分</strong>的意思，就是把一个表的数据给弄到多个库的多个表里去，但是每个库的表结构都一样，只不过每个库表放的数据是不同的，所有库表的数据加起来就是全部数据。水平拆分的意义，就是将数据均匀放更多的库里，然后用多个库来扛更高的并发，还有就是用多个库的存储容量来进行扩容。</p>
-<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-split-horizon.png" alt="database-split-horizon"></p>
-<p><strong>垂直拆分</strong>的意思，就是<strong>把一个有很多字段的表给拆分成多个表</strong>，<strong>或者是多个库上去</strong>。每个库表的结构都不一样，每个库表都包含部分字段。一般来说，会<strong>将较少的访问频率很高的字段放到一个表里去</strong>，然后<strong>将较多的访问频率很低的字段放到另外一个表里去</strong>。因为数据库是有缓存的，你访问频率高的行字段越少，就可以在缓存里缓存更多的行，性能就越好。这个一般在表层面做的较多一些。</p>
-<p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-split-vertically.png" alt="database-split-vertically"></p>
-<p>这个其实挺常见的，不一定我说，大家很多同学可能自己都做过，把一个大表拆开，订单表、订单支付表、订单商品表。</p>
-<p>还有<strong>表层面的拆分</strong>，就是分表，将一个表变成 N 个表，就是<strong>让每个表的数据量控制在一定范围内</strong>，保证 SQL 的性能。否则单表数据量越大，SQL 性能就越差。一般是 200 万行左右，不要太多，但是也得看具体你怎么操作，也可能是 500 万，或者是 100 万。你的SQL越复杂，就最好让单表行数越少。</p>
-<p>好了，无论分库还是分表，上面说的那些数据库中间件都是可以支持的。就是基本上那些中间件可以做到你分库分表之后，<strong>中间件可以根据你指定的某个字段值</strong>，比如说 userid，<strong>自动路由到对应的库上去，然后再自动路由到对应的表里去</strong>。</p>
-<p>你就得考虑一下，你的项目里该如何分库分表？一般来说，垂直拆分，你可以在表层面来做，对一些字段特别多的表做一下拆分；水平拆分，你可以说是并发承载不了，或者是数据量太大，容量承载不了，你给拆了，按什么字段来拆，你自己想好；分表，你考虑一下，你如果哪怕是拆到每个库里去，并发和容量都 ok 了，但是每个库的表还是太大了，那么你就分表，将这个表分开，保证每个表的数据量并不是很大。</p>
-<p>而且这儿还有两种<strong>分库分表的方式</strong>：</p>
+<p><strong>顺着这个思路，再接着追问几个常见面试题。</strong></p>
+<h2 id="你们一般怎么分库的？"><a href="#你们一般怎么分库的？" class="headerlink" title="你们一般怎么分库的？"></a><strong>你们一般怎么分库的？</strong></h2><p>一般分库都是按照业务划分的，比如订单库、用户库等等。</p>
+<p>有时候会针对一些特殊的库再作切分，比如一些活动相关的库都做了拆分。</p>
+<p>因为做活动的时候并发可能会比较高，怕影响现有的核心业务，所以即使有关联，也会单独做拆分。</p>
+<p><img src="https://pic1.zhimg.com/50/v2-efad5dff9fe449ce992f642af56643e2_720w.jpg?source=1940ef5c" alt="img">)<img src="https://pic1.zhimg.com/80/v2-efad5dff9fe449ce992f642af56643e2_720w.jpg?source=1940ef5c" alt="img"></p>
+<h2 id="那你觉得分库会带来什么问题呢？"><a href="#那你觉得分库会带来什么问题呢？" class="headerlink" title="那你觉得分库会带来什么问题呢？"></a><strong>那你觉得分库会带来什么问题呢？</strong></h2><blockquote>
+<p> 首先是<strong>事务</strong>的问题。</p>
+</blockquote>
+<p>我们使用关系型数据库，有很大一点在于它保证事务完整性。</p>
+<p>而分库之后单机事务就用不上了，必须使用分布式事务来解决，而分布式事务基本的都是残缺的(我之前文章把分布式事务汇总了一波，后台搜索分布式事务就有了)。</p>
+<p>这是很重要的一点需要考虑。</p>
+<blockquote>
+<p> 连表 JOIN 问题</p>
+</blockquote>
+<p>在一个库中的时候我们还可以利用 JOIN 来连表查询，而跨库了之后就无法使用 JOIN 了。</p>
+<p>此时的解决方案就是<strong>在业务代码中进行关联</strong>，也就是先把一个表的数据查出来，然后通过得到的结果再去查另一张表，然后利用代码来关联得到最终的结果。</p>
+<p>这种方式实现起来稍微比较复杂，不过也是可以接受的。</p>
+<p>还有可以<strong>适当的冗余一些字段</strong>。比如以前的表就存储一个关联 ID，但是业务时常要求返回对应的 Name 或者其他字段。这时候就可以把这些字段冗余到当前表中，来去除需要关联的操作。</p>
+<h2 id="那你们怎么分表的？"><a href="#那你们怎么分表的？" class="headerlink" title="那你们怎么分表的？"></a><strong>那你们怎么分表的？</strong></h2><p>分表其实有两种：</p>
 <ul>
-<li>一种是按照 range 来分，就是每个库一段连续的数据，这个一般是按比如<strong>时间范围</strong>来的，但是这种一般较少用，因为很容易产生热点问题，大量的流量都打在最新的数据上了。</li>
-<li>或者是按照某个字段 hash 一下均匀分散，这个较为常用。</li>
+<li>垂直分表</li>
+<li>水平分表</li>
 </ul>
-<p>range 来分，好处在于说，扩容的时候很简单，因为你只要预备好，给每个月都准备一个库就可以了，到了一个新的月份的时候，自然而然，就会写新的库了；缺点，但是大部分的请求，都是访问最新的数据。实际生产用 range，要看场景。</p>
-<p>hash 分发，好处在于说，可以平均分配每个库的数据量和请求压力；坏处在于说扩容起来比较麻烦，会有一个数据迁移的过程，之前的数据需要重新计算 hash 值重新分配到不同的库或表。</p>
-<h2 id="面试题-1"><a href="#面试题-1" class="headerlink" title="面试题"></a>面试题</h2><p>现在有一个未分库分表的系统，未来要分库分表，如何设计才可以让系统从未分库分表<strong>动态切换</strong>到分库分表上？</p>
-<h2 id="面试官心理分析-1"><a href="#面试官心理分析-1" class="headerlink" title="面试官心理分析"></a>面试官心理分析</h2><p>你看看，你现在已经明白为啥要分库分表了，你也知道常用的分库分表中间件了，你也设计好你们如何分库分表的方案了（水平拆分、垂直拆分、分表），那问题来了，你接下来该怎么把你那个单库单表的系统给迁移到分库分表上去？</p>
+<p>垂直分表，来看个图，很直观：</p>
+<p><img src="https://pic1.zhimg.com/50/v2-dbc1ed1bdeef9639d4f51505e9646b10_720w.jpg?source=1940ef5c" alt="img">)<img src="https://pic1.zhimg.com/80/v2-dbc1ed1bdeef9639d4f51505e9646b10_720w.jpg?source=1940ef5c" alt="img"></p>
+<p><strong>垂直分表</strong>就是把一些不常用的大字段剥离出去。</p>
+<p>像上面的例子：用户名是很常见的搜索结果，性别和年龄占用的空间又不大，而地址和个人简介占用的空间相对而言就较大，我们都知道一个数据页的空间是有限的，把一些无用的数据拆分出去，一页就能存放更多行的数据。</p>
+<p>内存存放更多有用的数据，就减少了磁盘的访问次数，性能就得到提升。</p>
+<p><strong>水平分表</strong>，则是因为一张表内的数据太多了，上文也提到了数据越多 B+ 树就越高，访问的性能就差，所以进行水平拆分。</p>
+<p><img src="https://pic1.zhimg.com/50/v2-514aa1e4cfeaf8edf887e90e11991c11_720w.jpg?source=1940ef5c" alt="img">)<img src="https://pic1.zhimg.com/80/v2-514aa1e4cfeaf8edf887e90e11991c11_720w.jpg?source=1940ef5c" alt="img"></p>
+<p>其实不管这些，浅显的理解下，在一百个数据里面找一个数据快，还是在一万个数据里面找一个数据快？</p>
+<p>即使有索引，那厚的书目录多，翻目录也慢~</p>
+<h2 id="那分表会有什么问题？"><a href="#那分表会有什么问题？" class="headerlink" title="那分表会有什么问题？"></a><strong>那分表会有什么问题？</strong></h2><p>垂直分表还好，就是需要关联一下，而水平分表就有点麻烦了。</p>
+<blockquote>
+<p> 排序、count、分页问题</p>
+</blockquote>
+<p>如果一个用户的数据被拆分到多个表中，那查询结果分页就不像以前单张表那样直接就能查出来了，像 count 操作也是一样的。</p>
+<p>只能由业务代码来实现或者用中间件将各表中的数据汇总、排序、分页然后返回。</p>
+<p>像 count 操作的结果其实可以缓存下来，然后每次数据增删都更新计数。</p>
+<blockquote>
+<p> 路由问题</p>
+</blockquote>
+<p>分表的路由可以分：</p>
+<ul>
+<li>Hash 路由</li>
+<li>范围路由</li>
+<li>路由表</li>
+</ul>
+<p><strong>Hash 路由</strong>，其实就是选择表中的某一列，然后进行 Hash 运算，将 Hash 运算得到的结果再对子表数进行取模，这样就能均匀的将数据分到不同的子表上。</p>
+<p>这跟 HashMap 选哪个桶是一样的原理。</p>
+<p>优点就是数据分布均匀。</p>
+<p>缺点就是增加子表的时候麻烦，想想 HashMap的扩容，是不是得搬迁数据？这个分表也是一样的，我们可都知道，数据迁移一件麻烦事！</p>
+<p><strong>范围路由</strong>，其实很简单，可以是时间，也可以是地址，表示一定的范围的即可。</p>
+<p>比如本来一张 User 表，我可以分 User_HZ、User_BJ、User_SH，按照地名来划分 User。</p>
+<p>再比如 log 表，我可以将表分为 log_202103、 log_202104，把日志按照年月来划分。</p>
+<p>优点就是相对而言比较容易扩展，比如现在来个 GZ，那就加个 User_GZ。如果到了 5 月，那就建个 log_202105。</p>
+<p>缺点就是数据可能分布不均匀，例如 BJ 的用户特别多或者某个月搞了促销，日志量特别大，等等。</p>
+<p><strong>路由表</strong>，就是专门搞个表来记录路由信息，来看个图就很清楚了。</p>
+<p><img src="https://pic3.zhimg.com/50/v2-376b651bf8433ef2bce6b2e8b438d748_720w.jpg?source=1940ef5c" alt="img">)<img src="https://pic3.zhimg.com/80/v2-376b651bf8433ef2bce6b2e8b438d748_720w.jpg?source=1940ef5c" alt="img"></p>
+<p>从图中我们就能得知，UserID 为 2 的用户数据在要去 User_3 这个用户表查询。</p>
+<p>优点就是灵活咯，如果要迁移数据，直接迁移然后路由表一改就完事儿了~</p>
+<p>缺点就是得多查一次，每次查询都需要访问路由表，不过这个一般会做缓存的。</p>
+<blockquote>
+<p> 全局主键问题</p>
+</blockquote>
+<p>以前单表的时候很简单，就是主键自增，现在分表了之后就有点尴尬了。</p>
+<p>所以需要一些手段来保证全局主键唯一。</p>
+<ol>
+<li>还是自增，只不过自增步长设置一下。比如现在有三张表，步长设置为3，三张表 ID 初始值分别是1、2、3。 这样第一张表的 ID 增长是 1、4、7。第二张表是2、5、8。第三张表是3、6、9，这样就不会重复了。</li>
+<li>UUID，这种最简单，但是不连续的主键插入会导致严重的页分裂，性能比较差。</li>
+<li>分布式 ID，比较出名的就是 Twitter 开源的 sonwflake 雪花算法，具体就不展开了，不然就又是一篇文章了，简单点利用 redis 来递增也行。</li>
+</ol>
+<h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2><p>现在有一个未分库分表的系统，未来要分库分表，如何设计才可以让系统从未分库分表<strong>动态切换</strong>到分库分表上？</p>
+<h2 id="面试官心理分析"><a href="#面试官心理分析" class="headerlink" title="面试官心理分析"></a>面试官心理分析</h2><p>你看看，你现在已经明白为啥要分库分表了，你也知道常用的分库分表中间件了，你也设计好你们如何分库分表的方案了（水平拆分、垂直拆分、分表），那问题来了，你接下来该怎么把你那个单库单表的系统给迁移到分库分表上去？</p>
 <p>所以这都是一环扣一环的，就是看你有没有全流程经历过这个过程。</p>
-<h2 id="面试题剖析-1"><a href="#面试题剖析-1" class="headerlink" title="面试题剖析"></a>面试题剖析</h2><p>这个其实从 low 到高大上有好几种方案，我们都玩儿过，我都给你说一下。</p>
+<h2 id="面试题剖析"><a href="#面试题剖析" class="headerlink" title="面试题剖析"></a>面试题剖析</h2><p>这个其实从 low 到高大上有好几种方案，我们都玩儿过，我都给你说一下。</p>
 <h3 id="停机迁移方案"><a href="#停机迁移方案" class="headerlink" title="停机迁移方案"></a>停机迁移方案</h3><p>我先给你说一个最 low 的方案，就是很简单，大家伙儿凌晨 12 点开始运维，网站或者 app 挂个公告，说 0 点到早上 6 点进行运维，无法访问。</p>
 <p>接着到 0 点停机，系统停掉，没有流量写入了，此时老的单库单表数据库静止了。然后你之前得写好一个<strong>导数的一次性工具</strong>，此时直接跑起来，然后将单库单表的数据哗哗哗读出来，写到分库分表里面去。</p>
 <p>导数完了之后，就 ok 了，修改系统的数据库连接配置啥的，包括可能代码和 SQL 也许有修改，那你就用最新的代码，然后直接启动连到新的分库分表上去。</p>
@@ -502,8 +525,8 @@
 <p>导完一轮之后，有可能数据还是存在不一致，那么就程序自动做一轮校验，比对新老库每个表的每条数据，接着如果有不一样的，就针对那些不一样的，从老库读数据再次写。反复循环，直到两个库每个表的数据都完全一致为止。</p>
 <p>接着当数据完全一致了，就 ok 了，基于仅仅使用分库分表的最新代码，重新部署一次，不就仅仅基于分库分表在操作了么，还没有几个小时的停机时间，很稳。所以现在基本玩儿数据迁移之类的，都是这么干的。</p>
 <p><img src="https://gitee.com/shishan100/Java-Interview-Advanced/raw/master/images/database-shard-method-2.png" alt="database-shard-method-2"></p>
-<h2 id="面试题-2"><a href="#面试题-2" class="headerlink" title="面试题"></a>面试题</h2><p>如何设计可以动态扩容缩容的分库分表方案？</p>
-<h2 id="面试官心理分析-2"><a href="#面试官心理分析-2" class="headerlink" title="面试官心理分析"></a>面试官心理分析</h2><p>对于分库分表来说，主要是面对以下问题：</p>
+<h2 id="面试题-1"><a href="#面试题-1" class="headerlink" title="面试题"></a>面试题</h2><p>如何设计可以动态扩容缩容的分库分表方案？</p>
+<h2 id="面试官心理分析-1"><a href="#面试官心理分析-1" class="headerlink" title="面试官心理分析"></a>面试官心理分析</h2><p>对于分库分表来说，主要是面对以下问题：</p>
 <ul>
 <li>选择一个数据库中间件，调研、学习、测试；</li>
 <li>设计你的分库分表的一个方案，你要分成多少个库，每个库分成多少个表，比如 3 个库，每个库 4 个表；</li>
@@ -515,7 +538,7 @@
 <p>这个是你必须面对的一个事儿，就是你已经弄好分库分表方案了，然后一堆库和表都建好了，基于分库分表中间件的代码开发啥的都好了，测试都 ok 了，数据能均匀分布到各个库和各个表里去，而且接着你还通过双写的方案咔嚓一下上了系统，已经直接基于分库分表方案在搞了。</p>
 <p>那么现在问题来了，你现在这些库和表又支撑不住了，要继续扩容咋办？这个可能就是说你的每个库的容量又快满了，或者是你的表数据量又太大了，也可能是你每个库的写并发太高了，你得继续扩容。</p>
 <p>这都是玩儿分库分表线上必须经历的事儿。</p>
-<h2 id="面试题剖析-2"><a href="#面试题剖析-2" class="headerlink" title="面试题剖析"></a>面试题剖析</h2><h3 id="停机扩容（不推荐）"><a href="#停机扩容（不推荐）" class="headerlink" title="停机扩容（不推荐）"></a>停机扩容（不推荐）</h3><p>这个方案就跟停机迁移一样，步骤几乎一致，唯一的一点就是那个导数的工具，是把现有库表的数据抽出来慢慢倒入到新的库和表里去。但是最好别这么玩儿，有点不太靠谱，因为既然<strong>分库分表</strong>就说明数据量实在是太大了，可能多达几亿条，甚至几十亿，你这么玩儿，可能会出问题。</p>
+<h2 id="面试题剖析-1"><a href="#面试题剖析-1" class="headerlink" title="面试题剖析"></a>面试题剖析</h2><h3 id="停机扩容（不推荐）"><a href="#停机扩容（不推荐）" class="headerlink" title="停机扩容（不推荐）"></a>停机扩容（不推荐）</h3><p>这个方案就跟停机迁移一样，步骤几乎一致，唯一的一点就是那个导数的工具，是把现有库表的数据抽出来慢慢倒入到新的库和表里去。但是最好别这么玩儿，有点不太靠谱，因为既然<strong>分库分表</strong>就说明数据量实在是太大了，可能多达几亿条，甚至几十亿，你这么玩儿，可能会出问题。</p>
 <p>从单库单表迁移到分库分表的时候，数据量并不是很大，单表最大也就两三千万。那么你写个工具，多弄几台机器并行跑，1小时数据就导完了。这没有问题。</p>
 <p>如果 3 个库 + 12 个表，跑了一段时间了，数据量都 1~2 亿了。光是导 2 亿数据，都要导个几个小时，6 点，刚刚导完数据，还要搞后续的修改配置，重启系统，测试验证，10 点才可以搞完。所以不能这么搞。</p>
 <h3 id="优化后的方案"><a href="#优化后的方案" class="headerlink" title="优化后的方案"></a>优化后的方案</h3><p>一开始上来就是 32 个库，每个库 32 个表，那么总共是 1024 张表。</p>
@@ -688,7 +711,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">284</span>
+                  <span class="site-state-item-count">305</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -700,7 +723,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -747,7 +770,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题"><span class="nav-number">1.</span> <span class="nav-text">面试题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试官心理分析"><span class="nav-number">2.</span> <span class="nav-text">面试官心理分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题剖析"><span class="nav-number">3.</span> <span class="nav-text">面试题剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要分库分表？（设计高并发系统的时候，数据库层面该如何设计？）"><span class="nav-number">3.1.</span> <span class="nav-text">为什么要分库分表？（设计高并发系统的时候，数据库层面该如何设计？）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分表"><span class="nav-number">3.1.1.</span> <span class="nav-text">分表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分库"><span class="nav-number">3.1.2.</span> <span class="nav-text">分库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？"><span class="nav-number">3.2.</span> <span class="nav-text">用过哪些分库分表中间件？不同的分库分表中间件都有什么优点和缺点？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cobar"><span class="nav-number">3.2.1.</span> <span class="nav-text">Cobar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TDDL"><span class="nav-number">3.2.2.</span> <span class="nav-text">TDDL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Atlas"><span class="nav-number">3.2.3.</span> <span class="nav-text">Atlas</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sharding-jdbc"><span class="nav-number">3.2.4.</span> <span class="nav-text">Sharding-jdbc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mycat"><span class="nav-number">3.2.5.</span> <span class="nav-text">Mycat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">3.2.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#你们具体是如何对数据库如何进行垂直拆分或水平拆分的？"><span class="nav-number">3.3.</span> <span class="nav-text">你们具体是如何对数据库如何进行垂直拆分或水平拆分的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题-1"><span class="nav-number">4.</span> <span class="nav-text">面试题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试官心理分析-1"><span class="nav-number">5.</span> <span class="nav-text">面试官心理分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题剖析-1"><span class="nav-number">6.</span> <span class="nav-text">面试题剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#停机迁移方案"><span class="nav-number">6.1.</span> <span class="nav-text">停机迁移方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双写迁移方案"><span class="nav-number">6.2.</span> <span class="nav-text">双写迁移方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题-2"><span class="nav-number">7.</span> <span class="nav-text">面试题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试官心理分析-2"><span class="nav-number">8.</span> <span class="nav-text">面试官心理分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题剖析-2"><span class="nav-number">9.</span> <span class="nav-text">面试题剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#停机扩容（不推荐）"><span class="nav-number">9.1.</span> <span class="nav-text">停机扩容（不推荐）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化后的方案"><span class="nav-number">9.2.</span> <span class="nav-text">优化后的方案</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#你们一般怎么分库的？"><span class="nav-number">1.</span> <span class="nav-text">你们一般怎么分库的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#那你觉得分库会带来什么问题呢？"><span class="nav-number">2.</span> <span class="nav-text">那你觉得分库会带来什么问题呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#那你们怎么分表的？"><span class="nav-number">3.</span> <span class="nav-text">那你们怎么分表的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#那分表会有什么问题？"><span class="nav-number">4.</span> <span class="nav-text">那分表会有什么问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题"><span class="nav-number">5.</span> <span class="nav-text">面试题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试官心理分析"><span class="nav-number">6.</span> <span class="nav-text">面试官心理分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题剖析"><span class="nav-number">7.</span> <span class="nav-text">面试题剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#停机迁移方案"><span class="nav-number">7.1.</span> <span class="nav-text">停机迁移方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双写迁移方案"><span class="nav-number">7.2.</span> <span class="nav-text">双写迁移方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题-1"><span class="nav-number">8.</span> <span class="nav-text">面试题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试官心理分析-1"><span class="nav-number">9.</span> <span class="nav-text">面试官心理分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试题剖析-1"><span class="nav-number">10.</span> <span class="nav-text">面试题剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#停机扩容（不推荐）"><span class="nav-number">10.1.</span> <span class="nav-text">停机扩容（不推荐）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化后的方案"><span class="nav-number">10.2.</span> <span class="nav-text">优化后的方案</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -797,7 +820,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共566.1k字</span>
+  <span class="post-count">博客全站共644.9k字</span>
 </div>
 
         
