@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 前面我写了很多Mysql相关的知识点，到这一篇稍微可以串一下了，从SQL执行流程、MVCC到锁，很多时候可能觉得对于间隙锁和Next-Key Lock好像已经理解了，但是好像又觉得理解差那么一点意思，这篇文章从头来梳理一下概念，明确一下这些知识。 锁首先，对于Mysql来说实现了两种行级锁： 共享锁：允许事务读一行数据，一般记为S，也称为读锁 排他锁：允许事务删除或者更新一行数据，一般">
+<meta property="og:type" content="article">
+<meta property="og:title" content="幻读、间隙锁">
+<meta property="og:url" content="http://aamingaa.github.io/2021/09/21/%E5%B9%BB%E8%AF%BB%E3%80%81%E9%97%B4%E9%9A%99%E9%94%81/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 前面我写了很多Mysql相关的知识点，到这一篇稍微可以串一下了，从SQL执行流程、MVCC到锁，很多时候可能觉得对于间隙锁和Next-Key Lock好像已经理解了，但是好像又觉得理解差那么一点意思，这篇文章从头来梳理一下概念，明确一下这些知识。 锁首先，对于Mysql来说实现了两种行级锁： 共享锁：允许事务读一行数据，一般记为S，也称为读锁 排他锁：允许事务删除或者更新一行数据，一般">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkYpposNibwibwEAfBNVEaRLHAPMau2tSNVpfjxu38mghDvxl50YT8Iedw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySk4NHcZLgVuFV5mOfDt0cgj4yZ2sM4D6lzbrsXzc1t4lpW4RTDaibia2nA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkvtgVlibPtB55pmQlNArZ5ickANpAibGDEhObQK7qpJq1Ya85wDpAgxkXg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkHIjlmLjlfw5JyGm3moXgEGNVYLG71UZBZCRW75LQfq9hD2GTVxtnFQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkuzHKb4X3aMgibQDWnZARBKHHJicd4CSm7QDpG0dqy4O2f0T3M2a17JhQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkkyZ00jWn60a21tQCvqnskyWDAicfRNwMJE4LicDf7jOHcA1gUz6XyNibQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkx0IRZnTOg3zXDKBtDqokV7cAu9JV0OxYYJnpqqKP5WvP8j3VCoHtng/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkjX90EuUIp2mX19NvqArMqKULB9fPNbJtWJ8LzvVeRBwLHA3Gu9Maqg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="article:published_time" content="2021-09-21T07:00:00.000Z">
+<meta property="article:modified_time" content="2021-09-21T07:01:18.020Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkYpposNibwibwEAfBNVEaRLHAPMau2tSNVpfjxu38mghDvxl50YT8Iedw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/09/21/幻读、间隙锁/"/>
+
+
+
+
+
+  <title>幻读、间隙锁 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/09/21/%E5%B9%BB%E8%AF%BB%E3%80%81%E9%97%B4%E9%9A%99%E9%94%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">幻读、间隙锁</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-21T15:00:00+08:00">
+                2021-09-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<p>前面我写了很多Mysql相关的知识点，到这一篇稍微可以串一下了，从SQL执行流程、MVCC到锁，很多时候可能觉得对于间隙锁和Next-Key Lock好像已经理解了，但是好像又觉得理解差那么一点意思，这篇文章从头来梳理一下概念，明确一下这些知识。</p>
+<h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><p>首先，对于Mysql来说实现了两种行级锁：</p>
+<p><strong>共享锁</strong>：允许事务读一行数据，一般记为S，也称为读锁</p>
+<p><strong>排他锁</strong>：允许事务删除或者更新一行数据，一般记为X，也称为写锁</p>
+<p>关于读写锁的互斥性，应该都很清楚，读锁只能和读锁兼容，其他场景都无法兼容，这里不再赘述吧。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkYpposNibwibwEAfBNVEaRLHAPMau2tSNVpfjxu38mghDvxl50YT8Iedw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h1 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h1><p>继续回顾下关于Mysql的4个隔离级别：</p>
+<p><strong>读未提交Read Uncommitted</strong>：能读到其他事务还没有提交的数据，这种现象叫做脏读。</p>
+<p><strong>读已提交Read Committed</strong>：只会读取其他事务已经提交的数据，所以不会产生RC的脏读问题。所以又带来一个问题叫做不可重复读，一个事务中两次一样的SQL查询可能查到的结果不一样。</p>
+<p><strong>可重复读Repeatable Read</strong>：RR是Mysql的默认隔离级别，一个事务中两次SQL查询总是会查到一样的结果，不存在不可重复读的问题，但是还是会有幻读的问题。</p>
+<p><strong>串行Serializable</strong>：串行场景没有任何问题，完全串行化的操作，读加读锁，写加写锁。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySk4NHcZLgVuFV5mOfDt0cgj4yZ2sM4D6lzbrsXzc1t4lpW4RTDaibia2nA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h1 id="幻读、Next-Key-Lock、MVCC"><a href="#幻读、Next-Key-Lock、MVCC" class="headerlink" title="幻读、Next-Key Lock、MVCC"></a>幻读、Next-Key Lock、MVCC</h1><p>简单的回顾完了基础，那么我们看看RR级别下还会存在的幻读到底是什么问题，Mysql官方文档这样描述的：</p>
+<blockquote>
+<p>The so-called phantom problem occurs within a transaction when the same query produces different sets of rows at different times. For example, if a <code>SELECT</code> is executed twice, but returns a row the second time that was not returned the first time, the row is a “phantom” row.</p>
+</blockquote>
+<p>翻译过来就是，幻读指的是同一事务下，不同的时间点，同样的查询，得到不同的行记录的集合。</p>
+<p>如果说一个<code>select</code>执行了两次，但是第二次比第一次多出来行记录，这就是幻读。</p>
+<p>所以，对于幻读来说那一定是新增插入的数据！</p>
+<p>比如说在一个事务内，先查询<code>select * from user where age=10 for update</code>，得到的结果是id为[1,2,3]的记录，再次执行查询，得到了结果为[1,2,3,4]的记录，这是幻读。</p>
+<p>那怎么解决幻读的问题？以前我在文章里说解决幻读的原理是MVCC（<a href="https://mp.weixin.qq.com/s?__biz=MzkzNTEwOTAxMA==&mid=2247489415&idx=1&sn=8abd08678fd291b9e0980e254356e106&chksm=c2b25f7af5c5d66c096cb8894c23e02fa860a3f7d31260ce95a8af2691b768ba23cdec3dfa07&token=1806387343&lang=zh_CN&scene=21#wechat_redirect" target="_blank" rel="noopener">MVCC原理看这里</a>）很多网上的文章也有这么写的，其实不能说错，但是肯定也是不太对的，准确地来说应该是通过MVCC+Next-Key Lock的方式才解决了幻读的问题。</p>
+<p>对于MVCC中的读可以分为两种，分别叫做<strong>快照读</strong>和<strong>当前读</strong>(这个当前读的说法我在书里翻了半天也没有找到，但是看网上一堆资料和大佬都叫当前读，那么我们就叫当前读吧，你知道的话可以告诉我哪本书有这个称呼，Mysql我只看见Lock reading或者锁定读的叫法，有的也说锁定读就是当前读，但是并没有找到当前读这种称呼的出处在哪儿)。</p>
+<p><strong>快照读</strong>就是简单的<code>select</code>查询，查询的都是快照版本，这个场景下因为都是基于MVCC来查询快照的某个版本，所以不会存在幻读的问题，也可以认为是解决了幻读的方案之一，对于RC级别来说，因为每次查询都重新生成一个read view，也就是查询的都是最新的快照数据，所以会可能每次查询到不一样的数据，造成不可重复读，而对于RR级别来说只有第一次的时候生成read view，查询的是事务开始的时候的快照数据，所以就不存在不可重复读的问题，当然就更不可能有幻读的问题了。</p>
+<p>所以，现在我们说幻读，其实不是指快照读的场景，而是指的是当前读的场景。</p>
+<p><strong>当前读</strong>指的是<code>lock in share mode</code>、<code>for update</code> 、<code>insert</code>、<code>update</code>、<code>delete</code>这些需要加锁的操作。对于MVCC来说就是解决的快照读的场景，而对于当前读那么就是Next-Key Lock要解决的事情。</p>
+<p>那么Next-Key Lock是什么？怎么解决的幻读？</p>
+<p>行锁有写锁X和读锁S两种，实际上行锁有3种实现算法，Next-Key Lock是其中之一。</p>
+<p>第一种叫做<strong>Record Lock</strong>，字面意思，行记录的锁，实际上指的是对索引记录的锁定。</p>
+<p>比如执行语句<code>select * from user where age=10 for update</code>，将会锁住<code>user</code>表所有<code>age=10</code>的行记录，所有对<code>age=10</code>的记录的操作都会被阻塞。</p>
+<p>第二种都比较熟悉，叫做<strong>Gap Lock</strong>，也就是<strong>间隙锁</strong>，它用于锁定的索引之间的间隙，但是不会包含记录本身。</p>
+<p>比如语句<code>select * from user where age&gt;1 and age&lt;10 for update</code>，将会锁住<code>age</code>在(1,10)的范围区间，此时其他事务对该区间的操作都会被阻塞。</p>
+<p>间隙锁是可重复读RR隔离级别下特有的，另外还有几种场景也会不使用间隙锁。</p>
+<ol>
+<li>事务隔离级别设置为读已提交RC ，这样肯定没有间隙锁了。</li>
+<li><code>Innodb_locks_unsafe_for_binlog</code>设置为1</li>
+<li>另外一种情况适用于<strong>主键索引或者唯一索引</strong>的等值查询条件，比如<code>select * from user where id=1</code>，<code>id</code>是主键索引，这样只使用Record Lock就可以了，因为能唯一锁定一条记录，所以没有必要再加间隙锁了，这是锁降级的过程。</li>
+</ol>
+<p>而第三种<strong>Next-Key Lock</strong>实际上就是相当于Record Lock+Gap Lock的组合。比如索引有10，20，30几个值，那么被锁住的区间可能会是(-∞,10]，(10,20]，(20,30]，(30,+∞)。</p>
+<h1 id="解决幻读"><a href="#解决幻读" class="headerlink" title="解决幻读"></a>解决幻读</h1><p>上一篇关于<a href="https://mp.weixin.qq.com/s?__biz=MzkzNTEwOTAxMA==&mid=2247493358&idx=1&sn=eaa4990b314660e30f29ee4c642564e3&chksm=c2b1ae13f5c627056b6cc4d50be8ec8443d37f5e80ac4da980ca145e0c232587fa13fbef02f9&token=1806387343&lang=zh_CN&scene=21#wechat_redirect" target="_blank" rel="noopener">更新SQL执行过程</a>我们已经对这个基础有了一定的了解，在这里我们去掉和这里内容无关的一些日志的细节，把给数据加锁的流程加入进去，这样通过SQL执行可以更好地理解Next-Key Lock到底是如何解决幻读的，执行过程如下：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkvtgVlibPtB55pmQlNArZ5ickANpAibGDEhObQK7qpJq1Ya85wDpAgxkXg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<ol>
+<li>首先第一步Server层会来查询数据</li>
+<li>存储引擎根据查询条件查到数据之后对数据进行加锁，Record Lock或者间隙锁，然后返回数据</li>
+<li>Server层拿到数据之后调用API去存储引擎更新数据</li>
+<li>最后存储引擎返回结果，流程结束</li>
+</ol>
+<p>搞一张表说明一下，<code>user</code>表有4个字段，<code>id</code>是主键索引，<code>name</code>是唯一索引，<code>age</code>是普通索引，<code>city</code>没有索引，然后插入一些测试数据，下面区分一下几种情况来说明是怎么加Next-Key Lock的，然后就知道为啥会没有幻读的问题了。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkHIjlmLjlfw5JyGm3moXgEGNVYLG71UZBZCRW75LQfq9hD2GTVxtnFQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h3 id="没有索引"><a href="#没有索引" class="headerlink" title="没有索引"></a>没有索引</h3><p>更新语句<code>update user set city=&#39;nanjing&#39; where city=&#39;wuhan&#39;</code>会发生什么？</p>
+<p>因为<code>city</code>是没有索引的，所以存储引擎只能给所有的记录都加上锁，然后把数据都返回给Server层，然后Server层把<code>city</code>改成<code>nanjing</code>，再更新数据。</p>
+<p>因此，首先Record Lock会锁住现有的7条记录，间隙锁则会对主键索引的间隙全部加上间隙锁。</p>
+<p>所以，更新的时候没有索引是非常可怕的一件事情，相当于把整个表都给锁了，那表都给锁了当然不存在幻读了。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkuzHKb4X3aMgibQDWnZARBKHHJicd4CSm7QDpG0dqy4O2f0T3M2a17JhQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h3 id="普通索引"><a href="#普通索引" class="headerlink" title="普通索引"></a>普通索引</h3><p>我们再假设一个语句<code>select * from user where age=20 for update</code>。</p>
+<p>因为<code>age</code>是一个普通索引，存储引擎根据条件过滤查到所有匹配<code>age=20</code>的记录，给他们加上写锁，间隙锁会加在(10,20)，(20,30)的区间上，因此现在无论怎样都无法插入<code>age=20</code>的记录了</p>
+<p>为什么要锁定这两个区间？如果不锁定这两个区间的话，那么还能插入比如<code>id=11,age=20</code>或者<code>id=21,age=20</code>的记录，这样就存在幻读了。</p>
+<p>（那实际上写锁不光是在会加在<code>age</code>普通索引上，还会加在主键索引上，因为数据都是在主键索引下对吧，这个肯定也要加锁的，为了看起来简单点，就不画出来了）</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkkyZ00jWn60a21tQCvqnskyWDAicfRNwMJE4LicDf7jOHcA1gUz6XyNibQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h3 id="唯一-amp-主键索引"><a href="#唯一-amp-主键索引" class="headerlink" title="唯一&amp;主键索引"></a>唯一&amp;主键索引</h3><p>如果查询的是唯一索引又会发生什么呢？比如有查询语句<code>select * from user where name=&#39;b&#39; for update</code>。</p>
+<p>上面我们提到过，如果是唯一索引或者主键索引的话，并且是等值查询，实际上会发生锁降级，降级为Record Lock，就不会有间隙锁了。</p>
+<p>因为主键或者唯一索引能保证值是唯一的，所以也就不需要再增加间隙锁了。</p>
+<p>很显然，是无法插入<code>name=b</code>的的记录的，也不存在幻读问题。</p>
+<p>如果是范围查询比如<code>id&gt;1 and id&lt;11</code>呢，实际上也是一样的锁定方式，不再赘述。</p>
+<p>相比稍微有点不同的是上面也说过，唯一索引不光锁定唯一索引，还会锁定主键索引，主键索引的话只要索引主键索引就行了。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkx0IRZnTOg3zXDKBtDqokV7cAu9JV0OxYYJnpqqKP5WvP8j3VCoHtng/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>那最后说了这么多，RR级别下不是都已经解决了幻读的问题吗，怎么还说有幻读的问题呢？</p>
+<p>关于这个问题，可以看看这个报出的BUG<a href="https://bugs.mysql.com/bug.php?id=63870，回复说了这不是BUG，这是符合隔离规范的设计，有兴趣的自己看看吧。" target="_blank" rel="noopener">https://bugs.mysql.com/bug.php?id=63870，回复说了这不是BUG，这是符合隔离规范的设计，有兴趣的自己看看吧。</a></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibBMVuDfkZUk3LU3iaMoGwm17ybSQxRySkjX90EuUIp2mX19NvqArMqKULB9fPNbJtWJ8LzvVeRBwLHA3Gu9Maqg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><a href="https://mp.weixin.qq.com/s/6jPUAKzyxceqWe-sR9NPrQ" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/6jPUAKzyxceqWe-sR9NPrQ</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/13/%E9%80%92%E5%BD%92%E6%9F%A5%E8%AF%A2/" rel="next" title="递归查询">
+                <i class="fa fa-chevron-left"></i> 递归查询
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/10/24/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="prev" title="go设计模式">
+                go设计模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">313</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#锁"><span class="nav-number">1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隔离级别"><span class="nav-number">2.</span> <span class="nav-text">隔离级别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#幻读、Next-Key-Lock、MVCC"><span class="nav-number">3.</span> <span class="nav-text">幻读、Next-Key Lock、MVCC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决幻读"><span class="nav-number">4.</span> <span class="nav-text">解决幻读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#没有索引"><span class="nav-number">4.0.1.</span> <span class="nav-text">没有索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#普通索引"><span class="nav-number">4.0.2.</span> <span class="nav-text">普通索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#唯一-amp-主键索引"><span class="nav-number">4.0.3.</span> <span class="nav-text">唯一&amp;主键索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共676.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

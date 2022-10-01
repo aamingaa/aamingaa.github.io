@@ -88,7 +88,7 @@
 <meta property="og:image" content="http://aamingaa.github.io/2021/09/07/task-struct%E5%89%96%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210907104329851.png">
 <meta property="og:image" content="https://img-blog.csdn.net/20161020143931972?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
 <meta property="article:published_time" content="2021-09-07T02:37:02.000Z">
-<meta property="article:modified_time" content="2021-09-07T03:32:21.358Z">
+<meta property="article:modified_time" content="2021-09-23T02:53:21.127Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aamingaa.github.io/2021/09/07/task-struct%E5%89%96%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210907104329851.png">
@@ -376,7 +376,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  856
+                  793
                 </span>
               
 
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  2
                 </span>
               
             </div>
@@ -418,7 +418,7 @@
 <p>mm指向进程的虚拟内存，files指向一个数组，装载进程打开文件的指针。ffiles【0】标准输入，files【1】标准输出，files【2】标准错误输出。如果需要其他资源，比如打开一个文件进行读写，就进行一个系统调用，让内核把文件打开，放到files【4】。</p>
 <p>对于一个进程的线程来说，他们的mm和files都指向同一个区域。</p>
 <p>fork会创建一个task_struct的结构体，代表子进程。并为他分配进程所需要的信息。由于fork采用写时复制，在子进程没开始写的时候，子进程的task中指向内存资源的指针的指向和父进程相同。当开始写的时候，操作系统才copy资源给子进程，然后将子进程的task_struct的指针重新指向新的内存资源</p>
-<p> fork()是内核程序创建进程的一种方式（其他还有vfork()和clone()方法），由fork()创建的新进程被称为子进程（child process）。需要特别注意的是：该函数被调用一次，但返回两次。两次分别返回父进程和子进程。子进程的返回的是0（内核代码中设定的为0），而父进程返回的是子进程的进程PID。父进程和子进程共享代码段，但是分别拥有自己的数据段和堆栈段。一个进程的子进程可以不止一个。对子进程来说，之所以fork返回0给它，是因为它随时可以调用getpid()来获取自己的PID；也可以调用getppid()来获取父进程的PID。<br>        fork之后，操作系统会拷贝出一个与父进程完全相同的子进程，这两个进程共享代码段空间，但是数据段是互相独立的，子进程数据空间中的内容是父进程的完整拷贝，指令指针也完全相同，子进程</p>
+<p>  在fork之后exec之前两个进程用的是相同的物理空间（内存区），子进程的代码段、数据段、堆栈都是指向父进程的物理空间，也就是说，两者的虚拟空间不同，但其对应的物理空间是同一个。当父子进程中有更改相应段的行为发生时，再为子进程相应的段分配物理空间，如果不是因为exec，内核会给子进程的数据段、堆栈段分配相应的物理空间（至此两者有各自的进程空间，互不影响），而代码段继续共享父进程的物理空间（两者的代码完全相同）。而如果是因为exec，由于两者执行的代码不同，子进程的代码段也会分配单独的物理空间。   </p>
 <p>task_struct是Linux内核的一种数据结构，它会被装载到RAM中并且包含着进程的信息。每个进程都把它的信息放在 task_struct 这个数据结构体，task_struct 包含了这些内容：</p>
 <p>(1)标示符 ： 描述本进程的唯一标识符，用来区别其他进程。 </p>
 <p>(2)状态 ：任务状态，退出代码，退出信号等。<br>(3)优先级 ：相对于其他进程的优先级。<br>(4)程序计数器：程序中即将被执行的下一条指令的地址。<br>(5)内存指针：包括程序代码和进程相关数据的指针，还有和其他进程共享的内存块的指针。<br>(6)上下文数据：进程执行时处理器的寄存器中的数据。<br>(7) I／O状态信息：包括显示的I/O请求,分配给进程的I／O设备和被进程使用的文件列表。<br>(8) 记账信息：可能包括处理器时间总和，使用的时钟数总和，时间限制，记账号等。 </p>
@@ -539,7 +539,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-count">313</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -551,7 +551,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -603,7 +603,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -632,7 +632,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共644.9k字</span>
+  <span class="post-count">博客全站共676.6k字</span>
 </div>
 
         

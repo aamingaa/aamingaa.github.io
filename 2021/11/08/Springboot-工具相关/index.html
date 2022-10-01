@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="启动  POM文件: 12345678910111213141516171819202122232425262728293031&lt;packaging&gt;pom&lt;&#x2F;packaging&gt;&lt;properties&gt;   &lt;project.build.sourceEncoding&gt;UTF-8&lt;&#x2F;project.build.sourceE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Springboot 工具相关">
+<meta property="og:url" content="http://aamingaa.github.io/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="启动  POM文件: 12345678910111213141516171819202122232425262728293031&lt;packaging&gt;pom&lt;&#x2F;packaging&gt;&lt;properties&gt;   &lt;project.build.sourceEncoding&gt;UTF-8&lt;&#x2F;project.build.sourceE">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211108101012797.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211108101044170.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211109124140879.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211109003800094.png">
+<meta property="article:published_time" content="2021-11-08T02:08:54.000Z">
+<meta property="article:modified_time" content="2021-11-11T14:50:53.166Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://aamingaa.github.io/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211108101012797.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/11/08/Springboot-工具相关/"/>
+
+
+
+
+
+  <title>Springboot 工具相关 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Springboot 工具相关</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-08T10:08:54+08:00">
+                2021-11-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" itemprop="url" rel="index">
+                    <span itemprop="name">工具使用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><p><img src="/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211108101012797.png" alt="image-20211108101012797"></p>
+<p><img src="/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211108101044170.png" alt="image-20211108101044170"></p>
+<p>POM文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&lt;packaging&gt;pom&lt;&#x2F;packaging&gt;</span><br><span class="line">&lt;properties&gt;</span><br><span class="line">   &lt;project.build.sourceEncoding&gt;UTF-8&lt;&#x2F;project.build.sourceEncoding&gt;</span><br><span class="line">   &lt;project.reporting.outputEncoding&gt;UTF-8&lt;&#x2F;project.reporting.outputEncoding&gt;</span><br><span class="line">   &lt;java.version&gt;1.8&lt;&#x2F;java.version&gt;</span><br><span class="line"></span><br><span class="line">   &lt;mysql-connector-java.version&gt;5.1.41&lt;&#x2F;mysql-connector-java.version&gt;</span><br><span class="line">   &lt;mybatis-spring-boot-starter.version&gt;2.5.4&lt;&#x2F;mybatis-spring-boot-starter.version&gt;</span><br><span class="line">   &lt;spring-boot-starter.version&gt;2.5.4&lt;&#x2F;spring-boot-starter.version&gt;</span><br><span class="line">   &lt;mapper-spring-boot-starter.version&gt;2.1.5&lt;&#x2F;mapper-spring-boot-starter.version&gt;</span><br><span class="line">   &lt;pagehelper-spring-boot-starter.version&gt;1.2.12&lt;&#x2F;pagehelper-spring-boot-starter.version&gt;</span><br><span class="line"></span><br><span class="line">   &lt;okhttp.version&gt;4.2.2&lt;&#x2F;okhttp.version&gt;</span><br><span class="line">   &lt;jackson.version&gt;2.10.2&lt;&#x2F;jackson.version&gt;</span><br><span class="line"></span><br><span class="line">   &lt;commons-codec.version&gt;1.11&lt;&#x2F;commons-codec.version&gt;</span><br><span class="line">   &lt;commons-lang3.version&gt;3.4&lt;&#x2F;commons-lang3.version&gt;</span><br><span class="line">   &lt;commons-fileupload.version&gt;1.4&lt;&#x2F;commons-fileupload.version&gt;</span><br><span class="line">   &lt;google-guava.version&gt;28.2-jre&lt;&#x2F;google-guava.version&gt;</span><br><span class="line"></span><br><span class="line">   &lt;slf4j.version&gt;1.7.21&lt;&#x2F;slf4j.version&gt;</span><br><span class="line">   &lt;joda-time.version&gt;2.10.6&lt;&#x2F;joda-time.version&gt;</span><br><span class="line"></span><br><span class="line">   &lt;&#x2F;properties&gt;</span><br><span class="line">   &lt;dependencies&gt;</span><br><span class="line">       &lt;dependency&gt;</span><br><span class="line">           &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">           &lt;artifactId&gt;spring-boot-starter-web&lt;&#x2F;artifactId&gt;</span><br><span class="line">           &lt;version&gt;$&#123;spring-boot-starter.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">       &lt;&#x2F;dependency&gt;</span><br><span class="line">   &lt;&#x2F;dependencies&gt;</span><br></pre></td></tr></table></figure>
+
+<p>Application</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">public class Application &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(Application.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Controller</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">public class HelloController &#123;</span><br><span class="line"></span><br><span class="line">    @GetMapping(&quot;hello&quot;)</span><br><span class="line">    public Object hello() &#123;</span><br><span class="line">      return &quot;hello&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Mybatis逆向"><a href="#Mybatis逆向" class="headerlink" title="Mybatis逆向"></a>Mybatis逆向</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;mysql&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mysql-connector-java&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;5.1.41&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;tk.mybatis&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mapper-spring-boot-starter&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.4&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;!-- mybatis 逆向生成工具  --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.mybatis.generator&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mybatis-generator-core&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.3.2&lt;&#x2F;version&gt;</span><br><span class="line">    &lt;scope&gt;compile&lt;&#x2F;scope&gt;</span><br><span class="line">    &lt;optional&gt;true&lt;&#x2F;optional&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public interface MyMapper&lt;T&gt; extends Mapper&lt;T&gt;, MySqlMapper&lt;T&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">public class GeneratorDisplay &#123;</span><br><span class="line"></span><br><span class="line">	public void generator() throws Exception &#123;</span><br><span class="line"></span><br><span class="line">		List&lt;String&gt; warnings &#x3D; new ArrayList&lt;String&gt;();</span><br><span class="line">		boolean overwrite &#x3D; true;</span><br><span class="line">		&#x2F;&#x2F;指定 逆向工程配置文件</span><br><span class="line">&#x2F;&#x2F;		File configFile &#x3D; new File(&quot;mybatis_reverse&quot;</span><br><span class="line">&#x2F;&#x2F;											+ File.separator</span><br><span class="line">&#x2F;&#x2F;											+&quot;generatorConfig.xml&quot;);</span><br><span class="line">		File configFile &#x3D; new File(&quot;E:\\project\\mybatis_reverse\\generatorConfig.xml&quot;);</span><br><span class="line">		ConfigurationParser cp &#x3D; new ConfigurationParser(warnings);</span><br><span class="line">		Configuration config &#x3D; cp.parseConfiguration(configFile);</span><br><span class="line">		DefaultShellCallback callback &#x3D; new DefaultShellCallback(overwrite);</span><br><span class="line">		MyBatisGenerator myBatisGenerator &#x3D; new MyBatisGenerator(config,</span><br><span class="line">				callback, warnings);</span><br><span class="line">		myBatisGenerator.generate(null);</span><br><span class="line"></span><br><span class="line">	&#125; </span><br><span class="line">	</span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			GeneratorDisplay generatorSqlmap &#x3D; new GeneratorDisplay();</span><br><span class="line">			generatorSqlmap.generator();</span><br><span class="line">		&#125; catch (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211109124140879.png" alt="image-20211109124140879"></p>
+<p>最外层 genenratorConfig.xml</p>
+<p><img src="/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211109003800094.png" alt="image-20211109003800094"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE generatorConfiguration</span><br><span class="line">        PUBLIC &quot;-&#x2F;&#x2F;mybatis.org&#x2F;&#x2F;DTD MyBatis Generator Configuration 1.0&#x2F;&#x2F;EN&quot;</span><br><span class="line">        &quot;http:&#x2F;&#x2F;mybatis.org&#x2F;dtd&#x2F;mybatis-generator-config_1_0.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;generatorConfiguration&gt;</span><br><span class="line">    &lt;context id&#x3D;&quot;MysqlContext&quot; targetRuntime&#x3D;&quot;MyBatis3Simple&quot; defaultModelType&#x3D;&quot;flat&quot;&gt;</span><br><span class="line">        &lt;property name&#x3D;&quot;beginningDelimiter&quot; value&#x3D;&quot;&#96;&quot;&#x2F;&gt;</span><br><span class="line">        &lt;property name&#x3D;&quot;endingDelimiter&quot; value&#x3D;&quot;&#96;&quot;&#x2F;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;!-- 通用mapper所在目录 --&gt;</span><br><span class="line">        &lt;plugin type&#x3D;&quot;tk.mybatis.mapper.generator.MapperPlugin&quot;&gt;</span><br><span class="line">            &lt;property name&#x3D;&quot;mappers&quot; value&#x3D;&quot;com.imooc.my.mapper.MyMapper&quot;&#x2F;&gt;</span><br><span class="line">        &lt;&#x2F;plugin&gt;</span><br><span class="line"></span><br><span class="line">        &lt;jdbcConnection driverClass&#x3D;&quot;com.mysql.jdbc.Driver&quot;</span><br><span class="line">                        connectionURL&#x3D;&quot;jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;imooc-red-book-dev&quot;</span><br><span class="line">                        userId&#x3D;&quot;root&quot;</span><br><span class="line">                        password&#x3D;&quot;123456&quot;&gt;</span><br><span class="line">        &lt;&#x2F;jdbcConnection&gt;</span><br><span class="line"></span><br><span class="line">        &lt;!-- 对应生成的pojo所在包 --&gt;</span><br><span class="line">        &lt;javaModelGenerator targetPackage&#x3D;&quot;com.imooc.pojo&quot; targetProject&#x3D;&quot;src&#x2F;main&#x2F;java&quot;&#x2F;&gt;</span><br><span class="line"></span><br><span class="line">		&lt;!-- 对应生成的mapper所在目录 --&gt;</span><br><span class="line">        &lt;sqlMapGenerator targetPackage&#x3D;&quot;mapper&quot; targetProject&#x3D;&quot;src&#x2F;main&#x2F;resources&quot;&#x2F;&gt;</span><br><span class="line"></span><br><span class="line">		&lt;!-- 配置mapper对应的java映射 --&gt;</span><br><span class="line">        &lt;javaClientGenerator targetPackage&#x3D;&quot;com.imooc.mapper&quot; targetProject&#x3D;&quot;src&#x2F;main&#x2F;java&quot; type&#x3D;&quot;XMLMAPPER&quot;&#x2F;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;!-- 数据库表 --&gt;</span><br><span class="line">		&lt;table tableName&#x3D;&quot;comment&quot;&gt;&lt;&#x2F;table&gt;</span><br><span class="line">		&lt;table tableName&#x3D;&quot;fans&quot;&gt;&lt;&#x2F;table&gt;</span><br><span class="line">		&lt;table tableName&#x3D;&quot;my_liked_vlog&quot;&gt;&lt;&#x2F;table&gt;</span><br><span class="line">		&lt;table tableName&#x3D;&quot;users&quot;&gt;&lt;&#x2F;table&gt;</span><br><span class="line">		&lt;table tableName&#x3D;&quot;vlog&quot;&gt;&lt;&#x2F;table&gt;</span><br><span class="line"></span><br><span class="line">    &lt;&#x2F;context&gt;</span><br><span class="line">&lt;&#x2F;generatorConfiguration&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="整合配置mybatis"><a href="#整合配置mybatis" class="headerlink" title="整合配置mybatis"></a>整合配置mybatis</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--pagehelper--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.github.pagehelper&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;pagehelper-spring-boot-starter&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.3&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;!--mybatis--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.mybatis.spring.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.1.0&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;!-- 阿里开源数据源 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;druid&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.1.0&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>application.properties</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  datasource:                                     # 数据源的相关配置</span><br><span class="line">    type: com.zaxxer.hikari.HikariDataSource      # 数据源的类型，可以更改为其他的数据源配置，比如druid</span><br><span class="line">    driver-class-name: com.mysql.jdbc.Driver      # mysql&#x2F;MariaDB 的数据库驱动类名称</span><br><span class="line">    url: jdbc:mysql:&#x2F;&#x2F;192.168.0.104:3306&#x2F;imooc-red-book-dev?useUnicode&#x3D;true&amp;characterEncoding&#x3D;UTF-8&amp;autoReconnect&#x3D;true</span><br><span class="line">    username: root</span><br><span class="line">    password: 123456</span><br><span class="line">    hikari:</span><br><span class="line">      connection-timeout: 30000               # 等待连接池分配连接的最大时间（毫秒），超过这个时长还没有可用的连接，则会抛出SQLException</span><br><span class="line">      minimum-idle: 5                         # 最小连接数</span><br><span class="line">      maximum-pool-size: 20                   # 最大连接数</span><br><span class="line">      auto-commit: true                       # 自动提交</span><br><span class="line">      idle-timeout: 600000                    # 连接超时的最大时长（毫秒），超时则会被释放（retired）</span><br><span class="line">      pool-name: DataSourceHikariCP           # 连接池的名字</span><br><span class="line">      max-lifetime: 18000000                  # 连接池的最大生命时长（毫秒），超时则会被释放（retired）</span><br><span class="line">      connection-test-query: SELECT 1</span><br><span class="line"># 整合mybatis</span><br><span class="line">mybatis:</span><br><span class="line">  type-aliases-package: com.imooc.pojo       # 所有pojo类所在的包路径</span><br><span class="line">  mapper-locations: classpath:mapper&#x2F;*.xml    # mapper映射文件</span><br><span class="line"></span><br><span class="line"># 通用mapper工具的配置</span><br><span class="line">mapper:</span><br><span class="line">  mappers: com.imooc.my.mapper.MyMapper      # 配置MyMapper，包含了一些封装好的CRUD方法</span><br><span class="line">  not-empty: false                            # 在进行数据库操作的时候，username !&#x3D; null 是否会追加 username !&#x3D; &#39;&#39;</span><br><span class="line">  identity: MYSQL</span><br><span class="line"></span><br><span class="line"># 分页插件助手的配置</span><br><span class="line">pagehelper:</span><br><span class="line">  helper-dialect: MYSQL</span><br><span class="line">  support-methods-arguments: true</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">@MapperScan(basePackages &#x3D; &quot;com.imooc.mapper&quot;)</span><br><span class="line">public class Application &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(Application.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Swagger"><a href="#Swagger" class="headerlink" title="Swagger"></a>Swagger</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- knife4j 接口文档工具 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.github.xiaoymin&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;knife4j-spring-boot-starter&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.github.xiaoymin&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;knife4j-springdoc-ui&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">@EnableSwagger2WebMvc</span><br><span class="line">public class Knife4jConfig &#123;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    public Docket defaultApi2() &#123;</span><br><span class="line">        Docket docket&#x3D;new Docket(DocumentationType.SWAGGER_2)</span><br><span class="line">                .apiInfo(new ApiInfoBuilder()</span><br><span class="line">                        &#x2F;&#x2F;.title(&quot;swagger-bootstrap-ui-demo RESTful APIs&quot;)</span><br><span class="line">                        .description(&quot;慕红薯短视频实战接口文档&quot;)</span><br><span class="line">                        .termsOfServiceUrl(&quot;http:&#x2F;&#x2F;www.xx.com&#x2F;&quot;)</span><br><span class="line">                        .contact(new Contact(&quot;lee&quot;, &quot;http:&#x2F;&#x2F;www.imooc.com&#x2F;&quot;, &quot;abc@imooc.com&quot;))</span><br><span class="line">                        .version(&quot;1.0&quot;)</span><br><span class="line">                        .build())</span><br><span class="line">                &#x2F;&#x2F;分组名称</span><br><span class="line">                .groupName(&quot;2.X版本&quot;)</span><br><span class="line">                .select()</span><br><span class="line">                &#x2F;&#x2F;这里指定Controller扫描包路径</span><br><span class="line">                .apis(RequestHandlerSelectors.basePackage(&quot;com.imooc.controller&quot;))</span><br><span class="line">                .paths(PathSelectors.any())</span><br><span class="line">                .build();</span><br><span class="line">        return docket;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Slf4j</span><br><span class="line">@Api(tags &#x3D; &quot;Hello 测试的接口&quot;)</span><br><span class="line">@RestController</span><br><span class="line">public class HelloController &#123;</span><br><span class="line"></span><br><span class="line">    @ApiOperation(value &#x3D; &quot;hello - 这是一个hello的测试路由&quot;)</span><br><span class="line">    public Object hello() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="腾讯云短信"><a href="#腾讯云短信" class="headerlink" title="腾讯云短信"></a>腾讯云短信</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 第三方云厂商相关的依赖 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.tencentcloudapi&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;tencentcloud-sdk-java&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.1.270&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">@Data</span><br><span class="line">@PropertySource(&quot;classpath:tencentcloud.properties&quot;)</span><br><span class="line">@ConfigurationProperties(prefix &#x3D; &quot;tencent.cloud&quot;)</span><br><span class="line">public class TencentCloudProperties &#123;</span><br><span class="line"></span><br><span class="line">    private String secretId;</span><br><span class="line">    private String secretKey;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class SMSUtils &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private TencentCloudProperties tencentCloudProperties;</span><br><span class="line"></span><br><span class="line">    public void sendSMS(String phone, String code) throws Exception &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            &#x2F;* 必要步骤：</span><br><span class="line">             * 实例化一个认证对象，入参需要传入腾讯云账户密钥对secretId，secretKey。</span><br><span class="line">             * 这里采用的是从环境变量读取的方式，需要在环境变量中先设置这两个值。</span><br><span class="line">             * 你也可以直接在代码中写死密钥对，但是小心不要将代码复制、上传或者分享给他人，</span><br><span class="line">             * 以免泄露密钥对危及你的财产安全。</span><br><span class="line">             * CAM密匙查询获取: https:&#x2F;&#x2F;console.cloud.tencent.com&#x2F;cam&#x2F;capi*&#x2F;</span><br><span class="line">            Credential cred &#x3D; new Credential(tencentCloudProperties.getSecretId(),</span><br><span class="line">                    tencentCloudProperties.getSecretKey());</span><br><span class="line"></span><br><span class="line">            &#x2F;&#x2F; 实例化一个http选项，可选的，没有特殊需求可以跳过</span><br><span class="line">            HttpProfile httpProfile &#x3D; new HttpProfile();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;            httpProfile.setReqMethod(&quot;POST&quot;); &#x2F;&#x2F; 默认使用POST</span><br><span class="line"></span><br><span class="line">            &#x2F;* SDK会自动指定域名。通常是不需要特地指定域名的，但是如果你访问的是金融区的服务</span><br><span class="line">             * 则必须手动指定域名，例如sms的上海金融区域名： sms.ap-shanghai-fsi.tencentcloudapi.com *&#x2F;</span><br><span class="line">            httpProfile.setEndpoint(&quot;sms.tencentcloudapi.com&quot;);</span><br><span class="line"></span><br><span class="line">            &#x2F;&#x2F; 实例化一个client选项</span><br><span class="line">            ClientProfile clientProfile &#x3D; new ClientProfile();</span><br><span class="line">            clientProfile.setHttpProfile(httpProfile);</span><br><span class="line">            &#x2F;&#x2F; 实例化要请求产品的client对象,clientProfile是可选的</span><br><span class="line">            SmsClient client &#x3D; new SmsClient(cred, &quot;ap-nanjing&quot;, clientProfile);</span><br><span class="line"></span><br><span class="line">            &#x2F;&#x2F; 实例化一个请求对象,每个接口都会对应一个request对象</span><br><span class="line">            SendSmsRequest req &#x3D; new SendSmsRequest();</span><br><span class="line">            String[] phoneNumberSet1 &#x3D; &#123;&quot;+86&quot; + phone&#125;;&#x2F;&#x2F;电话号码</span><br><span class="line">            req.setPhoneNumberSet(phoneNumberSet1);</span><br><span class="line">            req.setSmsSdkAppId(&quot;1400568450&quot;);   &#x2F;&#x2F; 短信应用ID: 短信SdkAppId在 [短信控制台] 添加应用后生成的实际SdkAppId</span><br><span class="line">            req.setSignName(&quot;风间影月&quot;);         &#x2F;&#x2F; 签名</span><br><span class="line">            req.setTemplateId(&quot;1108902&quot;);       &#x2F;&#x2F; 模板id：必须填写已审核通过的模板 ID。模板ID可登录 [短信控制台] 查看</span><br><span class="line"></span><br><span class="line">            &#x2F;* 模板参数（自定义占位变量）: 若无模板参数，则设置为空 *&#x2F;</span><br><span class="line">            String[] templateParamSet1 &#x3D; &#123;code&#125;;</span><br><span class="line">            req.setTemplateParamSet(templateParamSet1);</span><br><span class="line"></span><br><span class="line">            &#x2F;&#x2F; 返回的resp是一个SendSmsResponse的实例，与请求对象对应</span><br><span class="line">            SendSmsResponse resp &#x3D; client.SendSms(req);</span><br><span class="line">            &#x2F;&#x2F; 输出json格式的字符串回包</span><br><span class="line">&#x2F;&#x2F;            System.out.println(SendSmsResponse.toJsonString(resp));</span><br><span class="line">        &#125; catch (TencentCloudSDKException e) &#123;</span><br><span class="line">            System.out.println(e.toString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;    public static void main(String[] args) &#123;</span><br><span class="line">&#x2F;&#x2F;        try &#123;</span><br><span class="line">&#x2F;&#x2F;            new SMSUtils().sendSMS(&quot;18812345612&quot;, &quot;7896&quot;);</span><br><span class="line">&#x2F;&#x2F;        &#125; catch (Exception e) &#123;</span><br><span class="line">&#x2F;&#x2F;            e.printStackTrace();</span><br><span class="line">&#x2F;&#x2F;        &#125;</span><br><span class="line">&#x2F;&#x2F;    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">private SMSUtils smsUtils;</span><br><span class="line"></span><br><span class="line">@GetMapping(&quot;sms&quot;)</span><br><span class="line">public Object sms() throws Exception &#123;</span><br><span class="line"></span><br><span class="line">    String code &#x3D; &quot;123456&quot;;</span><br><span class="line">    smsUtils.sendSMS(&quot;&quot;, code);</span><br><span class="line"></span><br><span class="line">    return GraceJSONResult.ok();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h1><p>工具类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- apache 工具类 --&gt;</span><br><span class="line">           &lt;dependency&gt;</span><br><span class="line">               &lt;groupId&gt;commons-codec&lt;&#x2F;groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;commons-codec&lt;&#x2F;artifactId&gt;</span><br><span class="line">               &lt;version&gt;$&#123;commons-codec.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">           &lt;&#x2F;dependency&gt;</span><br><span class="line">           &lt;dependency&gt;</span><br><span class="line">               &lt;groupId&gt;org.apache.commons&lt;&#x2F;groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;commons-lang3&lt;&#x2F;artifactId&gt;</span><br><span class="line">               &lt;version&gt;$&#123;commons-lang3.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">           &lt;&#x2F;dependency&gt;</span><br><span class="line">           &lt;dependency&gt;</span><br><span class="line">               &lt;groupId&gt;commons-fileupload&lt;&#x2F;groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;commons-fileupload&lt;&#x2F;artifactId&gt;</span><br><span class="line">               &lt;version&gt;$&#123;commons-fileupload.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">           &lt;&#x2F;dependency&gt;</span><br><span class="line"></span><br><span class="line">           &lt;!-- google 工具类 --&gt;</span><br><span class="line">           &lt;dependency&gt;</span><br><span class="line">               &lt;groupId&gt;com.google.guava&lt;&#x2F;groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;guava&lt;&#x2F;artifactId&gt;</span><br><span class="line">               &lt;version&gt;$&#123;google-guava.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">           &lt;&#x2F;dependency&gt;</span><br><span class="line"></span><br><span class="line">           &lt;!-- joda-time 时间工具 --&gt;</span><br><span class="line">           &lt;dependency&gt;</span><br><span class="line">               &lt;groupId&gt;joda-time&lt;&#x2F;groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;joda-time&lt;&#x2F;artifactId&gt;</span><br><span class="line">               &lt;version&gt;$&#123;joda-time.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">           &lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>问题：</p>
+<pre><code>启动redis服务，可以使用127.0.0.1配置并使用访问redis，但是换成IP地址就无法访问 </code></pre><p>解决：</p>
+<pre><code>1. 打开 redis.windows.config文件（linux对应redis.conf文件）将 NETWORK 下 bind 127.0.0.1 注释掉
+
+    并将 protected-mode  yes    改为 protected-mode  no；
+
+2. 同理修改 redis.windows.server.config 文件中相应内容；
+
+3. 重启 Redis 服务，即可使用 IP 访问 Redis了；</code></pre></blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 引入 redis 依赖 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">@Slf4j</span><br><span class="line">public class PassportInterceptor extends BaseInfoProperties implements HandlerInterceptor &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean preHandle(HttpServletRequest request,</span><br><span class="line">                             HttpServletResponse response, Object handler) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 获得用户的ip</span><br><span class="line">        String userIp &#x3D; IPUtil.getRequestIp(request);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 得到是否存在的判断</span><br><span class="line">        boolean keyIsExist &#x3D; redis.keyIsExist(MOBILE_SMSCODE + &quot;:&quot; + userIp);</span><br><span class="line"></span><br><span class="line">        if (keyIsExist) &#123;</span><br><span class="line">            GraceException.display(ResponseStatusEnum.SMS_NEED_WAIT_ERROR);</span><br><span class="line">            log.info(&quot;短信发送频率太大！&quot;);</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;**</span><br><span class="line">         * true: 请求放行</span><br><span class="line">         * false: 请求拦截</span><br><span class="line">         *&#x2F;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class InterceptorConfig implements WebMvcConfigurer &#123;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    public PassportInterceptor passportInterceptor() &#123;</span><br><span class="line">        return new PassportInterceptor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    public UserTokenInterceptor userTokenInterceptor() &#123;</span><br><span class="line">        return new UserTokenInterceptor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void addInterceptors(InterceptorRegistry registry) &#123;</span><br><span class="line">        registry.addInterceptor(passportInterceptor())</span><br><span class="line">                .addPathPatterns(&quot;&#x2F;passport&#x2F;getSMSCode&quot;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="异常封装"><a href="#异常封装" class="headerlink" title="异常封装"></a>异常封装</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">public class GraceException &#123;</span><br><span class="line"></span><br><span class="line">    public static void display(ResponseStatusEnum responseStatusEnum) &#123;</span><br><span class="line">        throw new MyCustomException(responseStatusEnum);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public class MyCustomException extends RuntimeException &#123;</span><br><span class="line"></span><br><span class="line">    private ResponseStatusEnum responseStatusEnum;</span><br><span class="line"></span><br><span class="line">    public MyCustomException(ResponseStatusEnum responseStatusEnum) &#123;</span><br><span class="line">        super(&quot;异常状态码为：&quot; + responseStatusEnum.status()</span><br><span class="line">                + &quot;；具体异常信息为：&quot; + responseStatusEnum.msg());</span><br><span class="line">        this.responseStatusEnum &#x3D; responseStatusEnum;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public ResponseStatusEnum getResponseStatusEnum() &#123;</span><br><span class="line">        return responseStatusEnum;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setResponseStatusEnum(ResponseStatusEnum responseStatusEnum) &#123;</span><br><span class="line">        this.responseStatusEnum &#x3D; responseStatusEnum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;**</span><br><span class="line"> * 统一异常拦截处理</span><br><span class="line"> * 可以针对异常的类型进行捕获，然后返回json信息到前端</span><br><span class="line"> *&#x2F;</span><br><span class="line">@ControllerAdvice</span><br><span class="line">public class GraceExceptionHandler &#123;</span><br><span class="line"></span><br><span class="line">    @ExceptionHandler(MyCustomException.class)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public GraceJSONResult returnMyException(MyCustomException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        return GraceJSONResult.exception(e.getResponseStatusEnum());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/" rel="next" title="设计模式分析">
+                <i class="fa fa-chevron-left"></i> 设计模式分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/11/15/%E7%BC%96%E5%86%99%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E4%BA%9B%E5%8E%9F%E5%88%99/" rel="prev" title="编写代码的一些原则">
+                编写代码的一些原则 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">313</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#启动"><span class="nav-number">1.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mybatis逆向"><span class="nav-number">2.</span> <span class="nav-text">Mybatis逆向</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#整合配置mybatis"><span class="nav-number">3.</span> <span class="nav-text">整合配置mybatis</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Swagger"><span class="nav-number">4.</span> <span class="nav-text">Swagger</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#腾讯云短信"><span class="nav-number">5.</span> <span class="nav-text">腾讯云短信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis"><span class="nav-number">6.</span> <span class="nav-text">redis</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#拦截器"><span class="nav-number">7.</span> <span class="nav-text">拦截器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#异常封装"><span class="nav-number">8.</span> <span class="nav-text">异常封装</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共676.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

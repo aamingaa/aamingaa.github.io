@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 创建型单例123456789101112131415public class Singleton &amp;#123;    private volatile static Singleton uniqueInstance;    private Singleton() &amp;#123;    &amp;#125;    public static Singleton getUniqueInstance(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式分析">
+<meta property="og:url" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 创建型单例123456789101112131415public class Singleton &amp;#123;    private volatile static Singleton uniqueInstance;    private Singleton() &amp;#123;    &amp;#125;    public static Singleton getUniqueInstance(">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105202614707.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105212239282.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105230627238.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105234424187.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105235519959.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211119151803506.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211119152000305.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211119152401118.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211106193659420.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211106000624467.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211114103659372.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211114104309233.png">
+<meta property="og:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211114104331473.png">
+<meta property="article:published_time" content="2021-11-05T12:11:01.000Z">
+<meta property="article:modified_time" content="2021-11-19T07:28:27.468Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105202614707.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://aamingaa.github.io/2021/11/05/设计模式分析/"/>
+
+
+
+
+
+  <title>设计模式分析 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://aamingaa.github.io/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">设计模式分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-05T20:11:01+08:00">
+                2021-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="创建型"><a href="#创建型" class="headerlink" title="创建型"></a>创建型</h1><h2 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Singleton &#123;</span><br><span class="line">    private volatile static Singleton uniqueInstance;</span><br><span class="line">    private Singleton() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    public static Singleton getUniqueInstance() &#123;</span><br><span class="line">        if (uniqueInstance &#x3D;&#x3D; null) &#123;</span><br><span class="line">        synchronized (Singleton.class) &#123;</span><br><span class="line">        if (uniqueInstance &#x3D;&#x3D; null) &#123;</span><br><span class="line">        uniqueInstance &#x3D; new Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">     &#125;</span><br><span class="line">    return uniqueInstance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="简单工厂"><a href="#简单工厂" class="headerlink" title="简单工厂"></a>简单工厂</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public interface Product &#123;</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteProduct implements Product&#123;</span><br><span class="line">&#125;</span><br><span class="line">public class simpleFactory &#123;</span><br><span class="line">    public Product createProduct(int type) &#123;</span><br><span class="line">        if(type &#x3D;&#x3D; 1) &#123;</span><br><span class="line">            return new ConcreteProduct();</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="工厂"><a href="#工厂" class="headerlink" title="工厂"></a>工厂</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface Product &#123;</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteProduct implements Product &#123;</span><br><span class="line">&#125;</span><br><span class="line">public abstract class Factory &#123;</span><br><span class="line">    public abstract Product createProduct();</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteFactory extends Factory&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public Product createProduct() &#123;</span><br><span class="line">        return new ConcreteProduct();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="建造者"><a href="#建造者" class="headerlink" title="建造者"></a>建造者</h2><p>我们先说一个生活中的小例子，当我们在外面饭店吃饭时，比如点个水煮肉片，这家店可能会辣一点、那家店可能会咸一点、对面那家可能放青菜、隔壁那家可能放菠菜，每家店做出来的都不一样，明明都是水煮肉片却有不同的做法，如果都一样就不会说这家难吃那家好吃了。那再看快餐店，比如KFC，我们点个至尊虾堡，所有人不管在哪个城市哪家店，做法、味道都是一样的，为什么呢，因为它用料、时间、温度等等都是严格规定的，我们只需要下订单就行了，这就是一个建造者模式</p>
+<p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105202614707.png" alt="image-20211105202614707"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">public class Director &#123;</span><br><span class="line"></span><br><span class="line">    public void Construct(Builder builder) &#123;</span><br><span class="line">        builder.BuildPartA();</span><br><span class="line">        builder.BuildPartB();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public abstract class Builder &#123;</span><br><span class="line">    </span><br><span class="line">    public abstract void BuildPartA();        &#x2F;&#x2F;产品的A部件</span><br><span class="line">    public abstract void BuildPartB();        &#x2F;&#x2F;产品的B部件</span><br><span class="line">    public abstract Product getResult();    &#x2F;&#x2F;获取产品建造后结果</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteBuilder1 extends Builder &#123;</span><br><span class="line"></span><br><span class="line">    private Product product &#x3D; new Product();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;设置产品零件</span><br><span class="line">    @Override</span><br><span class="line">    public void BuildPartA() &#123;</span><br><span class="line">        product.add(&quot;部件A&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void BuildPartB() &#123;</span><br><span class="line">        product.add(&quot;部件B&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;组建一个产品</span><br><span class="line">    @Override</span><br><span class="line">    public Product getResult() &#123;</span><br><span class="line">        return product;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public class Client &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        Director director &#x3D; new Director();</span><br><span class="line">        Builder builder1 &#x3D; new ConcreteBuilder1();</span><br><span class="line">        Builder builder2 &#x3D; new ConcreteBuilder2();</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;指挥者用ConcreteBuilder1的方法来建造产品</span><br><span class="line">        director.Construct(builder1);</span><br><span class="line">        Product product1 &#x3D; builder1.getResult();</span><br><span class="line">        product1.show();</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;指挥者用ConcreteBuilder2的方法来建造产品</span><br><span class="line">        director.Construct(builder2);</span><br><span class="line">        Product product2 &#x3D; builder2.getResult();</span><br><span class="line">        product2.show();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public abstract class ProtoType &#123;</span><br><span class="line">    abstract ProtoType myclone() ;</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteProto extends ProtoType&#123;</span><br><span class="line">    private String str;</span><br><span class="line"></span><br><span class="line">    public ConcreteProto(String str) &#123;</span><br><span class="line">        this.str &#x3D; str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;ConcreteProto&#123;&quot; +</span><br><span class="line">                &quot;str&#x3D;&#39;&quot; + str + &#39;\&#39;&#39; +</span><br><span class="line">                &#39;&#125;&#39;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    ProtoType myclone() &#123;</span><br><span class="line">        return new ConcreteProto(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="行为型"><a href="#行为型" class="headerlink" title="行为型"></a>行为型</h1><h2 id="责任链"><a href="#责任链" class="headerlink" title="责任链"></a>责任链</h2><p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105212239282.png" alt="image-20211105212239282"></p>
+<ul>
+<li>链上的每个对象都有机会处理请求</li>
+<li>链上的每个对象都持有下一个要处理对象的引用</li>
+<li>链上的某个对象无法处理当前请求，那么它会把相同的请求传给下一个对象</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class PreparationList &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 是否洗脸</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private boolean washFace;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 是否洗头</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private boolean washHair;</span><br><span class="line"></span><br><span class="line">    public boolean isWashFace() &#123;</span><br><span class="line">        return washFace;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setWashFace(boolean washFace) &#123;</span><br><span class="line">        this.washFace &#x3D; washFace;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean isWashHair() &#123;</span><br><span class="line">        return washHair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setWashHair(boolean washHair) &#123;</span><br><span class="line">        this.washHair &#x3D; washHair;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;ThingList [washFace&#x3D;&quot; + washFace + &quot;, washHair&#x3D;&quot; + washHair + &quot;, haveBreakfast&#x3D;&quot; + haveBreakfast + &quot;]&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public abstract class AbstractPrepareFilter &#123;</span><br><span class="line"></span><br><span class="line">    private AbstractPrepareFilter nextPrepareFilter;</span><br><span class="line"></span><br><span class="line">    public AbstractPrepareFilter(AbstractPrepareFilter nextPrepareFilter) &#123;</span><br><span class="line">        this.nextPrepareFilter &#x3D; nextPrepareFilter;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void doFilter(PreparationList preparationList, Study study) &#123;</span><br><span class="line">        prepare(preparationList);</span><br><span class="line"></span><br><span class="line">        if (nextPrepareFilter &#x3D;&#x3D; null) &#123;</span><br><span class="line">            study.study();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            nextPrepareFilter.doFilter(preparationList, study);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public abstract void prepare(PreparationList preparationList);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class Study &#123;</span><br><span class="line"></span><br><span class="line">    public void study() &#123;</span><br><span class="line">        System.out.println(&quot;学习&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class WashFaceFilter extends AbstractPrepareFilter &#123;</span><br><span class="line"></span><br><span class="line">    public WashFaceFilter(AbstractPrepareFilter nextPrepareFilter) &#123;</span><br><span class="line">        super(nextPrepareFilter);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void prepare(PreparationList preparationList) &#123;</span><br><span class="line">        if (preparationList.isWashFace()) &#123;</span><br><span class="line">            System.out.println(&quot;洗脸&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class WashHairFilter extends AbstractPrepareFilter &#123;</span><br><span class="line"></span><br><span class="line">    public WashHairFilter(AbstractPrepareFilter nextPrepareFilter) &#123;</span><br><span class="line">        super(nextPrepareFilter);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void prepare(PreparationList preparationList) &#123;</span><br><span class="line">        if (preparationList.isWashHair()) &#123;</span><br><span class="line">            System.out.println(&quot;洗头&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class test1 &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        PreparationList preparationList &#x3D; new PreparationList();</span><br><span class="line">        preparationList.setWashFace(true);</span><br><span class="line">        preparationList.setWashHair(false);</span><br><span class="line">        Study study &#x3D; new Study();</span><br><span class="line">        AbstractPrepareFilter washFaceFilter &#x3D; new WashFaceFilter(null);</span><br><span class="line">        AbstractPrepareFilter washHairFilter &#x3D; new WashHairFilter(washFaceFilter);</span><br><span class="line"></span><br><span class="line">        washHairFilter.doFilter(preparationList, study);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h2><p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105230627238.png" alt="image-20211105230627238"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public interface Aggregate &#123;</span><br><span class="line">	Iterator createIterator();</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteAggregate implements Aggregate &#123;</span><br><span class="line">    private Integer[] items;</span><br><span class="line">    public ConcreteAggregate() &#123;</span><br><span class="line">    items &#x3D; new Integer[10];</span><br><span class="line">    for (int i &#x3D; 0; i &lt; items.length; i++) &#123;</span><br><span class="line">    items[i] &#x3D; i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public Iterator createIterator() &#123;</span><br><span class="line">	return new ConcreteIterator&lt;Integer&gt;(items);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">public interface Iterator&lt;Item&gt; &#123;</span><br><span class="line">    Item next();</span><br><span class="line">    boolean hasNext();</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteIterator&lt;Item&gt; implements Iterator &#123;</span><br><span class="line">    private Item[] items;</span><br><span class="line">    private int position &#x3D; 0;</span><br><span class="line">	public ConcreteIterator(Item[] items) &#123;</span><br><span class="line">     this.items &#x3D; items;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public Object next() &#123;</span><br><span class="line">    return items[position++];</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public boolean hasNext() &#123;</span><br><span class="line">    return position &lt; items.length;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="观察者"><a href="#观察者" class="headerlink" title="观察者"></a>观察者</h2><p>主题（Subject）具有注册和移除观察者、并通知所有观察者的功能，主题是通过维护一张观察者列表来实现这些操<br>作的。<br>观察者（Observer）的注册功能需要调用主题的 registerObserver() 方法。</p>
+<p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105234424187.png" alt="image-20211105234424187"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">public interface Observer &#123;</span><br><span class="line">    void update(int temp);</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteObserver1 implements Observer &#123;</span><br><span class="line">    public ConcreteObserver1(Subject subject) &#123;</span><br><span class="line">        subject.register(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void update(int temp) &#123;</span><br><span class="line">        System.out.println(temp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public interface Subject &#123;</span><br><span class="line">       void register(Observer o);</span><br><span class="line">       void remove(Observer o);</span><br><span class="line">       void notify1();</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteSubject implements Subject&#123;</span><br><span class="line">    private List&lt;Observer&gt; observerList;</span><br><span class="line">    private int tmp;</span><br><span class="line">    public ConcreteSubject(List&lt;Observer&gt; observerList) &#123;</span><br><span class="line">        this.observerList &#x3D; observerList;</span><br><span class="line">    &#125;</span><br><span class="line">    public void display(int temp) &#123;</span><br><span class="line">        this.tmp &#x3D; temp;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public void register(Observer o) &#123;</span><br><span class="line">        observerList.add(o);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void remove(Observer o) &#123;</span><br><span class="line">        observerList.remove(o);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void notify1() &#123;</span><br><span class="line">     for(Observer o : observerList) &#123;</span><br><span class="line">         o.update(tmp);</span><br><span class="line">     &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="策略"><a href="#策略" class="headerlink" title="策略"></a>策略</h2><p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211105235519959.png" alt="image-20211105235519959"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public interface Strategy</span><br><span class="line">&#123;</span><br><span class="line">    public void useStrategy();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class StrategyA implements Strategy</span><br><span class="line">&#123;</span><br><span class="line">    public void useStrategy()</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(&quot;StrategyA.useStrategy()&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class StrategyB implements Strategy</span><br><span class="line">&#123;</span><br><span class="line">    public void useStrategy()</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(&quot;StrategyB.useStrategy()&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class Context</span><br><span class="line">&#123;</span><br><span class="line">    private Strategy strategy;</span><br><span class="line">    </span><br><span class="line">    public Context(Strategy strategy)</span><br><span class="line">    &#123;</span><br><span class="line">        this.strategy &#x3D; strategy;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public void strategyMethod()</span><br><span class="line">    &#123;</span><br><span class="line">        strategy.useStrategy();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class TestMain</span><br><span class="line">&#123;</span><br><span class="line">    public static void main(String[] args)</span><br><span class="line">    &#123;</span><br><span class="line">        Strategy strategyA &#x3D; new StrategyA();</span><br><span class="line">        Strategy strategyB &#x3D; new StrategyB();</span><br><span class="line">        </span><br><span class="line">        Context context &#x3D; new Context(strategyA);</span><br><span class="line">        context.strategyMethod();</span><br><span class="line">        context &#x3D; new Context(strategyB);</span><br><span class="line">        context.strategyMethod();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h2><p>状态模式把所研究的对象的行为包装在不同的状态对象里，每一个状态对象都属于一个抽象状态类的一个子类。状态模式的意图是让一个对象在其内部状态改变的时候，其行为也随之改变。状态模式的示意性类图如下所示：</p>
+<p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211119151803506.png" alt="image-20211119151803506"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">public class Context &#123;</span><br><span class="line">    &#x2F;&#x2F;持有一个State类型的对象实例</span><br><span class="line">    private State state;</span><br><span class="line"></span><br><span class="line">    public void setState(State state) &#123;</span><br><span class="line">        this.state &#x3D; state;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 用户感兴趣的接口方法</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public void request(String sampleParameter) &#123;</span><br><span class="line">        &#x2F;&#x2F;转调state来处理</span><br><span class="line">        state.handle(sampleParameter);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public interface State &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 状态对应的处理</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public void handle(String sampleParameter);</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteStateA implements State &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void handle(String sampleParameter) &#123;</span><br><span class="line">        </span><br><span class="line">        System.out.println(&quot;ConcreteStateA handle ：&quot; + sampleParameter);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteStateB implements State &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void handle(String sampleParameter) &#123;</span><br><span class="line">        </span><br><span class="line">        System.out.println(&quot;ConcreteStateB handle ：&quot; + sampleParameter);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public class Client &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        &#x2F;&#x2F;创建状态</span><br><span class="line">        State state &#x3D; new ConcreteStateB();</span><br><span class="line">        &#x2F;&#x2F;创建环境</span><br><span class="line">        Context context &#x3D; new Context();</span><br><span class="line">        &#x2F;&#x2F;将状态设置到环境中</span><br><span class="line">        context.setState(state);</span><br><span class="line">        &#x2F;&#x2F;请求</span><br><span class="line">        context.request(&quot;test&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="备忘录"><a href="#备忘录" class="headerlink" title="备忘录"></a>备忘录</h2><p>　<strong>备忘录对象是一个用来存储另外一个对象内部状态的快照的对象。备忘录模式的用意是在不破坏封装的条件下，将一个对象的状态捕捉(Capture)住，并外部化，存储起来，从而可以在将来合适的时候把这个对象还原到存储起来的状态。备忘录模式常常与命令模式和迭代子模式一同使用。</strong></p>
+<p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211119152000305.png" alt="image-20211119152000305"></p>
+<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><p>　每一个命令都是一个操作：请求的一方发出请求要求执行一个操作；接收的一方收到请求，并执行操作。命令模式允许请求的一方和接收的一方独立开来，使得请求的一方不必知道接收请求的一方的接口，更不必知道请求是怎么被接收，以及操作是否被执行、何时被执行，以及是怎么被执行的。</p>
+<p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211119152401118.png" alt="image-20211119152401118"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">public class Receiver &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 真正执行命令相应的操作</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public void action()&#123;</span><br><span class="line">        System.out.println(&quot;执行操作&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public interface Command &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 执行方法</span><br><span class="line">     *&#x2F;</span><br><span class="line">    void execute();</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteCommand implements Command &#123;</span><br><span class="line">    &#x2F;&#x2F;持有相应的接收者对象</span><br><span class="line">    private Receiver receiver &#x3D; null;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 构造方法</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public ConcreteCommand(Receiver receiver)&#123;</span><br><span class="line">        this.receiver &#x3D; receiver;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public void execute() &#123;</span><br><span class="line">        &#x2F;&#x2F;通常会转调接收者对象的相应方法，让接收者来真正执行功能</span><br><span class="line">        receiver.action();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public class Invoker &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 持有命令对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private Command command &#x3D; null;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 构造方法</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public Invoker(Command command)&#123;</span><br><span class="line">        this.command &#x3D; command;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 行动方法</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public void action()&#123;</span><br><span class="line">        </span><br><span class="line">        command.execute();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="结构型"><a href="#结构型" class="headerlink" title="结构型"></a>结构型</h1><h2 id="适配器"><a href="#适配器" class="headerlink" title="适配器"></a>适配器</h2><p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211106193659420.png" alt="image-20211106193659420"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 目标接口, 具有标准的接口</span><br><span class="line">public interface Target &#123;</span><br><span class="line"></span><br><span class="line">    public void request();</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;已经存在的, 并且具有特殊功能的类, 但是不符合我们既有的标准的接口的类</span><br><span class="line">public class Adaptee &#123;</span><br><span class="line">    public void specificRequest() &#123;</span><br><span class="line">        System.out.println(&quot;被适配类, 我是两孔插座, 具有特殊的功能&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; 装饰类, 直接关联被适配器类, 同时实现标准接口</span><br><span class="line">public class Adapter implements Target &#123;</span><br><span class="line"></span><br><span class="line">    private Adaptee adaptee;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;    通过构造函数传入被适配类对象</span><br><span class="line">    public Adapter(Adaptee adaptee) &#123;</span><br><span class="line">        this.adaptee &#x3D; adaptee;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void request() &#123;</span><br><span class="line">        System.out.println(&quot;我是适配器类, 我能适配任何两孔插座, 让它正常工作&quot;);</span><br><span class="line">&#x2F;&#x2F;        这里使用委托的方式完成特殊的功能</span><br><span class="line">        this.adaptee.specificRequest();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class App </span><br><span class="line">&#123;</span><br><span class="line">    public static void main( String[] args ) &#123;</span><br><span class="line">&#x2F;&#x2F;        使用特殊功能类, 即适配类</span><br><span class="line">&#x2F;&#x2F;        需要先创建一个呗适配类的对象作为参数</span><br><span class="line">        Target target &#x3D; new Adapter(new Adaptee());</span><br><span class="line">        target.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="桥接器"><a href="#桥接器" class="headerlink" title="桥接器"></a>桥接器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Abstraction &#123;</span><br><span class="line">    </span><br><span class="line">    protected Implementor impl;</span><br><span class="line">    </span><br><span class="line">    public Abstraction(Implementor impl)&#123;</span><br><span class="line">        this.impl &#x3D; impl;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;示例方法</span><br><span class="line">    public void operation()&#123;</span><br><span class="line">        </span><br><span class="line">        impl.operationImpl();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class RefinedAbstraction extends Abstraction &#123;</span><br><span class="line">    </span><br><span class="line">    public RefinedAbstraction(Implementor impl) &#123;</span><br><span class="line">        super(impl);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;其他的操作方法</span><br><span class="line">    public void otherOperation()&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public abstract class Implementor &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 示例方法，实现抽象部分需要的某些具体功能</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public abstract void operationImpl();</span><br><span class="line">&#125;</span><br><span class="line">public class ConcreteImplementorA extends Implementor &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void operationImpl() &#123;</span><br><span class="line">        &#x2F;&#x2F;具体操作</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="装饰器"><a href="#装饰器" class="headerlink" title="装饰器"></a>装饰器</h2><p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211106000624467.png" alt="image-20211106000624467"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public interface Cook &#123;</span><br><span class="line"></span><br><span class="line">    public void cookDinner();</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class ChineseCook implements Cook &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void cookDinner() &#123;</span><br><span class="line">        System.out.println(&quot;中国人做晚饭&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public abstract class FilterCook implements Cook &#123;</span><br><span class="line"></span><br><span class="line">    protected Cook cook;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<pre><code>public class WashHandsCook extends FilterCook {
+public WashHandsCook(Cook cook) {
+    this.cook = cook;
+}
+
+@Override
+public void cookDinner() {
+    System.out.println(&quot;先洗手&quot;);
+    cook.cookDinner();
+}
+}</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class WashHearCook extends FilterCook &#123;</span><br><span class="line">    </span><br><span class="line">    public WashHearCook(Cook cook) &#123;</span><br><span class="line">        this.cook &#x3D; cook;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public void cookDinner() &#123;</span><br><span class="line">        System.out.println(&quot;先洗头&quot;);</span><br><span class="line">        cook.cookDinner();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<pre><code>Cook cook0 = new WashHandsCook(new ChineseCook());
+Cook cook1 = new WashHearCook(new ChineseCook());
+
+cook0.cookDinner();
+cook1.cookDinner();</code></pre><h2 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h2><p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211114103659372.png" alt="image-20211114103659372"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public abstract class AbstractObject &#123;</span><br><span class="line">    &#x2F;&#x2F;操作</span><br><span class="line">    public abstract void operation();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class RealObject extends AbstractObject &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void operation() &#123;</span><br><span class="line">        &#x2F;&#x2F;一些操作</span><br><span class="line">        System.out.println(&quot;一些操作&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class ProxyObject extends AbstractObject&#123;</span><br><span class="line">    RealObject realObject &#x3D; new RealObject();</span><br><span class="line">    @Override</span><br><span class="line">    public void operation() &#123;</span><br><span class="line">        &#x2F;&#x2F;调用目标对象之前可以做相关操作</span><br><span class="line">        System.out.println(&quot;before&quot;);        </span><br><span class="line">        realObject.operation();        </span><br><span class="line">        &#x2F;&#x2F;调用目标对象之后可以做相关操作</span><br><span class="line">        System.out.println(&quot;after&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        &#x2F;&#x2F; TODO Auto-generated method stub</span><br><span class="line">        AbstractObject obj &#x3D; new ProxyObject();</span><br><span class="line">        obj.operation();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h2><p>合成模式把部分和整体的关系用树结构表示出来。合成模式使得客户端把一个个单独的成分对象和由它们复合而成的合成对象同等看待。</p>
+<p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211114104309233.png" alt="image-20211114104309233"></p>
+<p><img src="/2021/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90/C:%5CUsers%5C77406%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211114104331473.png" alt="image-20211114104331473"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public interface Component &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 输出组建自身的名称</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public void printStruct(String preStr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">public class Composite implements Component &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 用来存储组合对象中包含的子组件对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private List&lt;Component&gt; childComponents &#x3D; new ArrayList&lt;Component&gt;();</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 组合对象的名字</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private String name;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 构造方法，传入组合对象的名字</span><br><span class="line">     * @param name    组合对象的名字</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public Composite(String name)&#123;</span><br><span class="line">        this.name &#x3D; name;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 聚集管理方法，增加一个子构件对象</span><br><span class="line">     * @param child 子构件对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public void addChild(Component child)&#123;</span><br><span class="line">        childComponents.add(child);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 聚集管理方法，删除一个子构件对象</span><br><span class="line">     * @param index 子构件对象的下标</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public void removeChild(int index)&#123;</span><br><span class="line">        childComponents.remove(index);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 聚集管理方法，返回所有子构件对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public List&lt;Component&gt; getChild()&#123;</span><br><span class="line">        return childComponents;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 输出对象的自身结构</span><br><span class="line">     * @param preStr 前缀，主要是按照层级拼接空格，实现向后缩进</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Override</span><br><span class="line">    public void printStruct(String preStr) &#123;</span><br><span class="line">        &#x2F;&#x2F; 先把自己输出</span><br><span class="line">        System.out.println(preStr + &quot;+&quot; + this.name);</span><br><span class="line">        &#x2F;&#x2F;如果还包含有子组件，那么就输出这些子组件对象</span><br><span class="line">        if(this.childComponents !&#x3D; null)&#123;</span><br><span class="line">            &#x2F;&#x2F;添加两个空格，表示向后缩进两个空格</span><br><span class="line">            preStr +&#x3D; &quot;  &quot;;</span><br><span class="line">            &#x2F;&#x2F;输出当前对象的子对象</span><br><span class="line">            for(Component c : childComponents)&#123;</span><br><span class="line">                &#x2F;&#x2F;递归输出每个子对象</span><br><span class="line">                c.printStruct(preStr);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class Leaf implements Component &#123;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 叶子对象的名字</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private String name;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 构造方法，传入叶子对象的名称</span><br><span class="line">     * @param name 叶子对象的名字</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public Leaf(String name)&#123;</span><br><span class="line">        this.name &#x3D; name;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 输出叶子对象的结构，叶子对象没有子对象，也就是输出叶子对象的名字</span><br><span class="line">     * @param preStr 前缀，主要是按照层级拼接的空格，实现向后缩进</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Override</span><br><span class="line">    public void printStruct(String preStr) &#123;</span><br><span class="line">        &#x2F;&#x2F; TODO Auto-generated method stub</span><br><span class="line">        System.out.println(preStr + &quot;-&quot; + name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">    public static void main(String[]args)&#123;</span><br><span class="line">        Composite root &#x3D; new Composite(&quot;服装&quot;);</span><br><span class="line">        Composite c1 &#x3D; new Composite(&quot;男装&quot;);</span><br><span class="line">        Composite c2 &#x3D; new Composite(&quot;女装&quot;);</span><br><span class="line">        </span><br><span class="line">        Leaf leaf1 &#x3D; new Leaf(&quot;衬衫&quot;);</span><br><span class="line">        Leaf leaf2 &#x3D; new Leaf(&quot;夹克&quot;);</span><br><span class="line">        Leaf leaf3 &#x3D; new Leaf(&quot;裙子&quot;);</span><br><span class="line">        Leaf leaf4 &#x3D; new Leaf(&quot;套装&quot;);</span><br><span class="line">        </span><br><span class="line">        root.addChild(c1);</span><br><span class="line">        root.addChild(c2);</span><br><span class="line">        c1.addChild(leaf1);</span><br><span class="line">        c1.addChild(leaf2);</span><br><span class="line">        c2.addChild(leaf3);</span><br><span class="line">        c2.addChild(leaf4);</span><br><span class="line">        </span><br><span class="line">        root.printStruct(&quot;&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="外观模式"><a href="#外观模式" class="headerlink" title="外观模式"></a>外观模式</h2><p>提供了一个统一的接口，用来访问子系统中的一群接口，从而让子系统更容易使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class SubSystem &#123;</span><br><span class="line">    public void turnOnTV() &#123;</span><br><span class="line">    System.out.println(&quot;turnOnTV()&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public void setCD(String cd) &#123;</span><br><span class="line">    System.out.println(&quot;setCD( &quot; + cd + &quot; )&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public void startWatching()&#123;</span><br><span class="line">    System.out.println(&quot;startWatching()&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class Facade &#123;</span><br><span class="line">    private SubSystem subSystem &#x3D; new SubSystem();</span><br><span class="line">    public void watchMovie() &#123;</span><br><span class="line">    subSystem.turnOnTV();</span><br><span class="line">    subSystem.setCD(&quot;a movie&quot;);</span><br><span class="line">    subSystem.startWatching();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/10/24/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="next" title="go设计模式">
+                <i class="fa fa-chevron-left"></i> go设计模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/11/08/Springboot-%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/" rel="prev" title="Springboot 工具相关">
+                Springboot 工具相关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avator.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=442319&auto=1&height=66"></iframe>
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">313</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#创建型"><span class="nav-number">1.</span> <span class="nav-text">创建型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单例"><span class="nav-number">1.1.</span> <span class="nav-text">单例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单工厂"><span class="nav-number">1.2.</span> <span class="nav-text">简单工厂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂"><span class="nav-number">1.3.</span> <span class="nav-text">工厂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者"><span class="nav-number">1.4.</span> <span class="nav-text">建造者</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原型"><span class="nav-number">1.5.</span> <span class="nav-text">原型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#行为型"><span class="nav-number">2.</span> <span class="nav-text">行为型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#责任链"><span class="nav-number">2.1.</span> <span class="nav-text">责任链</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代器"><span class="nav-number">2.2.</span> <span class="nav-text">迭代器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察者"><span class="nav-number">2.3.</span> <span class="nav-text">观察者</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#策略"><span class="nav-number">2.4.</span> <span class="nav-text">策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态模式"><span class="nav-number">2.5.</span> <span class="nav-text">状态模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#备忘录"><span class="nav-number">2.6.</span> <span class="nav-text">备忘录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令模式"><span class="nav-number">2.7.</span> <span class="nav-text">命令模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构型"><span class="nav-number">3.</span> <span class="nav-text">结构型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#适配器"><span class="nav-number">3.1.</span> <span class="nav-text">适配器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#桥接器"><span class="nav-number">3.2.</span> <span class="nav-text">桥接器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器"><span class="nav-number">3.3.</span> <span class="nav-text">装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代理"><span class="nav-number">3.4.</span> <span class="nav-text">代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组合"><span class="nav-number">3.5.</span> <span class="nav-text">组合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#外观模式"><span class="nav-number">3.6.</span> <span class="nav-text">外观模式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+-->
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共676.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'poAXA1bCt4bcaGmuoHBrU52s-gzGzoHsz',
+        app_key: 'ARaHT9OThVx8QqybEjteIed2',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="30" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
